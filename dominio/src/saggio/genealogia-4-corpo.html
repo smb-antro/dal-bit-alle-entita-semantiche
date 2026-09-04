@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Genealogia · 4 — Lo spazio, il corpo, la macchina</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0F2A22;
+    --surface: #173B30;
+    --surface-2: #1E4A3C;
+    --copper: #C97D3D;
+    --copper-bright: #F0A85E;
+    --text: #F2ECE0;
+    --text-dim: #A9BFB6;
+    --line: rgba(242,236,224,0.12);
+    --rail-w: 300px;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Source Serif 4', Georgia, serif;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,h2,h3, .display{
+    font-family: 'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+  .mono{ font-family: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace; }
+  a{ color: var(--copper-bright); }
+
+  /* ---------- layout shell: sidebar fissa con indice del sito ---------- */
+  .sidebar{
+    background: rgba(15,42,34,0.92);
+    border-bottom: 1px solid var(--line);
+    padding: 28px 24px 32px;
+  }
+  .sidebar-kicker{
+    font-family: 'IBM Plex Mono', monospace; font-size: .74rem; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px;
+  }
+  .sidebar-title{
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.02rem;
+    color: var(--text); margin-bottom: 22px;
+  }
+  .sidebar .parte{ margin-top: 26px; }
+  .sidebar .parte:first-of-type{ margin-top: 0; }
+  .sidebar .parte-heading{
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: .74rem;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--copper-bright);
+    padding-bottom: 10px; margin-bottom: 2px; border-bottom: 1px solid var(--line);
+  }
+  .sidebar .voce-semplice{
+    display: block; padding: 10px 4px; border-bottom: 1px solid var(--line);
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem;
+    color: var(--text); text-decoration: none;
+  }
+  .sidebar .voce-semplice:hover{ color: var(--copper-bright); }
+  .sidebar .voce-semplice.current{ color: var(--copper-bright); }
+  .sidebar details.modulo{ border-bottom: 1px solid var(--line); }
+  .sidebar details.modulo summary{
+    display: flex; align-items: center; gap: 8px; padding: 10px 4px; cursor: pointer;
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem; color: var(--text);
+    list-style: none;
+  }
+  .sidebar details.modulo summary.current{ color: var(--copper-bright); }
+  .sidebar details.modulo summary::-webkit-details-marker{ display: none; }
+  .sidebar details.modulo summary::before{
+    content: "›"; display: inline-block; font-family: 'IBM Plex Mono', monospace;
+    color: var(--text-dim); transition: transform .15s ease; flex-shrink: 0;
+  }
+  .sidebar details.modulo[open] summary::before{ transform: rotate(90deg); color: var(--copper-bright); }
+  .sidebar details.modulo summary:hover{ color: var(--copper-bright); }
+  .sidebar .unita-list{ padding: 2px 0 12px 22px; display: flex; flex-direction: column; gap: 1px; }
+  .sidebar .unita-list a{
+    display: block; padding: 6px 4px; font-size: .82rem; color: var(--text-dim); text-decoration: none;
+  }
+  .sidebar .unita-list a:hover{ color: var(--copper-bright); }
+  .sidebar .unita-list a .num{ color: var(--copper); margin-right: 6px; font-family: 'IBM Plex Mono', monospace; font-size: .74rem; }
+
+  /* pallini luminosi di scroll-spy, sulle voci dell'unità corrente */
+  .sidebar .unita-list.scrollspy a{ position: relative; padding-left: 20px; }
+  .sidebar .unita-list.scrollspy a::before{
+    content: "";
+    position: absolute; left: 2px; top: 50%;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--surface-2); border: 1px solid var(--line);
+    transform: translateY(-50%);
+    transition: background .25s, box-shadow .25s, transform .25s;
+  }
+  .sidebar .unita-list.scrollspy a.active{ color: var(--copper-bright); }
+  .sidebar .unita-list.scrollspy a.active::before{
+    background: var(--copper-bright);
+    box-shadow: 0 0 0 4px rgba(240,168,94,0.18);
+    transform: translateY(-50%) scale(1.2);
+  }
+
+  main{ padding-top: 0; }
+
+  @media (min-width: 900px){
+    .sidebar{
+      position: fixed; z-index: 50; top:0; bottom:0; left:0; width: var(--rail-w);
+      overflow-y: auto; border-bottom:none; border-right: 1px solid var(--line);
+    }
+    main{ padding-left: var(--rail-w); }
+  }
+
+  .wrap{ max-width: 740px; margin: 0 auto; padding: 0 24px; }
+
+  .unit-block section{ padding: 92px 0 84px; border-bottom: 1px solid var(--line); }
+  .unit-block:last-child section:last-of-type{ border-bottom:none; }
+
+  .eyebrow{
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--copper-bright);
+    margin-bottom: 14px; display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{ content:""; width: 22px; height:1px; background: var(--copper-bright); display:inline-block; }
+
+  h2.title{ font-size: clamp(1.6rem, 4vw, 2.3rem); margin-bottom: 20px; }
+
+  p{ margin: 0 0 18px; color: var(--text); font-size: 1.05rem; }
+  p.dim{ color: var(--text-dim); }
+  .lede{ font-size: 1.15rem; color: var(--text); }
+
+  .reveal{ opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.visible{ opacity:1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce){
+    .reveal{ transition: opacity .2s linear; transform:none; }
+    *{ scroll-behavior: auto !important; }
+  }
+
+  .aside{
+    margin: 26px 0; padding: 18px 20px; background: var(--surface);
+    border-left: 3px solid var(--copper); border-radius: 2px;
+  }
+  .aside .label{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--copper-bright); margin-bottom: 8px; display:block;
+  }
+  .aside p{ margin-bottom:0; font-size: 0.96rem; color: var(--text-dim); }
+
+  .question{
+    margin: 28px 0; padding: 20px 22px; border: 1px dashed var(--line); border-radius: 4px;
+    font-family: 'Space Grotesk', sans-serif; font-size: 1.0rem; color: var(--copper-bright);
+  }
+
+  blockquote{
+    margin: 0; padding-left: 22px; border-left: 2px solid var(--copper);
+    font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; color: var(--text);
+  }
+
+  /* ---------- hero ---------- */
+  .hero{ padding-top: 62px; }
+  .hero .kicker{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.8rem; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--text-dim); margin-bottom: 18px;
+  }
+  .hero h1{ font-size: clamp(1.9rem, 5.6vw, 2.9rem); line-height:1.12; margin-bottom: 24px; }
+  .hero h1 em{ font-style: normal; color: var(--copper-bright); }
+
+  .scrolldown{
+    margin-top: 50px; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem;
+    color: var(--text-dim); letter-spacing: 0.08em; text-transform: uppercase;
+    display:flex; align-items:center; gap:8px;
+  }
+  .scrolldown::after{ content:"↓"; color: var(--copper-bright); animation: nudge 1.8s infinite ease-in-out; }
+  @media (prefers-reduced-motion: reduce){ .scrolldown::after{ animation:none; } }
+  @keyframes nudge{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(5px); } }
+
+  /* ---------- chiusura ---------- */
+  .chiusura{ background: linear-gradient(180deg, var(--bg), var(--surface)); }
+  .footer-note{
+    margin-top: 46px; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem; color: var(--text-dim);
+  }
+</style>
+</head>
+<body>
+
+<nav class="sidebar" aria-label="Indice del saggio">
+  <div class="sidebar-kicker">Indice</div>
+  <div class="sidebar-title">Dal bit alle entità semantiche</div>
+
+  <div class="parte">
+    <details class="modulo">
+      <summary>Presentazione — Dal bit alle entità semantiche</summary>
+      <div class="unita-list">
+        <a href="presentazione.html#parte-1"><span class="num">1</span>Framework epistemologico: i limiti che condividiamo con le macchine</a>
+        <a href="presentazione.html#parte-2"><span class="num">2</span>Il dominio: struttura e composizione del saggio interattivo</a>
+        <a href="presentazione.html#parte-3"><span class="num">3</span>La lente semantica</a>
+      </div>
+    </details>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Parte I — Fondamenti</div>
+    <a class="voce-semplice" href="fondamenti-1-funzioni-booleane.html">1. Funzioni booleane</a>
+    <a class="voce-semplice" href="fondamenti-2-hardware-software.html">2. Hardware e software</a>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Parte II — Genealogia</div>
+
+    <details class="modulo">
+      <summary>1. Tre ore di disputa senza esito</summary>
+      <div class="unita-list">
+        <a href="genealogia-1-disputa.html#unit-a1"><span class="num">1.1</span>Dalla characteristica universalis alla pura ideografia</a>
+        <a href="genealogia-1-disputa.html#unit-a2"><span class="num">1.2</span>Gödel, Turing, Lucas</a>
+        <a href="genealogia-1-disputa.html#unit-a3"><span class="num">1.3</span>Il perceptron e la disgiunzione esclusiva (XOR)</a>
+        <a href="genealogia-1-disputa.html#unit-a4"><span class="num">1.4</span>Dai sistemi esperti alle macchine statistiche</a>
+        <a href="genealogia-1-disputa.html#unit-a5"><span class="num">1.5</span>Re, donna, regina</a>
+        <a href="genealogia-1-disputa.html#unit-a6"><span class="num">1.6</span>L'attenzione sostituisce la memoria</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>2. Il fenomeno e i suoi limiti</summary>
+      <div class="unita-list">
+        <a href="genealogia-2-limiti.html#unit-b1"><span class="num">2.1</span>Completamento statistico a scala massiva, in-context learning, transfer cross-dominio e altre capacità emergenti</a>
+        <a href="genealogia-2-limiti.html#unit-b2"><span class="num">2.2</span>Interpolazione, pesi statistici, metacognizione</a>
+        <a href="genealogia-2-limiti.html#unit-b3"><span class="num">2.3</span>Grounding, ragionamento causale, generalizzazione composizionale, cortocircuito dell'apprendimento</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>3. Perché ci vuole un villaggio</summary>
+      <div class="unita-list">
+        <a href="genealogia-3-villaggio.html#unit-c1"><span class="num">3.1</span>Il problema del significato</a>
+        <a href="genealogia-3-villaggio.html#unit-c2"><span class="num">3.2</span>Il problema della causalità</a>
+        <a href="genealogia-3-villaggio.html#unit-c3"><span class="num">3.3</span>Il problema biologico</a>
+        <a href="genealogia-3-villaggio.html#unit-c4"><span class="num">3.4</span>Il problema della coscienza</a>
+        <a href="genealogia-3-villaggio.html#unit-c5"><span class="num">3.5</span>Cosa siamo, per contrasto</a>
+      </div>
+    </details>
+
+    <details class="modulo" open>
+      <summary class="current">4. Lo spazio, il corpo, la macchina</summary>
+      <div class="unita-list scrollspy" id="local-scrollspy">
+        <a href="#unit-d1" data-spy-target="unit-d1"><span class="num">4.1</span>Cos'è lo spazio? Il corpo come strumento di misura</a>
+        <a href="#unit-d2" data-spy-target="unit-d2"><span class="num">4.2</span>Il corpo mancante</a>
+      </div>
+    </details>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Parte III — Meccanismo</div>
+
+    <details class="modulo">
+      <summary>1. Il testo come dato</summary>
+      <div class="unita-list">
+        <a href="meccanismo-1-testo-come-dato.html#unit-u1"><span class="num">1.1</span>Encoding</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u2"><span class="num">1.2</span>Tokenizzazione</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u3"><span class="num">1.3</span>Problema del vocabolario</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u4"><span class="num">1.4</span>Dagli ID al punto più discreto</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u5"><span class="num">1.5</span>Gödel</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>2. Probabilità e linguaggio</summary>
+      <div class="unita-list">
+        <a href="meccanismo-2-probabilita.html#unit-u1"><span class="num">2.1</span>Prevedere la parola successiva</a>
+        <a href="meccanismo-2-probabilita.html#unit-u2"><span class="num">2.2</span>Unigrammi/bigrammi, induzione, calibrazione</a>
+        <a href="meccanismo-2-probabilita.html#unit-u3"><span class="num">2.3</span>N-grammi e assunzione di Markov</a>
+        <a href="meccanismo-2-probabilita.html#unit-u4"><span class="num">2.4</span>Sparsità e dipendenze lontane</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>3. Parole come punti nello spazio</summary>
+      <div class="unita-list">
+        <a href="meccanismo-3-embedding.html#unit-u1"><span class="num">3.1</span>Il problema lasciato aperto</a>
+        <a href="meccanismo-3-embedding.html#unit-u2"><span class="num">3.2</span>Le parole come vettori (embedding)</a>
+        <a href="meccanismo-3-embedding.html#unit-u3"><span class="num">3.3</span>L'ipotesi distribuzionale</a>
+        <a href="meccanismo-3-embedding.html#unit-u4"><span class="num">3.4</span>L'aritmetica vettoriale</a>
+        <a href="meccanismo-3-embedding.html#unit-u5"><span class="num">3.5</span>Polisemia ed embedding statico</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>4. Reti neurali</summary>
+      <div class="unita-list">
+        <a href="meccanismo-4-reti-neurali.html#unit-u1"><span class="num">4.1</span>Dal neurone biologico al neurone artificiale</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u2"><span class="num">4.2</span>Il perceptron e XOR</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u3"><span class="num">4.3</span>Strati e profondità</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u4"><span class="num">4.4</span>La funzione di perdita</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u5"><span class="num">4.5</span>Il gradiente e la backpropagation</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>5. Il Transformer</summary>
+      <div class="unita-list">
+        <a href="meccanismo-5-transformer.html#unit-u1"><span class="num">5.1</span>Il problema che l'attenzione risolve</a>
+        <a href="meccanismo-5-transformer.html#unit-u2"><span class="num">5.2</span>L'idea dell'attention</a>
+        <a href="meccanismo-5-transformer.html#unit-u3"><span class="num">5.3</span>Query, Key, Value</a>
+        <a href="meccanismo-5-transformer.html#unit-u4"><span class="num">5.4</span>Embedding contestuale</a>
+        <a href="meccanismo-5-transformer.html#unit-u5"><span class="num">5.5</span>Multi-head e posizione</a>
+        <a href="meccanismo-5-transformer.html#unit-u6"><span class="num">5.6</span>Parallelismo e scala</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>6. Cosa significa "Large"</summary>
+      <div class="unita-list">
+        <a href="meccanismo-6-large.html#unit-u1"><span class="num">6.1</span>Scala</a>
+        <a href="meccanismo-6-large.html#unit-u2"><span class="num">6.2</span>Capacità emergenti</a>
+        <a href="meccanismo-6-large.html#unit-u3"><span class="num">6.3</span>I dati</a>
+        <a href="meccanismo-6-large.html#unit-u4"><span class="num">6.4</span>Fine-tuning</a>
+        <a href="meccanismo-6-large.html#unit-u5"><span class="num">6.5</span>RLHF</a>
+        <a href="meccanismo-6-large.html#unit-u6"><span class="num">6.6</span>Quantizzazione (chiusura dell'arco tecnico)</a>
+      </div>
+    </details>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Appendice</div>
+
+    <details class="modulo">
+      <summary>Dietro i widget</summary>
+      <div class="unita-list">
+        <a href="dietro-i-widget.html#unit-u1"><span class="num">A.1</span>Il tokenizzatore (Meccanismo · 1)</a>
+        <a href="dietro-i-widget.html#unit-u2"><span class="num">A.2</span>Il predittore n-grammi (Meccanismo · 2)</a>
+        <a href="dietro-i-widget.html#unit-u3"><span class="num">A.3</span>La mappa embedding (Meccanismo · 3)</a>
+        <a href="dietro-i-widget.html#unit-u4"><span class="num">A.4</span>Neurone, XOR, superficie di perdita (Meccanismo · 4)</a>
+        <a href="dietro-i-widget.html#unit-u5"><span class="num">A.5</span>L'attention (Meccanismo · 5)</a>
+        <a href="dietro-i-widget.html#unit-u6"><span class="num">A.6</span>Scala e capacità (Meccanismo · 6)</a>
+      </div>
+    </details>
+  </div>
+</nav>
+
+<main>
+
+<div class="unit-block" id="unit-d1" data-unit="d1">
+
+  <section id="d1-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Genealogia · 4.1</div>
+      <h1>Una mano verso un bicchiere. <em>Senza pensarci.</em></h1>
+      <p class="lede dim">Allunghi una mano verso un bicchiere sul tavolo. Senza pensarci: sa già quanto è lontano, in che direzione girare il polso, quanta forza serve per sollevarlo senza rovesciarlo. Nessuno di questi calcoli passa mai per la coscienza. Eppure ognuno presuppone una risposta implicita alla domanda più antica e meno ovvia della filosofia: che cos'è, esattamente, lo spazio?</p>
+      <p class="dim">I blocchi precedenti hanno smontato che cosa un LLM sa fare, simula di fare, e non fa affatto — e hanno mostrato che dietro quei limiti c'è quasi sempre la stessa assenza: un corpo. Questo blocco prende quell'assenza sul serio, a partire dalla cosa più data per scontata di tutte: lo spazio in cui il corpo si muove.</p>
+
+      <div class="scrolldown">tre filosofi, tre spazi diversi</div>
+    </div>
+  </section>
+
+  <section id="d1-sez-newton">
+    <div class="wrap reveal">
+      <div class="eyebrow">Primo spazio</div>
+      <h2 class="title">Newton: lo spazio come contenitore assoluto</h2>
+      <p>Isaac Newton (fine Seicento) tratta lo spazio come un palcoscenico fisico assoluto, esistente indipendentemente da qualunque cosa lo occupi — un contenitore vuoto, misurabile in coordinate, dentro cui gli oggetti si muovono. È lo spazio del senso comune scientifico, quello dei righelli e delle coordinate cartesiane — e anche, in anticipo, lo spazio in cui vivrà ogni sistema di coordinate usato più tardi dalla computer vision.</p>
+
+      <div class="aside">
+        <span class="label">Perché iniziare da qui</span>
+        <p>Non perché sia la teoria «giusta» (le due successive la complicano parecchio), ma perché è il modello di spazio più facile da programmare in una macchina — coordinate, distanze euclidee, nient'altro. Vale la pena notare subito quanto sia più povero delle alternative.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="d1-sez-kant">
+    <div class="wrap reveal">
+      <div class="eyebrow">Secondo spazio</div>
+      <h2 class="title">Kant: lo spazio come forma dell'intuizione</h2>
+      <p>Immanuel Kant rovescia la prospettiva: lo spazio non è una proprietà del mondo esterno che la mente scopre, ma una struttura che la mente stessa impone a ogni esperienza possibile — una «forma dell'intuizione», la lente stessa attraverso cui qualunque oggetto può apparirci, non un oggetto essa stessa. Non possiamo mai fare esperienza di qualcosa che non sia già organizzato spazialmente: non è che impariamo lo spazio dall'esperienza, è che l'esperienza stessa è possibile solo perché lo spazio è già lì, come precondizione.</p>
+
+      <div class="question">Se lo spazio è (anche in parte) una struttura imposta dalla mente e non solo scoperta nel mondo, che cosa accade quando la «mente» in questione non ha mai avuto un corpo che si muove in quello spazio?</div>
+    </div>
+  </section>
+
+  <section id="d1-sez-merleau-ponty">
+    <div class="wrap reveal">
+      <div class="eyebrow">Terzo spazio</div>
+      <h2 class="title">Merleau-Ponty: lo spazio vissuto attraverso il corpo</h2>
+      <p>Maurice Merleau-Ponty (Novecento, fenomenologia) porta la domanda un passo oltre Kant: lo spazio non è nemmeno solo una struttura mentale astratta — è vissuto attraverso un corpo specifico, situato, orientato. «Destra» e «sinistra» non sono coordinate neutre: esistono perché ha una mano destra e una mano sinistra. «Vicino» e «lontano» non sono misure oggettive pure: sono relative a ciò che il suo corpo può raggiungere, vedere, percorrere in un tempo ragionevole.</p>
+
+      <p class="dim">Il bicchiere dell'apertura, ripreso qui: è vicino perché il braccio può allungarsi fin lì; è davanti perché il corpo ha una faccia orientata in una direzione precisa; è piccolo perché viene confrontato, implicitamente, con la mano. Nessuna di queste proprietà — vicino, davanti, piccolo — esiste indipendentemente da un corpo con quelle caratteristiche specifiche.</p>
+    </div>
+  </section>
+
+  <section id="d1-sez-illusioni">
+    <div class="wrap reveal">
+      <div class="eyebrow">La prova empirica</div>
+      <h2 class="title">Le illusioni ottiche: la percezione è costruttiva, non passiva</h2>
+      <p>Le illusioni ottiche (dalla scacchiera di Adelson alle illusioni di Müller-Lyer) non sono difetti del sistema percettivo — sono la prova più diretta che la percezione non riceve mai un'immagine neutra del mondo. Costruisce un'ipotesi, la più probabile date le informazioni sensoriali disponibili e le aspettative pregresse — un'idea formalizzata nella «Bayesian brain hypothesis»: il cervello funziona come un motore inferenziale che aggiorna continuamente ipotesi sul mondo, non come una macchina fotografica.</p>
+
+      <div class="aside">
+        <span class="label">Perché conta per questo corso</span>
+        <p>Se anche la percezione umana è già costruzione statistica e non ricezione passiva, la distanza tra «un cervello che inferisce» e «un LLM che inferisce pattern statistici dal testo» si accorcia di un grado — pur restando, come si vedrà nell'unità successiva, radicalmente diversa nella sua fonte di informazione (segnali sensorimotori continui contro token testuali discreti).</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="d1-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">Tre gradi crescenti di coinvolgimento del corpo</h2>
+      <p>Tre filosofi, tre gradi crescenti di coinvolgimento del corpo: Newton lo esclude del tutto (spazio come contenitore neutro), Kant lo sposta nella mente ma resta astratto (spazio come struttura cognitiva), Merleau-Ponty lo rimette al centro in carne e ossa (spazio vissuto attraverso un corpo specifico). Le illusioni ottiche aggiungono la prova empirica: anche la percezione più elementare è già costruzione, non ricezione — un'eco diretta di ciò che i Blocchi B e C hanno già mostrato per il linguaggio e il ragionamento.</p>
+    </div>
+  </section>
+
+  <section id="d1-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura</div>
+      <h2 class="title">Che spazio abita una macchina?</h2>
+      <blockquote>
+        Se lo spazio, per un essere umano, è sempre spazio-vissuto-da-un-corpo, resta una domanda scomoda per il resto del corso: che tipo di spazio — se un tipo qualsiasi — abita una macchina che non ha mai avuto un corpo in questo senso?
+      </blockquote>
+      <p style="margin-top:28px;">La prossima unità guarda esattamente lì: che cosa vede una fotocamera, che cosa «sa» un robot del proprio corpo, e che cosa — se qualcosa — Claude abita quando usa parole come «vicino» o «davanti».</p>
+
+      <div class="footer-note">Genealogia — 4.1 · Cos'è lo spazio? Il corpo come strumento di misura</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="unit-block" id="unit-d2" data-unit="d2">
+
+  <section id="d2-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Genealogia · 4.2</div>
+      <h1>Una fotocamera non ha mai avuto <em>fame, né freddo, né paura di cadere.</em></h1>
+      <p class="lede dim">L'unità precedente ha mostrato che lo spazio umano è inseparabile da un corpo che afferra, si orienta, rischia di cadere. Questa unità esamina tre altri «corpi» — quello di una fotocamera, quello di un robot, quello di Claude — e chiede, per ciascuno, quanto di quello spazio vissuto sopravviva.</p>
+      <p class="dim">Nessuno dei tre ha mai avuto fame. Vale la pena stabilire, con precisione, che cosa questo comporta.</p>
+
+      <div class="scrolldown">tre corpi, un solo gap in comune</div>
+    </div>
+  </section>
+
+  <section id="d2-sez-computer-vision">
+    <div class="wrap reveal">
+      <div class="eyebrow">Primo corpo</div>
+      <h2 class="title">Computer vision: una matrice di pixel, nessun punto di vista</h2>
+      <p>Un sistema di visione artificiale riceve un'immagine come una griglia di numeri — valori di luminosità e colore per ogni pixel, disposti in righe e colonne. Può essere addestrato a riconoscere che un pixel appartiene a un gatto, a stimare una distanza in millimetri tra due punti nell'immagine, persino a costruire una mappa 3D di una stanza. Tutto questo accade senza che il sistema abbia mai un punto di vista nel senso pieno del termine: nessun «qui» da cui guarda, nessuna faccia orientata, nessun corpo che potrebbe avvicinarsi o allontanarsi da quel gatto.</p>
+
+      <p class="dim">«Vicino» e «lontano», per un sistema di visione artificiale, sono numeri in un sistema di coordinate — esattamente lo spazio di Newton descritto nell'unità precedente, il più povero dei tre. Nessun «vicino-perché-posso-allungare-il-braccio» nel senso di Merleau-Ponty: solo una distanza calcolata, indifferente a qualunque corpo.</p>
+    </div>
+  </section>
+
+  <section id="d2-sez-robot">
+    <div class="wrap reveal">
+      <div class="eyebrow">Secondo corpo</div>
+      <h2 class="title">Il robot: un corpo limitato, un loop chiuso ma povero</h2>
+      <p>Un robot ha, in un senso più letterale, un corpo: sensori che ricevono segnali dal mondo, attuatori che agiscono su di esso, un loop sensorimotor — percepisci, agisci, percepisci di nuovo l'effetto della tua azione — effettivamente chiuso. In questo è più vicino all'esperienza umana di quanto lo sia una semplice fotocamera.</p>
+
+      <p>Ma è un loop tipicamente povero rispetto a quello umano: pochi gradi di libertà rispetto alle decine di un corpo umano, uno spazio propriocettivo rudimentale (sa dove sono i suoi giunti, ma non ha nulla di paragonabile alla ricchezza propriocettiva di un corpo biologico), quasi mai un sistema vestibolare — nessun senso dell'equilibrio, nessuna paura implicita di cadere che organizzi il comportamento come accade fin dai primi mesi di vita in un bambino.</p>
+    </div>
+  </section>
+
+  <section id="d2-sez-claude">
+    <div class="wrap reveal">
+      <div class="eyebrow">Terzo corpo</div>
+      <h2 class="title">Claude: nessuno spazio abitato</h2>
+      <p>Claude non ha né l'uno né l'altro. Non riceve un'immagine da elaborare come coordinate, non ha attuatori che agiscono nel mondo fisico, nessun loop sensorimotor di alcun tipo. Conosce la parola «vicino» esclusivamente come token, coerente statisticamente con altri token — «vicino» compare spesso accanto a «raggiungere», «a portata di mano», «dietro l'angolo» — senza che nessuna di queste co-occorrenze sia mai stata verificata contro un'esperienza spaziale reale.</p>
+
+      <p class="dim">Se si vuole usare la parola «corpo» per Claude, l'unico candidato onesto è il corpus di testo di addestramento: un corpo fatto di linguaggio, non di materia. Non uno spazio abitato — un insieme di relazioni statistiche tra parole che parlano, tra le altre cose, di spazio.</p>
+    </div>
+  </section>
+
+  <section id="d2-sez-gap-sensorimotor">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il nodo teorico</div>
+      <h2 class="title">Il gap sensorimotor come gap cognitivo</h2>
+      <p>Rodney Brooks, negli anni '80, propone una tesi che ribalta decenni di ricerca in intelligenza artificiale simbolica: forse l'intelligenza non richiede, prima di tutto, rappresentazioni simboliche interne del mondo — richiede corpi, situati in ambienti reali, capaci di agire e reagire senza dover prima costruire un modello simbolico completo di ciò che li circonda. È l'origine della robotica <em>embodied</em>: intelligenza che emerge dall'interazione diretta col mondo, non da un ragionamento astratto che precede l'azione.</p>
+
+      <p>Questa tesi si aggancia direttamente al grounding mancante discusso in Genealogia · 3.1: il grounding che manca a un LLM è, in buona parte, grounding <em>sensorimotorio</em> — non semplicemente l'assenza di un riferimento nel mondo in generale, ma specificamente l'assenza di un corpo che si muove in quel mondo.</p>
+
+      <p>George Lakoff e Mark Johnson aggiungono un tassello linguistico diretto: molte metafore concettuali con cui si pensano i concetti astratti hanno un'origine sensorimotoria esplicita. «Capire» si dice, in innumerevoli lingue, come una variante di «afferrare» — capire un'idea è, metaforicamente, prenderla in mano. «Il futuro è davanti a noi» presuppone un corpo orientato che si muove in una direzione. Queste non sono decorazioni retoriche: per Lakoff e Johnson sono la struttura stessa con cui il pensiero astratto viene organizzato, ed è una struttura che nasce dal corpo, non dal linguaggio puro.</p>
+
+      <div class="aside">
+        <span class="label">Un punto spesso trascurato</span>
+        <p>L'apprendimento paucisample dei bambini piccoli — riconoscere una categoria nuova da pochissimi esempi, già incontrato in Genealogia · 3.3 — è quasi sempre apprendimento <em>embodied</em>: il bambino tocca, gira, lascia cadere l'oggetto nuovo, non lo osserva soltanto. Un LLM impara esclusivamente da testo — mai da un'interazione fisica diretta con l'oggetto di cui il testo parla.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="d2-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">Tre corpi, tre gradi di povertà</h2>
+      <p>Tre corpi, tre gradi di povertà rispetto allo spazio vissuto descritto in 4.1: la fotocamera ha coordinate ma nessun punto di vista; il robot ha un loop sensorimotor chiuso ma povero di gradi di libertà e privo di senso dell'equilibrio; Claude non ha nemmeno un loop — solo un corpus di parole che, tra le altre cose, parlano di corpi altrui. Il gap non è quantitativo (più sensori, più dati) ma qualitativo: nessuno dei tre condivide con un corpo biologico l'unità di percezione-azione-rischio che genera lo spazio vissuto di Merleau-Ponty.</p>
+    </div>
+  </section>
+
+  <section id="d2-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura</div>
+      <h2 class="title">Il corpo mancante</h2>
+      <blockquote>
+        Dotare un LLM di un corpo — sensori, attuatori, un loop sensorimotor reale — lo renderebbe più intelligente in un senso pieno? O il problema non è l'assenza di dati sensoriali, ma qualcosa nell'architettura stessa (un sistema addestrato con next-token-prediction su testo) che nessuna quantità di dati sensoriali aggiuntivi potrebbe risolvere?
+      </blockquote>
+      <p style="margin-top:28px;">Nessuna risposta consolidata: è un programma di ricerca aperto — la robotica embodied di oggi è, in un certo senso, un tentativo pratico di rispondere sperimentalmente a questa domanda.</p>
+
+      <p>C'è un raccordo diretto, e concreto, verso la prossima parte del saggio. Il corpo fisico di Claude non è un'astrazione filosofica: è un data center, delle GPU, dei transistor che si accendono e si spengono — il primo caso reale su cui applicare tutte le domande appena poste su spazio, corpo, grounding. È esattamente da lì che riparte il filo: da un sogno di calcolabilità nato nel Seicento (Genealogia · 1), attraverso i limiti odierni (Genealogia · 2) e le discipline che li studiano (Genealogia · 3), fino al corpo mancante (Genealogia · 4) — questa parte del saggio si chiude qui. I moduli di Meccanismo, già sviluppati per intero, cominciano a scomporre, uno alla volta, il meccanismo dietro ogni domanda rimasta aperta.</p>
+
+      <div class="footer-note">Genealogia — 4.2 · Il corpo mancante</div>
+    </div>
+  </section>
+
+</div>
+
+</main>
+
+<script>
+  // --- reveal on scroll (globale, indipendente dall'unità attiva) ---
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => io.observe(el));
+
+  // --- scroll-spy sulla sidebar: illumina l'unità dell'accordion in vista ---
+  const spyLinks = document.querySelectorAll('#local-scrollspy a[data-spy-target]');
+  const unitBlocksForSpy = document.querySelectorAll('.unit-block');
+  const localSpy2 = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        spyLinks.forEach(a => a.classList.toggle('active', a.dataset.spyTarget === e.target.id));
+      }
+    });
+  }, { threshold: 0, rootMargin: '-45% 0px -45% 0px' });
+  unitBlocksForSpy.forEach(b => localSpy2.observe(b));
+</script>
+
+</body>
+</html>

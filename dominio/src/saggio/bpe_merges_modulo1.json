@@ -1,0 +1,4699 @@
+{
+ "_metadata": {
+  "descrizione": "Regole di merge BPE (Byte-Pair Encoding) addestrate per il playground del tokenizzatore (Meccanismo · 1, unita 1.1-1.4).",
+  "fonte_corpus": "Testo integrale del Modulo 00 narrativo gia scritto in questo stesso progetto (i quattro capitoli di Genealogia, ripulito da tag HTML) - autoreferenziale: il corso che insegna la tokenizzazione e tokenizzato usando se stesso.",
+  "corpus_parole_totali": 13974,
+  "corpus_parole_uniche": 2989,
+  "metodo": "Algoritmo BPE standard (Sennrich et al. 2016): si parte dai singoli caratteri di ogni parola (con marcatore di fine parola), poi si uniscono iterativamente, per 300 passi, le due unita adiacenti piu frequenti nell'intero corpus. Nessuna unione inventata a mano - ogni passo riflette una vera regolarita statistica del corpus.",
+  "eow_marker": "·",
+  "vocabolario_finale": {
+   "caratteri_base": 34,
+   "unioni_apprese": 300,
+   "totale_simboli": 334,
+   "nota": "Volutamente piccolo (contro le ~50.000 unita di un tokenizzatore di produzione) per restare leggibile in una demo didattica."
+  },
+  "verifica_round_trip": "0 errori su 2989 parole uniche del corpus: ricomponendo i token si ottiene sempre la parola originale esatta.",
+  "esempi_verificati_su_parole_non_nel_corpus": {
+   "tokenizzazione": "t | o | k | en | izz | azione·",
+   "blorpificazione (inventata)": "bl | or | pi | fic | azione·",
+   "nota": "anche su parole mai viste (incluse invenzioni) il suffisso italiano '-azione' viene riconosciuto correttamente, mentre il resto si scompone in unita piu piccole - il comportamento che l'unita 1.3 deve mostrare."
+  },
+  "vocabolario_totale": 334,
+  "nota_vocabolario": "Ogni simbolo (carattere base o unione appresa) ha un ID intero sequenziale, assegnato prima ai caratteri base (ordine alfabetico, ricavati direttamente dal corpus) poi alle unioni (nell'ordine in cui sono state apprese) - usato per mostrare gli ID numerici dei token in 1.4."
+ },
+ "eow_marker": "·",
+ "merges": [
+  [
+   "a",
+   "·",
+   3253
+  ],
+  [
+   "e",
+   "·",
+   2971
+  ],
+  [
+   "o",
+   "·",
+   2756
+  ],
+  [
+   "i",
+   "·",
+   1763
+  ],
+  [
+   "o",
+   "n",
+   1245
+  ],
+  [
+   "e",
+   "r",
+   1072
+  ],
+  [
+   "e",
+   "n",
+   1053
+  ],
+  [
+   "u",
+   "n",
+   1038
+  ],
+  [
+   "s",
+   "t",
+   985
+  ],
+  [
+   "i",
+   "n",
+   964
+  ],
+  [
+   "a",
+   "t",
+   715
+  ],
+  [
+   "a",
+   "l",
+   676
+  ],
+  [
+   "c",
+   "o",
+   639
+  ],
+  [
+   "c",
+   "h",
+   639
+  ],
+  [
+   "e",
+   "l",
+   633
+  ],
+  [
+   "a",
+   "n",
+   613
+  ],
+  [
+   "a",
+   "r",
+   601
+  ],
+  [
+   "p",
+   "r",
+   554
+  ],
+  [
+   "i",
+   "c",
+   547
+  ],
+  [
+   "i",
+   "l",
+   534
+  ],
+  [
+   "e",
+   "s",
+   524
+  ],
+  [
+   "d",
+   "i·",
+   516
+  ],
+  [
+   "en",
+   "t",
+   506
+  ],
+  [
+   "l",
+   "a·",
+   476
+  ],
+  [
+   "o",
+   "r",
+   469
+  ],
+  [
+   "un",
+   "·",
+   456
+  ],
+  [
+   "q",
+   "u",
+   417
+  ],
+  [
+   "on",
+   "·",
+   407
+  ],
+  [
+   "i",
+   "t",
+   402
+  ],
+  [
+   "ch",
+   "e·",
+   388
+  ],
+  [
+   "e",
+   "t",
+   359
+  ],
+  [
+   "l",
+   "o·",
+   349
+  ],
+  [
+   "i",
+   "on",
+   344
+  ],
+  [
+   "il",
+   "·",
+   335
+  ],
+  [
+   "i",
+   "m",
+   324
+  ],
+  [
+   "p",
+   "er",
+   317
+  ],
+  [
+   "e",
+   "m",
+   308
+  ],
+  [
+   "e",
+   "st",
+   298
+  ],
+  [
+   "d",
+   "el",
+   298
+  ],
+  [
+   "i",
+   "s",
+   297
+  ],
+  [
+   "t",
+   "o·",
+   278
+  ],
+  [
+   "t",
+   "r",
+   277
+  ],
+  [
+   "es",
+   "s",
+   273
+  ],
+  [
+   "a",
+   "m",
+   270
+  ],
+  [
+   "o",
+   "l",
+   261
+  ],
+  [
+   "n",
+   "on·",
+   257
+  ],
+  [
+   "z",
+   "ion",
+   255
+  ],
+  [
+   "i",
+   "v",
+   247
+  ],
+  [
+   "à",
+   "·",
+   246
+  ],
+  [
+   "c",
+   "on",
+   243
+  ],
+  [
+   "pr",
+   "o",
+   242
+  ],
+  [
+   "un",
+   "a·",
+   232
+  ],
+  [
+   "è",
+   "·",
+   231
+  ],
+  [
+   "in",
+   "·",
+   230
+  ],
+  [
+   "i",
+   "st",
+   229
+  ],
+  [
+   "l",
+   "'",
+   229
+  ],
+  [
+   "ent",
+   "e·",
+   218
+  ],
+  [
+   "z",
+   "a·",
+   216
+  ],
+  [
+   "u",
+   "r",
+   208
+  ],
+  [
+   "d",
+   "a·",
+   199
+  ],
+  [
+   "co",
+   "m",
+   196
+  ],
+  [
+   "zion",
+   "e·",
+   194
+  ],
+  [
+   "p",
+   "i",
+   186
+  ],
+  [
+   "m",
+   "o",
+   183
+  ],
+  [
+   "al",
+   "e·",
+   181
+  ],
+  [
+   "at",
+   "o·",
+   181
+  ],
+  [
+   "e",
+   "g",
+   177
+  ],
+  [
+   "a",
+   "s",
+   175
+  ],
+  [
+   "o",
+   "g",
+   173
+  ],
+  [
+   "c",
+   "c",
+   172
+  ],
+  [
+   "ar",
+   "e·",
+   172
+  ],
+  [
+   "a",
+   "g",
+   166
+  ],
+  [
+   "a",
+   "p",
+   161
+  ],
+  [
+   "o",
+   "s",
+   159
+  ],
+  [
+   "it",
+   "à·",
+   158
+  ],
+  [
+   "c",
+   "i",
+   157
+  ],
+  [
+   "et",
+   "t",
+   156
+  ],
+  [
+   "s",
+   "u",
+   155
+  ],
+  [
+   "st",
+   "r",
+   154
+  ],
+  [
+   "b",
+   "l",
+   152
+  ],
+  [
+   "d",
+   "o·",
+   152
+  ],
+  [
+   "p",
+   "ar",
+   152
+  ],
+  [
+   "ic",
+   "a·",
+   149
+  ],
+  [
+   "en",
+   "za·",
+   148
+  ],
+  [
+   "u",
+   "t",
+   148
+  ],
+  [
+   "i",
+   "o·",
+   148
+  ],
+  [
+   "co",
+   "r",
+   144
+  ],
+  [
+   "m",
+   "an",
+   144
+  ],
+  [
+   "d",
+   "i",
+   142
+  ],
+  [
+   "per",
+   "·",
+   136
+  ],
+  [
+   "s",
+   "i·",
+   136
+  ],
+  [
+   "i",
+   "a·",
+   133
+  ],
+  [
+   "qu",
+   "est",
+   132
+  ],
+  [
+   "ent",
+   "o·",
+   132
+  ],
+  [
+   "n",
+   "el",
+   130
+  ],
+  [
+   "del",
+   "·",
+   129
+  ],
+  [
+   "er",
+   "e·",
+   128
+  ],
+  [
+   "u",
+   "s",
+   127
+  ],
+  [
+   "l",
+   "e·",
+   124
+  ],
+  [
+   "at",
+   "t",
+   121
+  ],
+  [
+   "s",
+   "o",
+   119
+  ],
+  [
+   "s",
+   "a·",
+   116
+  ],
+  [
+   "p",
+   "o",
+   114
+  ],
+  [
+   "r",
+   "i",
+   114
+  ],
+  [
+   "a",
+   "c",
+   112
+  ],
+  [
+   "in",
+   "g",
+   112
+  ],
+  [
+   "in",
+   "t",
+   112
+  ],
+  [
+   "em",
+   "a·",
+   112
+  ],
+  [
+   "a",
+   "d",
+   109
+  ],
+  [
+   "v",
+   "er",
+   108
+  ],
+  [
+   "a",
+   "b",
+   107
+  ],
+  [
+   "e",
+   "d",
+   106
+  ],
+  [
+   "c",
+   "on·",
+   106
+  ],
+  [
+   "am",
+   "ente·",
+   106
+  ],
+  [
+   "ic",
+   "o·",
+   106
+  ],
+  [
+   "e",
+   "c",
+   104
+  ],
+  [
+   "a",
+   "zione·",
+   103
+  ],
+  [
+   "pi",
+   "ù",
+   101
+  ],
+  [
+   "più",
+   "·",
+   101
+  ],
+  [
+   "p",
+   "o·",
+   101
+  ],
+  [
+   "ch",
+   "i",
+   101
+  ],
+  [
+   "s",
+   "o·",
+   100
+  ],
+  [
+   "d",
+   "o",
+   99
+  ],
+  [
+   "f",
+   "or",
+   98
+  ],
+  [
+   "d",
+   "u",
+   97
+  ],
+  [
+   "m",
+   "a·",
+   96
+  ],
+  [
+   "g",
+   "i",
+   94
+  ],
+  [
+   "t",
+   "a·",
+   94
+  ],
+  [
+   "o",
+   "cc",
+   91
+  ],
+  [
+   "ur",
+   "a·",
+   89
+  ],
+  [
+   "bl",
+   "occ",
+   86
+  ],
+  [
+   "blocc",
+   "o·",
+   86
+  ],
+  [
+   "a",
+   "v",
+   86
+  ],
+  [
+   "n",
+   "i·",
+   84
+  ],
+  [
+   "p",
+   "l",
+   84
+  ],
+  [
+   "f",
+   "f",
+   83
+  ],
+  [
+   "c",
+   "r",
+   83
+  ],
+  [
+   "r",
+   "is",
+   82
+  ],
+  [
+   "s",
+   "e·",
+   82
+  ],
+  [
+   "h",
+   "a·",
+   81
+  ],
+  [
+   "t",
+   "e·",
+   81
+  ],
+  [
+   "il",
+   "e·",
+   80
+  ],
+  [
+   "st",
+   "ess",
+   80
+  ],
+  [
+   "at",
+   "a·",
+   80
+  ],
+  [
+   "s",
+   "p",
+   80
+  ],
+  [
+   "un",
+   "ità·",
+   79
+  ],
+  [
+   "l",
+   "i·",
+   79
+  ],
+  [
+   "s",
+   "e",
+   77
+  ],
+  [
+   "nel",
+   "·",
+   77
+  ],
+  [
+   "on",
+   "o·",
+   77
+  ],
+  [
+   "i",
+   "g",
+   75
+  ],
+  [
+   "co",
+   "sa·",
+   75
+  ],
+  [
+   "an",
+   "o·",
+   74
+  ],
+  [
+   "r",
+   "e·",
+   70
+  ],
+  [
+   "qu",
+   "el",
+   70
+  ],
+  [
+   "o",
+   "t",
+   70
+  ],
+  [
+   "n",
+   "ess",
+   70
+  ],
+  [
+   "pr",
+   "im",
+   69
+  ],
+  [
+   "n",
+   "o·",
+   68
+  ],
+  [
+   "so",
+   "lo·",
+   68
+  ],
+  [
+   "g",
+   "r",
+   67
+  ],
+  [
+   "s",
+   "ist",
+   67
+  ],
+  [
+   "com",
+   "e·",
+   66
+  ],
+  [
+   "tr",
+   "e·",
+   66
+  ],
+  [
+   "un",
+   "'",
+   64
+  ],
+  [
+   "c",
+   "e·",
+   64
+  ],
+  [
+   "quest",
+   "o·",
+   64
+  ],
+  [
+   "al",
+   "·",
+   64
+  ],
+  [
+   "e",
+   "v",
+   63
+  ],
+  [
+   "t",
+   "i",
+   62
+  ],
+  [
+   "ò",
+   "·",
+   62
+  ],
+  [
+   "u",
+   "i·",
+   61
+  ],
+  [
+   "p",
+   "u",
+   61
+  ],
+  [
+   "st",
+   "a·",
+   61
+  ],
+  [
+   "et",
+   "to·",
+   60
+  ],
+  [
+   "un",
+   "o·",
+   58
+  ],
+  [
+   "c",
+   "al",
+   58
+  ],
+  [
+   "l",
+   "l",
+   58
+  ],
+  [
+   "d",
+   "e",
+   57
+  ],
+  [
+   "int",
+   "er",
+   57
+  ],
+  [
+   "en",
+   "d",
+   57
+  ],
+  [
+   "ol",
+   "e·",
+   56
+  ],
+  [
+   "am",
+   "ento·",
+   56
+  ],
+  [
+   "r",
+   "eg",
+   56
+  ],
+  [
+   "o",
+   "m",
+   55
+  ],
+  [
+   "c",
+   "ui·",
+   54
+  ],
+  [
+   "r",
+   "e",
+   54
+  ],
+  [
+   "i",
+   "b",
+   53
+  ],
+  [
+   "é",
+   "·",
+   53
+  ],
+  [
+   "i",
+   "z",
+   52
+  ],
+  [
+   "qu",
+   "al",
+   51
+  ],
+  [
+   "r",
+   "ic",
+   51
+  ],
+  [
+   "sist",
+   "ema·",
+   51
+  ],
+  [
+   "f",
+   "ic",
+   51
+  ],
+  [
+   "a",
+   "z",
+   51
+  ],
+  [
+   "pro",
+   "bl",
+   50
+  ],
+  [
+   "ap",
+   "p",
+   50
+  ],
+  [
+   "for",
+   "m",
+   50
+  ],
+  [
+   "iv",
+   "a·",
+   50
+  ],
+  [
+   "com",
+   "p",
+   50
+  ],
+  [
+   "d",
+   "iv",
+   50
+  ],
+  [
+   "t",
+   "est",
+   50
+  ],
+  [
+   "at",
+   "i·",
+   50
+  ],
+  [
+   "mo",
+   "du",
+   49
+  ],
+  [
+   "m",
+   "·",
+   49
+  ],
+  [
+   "n",
+   "e",
+   49
+  ],
+  [
+   "del",
+   "la·",
+   49
+  ],
+  [
+   "in",
+   "a·",
+   49
+  ],
+  [
+   "do",
+   "man",
+   49
+  ],
+  [
+   "qu",
+   "an",
+   48
+  ],
+  [
+   "s",
+   "im",
+   48
+  ],
+  [
+   "in",
+   "e·",
+   48
+  ],
+  [
+   "s",
+   "enza·",
+   48
+  ],
+  [
+   "r",
+   "o·",
+   47
+  ],
+  [
+   "a",
+   "i·",
+   47
+  ],
+  [
+   "s",
+   "en",
+   47
+  ],
+  [
+   "mo",
+   "del",
+   47
+  ],
+  [
+   "modu",
+   "lo·",
+   46
+  ],
+  [
+   "ing",
+   "u",
+   46
+  ],
+  [
+   "quest",
+   "a·",
+   46
+  ],
+  [
+   "pu",
+   "ò·",
+   46
+  ],
+  [
+   "s",
+   "em",
+   46
+  ],
+  [
+   "ll",
+   "m·",
+   46
+  ],
+  [
+   "est",
+   "r",
+   46
+  ],
+  [
+   "t",
+   "ut",
+   45
+  ],
+  [
+   "iv",
+   "o·",
+   45
+  ],
+  [
+   "b",
+   "i",
+   45
+  ],
+  [
+   "probl",
+   "ema·",
+   45
+  ],
+  [
+   "c",
+   "a",
+   45
+  ],
+  [
+   "co",
+   "l",
+   44
+  ],
+  [
+   "o",
+   "v",
+   44
+  ],
+  [
+   "man",
+   "o·",
+   44
+  ],
+  [
+   "m",
+   "ente·",
+   44
+  ],
+  [
+   "r",
+   "et",
+   44
+  ],
+  [
+   "ent",
+   "i·",
+   43
+  ],
+  [
+   "al",
+   "i·",
+   43
+  ],
+  [
+   "tr",
+   "a·",
+   43
+  ],
+  [
+   "sp",
+   "az",
+   43
+  ],
+  [
+   "or",
+   "i·",
+   42
+  ],
+  [
+   "doman",
+   "da·",
+   42
+  ],
+  [
+   "t",
+   "i·",
+   41
+  ],
+  [
+   "r",
+   "ag",
+   41
+  ],
+  [
+   "t",
+   "e",
+   41
+  ],
+  [
+   "l",
+   "ingu",
+   41
+  ],
+  [
+   "og",
+   "ni·",
+   41
+  ],
+  [
+   "ch",
+   "é·",
+   41
+  ],
+  [
+   "str",
+   "u",
+   40
+  ],
+  [
+   "s",
+   "i",
+   40
+  ],
+  [
+   "prim",
+   "a·",
+   40
+  ],
+  [
+   "p",
+   "or",
+   40
+  ],
+  [
+   "del",
+   "l'",
+   40
+  ],
+  [
+   "pl",
+   "ic",
+   40
+  ],
+  [
+   "er",
+   "v",
+   40
+  ],
+  [
+   "ing",
+   "·",
+   40
+  ],
+  [
+   "model",
+   "lo·",
+   40
+  ],
+  [
+   "spaz",
+   "io·",
+   40
+  ],
+  [
+   "cor",
+   "po·",
+   40
+  ],
+  [
+   "or",
+   "e·",
+   39
+  ],
+  [
+   "su",
+   "·",
+   39
+  ],
+  [
+   "per",
+   "ché·",
+   39
+  ],
+  [
+   "d",
+   "estr",
+   39
+  ],
+  [
+   "d",
+   "is",
+   38
+  ],
+  [
+   "ion",
+   "e·",
+   38
+  ],
+  [
+   "c",
+   "ap",
+   38
+  ],
+  [
+   "stess",
+   "o·",
+   38
+  ],
+  [
+   "n",
+   "u",
+   38
+  ],
+  [
+   "m",
+   "ac",
+   38
+  ],
+  [
+   "al",
+   "la·",
+   38
+  ],
+  [
+   "os",
+   "s",
+   38
+  ],
+  [
+   "o",
+   "f",
+   37
+  ],
+  [
+   "im",
+   "ento·",
+   37
+  ],
+  [
+   "r",
+   "est",
+   37
+  ],
+  [
+   "po",
+   "sta·",
+   37
+  ],
+  [
+   "an",
+   "za·",
+   37
+  ],
+  [
+   "ad",
+   "destr",
+   37
+  ],
+  [
+   "er",
+   "·",
+   36
+  ],
+  [
+   "s",
+   "eg",
+   36
+  ],
+  [
+   "b",
+   "b",
+   36
+  ],
+  [
+   "g",
+   "en",
+   36
+  ],
+  [
+   "b",
+   "r",
+   35
+  ],
+  [
+   "zion",
+   "i·",
+   35
+  ],
+  [
+   "mac",
+   "ch",
+   35
+  ],
+  [
+   "ab",
+   "ile·",
+   35
+  ],
+  [
+   "on",
+   "do·",
+   35
+  ],
+  [
+   "d",
+   "im",
+   35
+  ],
+  [
+   "e",
+   "p",
+   35
+  ],
+  [
+   "pro",
+   "pr",
+   35
+  ],
+  [
+   "s",
+   "cr",
+   35
+  ],
+  [
+   "ca",
+   "us",
+   35
+  ],
+  [
+   "f",
+   "il",
+   34
+  ],
+  [
+   "stess",
+   "a·",
+   34
+  ],
+  [
+   "p",
+   "en",
+   34
+  ],
+  [
+   "m",
+   "at",
+   34
+  ],
+  [
+   "iz",
+   "z",
+   34
+  ],
+  [
+   "con",
+   "tr",
+   34
+  ],
+  [
+   "v",
+   "ol",
+   34
+  ],
+  [
+   "ut",
+   "t",
+   34
+  ],
+  [
+   "b",
+   "·",
+   34
+  ],
+  [
+   "r",
+   "ett",
+   34
+  ],
+  [
+   "test",
+   "o·",
+   34
+  ]
+ ],
+ "vocabolario": [
+  {
+   "id": 0,
+   "simbolo": "'",
+   "tipo": "carattere_base"
+  },
+  {
+   "id": 1,
+   "simbolo": "a",
+   "tipo": "carattere_base"
+  },
+  {
+   "id": 2,
+   "simbolo": "b",
+   "tipo": "carattere_base"
+  },
+  {
+   "id": 3,
+   "simbolo": "c",
+   "tipo": "carattere_base"
+  },
+  {
+   "id": 4,
+   "simbolo": "d",
+   "tipo": "carattere_base"
+  },
+  {
+   "id": 5,
+   "simbolo": "e",
+   "tipo": "carattere_base"
+  },
+  {
+   "id": 6,
+   "simbolo": "f",
+   "tipo": "carattere_base"
+  },
+  {
+   "id": 7,
+   "simbolo": "g",
+   "tipo": "carattere_base"
+  },
+  {
+   "id": 8,
+   "simbolo": "h",
+   "tipo": "carattere_base"
+  },
+  {
+   "id": 9,
+   "simbolo": "i",
+   "tipo": "carattere_base"
+  },
+  {
+   "id": 10,
+   "simbolo": "j",
+   "tipo": "carattere_base"
+  },
+  {
+   "id": 11,
+   "simbolo": "k",
+   "tipo": "carattere_base"
+  },
+  {
+   "id": 12,
+   "simbolo": "l",
+   "tipo": "carattere_base"
+  },
+  {
+   "id": 13,
+   "simbolo": "m",
+   "tipo": "carattere_base"
+  },
+  {
+   "id": 14,
+   "simbolo": "n",
+   "tipo": "carattere_base"
+  },
+  {
+   "id": 15,
+   "simbolo": "o",
+   "tipo": "carattere_base"
+  },
+  {
+   "id": 16,
+   "simbolo": "p",
+   "tipo": "carattere_base"
+  },
+  {
+   "id": 17,
+   "simbolo": "q",
+   "tipo": "carattere_base"
+  },
+  {
+   "id": 18,
+   "simbolo": "r",
+   "tipo": "carattere_base"
+  },
+  {
+   "id": 19,
+   "simbolo": "s",
+   "tipo": "carattere_base"
+  },
+  {
+   "id": 20,
+   "simbolo": "t",
+   "tipo": "carattere_base"
+  },
+  {
+   "id": 21,
+   "simbolo": "u",
+   "tipo": "carattere_base"
+  },
+  {
+   "id": 22,
+   "simbolo": "v",
+   "tipo": "carattere_base"
+  },
+  {
+   "id": 23,
+   "simbolo": "w",
+   "tipo": "carattere_base"
+  },
+  {
+   "id": 24,
+   "simbolo": "x",
+   "tipo": "carattere_base"
+  },
+  {
+   "id": 25,
+   "simbolo": "y",
+   "tipo": "carattere_base"
+  },
+  {
+   "id": 26,
+   "simbolo": "z",
+   "tipo": "carattere_base"
+  },
+  {
+   "id": 27,
+   "simbolo": "à",
+   "tipo": "carattere_base"
+  },
+  {
+   "id": 28,
+   "simbolo": "è",
+   "tipo": "carattere_base"
+  },
+  {
+   "id": 29,
+   "simbolo": "é",
+   "tipo": "carattere_base"
+  },
+  {
+   "id": 30,
+   "simbolo": "ì",
+   "tipo": "carattere_base"
+  },
+  {
+   "id": 31,
+   "simbolo": "ò",
+   "tipo": "carattere_base"
+  },
+  {
+   "id": 32,
+   "simbolo": "ù",
+   "tipo": "carattere_base"
+  },
+  {
+   "id": 33,
+   "simbolo": "·",
+   "tipo": "carattere_base"
+  },
+  {
+   "id": 34,
+   "simbolo": "a·",
+   "tipo": "unione",
+   "da": [
+    "a",
+    "·"
+   ],
+   "freq_addestramento": 3253
+  },
+  {
+   "id": 35,
+   "simbolo": "e·",
+   "tipo": "unione",
+   "da": [
+    "e",
+    "·"
+   ],
+   "freq_addestramento": 2971
+  },
+  {
+   "id": 36,
+   "simbolo": "o·",
+   "tipo": "unione",
+   "da": [
+    "o",
+    "·"
+   ],
+   "freq_addestramento": 2756
+  },
+  {
+   "id": 37,
+   "simbolo": "i·",
+   "tipo": "unione",
+   "da": [
+    "i",
+    "·"
+   ],
+   "freq_addestramento": 1763
+  },
+  {
+   "id": 38,
+   "simbolo": "on",
+   "tipo": "unione",
+   "da": [
+    "o",
+    "n"
+   ],
+   "freq_addestramento": 1245
+  },
+  {
+   "id": 39,
+   "simbolo": "er",
+   "tipo": "unione",
+   "da": [
+    "e",
+    "r"
+   ],
+   "freq_addestramento": 1072
+  },
+  {
+   "id": 40,
+   "simbolo": "en",
+   "tipo": "unione",
+   "da": [
+    "e",
+    "n"
+   ],
+   "freq_addestramento": 1053
+  },
+  {
+   "id": 41,
+   "simbolo": "un",
+   "tipo": "unione",
+   "da": [
+    "u",
+    "n"
+   ],
+   "freq_addestramento": 1038
+  },
+  {
+   "id": 42,
+   "simbolo": "st",
+   "tipo": "unione",
+   "da": [
+    "s",
+    "t"
+   ],
+   "freq_addestramento": 985
+  },
+  {
+   "id": 43,
+   "simbolo": "in",
+   "tipo": "unione",
+   "da": [
+    "i",
+    "n"
+   ],
+   "freq_addestramento": 964
+  },
+  {
+   "id": 44,
+   "simbolo": "at",
+   "tipo": "unione",
+   "da": [
+    "a",
+    "t"
+   ],
+   "freq_addestramento": 715
+  },
+  {
+   "id": 45,
+   "simbolo": "al",
+   "tipo": "unione",
+   "da": [
+    "a",
+    "l"
+   ],
+   "freq_addestramento": 676
+  },
+  {
+   "id": 46,
+   "simbolo": "co",
+   "tipo": "unione",
+   "da": [
+    "c",
+    "o"
+   ],
+   "freq_addestramento": 639
+  },
+  {
+   "id": 47,
+   "simbolo": "ch",
+   "tipo": "unione",
+   "da": [
+    "c",
+    "h"
+   ],
+   "freq_addestramento": 639
+  },
+  {
+   "id": 48,
+   "simbolo": "el",
+   "tipo": "unione",
+   "da": [
+    "e",
+    "l"
+   ],
+   "freq_addestramento": 633
+  },
+  {
+   "id": 49,
+   "simbolo": "an",
+   "tipo": "unione",
+   "da": [
+    "a",
+    "n"
+   ],
+   "freq_addestramento": 613
+  },
+  {
+   "id": 50,
+   "simbolo": "ar",
+   "tipo": "unione",
+   "da": [
+    "a",
+    "r"
+   ],
+   "freq_addestramento": 601
+  },
+  {
+   "id": 51,
+   "simbolo": "pr",
+   "tipo": "unione",
+   "da": [
+    "p",
+    "r"
+   ],
+   "freq_addestramento": 554
+  },
+  {
+   "id": 52,
+   "simbolo": "ic",
+   "tipo": "unione",
+   "da": [
+    "i",
+    "c"
+   ],
+   "freq_addestramento": 547
+  },
+  {
+   "id": 53,
+   "simbolo": "il",
+   "tipo": "unione",
+   "da": [
+    "i",
+    "l"
+   ],
+   "freq_addestramento": 534
+  },
+  {
+   "id": 54,
+   "simbolo": "es",
+   "tipo": "unione",
+   "da": [
+    "e",
+    "s"
+   ],
+   "freq_addestramento": 524
+  },
+  {
+   "id": 55,
+   "simbolo": "di·",
+   "tipo": "unione",
+   "da": [
+    "d",
+    "i·"
+   ],
+   "freq_addestramento": 516
+  },
+  {
+   "id": 56,
+   "simbolo": "ent",
+   "tipo": "unione",
+   "da": [
+    "en",
+    "t"
+   ],
+   "freq_addestramento": 506
+  },
+  {
+   "id": 57,
+   "simbolo": "la·",
+   "tipo": "unione",
+   "da": [
+    "l",
+    "a·"
+   ],
+   "freq_addestramento": 476
+  },
+  {
+   "id": 58,
+   "simbolo": "or",
+   "tipo": "unione",
+   "da": [
+    "o",
+    "r"
+   ],
+   "freq_addestramento": 469
+  },
+  {
+   "id": 59,
+   "simbolo": "un·",
+   "tipo": "unione",
+   "da": [
+    "un",
+    "·"
+   ],
+   "freq_addestramento": 456
+  },
+  {
+   "id": 60,
+   "simbolo": "qu",
+   "tipo": "unione",
+   "da": [
+    "q",
+    "u"
+   ],
+   "freq_addestramento": 417
+  },
+  {
+   "id": 61,
+   "simbolo": "on·",
+   "tipo": "unione",
+   "da": [
+    "on",
+    "·"
+   ],
+   "freq_addestramento": 407
+  },
+  {
+   "id": 62,
+   "simbolo": "it",
+   "tipo": "unione",
+   "da": [
+    "i",
+    "t"
+   ],
+   "freq_addestramento": 402
+  },
+  {
+   "id": 63,
+   "simbolo": "che·",
+   "tipo": "unione",
+   "da": [
+    "ch",
+    "e·"
+   ],
+   "freq_addestramento": 388
+  },
+  {
+   "id": 64,
+   "simbolo": "et",
+   "tipo": "unione",
+   "da": [
+    "e",
+    "t"
+   ],
+   "freq_addestramento": 359
+  },
+  {
+   "id": 65,
+   "simbolo": "lo·",
+   "tipo": "unione",
+   "da": [
+    "l",
+    "o·"
+   ],
+   "freq_addestramento": 349
+  },
+  {
+   "id": 66,
+   "simbolo": "ion",
+   "tipo": "unione",
+   "da": [
+    "i",
+    "on"
+   ],
+   "freq_addestramento": 344
+  },
+  {
+   "id": 67,
+   "simbolo": "il·",
+   "tipo": "unione",
+   "da": [
+    "il",
+    "·"
+   ],
+   "freq_addestramento": 335
+  },
+  {
+   "id": 68,
+   "simbolo": "im",
+   "tipo": "unione",
+   "da": [
+    "i",
+    "m"
+   ],
+   "freq_addestramento": 324
+  },
+  {
+   "id": 69,
+   "simbolo": "per",
+   "tipo": "unione",
+   "da": [
+    "p",
+    "er"
+   ],
+   "freq_addestramento": 317
+  },
+  {
+   "id": 70,
+   "simbolo": "em",
+   "tipo": "unione",
+   "da": [
+    "e",
+    "m"
+   ],
+   "freq_addestramento": 308
+  },
+  {
+   "id": 71,
+   "simbolo": "est",
+   "tipo": "unione",
+   "da": [
+    "e",
+    "st"
+   ],
+   "freq_addestramento": 298
+  },
+  {
+   "id": 72,
+   "simbolo": "del",
+   "tipo": "unione",
+   "da": [
+    "d",
+    "el"
+   ],
+   "freq_addestramento": 298
+  },
+  {
+   "id": 73,
+   "simbolo": "is",
+   "tipo": "unione",
+   "da": [
+    "i",
+    "s"
+   ],
+   "freq_addestramento": 297
+  },
+  {
+   "id": 74,
+   "simbolo": "to·",
+   "tipo": "unione",
+   "da": [
+    "t",
+    "o·"
+   ],
+   "freq_addestramento": 278
+  },
+  {
+   "id": 75,
+   "simbolo": "tr",
+   "tipo": "unione",
+   "da": [
+    "t",
+    "r"
+   ],
+   "freq_addestramento": 277
+  },
+  {
+   "id": 76,
+   "simbolo": "ess",
+   "tipo": "unione",
+   "da": [
+    "es",
+    "s"
+   ],
+   "freq_addestramento": 273
+  },
+  {
+   "id": 77,
+   "simbolo": "am",
+   "tipo": "unione",
+   "da": [
+    "a",
+    "m"
+   ],
+   "freq_addestramento": 270
+  },
+  {
+   "id": 78,
+   "simbolo": "ol",
+   "tipo": "unione",
+   "da": [
+    "o",
+    "l"
+   ],
+   "freq_addestramento": 261
+  },
+  {
+   "id": 79,
+   "simbolo": "non·",
+   "tipo": "unione",
+   "da": [
+    "n",
+    "on·"
+   ],
+   "freq_addestramento": 257
+  },
+  {
+   "id": 80,
+   "simbolo": "zion",
+   "tipo": "unione",
+   "da": [
+    "z",
+    "ion"
+   ],
+   "freq_addestramento": 255
+  },
+  {
+   "id": 81,
+   "simbolo": "iv",
+   "tipo": "unione",
+   "da": [
+    "i",
+    "v"
+   ],
+   "freq_addestramento": 247
+  },
+  {
+   "id": 82,
+   "simbolo": "à·",
+   "tipo": "unione",
+   "da": [
+    "à",
+    "·"
+   ],
+   "freq_addestramento": 246
+  },
+  {
+   "id": 83,
+   "simbolo": "con",
+   "tipo": "unione",
+   "da": [
+    "c",
+    "on"
+   ],
+   "freq_addestramento": 243
+  },
+  {
+   "id": 84,
+   "simbolo": "pro",
+   "tipo": "unione",
+   "da": [
+    "pr",
+    "o"
+   ],
+   "freq_addestramento": 242
+  },
+  {
+   "id": 85,
+   "simbolo": "una·",
+   "tipo": "unione",
+   "da": [
+    "un",
+    "a·"
+   ],
+   "freq_addestramento": 232
+  },
+  {
+   "id": 86,
+   "simbolo": "è·",
+   "tipo": "unione",
+   "da": [
+    "è",
+    "·"
+   ],
+   "freq_addestramento": 231
+  },
+  {
+   "id": 87,
+   "simbolo": "in·",
+   "tipo": "unione",
+   "da": [
+    "in",
+    "·"
+   ],
+   "freq_addestramento": 230
+  },
+  {
+   "id": 88,
+   "simbolo": "ist",
+   "tipo": "unione",
+   "da": [
+    "i",
+    "st"
+   ],
+   "freq_addestramento": 229
+  },
+  {
+   "id": 89,
+   "simbolo": "l'",
+   "tipo": "unione",
+   "da": [
+    "l",
+    "'"
+   ],
+   "freq_addestramento": 229
+  },
+  {
+   "id": 90,
+   "simbolo": "ente·",
+   "tipo": "unione",
+   "da": [
+    "ent",
+    "e·"
+   ],
+   "freq_addestramento": 218
+  },
+  {
+   "id": 91,
+   "simbolo": "za·",
+   "tipo": "unione",
+   "da": [
+    "z",
+    "a·"
+   ],
+   "freq_addestramento": 216
+  },
+  {
+   "id": 92,
+   "simbolo": "ur",
+   "tipo": "unione",
+   "da": [
+    "u",
+    "r"
+   ],
+   "freq_addestramento": 208
+  },
+  {
+   "id": 93,
+   "simbolo": "da·",
+   "tipo": "unione",
+   "da": [
+    "d",
+    "a·"
+   ],
+   "freq_addestramento": 199
+  },
+  {
+   "id": 94,
+   "simbolo": "com",
+   "tipo": "unione",
+   "da": [
+    "co",
+    "m"
+   ],
+   "freq_addestramento": 196
+  },
+  {
+   "id": 95,
+   "simbolo": "zione·",
+   "tipo": "unione",
+   "da": [
+    "zion",
+    "e·"
+   ],
+   "freq_addestramento": 194
+  },
+  {
+   "id": 96,
+   "simbolo": "pi",
+   "tipo": "unione",
+   "da": [
+    "p",
+    "i"
+   ],
+   "freq_addestramento": 186
+  },
+  {
+   "id": 97,
+   "simbolo": "mo",
+   "tipo": "unione",
+   "da": [
+    "m",
+    "o"
+   ],
+   "freq_addestramento": 183
+  },
+  {
+   "id": 98,
+   "simbolo": "ale·",
+   "tipo": "unione",
+   "da": [
+    "al",
+    "e·"
+   ],
+   "freq_addestramento": 181
+  },
+  {
+   "id": 99,
+   "simbolo": "ato·",
+   "tipo": "unione",
+   "da": [
+    "at",
+    "o·"
+   ],
+   "freq_addestramento": 181
+  },
+  {
+   "id": 100,
+   "simbolo": "eg",
+   "tipo": "unione",
+   "da": [
+    "e",
+    "g"
+   ],
+   "freq_addestramento": 177
+  },
+  {
+   "id": 101,
+   "simbolo": "as",
+   "tipo": "unione",
+   "da": [
+    "a",
+    "s"
+   ],
+   "freq_addestramento": 175
+  },
+  {
+   "id": 102,
+   "simbolo": "og",
+   "tipo": "unione",
+   "da": [
+    "o",
+    "g"
+   ],
+   "freq_addestramento": 173
+  },
+  {
+   "id": 103,
+   "simbolo": "cc",
+   "tipo": "unione",
+   "da": [
+    "c",
+    "c"
+   ],
+   "freq_addestramento": 172
+  },
+  {
+   "id": 104,
+   "simbolo": "are·",
+   "tipo": "unione",
+   "da": [
+    "ar",
+    "e·"
+   ],
+   "freq_addestramento": 172
+  },
+  {
+   "id": 105,
+   "simbolo": "ag",
+   "tipo": "unione",
+   "da": [
+    "a",
+    "g"
+   ],
+   "freq_addestramento": 166
+  },
+  {
+   "id": 106,
+   "simbolo": "ap",
+   "tipo": "unione",
+   "da": [
+    "a",
+    "p"
+   ],
+   "freq_addestramento": 161
+  },
+  {
+   "id": 107,
+   "simbolo": "os",
+   "tipo": "unione",
+   "da": [
+    "o",
+    "s"
+   ],
+   "freq_addestramento": 159
+  },
+  {
+   "id": 108,
+   "simbolo": "ità·",
+   "tipo": "unione",
+   "da": [
+    "it",
+    "à·"
+   ],
+   "freq_addestramento": 158
+  },
+  {
+   "id": 109,
+   "simbolo": "ci",
+   "tipo": "unione",
+   "da": [
+    "c",
+    "i"
+   ],
+   "freq_addestramento": 157
+  },
+  {
+   "id": 110,
+   "simbolo": "ett",
+   "tipo": "unione",
+   "da": [
+    "et",
+    "t"
+   ],
+   "freq_addestramento": 156
+  },
+  {
+   "id": 111,
+   "simbolo": "su",
+   "tipo": "unione",
+   "da": [
+    "s",
+    "u"
+   ],
+   "freq_addestramento": 155
+  },
+  {
+   "id": 112,
+   "simbolo": "str",
+   "tipo": "unione",
+   "da": [
+    "st",
+    "r"
+   ],
+   "freq_addestramento": 154
+  },
+  {
+   "id": 113,
+   "simbolo": "bl",
+   "tipo": "unione",
+   "da": [
+    "b",
+    "l"
+   ],
+   "freq_addestramento": 152
+  },
+  {
+   "id": 114,
+   "simbolo": "do·",
+   "tipo": "unione",
+   "da": [
+    "d",
+    "o·"
+   ],
+   "freq_addestramento": 152
+  },
+  {
+   "id": 115,
+   "simbolo": "par",
+   "tipo": "unione",
+   "da": [
+    "p",
+    "ar"
+   ],
+   "freq_addestramento": 152
+  },
+  {
+   "id": 116,
+   "simbolo": "ica·",
+   "tipo": "unione",
+   "da": [
+    "ic",
+    "a·"
+   ],
+   "freq_addestramento": 149
+  },
+  {
+   "id": 117,
+   "simbolo": "enza·",
+   "tipo": "unione",
+   "da": [
+    "en",
+    "za·"
+   ],
+   "freq_addestramento": 148
+  },
+  {
+   "id": 118,
+   "simbolo": "ut",
+   "tipo": "unione",
+   "da": [
+    "u",
+    "t"
+   ],
+   "freq_addestramento": 148
+  },
+  {
+   "id": 119,
+   "simbolo": "io·",
+   "tipo": "unione",
+   "da": [
+    "i",
+    "o·"
+   ],
+   "freq_addestramento": 148
+  },
+  {
+   "id": 120,
+   "simbolo": "cor",
+   "tipo": "unione",
+   "da": [
+    "co",
+    "r"
+   ],
+   "freq_addestramento": 144
+  },
+  {
+   "id": 121,
+   "simbolo": "man",
+   "tipo": "unione",
+   "da": [
+    "m",
+    "an"
+   ],
+   "freq_addestramento": 144
+  },
+  {
+   "id": 122,
+   "simbolo": "di",
+   "tipo": "unione",
+   "da": [
+    "d",
+    "i"
+   ],
+   "freq_addestramento": 142
+  },
+  {
+   "id": 123,
+   "simbolo": "per·",
+   "tipo": "unione",
+   "da": [
+    "per",
+    "·"
+   ],
+   "freq_addestramento": 136
+  },
+  {
+   "id": 124,
+   "simbolo": "si·",
+   "tipo": "unione",
+   "da": [
+    "s",
+    "i·"
+   ],
+   "freq_addestramento": 136
+  },
+  {
+   "id": 125,
+   "simbolo": "ia·",
+   "tipo": "unione",
+   "da": [
+    "i",
+    "a·"
+   ],
+   "freq_addestramento": 133
+  },
+  {
+   "id": 126,
+   "simbolo": "quest",
+   "tipo": "unione",
+   "da": [
+    "qu",
+    "est"
+   ],
+   "freq_addestramento": 132
+  },
+  {
+   "id": 127,
+   "simbolo": "ento·",
+   "tipo": "unione",
+   "da": [
+    "ent",
+    "o·"
+   ],
+   "freq_addestramento": 132
+  },
+  {
+   "id": 128,
+   "simbolo": "nel",
+   "tipo": "unione",
+   "da": [
+    "n",
+    "el"
+   ],
+   "freq_addestramento": 130
+  },
+  {
+   "id": 129,
+   "simbolo": "del·",
+   "tipo": "unione",
+   "da": [
+    "del",
+    "·"
+   ],
+   "freq_addestramento": 129
+  },
+  {
+   "id": 130,
+   "simbolo": "ere·",
+   "tipo": "unione",
+   "da": [
+    "er",
+    "e·"
+   ],
+   "freq_addestramento": 128
+  },
+  {
+   "id": 131,
+   "simbolo": "us",
+   "tipo": "unione",
+   "da": [
+    "u",
+    "s"
+   ],
+   "freq_addestramento": 127
+  },
+  {
+   "id": 132,
+   "simbolo": "le·",
+   "tipo": "unione",
+   "da": [
+    "l",
+    "e·"
+   ],
+   "freq_addestramento": 124
+  },
+  {
+   "id": 133,
+   "simbolo": "att",
+   "tipo": "unione",
+   "da": [
+    "at",
+    "t"
+   ],
+   "freq_addestramento": 121
+  },
+  {
+   "id": 134,
+   "simbolo": "so",
+   "tipo": "unione",
+   "da": [
+    "s",
+    "o"
+   ],
+   "freq_addestramento": 119
+  },
+  {
+   "id": 135,
+   "simbolo": "sa·",
+   "tipo": "unione",
+   "da": [
+    "s",
+    "a·"
+   ],
+   "freq_addestramento": 116
+  },
+  {
+   "id": 136,
+   "simbolo": "po",
+   "tipo": "unione",
+   "da": [
+    "p",
+    "o"
+   ],
+   "freq_addestramento": 114
+  },
+  {
+   "id": 137,
+   "simbolo": "ri",
+   "tipo": "unione",
+   "da": [
+    "r",
+    "i"
+   ],
+   "freq_addestramento": 114
+  },
+  {
+   "id": 138,
+   "simbolo": "ac",
+   "tipo": "unione",
+   "da": [
+    "a",
+    "c"
+   ],
+   "freq_addestramento": 112
+  },
+  {
+   "id": 139,
+   "simbolo": "ing",
+   "tipo": "unione",
+   "da": [
+    "in",
+    "g"
+   ],
+   "freq_addestramento": 112
+  },
+  {
+   "id": 140,
+   "simbolo": "int",
+   "tipo": "unione",
+   "da": [
+    "in",
+    "t"
+   ],
+   "freq_addestramento": 112
+  },
+  {
+   "id": 141,
+   "simbolo": "ema·",
+   "tipo": "unione",
+   "da": [
+    "em",
+    "a·"
+   ],
+   "freq_addestramento": 112
+  },
+  {
+   "id": 142,
+   "simbolo": "ad",
+   "tipo": "unione",
+   "da": [
+    "a",
+    "d"
+   ],
+   "freq_addestramento": 109
+  },
+  {
+   "id": 143,
+   "simbolo": "ver",
+   "tipo": "unione",
+   "da": [
+    "v",
+    "er"
+   ],
+   "freq_addestramento": 108
+  },
+  {
+   "id": 144,
+   "simbolo": "ab",
+   "tipo": "unione",
+   "da": [
+    "a",
+    "b"
+   ],
+   "freq_addestramento": 107
+  },
+  {
+   "id": 145,
+   "simbolo": "ed",
+   "tipo": "unione",
+   "da": [
+    "e",
+    "d"
+   ],
+   "freq_addestramento": 106
+  },
+  {
+   "id": 146,
+   "simbolo": "con·",
+   "tipo": "unione",
+   "da": [
+    "c",
+    "on·"
+   ],
+   "freq_addestramento": 106
+  },
+  {
+   "id": 147,
+   "simbolo": "amente·",
+   "tipo": "unione",
+   "da": [
+    "am",
+    "ente·"
+   ],
+   "freq_addestramento": 106
+  },
+  {
+   "id": 148,
+   "simbolo": "ico·",
+   "tipo": "unione",
+   "da": [
+    "ic",
+    "o·"
+   ],
+   "freq_addestramento": 106
+  },
+  {
+   "id": 149,
+   "simbolo": "ec",
+   "tipo": "unione",
+   "da": [
+    "e",
+    "c"
+   ],
+   "freq_addestramento": 104
+  },
+  {
+   "id": 150,
+   "simbolo": "azione·",
+   "tipo": "unione",
+   "da": [
+    "a",
+    "zione·"
+   ],
+   "freq_addestramento": 103
+  },
+  {
+   "id": 151,
+   "simbolo": "più",
+   "tipo": "unione",
+   "da": [
+    "pi",
+    "ù"
+   ],
+   "freq_addestramento": 101
+  },
+  {
+   "id": 152,
+   "simbolo": "più·",
+   "tipo": "unione",
+   "da": [
+    "più",
+    "·"
+   ],
+   "freq_addestramento": 101
+  },
+  {
+   "id": 153,
+   "simbolo": "po·",
+   "tipo": "unione",
+   "da": [
+    "p",
+    "o·"
+   ],
+   "freq_addestramento": 101
+  },
+  {
+   "id": 154,
+   "simbolo": "chi",
+   "tipo": "unione",
+   "da": [
+    "ch",
+    "i"
+   ],
+   "freq_addestramento": 101
+  },
+  {
+   "id": 155,
+   "simbolo": "so·",
+   "tipo": "unione",
+   "da": [
+    "s",
+    "o·"
+   ],
+   "freq_addestramento": 100
+  },
+  {
+   "id": 156,
+   "simbolo": "do",
+   "tipo": "unione",
+   "da": [
+    "d",
+    "o"
+   ],
+   "freq_addestramento": 99
+  },
+  {
+   "id": 157,
+   "simbolo": "for",
+   "tipo": "unione",
+   "da": [
+    "f",
+    "or"
+   ],
+   "freq_addestramento": 98
+  },
+  {
+   "id": 158,
+   "simbolo": "du",
+   "tipo": "unione",
+   "da": [
+    "d",
+    "u"
+   ],
+   "freq_addestramento": 97
+  },
+  {
+   "id": 159,
+   "simbolo": "ma·",
+   "tipo": "unione",
+   "da": [
+    "m",
+    "a·"
+   ],
+   "freq_addestramento": 96
+  },
+  {
+   "id": 160,
+   "simbolo": "gi",
+   "tipo": "unione",
+   "da": [
+    "g",
+    "i"
+   ],
+   "freq_addestramento": 94
+  },
+  {
+   "id": 161,
+   "simbolo": "ta·",
+   "tipo": "unione",
+   "da": [
+    "t",
+    "a·"
+   ],
+   "freq_addestramento": 94
+  },
+  {
+   "id": 162,
+   "simbolo": "occ",
+   "tipo": "unione",
+   "da": [
+    "o",
+    "cc"
+   ],
+   "freq_addestramento": 91
+  },
+  {
+   "id": 163,
+   "simbolo": "ura·",
+   "tipo": "unione",
+   "da": [
+    "ur",
+    "a·"
+   ],
+   "freq_addestramento": 89
+  },
+  {
+   "id": 164,
+   "simbolo": "blocc",
+   "tipo": "unione",
+   "da": [
+    "bl",
+    "occ"
+   ],
+   "freq_addestramento": 86
+  },
+  {
+   "id": 165,
+   "simbolo": "blocco·",
+   "tipo": "unione",
+   "da": [
+    "blocc",
+    "o·"
+   ],
+   "freq_addestramento": 86
+  },
+  {
+   "id": 166,
+   "simbolo": "av",
+   "tipo": "unione",
+   "da": [
+    "a",
+    "v"
+   ],
+   "freq_addestramento": 86
+  },
+  {
+   "id": 167,
+   "simbolo": "ni·",
+   "tipo": "unione",
+   "da": [
+    "n",
+    "i·"
+   ],
+   "freq_addestramento": 84
+  },
+  {
+   "id": 168,
+   "simbolo": "pl",
+   "tipo": "unione",
+   "da": [
+    "p",
+    "l"
+   ],
+   "freq_addestramento": 84
+  },
+  {
+   "id": 169,
+   "simbolo": "ff",
+   "tipo": "unione",
+   "da": [
+    "f",
+    "f"
+   ],
+   "freq_addestramento": 83
+  },
+  {
+   "id": 170,
+   "simbolo": "cr",
+   "tipo": "unione",
+   "da": [
+    "c",
+    "r"
+   ],
+   "freq_addestramento": 83
+  },
+  {
+   "id": 171,
+   "simbolo": "ris",
+   "tipo": "unione",
+   "da": [
+    "r",
+    "is"
+   ],
+   "freq_addestramento": 82
+  },
+  {
+   "id": 172,
+   "simbolo": "se·",
+   "tipo": "unione",
+   "da": [
+    "s",
+    "e·"
+   ],
+   "freq_addestramento": 82
+  },
+  {
+   "id": 173,
+   "simbolo": "ha·",
+   "tipo": "unione",
+   "da": [
+    "h",
+    "a·"
+   ],
+   "freq_addestramento": 81
+  },
+  {
+   "id": 174,
+   "simbolo": "te·",
+   "tipo": "unione",
+   "da": [
+    "t",
+    "e·"
+   ],
+   "freq_addestramento": 81
+  },
+  {
+   "id": 175,
+   "simbolo": "ile·",
+   "tipo": "unione",
+   "da": [
+    "il",
+    "e·"
+   ],
+   "freq_addestramento": 80
+  },
+  {
+   "id": 176,
+   "simbolo": "stess",
+   "tipo": "unione",
+   "da": [
+    "st",
+    "ess"
+   ],
+   "freq_addestramento": 80
+  },
+  {
+   "id": 177,
+   "simbolo": "ata·",
+   "tipo": "unione",
+   "da": [
+    "at",
+    "a·"
+   ],
+   "freq_addestramento": 80
+  },
+  {
+   "id": 178,
+   "simbolo": "sp",
+   "tipo": "unione",
+   "da": [
+    "s",
+    "p"
+   ],
+   "freq_addestramento": 80
+  },
+  {
+   "id": 179,
+   "simbolo": "unità·",
+   "tipo": "unione",
+   "da": [
+    "un",
+    "ità·"
+   ],
+   "freq_addestramento": 79
+  },
+  {
+   "id": 180,
+   "simbolo": "li·",
+   "tipo": "unione",
+   "da": [
+    "l",
+    "i·"
+   ],
+   "freq_addestramento": 79
+  },
+  {
+   "id": 181,
+   "simbolo": "se",
+   "tipo": "unione",
+   "da": [
+    "s",
+    "e"
+   ],
+   "freq_addestramento": 77
+  },
+  {
+   "id": 182,
+   "simbolo": "nel·",
+   "tipo": "unione",
+   "da": [
+    "nel",
+    "·"
+   ],
+   "freq_addestramento": 77
+  },
+  {
+   "id": 183,
+   "simbolo": "ono·",
+   "tipo": "unione",
+   "da": [
+    "on",
+    "o·"
+   ],
+   "freq_addestramento": 77
+  },
+  {
+   "id": 184,
+   "simbolo": "ig",
+   "tipo": "unione",
+   "da": [
+    "i",
+    "g"
+   ],
+   "freq_addestramento": 75
+  },
+  {
+   "id": 185,
+   "simbolo": "cosa·",
+   "tipo": "unione",
+   "da": [
+    "co",
+    "sa·"
+   ],
+   "freq_addestramento": 75
+  },
+  {
+   "id": 186,
+   "simbolo": "ano·",
+   "tipo": "unione",
+   "da": [
+    "an",
+    "o·"
+   ],
+   "freq_addestramento": 74
+  },
+  {
+   "id": 187,
+   "simbolo": "re·",
+   "tipo": "unione",
+   "da": [
+    "r",
+    "e·"
+   ],
+   "freq_addestramento": 70
+  },
+  {
+   "id": 188,
+   "simbolo": "quel",
+   "tipo": "unione",
+   "da": [
+    "qu",
+    "el"
+   ],
+   "freq_addestramento": 70
+  },
+  {
+   "id": 189,
+   "simbolo": "ot",
+   "tipo": "unione",
+   "da": [
+    "o",
+    "t"
+   ],
+   "freq_addestramento": 70
+  },
+  {
+   "id": 190,
+   "simbolo": "ness",
+   "tipo": "unione",
+   "da": [
+    "n",
+    "ess"
+   ],
+   "freq_addestramento": 70
+  },
+  {
+   "id": 191,
+   "simbolo": "prim",
+   "tipo": "unione",
+   "da": [
+    "pr",
+    "im"
+   ],
+   "freq_addestramento": 69
+  },
+  {
+   "id": 192,
+   "simbolo": "no·",
+   "tipo": "unione",
+   "da": [
+    "n",
+    "o·"
+   ],
+   "freq_addestramento": 68
+  },
+  {
+   "id": 193,
+   "simbolo": "solo·",
+   "tipo": "unione",
+   "da": [
+    "so",
+    "lo·"
+   ],
+   "freq_addestramento": 68
+  },
+  {
+   "id": 194,
+   "simbolo": "gr",
+   "tipo": "unione",
+   "da": [
+    "g",
+    "r"
+   ],
+   "freq_addestramento": 67
+  },
+  {
+   "id": 195,
+   "simbolo": "sist",
+   "tipo": "unione",
+   "da": [
+    "s",
+    "ist"
+   ],
+   "freq_addestramento": 67
+  },
+  {
+   "id": 196,
+   "simbolo": "come·",
+   "tipo": "unione",
+   "da": [
+    "com",
+    "e·"
+   ],
+   "freq_addestramento": 66
+  },
+  {
+   "id": 197,
+   "simbolo": "tre·",
+   "tipo": "unione",
+   "da": [
+    "tr",
+    "e·"
+   ],
+   "freq_addestramento": 66
+  },
+  {
+   "id": 198,
+   "simbolo": "un'",
+   "tipo": "unione",
+   "da": [
+    "un",
+    "'"
+   ],
+   "freq_addestramento": 64
+  },
+  {
+   "id": 199,
+   "simbolo": "ce·",
+   "tipo": "unione",
+   "da": [
+    "c",
+    "e·"
+   ],
+   "freq_addestramento": 64
+  },
+  {
+   "id": 200,
+   "simbolo": "questo·",
+   "tipo": "unione",
+   "da": [
+    "quest",
+    "o·"
+   ],
+   "freq_addestramento": 64
+  },
+  {
+   "id": 201,
+   "simbolo": "al·",
+   "tipo": "unione",
+   "da": [
+    "al",
+    "·"
+   ],
+   "freq_addestramento": 64
+  },
+  {
+   "id": 202,
+   "simbolo": "ev",
+   "tipo": "unione",
+   "da": [
+    "e",
+    "v"
+   ],
+   "freq_addestramento": 63
+  },
+  {
+   "id": 203,
+   "simbolo": "ti",
+   "tipo": "unione",
+   "da": [
+    "t",
+    "i"
+   ],
+   "freq_addestramento": 62
+  },
+  {
+   "id": 204,
+   "simbolo": "ò·",
+   "tipo": "unione",
+   "da": [
+    "ò",
+    "·"
+   ],
+   "freq_addestramento": 62
+  },
+  {
+   "id": 205,
+   "simbolo": "ui·",
+   "tipo": "unione",
+   "da": [
+    "u",
+    "i·"
+   ],
+   "freq_addestramento": 61
+  },
+  {
+   "id": 206,
+   "simbolo": "pu",
+   "tipo": "unione",
+   "da": [
+    "p",
+    "u"
+   ],
+   "freq_addestramento": 61
+  },
+  {
+   "id": 207,
+   "simbolo": "sta·",
+   "tipo": "unione",
+   "da": [
+    "st",
+    "a·"
+   ],
+   "freq_addestramento": 61
+  },
+  {
+   "id": 208,
+   "simbolo": "etto·",
+   "tipo": "unione",
+   "da": [
+    "et",
+    "to·"
+   ],
+   "freq_addestramento": 60
+  },
+  {
+   "id": 209,
+   "simbolo": "uno·",
+   "tipo": "unione",
+   "da": [
+    "un",
+    "o·"
+   ],
+   "freq_addestramento": 58
+  },
+  {
+   "id": 210,
+   "simbolo": "cal",
+   "tipo": "unione",
+   "da": [
+    "c",
+    "al"
+   ],
+   "freq_addestramento": 58
+  },
+  {
+   "id": 211,
+   "simbolo": "ll",
+   "tipo": "unione",
+   "da": [
+    "l",
+    "l"
+   ],
+   "freq_addestramento": 58
+  },
+  {
+   "id": 212,
+   "simbolo": "de",
+   "tipo": "unione",
+   "da": [
+    "d",
+    "e"
+   ],
+   "freq_addestramento": 57
+  },
+  {
+   "id": 213,
+   "simbolo": "inter",
+   "tipo": "unione",
+   "da": [
+    "int",
+    "er"
+   ],
+   "freq_addestramento": 57
+  },
+  {
+   "id": 214,
+   "simbolo": "end",
+   "tipo": "unione",
+   "da": [
+    "en",
+    "d"
+   ],
+   "freq_addestramento": 57
+  },
+  {
+   "id": 215,
+   "simbolo": "ole·",
+   "tipo": "unione",
+   "da": [
+    "ol",
+    "e·"
+   ],
+   "freq_addestramento": 56
+  },
+  {
+   "id": 216,
+   "simbolo": "amento·",
+   "tipo": "unione",
+   "da": [
+    "am",
+    "ento·"
+   ],
+   "freq_addestramento": 56
+  },
+  {
+   "id": 217,
+   "simbolo": "reg",
+   "tipo": "unione",
+   "da": [
+    "r",
+    "eg"
+   ],
+   "freq_addestramento": 56
+  },
+  {
+   "id": 218,
+   "simbolo": "om",
+   "tipo": "unione",
+   "da": [
+    "o",
+    "m"
+   ],
+   "freq_addestramento": 55
+  },
+  {
+   "id": 219,
+   "simbolo": "cui·",
+   "tipo": "unione",
+   "da": [
+    "c",
+    "ui·"
+   ],
+   "freq_addestramento": 54
+  },
+  {
+   "id": 220,
+   "simbolo": "re",
+   "tipo": "unione",
+   "da": [
+    "r",
+    "e"
+   ],
+   "freq_addestramento": 54
+  },
+  {
+   "id": 221,
+   "simbolo": "ib",
+   "tipo": "unione",
+   "da": [
+    "i",
+    "b"
+   ],
+   "freq_addestramento": 53
+  },
+  {
+   "id": 222,
+   "simbolo": "é·",
+   "tipo": "unione",
+   "da": [
+    "é",
+    "·"
+   ],
+   "freq_addestramento": 53
+  },
+  {
+   "id": 223,
+   "simbolo": "iz",
+   "tipo": "unione",
+   "da": [
+    "i",
+    "z"
+   ],
+   "freq_addestramento": 52
+  },
+  {
+   "id": 224,
+   "simbolo": "qual",
+   "tipo": "unione",
+   "da": [
+    "qu",
+    "al"
+   ],
+   "freq_addestramento": 51
+  },
+  {
+   "id": 225,
+   "simbolo": "ric",
+   "tipo": "unione",
+   "da": [
+    "r",
+    "ic"
+   ],
+   "freq_addestramento": 51
+  },
+  {
+   "id": 226,
+   "simbolo": "sistema·",
+   "tipo": "unione",
+   "da": [
+    "sist",
+    "ema·"
+   ],
+   "freq_addestramento": 51
+  },
+  {
+   "id": 227,
+   "simbolo": "fic",
+   "tipo": "unione",
+   "da": [
+    "f",
+    "ic"
+   ],
+   "freq_addestramento": 51
+  },
+  {
+   "id": 228,
+   "simbolo": "az",
+   "tipo": "unione",
+   "da": [
+    "a",
+    "z"
+   ],
+   "freq_addestramento": 51
+  },
+  {
+   "id": 229,
+   "simbolo": "probl",
+   "tipo": "unione",
+   "da": [
+    "pro",
+    "bl"
+   ],
+   "freq_addestramento": 50
+  },
+  {
+   "id": 230,
+   "simbolo": "app",
+   "tipo": "unione",
+   "da": [
+    "ap",
+    "p"
+   ],
+   "freq_addestramento": 50
+  },
+  {
+   "id": 231,
+   "simbolo": "form",
+   "tipo": "unione",
+   "da": [
+    "for",
+    "m"
+   ],
+   "freq_addestramento": 50
+  },
+  {
+   "id": 232,
+   "simbolo": "iva·",
+   "tipo": "unione",
+   "da": [
+    "iv",
+    "a·"
+   ],
+   "freq_addestramento": 50
+  },
+  {
+   "id": 233,
+   "simbolo": "comp",
+   "tipo": "unione",
+   "da": [
+    "com",
+    "p"
+   ],
+   "freq_addestramento": 50
+  },
+  {
+   "id": 234,
+   "simbolo": "div",
+   "tipo": "unione",
+   "da": [
+    "d",
+    "iv"
+   ],
+   "freq_addestramento": 50
+  },
+  {
+   "id": 235,
+   "simbolo": "test",
+   "tipo": "unione",
+   "da": [
+    "t",
+    "est"
+   ],
+   "freq_addestramento": 50
+  },
+  {
+   "id": 236,
+   "simbolo": "ati·",
+   "tipo": "unione",
+   "da": [
+    "at",
+    "i·"
+   ],
+   "freq_addestramento": 50
+  },
+  {
+   "id": 237,
+   "simbolo": "modu",
+   "tipo": "unione",
+   "da": [
+    "mo",
+    "du"
+   ],
+   "freq_addestramento": 49
+  },
+  {
+   "id": 238,
+   "simbolo": "m·",
+   "tipo": "unione",
+   "da": [
+    "m",
+    "·"
+   ],
+   "freq_addestramento": 49
+  },
+  {
+   "id": 239,
+   "simbolo": "ne",
+   "tipo": "unione",
+   "da": [
+    "n",
+    "e"
+   ],
+   "freq_addestramento": 49
+  },
+  {
+   "id": 240,
+   "simbolo": "della·",
+   "tipo": "unione",
+   "da": [
+    "del",
+    "la·"
+   ],
+   "freq_addestramento": 49
+  },
+  {
+   "id": 241,
+   "simbolo": "ina·",
+   "tipo": "unione",
+   "da": [
+    "in",
+    "a·"
+   ],
+   "freq_addestramento": 49
+  },
+  {
+   "id": 242,
+   "simbolo": "doman",
+   "tipo": "unione",
+   "da": [
+    "do",
+    "man"
+   ],
+   "freq_addestramento": 49
+  },
+  {
+   "id": 243,
+   "simbolo": "quan",
+   "tipo": "unione",
+   "da": [
+    "qu",
+    "an"
+   ],
+   "freq_addestramento": 48
+  },
+  {
+   "id": 244,
+   "simbolo": "sim",
+   "tipo": "unione",
+   "da": [
+    "s",
+    "im"
+   ],
+   "freq_addestramento": 48
+  },
+  {
+   "id": 245,
+   "simbolo": "ine·",
+   "tipo": "unione",
+   "da": [
+    "in",
+    "e·"
+   ],
+   "freq_addestramento": 48
+  },
+  {
+   "id": 246,
+   "simbolo": "senza·",
+   "tipo": "unione",
+   "da": [
+    "s",
+    "enza·"
+   ],
+   "freq_addestramento": 48
+  },
+  {
+   "id": 247,
+   "simbolo": "ro·",
+   "tipo": "unione",
+   "da": [
+    "r",
+    "o·"
+   ],
+   "freq_addestramento": 47
+  },
+  {
+   "id": 248,
+   "simbolo": "ai·",
+   "tipo": "unione",
+   "da": [
+    "a",
+    "i·"
+   ],
+   "freq_addestramento": 47
+  },
+  {
+   "id": 249,
+   "simbolo": "sen",
+   "tipo": "unione",
+   "da": [
+    "s",
+    "en"
+   ],
+   "freq_addestramento": 47
+  },
+  {
+   "id": 250,
+   "simbolo": "model",
+   "tipo": "unione",
+   "da": [
+    "mo",
+    "del"
+   ],
+   "freq_addestramento": 47
+  },
+  {
+   "id": 251,
+   "simbolo": "modulo·",
+   "tipo": "unione",
+   "da": [
+    "modu",
+    "lo·"
+   ],
+   "freq_addestramento": 46
+  },
+  {
+   "id": 252,
+   "simbolo": "ingu",
+   "tipo": "unione",
+   "da": [
+    "ing",
+    "u"
+   ],
+   "freq_addestramento": 46
+  },
+  {
+   "id": 253,
+   "simbolo": "questa·",
+   "tipo": "unione",
+   "da": [
+    "quest",
+    "a·"
+   ],
+   "freq_addestramento": 46
+  },
+  {
+   "id": 254,
+   "simbolo": "può·",
+   "tipo": "unione",
+   "da": [
+    "pu",
+    "ò·"
+   ],
+   "freq_addestramento": 46
+  },
+  {
+   "id": 255,
+   "simbolo": "sem",
+   "tipo": "unione",
+   "da": [
+    "s",
+    "em"
+   ],
+   "freq_addestramento": 46
+  },
+  {
+   "id": 256,
+   "simbolo": "llm·",
+   "tipo": "unione",
+   "da": [
+    "ll",
+    "m·"
+   ],
+   "freq_addestramento": 46
+  },
+  {
+   "id": 257,
+   "simbolo": "estr",
+   "tipo": "unione",
+   "da": [
+    "est",
+    "r"
+   ],
+   "freq_addestramento": 46
+  },
+  {
+   "id": 258,
+   "simbolo": "tut",
+   "tipo": "unione",
+   "da": [
+    "t",
+    "ut"
+   ],
+   "freq_addestramento": 45
+  },
+  {
+   "id": 259,
+   "simbolo": "ivo·",
+   "tipo": "unione",
+   "da": [
+    "iv",
+    "o·"
+   ],
+   "freq_addestramento": 45
+  },
+  {
+   "id": 260,
+   "simbolo": "bi",
+   "tipo": "unione",
+   "da": [
+    "b",
+    "i"
+   ],
+   "freq_addestramento": 45
+  },
+  {
+   "id": 261,
+   "simbolo": "problema·",
+   "tipo": "unione",
+   "da": [
+    "probl",
+    "ema·"
+   ],
+   "freq_addestramento": 45
+  },
+  {
+   "id": 262,
+   "simbolo": "ca",
+   "tipo": "unione",
+   "da": [
+    "c",
+    "a"
+   ],
+   "freq_addestramento": 45
+  },
+  {
+   "id": 263,
+   "simbolo": "col",
+   "tipo": "unione",
+   "da": [
+    "co",
+    "l"
+   ],
+   "freq_addestramento": 44
+  },
+  {
+   "id": 264,
+   "simbolo": "ov",
+   "tipo": "unione",
+   "da": [
+    "o",
+    "v"
+   ],
+   "freq_addestramento": 44
+  },
+  {
+   "id": 265,
+   "simbolo": "mano·",
+   "tipo": "unione",
+   "da": [
+    "man",
+    "o·"
+   ],
+   "freq_addestramento": 44
+  },
+  {
+   "id": 266,
+   "simbolo": "mente·",
+   "tipo": "unione",
+   "da": [
+    "m",
+    "ente·"
+   ],
+   "freq_addestramento": 44
+  },
+  {
+   "id": 267,
+   "simbolo": "ret",
+   "tipo": "unione",
+   "da": [
+    "r",
+    "et"
+   ],
+   "freq_addestramento": 44
+  },
+  {
+   "id": 268,
+   "simbolo": "enti·",
+   "tipo": "unione",
+   "da": [
+    "ent",
+    "i·"
+   ],
+   "freq_addestramento": 43
+  },
+  {
+   "id": 269,
+   "simbolo": "ali·",
+   "tipo": "unione",
+   "da": [
+    "al",
+    "i·"
+   ],
+   "freq_addestramento": 43
+  },
+  {
+   "id": 270,
+   "simbolo": "tra·",
+   "tipo": "unione",
+   "da": [
+    "tr",
+    "a·"
+   ],
+   "freq_addestramento": 43
+  },
+  {
+   "id": 271,
+   "simbolo": "spaz",
+   "tipo": "unione",
+   "da": [
+    "sp",
+    "az"
+   ],
+   "freq_addestramento": 43
+  },
+  {
+   "id": 272,
+   "simbolo": "ori·",
+   "tipo": "unione",
+   "da": [
+    "or",
+    "i·"
+   ],
+   "freq_addestramento": 42
+  },
+  {
+   "id": 273,
+   "simbolo": "domanda·",
+   "tipo": "unione",
+   "da": [
+    "doman",
+    "da·"
+   ],
+   "freq_addestramento": 42
+  },
+  {
+   "id": 274,
+   "simbolo": "ti·",
+   "tipo": "unione",
+   "da": [
+    "t",
+    "i·"
+   ],
+   "freq_addestramento": 41
+  },
+  {
+   "id": 275,
+   "simbolo": "rag",
+   "tipo": "unione",
+   "da": [
+    "r",
+    "ag"
+   ],
+   "freq_addestramento": 41
+  },
+  {
+   "id": 276,
+   "simbolo": "te",
+   "tipo": "unione",
+   "da": [
+    "t",
+    "e"
+   ],
+   "freq_addestramento": 41
+  },
+  {
+   "id": 277,
+   "simbolo": "lingu",
+   "tipo": "unione",
+   "da": [
+    "l",
+    "ingu"
+   ],
+   "freq_addestramento": 41
+  },
+  {
+   "id": 278,
+   "simbolo": "ogni·",
+   "tipo": "unione",
+   "da": [
+    "og",
+    "ni·"
+   ],
+   "freq_addestramento": 41
+  },
+  {
+   "id": 279,
+   "simbolo": "ché·",
+   "tipo": "unione",
+   "da": [
+    "ch",
+    "é·"
+   ],
+   "freq_addestramento": 41
+  },
+  {
+   "id": 280,
+   "simbolo": "stru",
+   "tipo": "unione",
+   "da": [
+    "str",
+    "u"
+   ],
+   "freq_addestramento": 40
+  },
+  {
+   "id": 281,
+   "simbolo": "si",
+   "tipo": "unione",
+   "da": [
+    "s",
+    "i"
+   ],
+   "freq_addestramento": 40
+  },
+  {
+   "id": 282,
+   "simbolo": "prima·",
+   "tipo": "unione",
+   "da": [
+    "prim",
+    "a·"
+   ],
+   "freq_addestramento": 40
+  },
+  {
+   "id": 283,
+   "simbolo": "por",
+   "tipo": "unione",
+   "da": [
+    "p",
+    "or"
+   ],
+   "freq_addestramento": 40
+  },
+  {
+   "id": 284,
+   "simbolo": "dell'",
+   "tipo": "unione",
+   "da": [
+    "del",
+    "l'"
+   ],
+   "freq_addestramento": 40
+  },
+  {
+   "id": 285,
+   "simbolo": "plic",
+   "tipo": "unione",
+   "da": [
+    "pl",
+    "ic"
+   ],
+   "freq_addestramento": 40
+  },
+  {
+   "id": 286,
+   "simbolo": "erv",
+   "tipo": "unione",
+   "da": [
+    "er",
+    "v"
+   ],
+   "freq_addestramento": 40
+  },
+  {
+   "id": 287,
+   "simbolo": "ing·",
+   "tipo": "unione",
+   "da": [
+    "ing",
+    "·"
+   ],
+   "freq_addestramento": 40
+  },
+  {
+   "id": 288,
+   "simbolo": "modello·",
+   "tipo": "unione",
+   "da": [
+    "model",
+    "lo·"
+   ],
+   "freq_addestramento": 40
+  },
+  {
+   "id": 289,
+   "simbolo": "spazio·",
+   "tipo": "unione",
+   "da": [
+    "spaz",
+    "io·"
+   ],
+   "freq_addestramento": 40
+  },
+  {
+   "id": 290,
+   "simbolo": "corpo·",
+   "tipo": "unione",
+   "da": [
+    "cor",
+    "po·"
+   ],
+   "freq_addestramento": 40
+  },
+  {
+   "id": 291,
+   "simbolo": "ore·",
+   "tipo": "unione",
+   "da": [
+    "or",
+    "e·"
+   ],
+   "freq_addestramento": 39
+  },
+  {
+   "id": 292,
+   "simbolo": "su·",
+   "tipo": "unione",
+   "da": [
+    "su",
+    "·"
+   ],
+   "freq_addestramento": 39
+  },
+  {
+   "id": 293,
+   "simbolo": "perché·",
+   "tipo": "unione",
+   "da": [
+    "per",
+    "ché·"
+   ],
+   "freq_addestramento": 39
+  },
+  {
+   "id": 294,
+   "simbolo": "destr",
+   "tipo": "unione",
+   "da": [
+    "d",
+    "estr"
+   ],
+   "freq_addestramento": 39
+  },
+  {
+   "id": 295,
+   "simbolo": "dis",
+   "tipo": "unione",
+   "da": [
+    "d",
+    "is"
+   ],
+   "freq_addestramento": 38
+  },
+  {
+   "id": 296,
+   "simbolo": "ione·",
+   "tipo": "unione",
+   "da": [
+    "ion",
+    "e·"
+   ],
+   "freq_addestramento": 38
+  },
+  {
+   "id": 297,
+   "simbolo": "cap",
+   "tipo": "unione",
+   "da": [
+    "c",
+    "ap"
+   ],
+   "freq_addestramento": 38
+  },
+  {
+   "id": 298,
+   "simbolo": "stesso·",
+   "tipo": "unione",
+   "da": [
+    "stess",
+    "o·"
+   ],
+   "freq_addestramento": 38
+  },
+  {
+   "id": 299,
+   "simbolo": "nu",
+   "tipo": "unione",
+   "da": [
+    "n",
+    "u"
+   ],
+   "freq_addestramento": 38
+  },
+  {
+   "id": 300,
+   "simbolo": "mac",
+   "tipo": "unione",
+   "da": [
+    "m",
+    "ac"
+   ],
+   "freq_addestramento": 38
+  },
+  {
+   "id": 301,
+   "simbolo": "alla·",
+   "tipo": "unione",
+   "da": [
+    "al",
+    "la·"
+   ],
+   "freq_addestramento": 38
+  },
+  {
+   "id": 302,
+   "simbolo": "oss",
+   "tipo": "unione",
+   "da": [
+    "os",
+    "s"
+   ],
+   "freq_addestramento": 38
+  },
+  {
+   "id": 303,
+   "simbolo": "of",
+   "tipo": "unione",
+   "da": [
+    "o",
+    "f"
+   ],
+   "freq_addestramento": 37
+  },
+  {
+   "id": 304,
+   "simbolo": "imento·",
+   "tipo": "unione",
+   "da": [
+    "im",
+    "ento·"
+   ],
+   "freq_addestramento": 37
+  },
+  {
+   "id": 305,
+   "simbolo": "rest",
+   "tipo": "unione",
+   "da": [
+    "r",
+    "est"
+   ],
+   "freq_addestramento": 37
+  },
+  {
+   "id": 306,
+   "simbolo": "posta·",
+   "tipo": "unione",
+   "da": [
+    "po",
+    "sta·"
+   ],
+   "freq_addestramento": 37
+  },
+  {
+   "id": 307,
+   "simbolo": "anza·",
+   "tipo": "unione",
+   "da": [
+    "an",
+    "za·"
+   ],
+   "freq_addestramento": 37
+  },
+  {
+   "id": 308,
+   "simbolo": "addestr",
+   "tipo": "unione",
+   "da": [
+    "ad",
+    "destr"
+   ],
+   "freq_addestramento": 37
+  },
+  {
+   "id": 309,
+   "simbolo": "er·",
+   "tipo": "unione",
+   "da": [
+    "er",
+    "·"
+   ],
+   "freq_addestramento": 36
+  },
+  {
+   "id": 310,
+   "simbolo": "seg",
+   "tipo": "unione",
+   "da": [
+    "s",
+    "eg"
+   ],
+   "freq_addestramento": 36
+  },
+  {
+   "id": 311,
+   "simbolo": "bb",
+   "tipo": "unione",
+   "da": [
+    "b",
+    "b"
+   ],
+   "freq_addestramento": 36
+  },
+  {
+   "id": 312,
+   "simbolo": "gen",
+   "tipo": "unione",
+   "da": [
+    "g",
+    "en"
+   ],
+   "freq_addestramento": 36
+  },
+  {
+   "id": 313,
+   "simbolo": "br",
+   "tipo": "unione",
+   "da": [
+    "b",
+    "r"
+   ],
+   "freq_addestramento": 35
+  },
+  {
+   "id": 314,
+   "simbolo": "zioni·",
+   "tipo": "unione",
+   "da": [
+    "zion",
+    "i·"
+   ],
+   "freq_addestramento": 35
+  },
+  {
+   "id": 315,
+   "simbolo": "macch",
+   "tipo": "unione",
+   "da": [
+    "mac",
+    "ch"
+   ],
+   "freq_addestramento": 35
+  },
+  {
+   "id": 316,
+   "simbolo": "abile·",
+   "tipo": "unione",
+   "da": [
+    "ab",
+    "ile·"
+   ],
+   "freq_addestramento": 35
+  },
+  {
+   "id": 317,
+   "simbolo": "ondo·",
+   "tipo": "unione",
+   "da": [
+    "on",
+    "do·"
+   ],
+   "freq_addestramento": 35
+  },
+  {
+   "id": 318,
+   "simbolo": "dim",
+   "tipo": "unione",
+   "da": [
+    "d",
+    "im"
+   ],
+   "freq_addestramento": 35
+  },
+  {
+   "id": 319,
+   "simbolo": "ep",
+   "tipo": "unione",
+   "da": [
+    "e",
+    "p"
+   ],
+   "freq_addestramento": 35
+  },
+  {
+   "id": 320,
+   "simbolo": "propr",
+   "tipo": "unione",
+   "da": [
+    "pro",
+    "pr"
+   ],
+   "freq_addestramento": 35
+  },
+  {
+   "id": 321,
+   "simbolo": "scr",
+   "tipo": "unione",
+   "da": [
+    "s",
+    "cr"
+   ],
+   "freq_addestramento": 35
+  },
+  {
+   "id": 322,
+   "simbolo": "caus",
+   "tipo": "unione",
+   "da": [
+    "ca",
+    "us"
+   ],
+   "freq_addestramento": 35
+  },
+  {
+   "id": 323,
+   "simbolo": "fil",
+   "tipo": "unione",
+   "da": [
+    "f",
+    "il"
+   ],
+   "freq_addestramento": 34
+  },
+  {
+   "id": 324,
+   "simbolo": "stessa·",
+   "tipo": "unione",
+   "da": [
+    "stess",
+    "a·"
+   ],
+   "freq_addestramento": 34
+  },
+  {
+   "id": 325,
+   "simbolo": "pen",
+   "tipo": "unione",
+   "da": [
+    "p",
+    "en"
+   ],
+   "freq_addestramento": 34
+  },
+  {
+   "id": 326,
+   "simbolo": "mat",
+   "tipo": "unione",
+   "da": [
+    "m",
+    "at"
+   ],
+   "freq_addestramento": 34
+  },
+  {
+   "id": 327,
+   "simbolo": "izz",
+   "tipo": "unione",
+   "da": [
+    "iz",
+    "z"
+   ],
+   "freq_addestramento": 34
+  },
+  {
+   "id": 328,
+   "simbolo": "contr",
+   "tipo": "unione",
+   "da": [
+    "con",
+    "tr"
+   ],
+   "freq_addestramento": 34
+  },
+  {
+   "id": 329,
+   "simbolo": "vol",
+   "tipo": "unione",
+   "da": [
+    "v",
+    "ol"
+   ],
+   "freq_addestramento": 34
+  },
+  {
+   "id": 330,
+   "simbolo": "utt",
+   "tipo": "unione",
+   "da": [
+    "ut",
+    "t"
+   ],
+   "freq_addestramento": 34
+  },
+  {
+   "id": 331,
+   "simbolo": "b·",
+   "tipo": "unione",
+   "da": [
+    "b",
+    "·"
+   ],
+   "freq_addestramento": 34
+  },
+  {
+   "id": 332,
+   "simbolo": "rett",
+   "tipo": "unione",
+   "da": [
+    "r",
+    "ett"
+   ],
+   "freq_addestramento": 34
+  },
+  {
+   "id": 333,
+   "simbolo": "testo·",
+   "tipo": "unione",
+   "da": [
+    "test",
+    "o·"
+   ],
+   "freq_addestramento": 34
+  }
+ ]
+}

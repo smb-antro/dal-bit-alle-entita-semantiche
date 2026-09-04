@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Genealogia · 3 — Perché ci vuole un villaggio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0F2A22;
+    --surface: #173B30;
+    --surface-2: #1E4A3C;
+    --copper: #C97D3D;
+    --copper-bright: #F0A85E;
+    --text: #F2ECE0;
+    --text-dim: #A9BFB6;
+    --line: rgba(242,236,224,0.12);
+    --rail-w: 300px;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Source Serif 4', Georgia, serif;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,h2,h3, .display{
+    font-family: 'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+  .mono{ font-family: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace; }
+  a{ color: var(--copper-bright); }
+
+  /* ---------- layout shell: sidebar fissa con indice del sito ---------- */
+  .sidebar{
+    background: rgba(15,42,34,0.92);
+    border-bottom: 1px solid var(--line);
+    padding: 28px 24px 32px;
+  }
+  .sidebar-kicker{
+    font-family: 'IBM Plex Mono', monospace; font-size: .74rem; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px;
+  }
+  .sidebar-title{
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.02rem;
+    color: var(--text); margin-bottom: 22px;
+  }
+  .sidebar .parte{ margin-top: 26px; }
+  .sidebar .parte:first-of-type{ margin-top: 0; }
+  .sidebar .parte-heading{
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: .74rem;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--copper-bright);
+    padding-bottom: 10px; margin-bottom: 2px; border-bottom: 1px solid var(--line);
+  }
+  .sidebar .voce-semplice{
+    display: block; padding: 10px 4px; border-bottom: 1px solid var(--line);
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem;
+    color: var(--text); text-decoration: none;
+  }
+  .sidebar .voce-semplice:hover{ color: var(--copper-bright); }
+  .sidebar .voce-semplice.current{ color: var(--copper-bright); }
+  .sidebar details.modulo{ border-bottom: 1px solid var(--line); }
+  .sidebar details.modulo summary{
+    display: flex; align-items: center; gap: 8px; padding: 10px 4px; cursor: pointer;
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem; color: var(--text);
+    list-style: none;
+  }
+  .sidebar details.modulo summary.current{ color: var(--copper-bright); }
+  .sidebar details.modulo summary::-webkit-details-marker{ display: none; }
+  .sidebar details.modulo summary::before{
+    content: "›"; display: inline-block; font-family: 'IBM Plex Mono', monospace;
+    color: var(--text-dim); transition: transform .15s ease; flex-shrink: 0;
+  }
+  .sidebar details.modulo[open] summary::before{ transform: rotate(90deg); color: var(--copper-bright); }
+  .sidebar details.modulo summary:hover{ color: var(--copper-bright); }
+  .sidebar .unita-list{ padding: 2px 0 12px 22px; display: flex; flex-direction: column; gap: 1px; }
+  .sidebar .unita-list a{
+    display: block; padding: 6px 4px; font-size: .82rem; color: var(--text-dim); text-decoration: none;
+  }
+  .sidebar .unita-list a:hover{ color: var(--copper-bright); }
+  .sidebar .unita-list a .num{ color: var(--copper); margin-right: 6px; font-family: 'IBM Plex Mono', monospace; font-size: .74rem; }
+
+  /* pallini luminosi di scroll-spy, sulle voci dell'unità corrente */
+  .sidebar .unita-list.scrollspy a{ position: relative; padding-left: 20px; }
+  .sidebar .unita-list.scrollspy a::before{
+    content: "";
+    position: absolute; left: 2px; top: 50%;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--surface-2); border: 1px solid var(--line);
+    transform: translateY(-50%);
+    transition: background .25s, box-shadow .25s, transform .25s;
+  }
+  .sidebar .unita-list.scrollspy a.active{ color: var(--copper-bright); }
+  .sidebar .unita-list.scrollspy a.active::before{
+    background: var(--copper-bright);
+    box-shadow: 0 0 0 4px rgba(240,168,94,0.18);
+    transform: translateY(-50%) scale(1.2);
+  }
+
+  main{ padding-top: 0; }
+
+  @media (min-width: 900px){
+    .sidebar{
+      position: fixed; z-index: 50; top:0; bottom:0; left:0; width: var(--rail-w);
+      overflow-y: auto; border-bottom:none; border-right: 1px solid var(--line);
+    }
+    main{ padding-left: var(--rail-w); }
+  }
+
+  .wrap{ max-width: 740px; margin: 0 auto; padding: 0 24px; }
+
+  .unit-block section{ padding: 92px 0 84px; border-bottom: 1px solid var(--line); }
+  .unit-block:last-child section:last-of-type{ border-bottom:none; }
+
+  .eyebrow{
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--copper-bright);
+    margin-bottom: 14px; display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{ content:""; width: 22px; height:1px; background: var(--copper-bright); display:inline-block; }
+
+  h2.title{ font-size: clamp(1.6rem, 4vw, 2.3rem); margin-bottom: 20px; }
+
+  p{ margin: 0 0 18px; color: var(--text); font-size: 1.05rem; }
+  p.dim{ color: var(--text-dim); }
+  .lede{ font-size: 1.15rem; color: var(--text); }
+
+  .reveal{ opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.visible{ opacity:1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce){
+    .reveal{ transition: opacity .2s linear; transform:none; }
+    *{ scroll-behavior: auto !important; }
+  }
+
+  .aside{
+    margin: 26px 0; padding: 18px 20px; background: var(--surface);
+    border-left: 3px solid var(--copper); border-radius: 2px;
+  }
+  .aside .label{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--copper-bright); margin-bottom: 8px; display:block;
+  }
+  .aside p{ margin-bottom:0; font-size: 0.96rem; color: var(--text-dim); }
+
+  .question{
+    margin: 28px 0; padding: 20px 22px; border: 1px dashed var(--line); border-radius: 4px;
+    font-family: 'Space Grotesk', sans-serif; font-size: 1.0rem; color: var(--copper-bright);
+  }
+
+  blockquote{
+    margin: 0; padding-left: 22px; border-left: 2px solid var(--copper);
+    font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; color: var(--text);
+  }
+
+  /* ---------- hero ---------- */
+  .hero{ padding-top: 62px; }
+  .hero .kicker{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.8rem; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--text-dim); margin-bottom: 18px;
+  }
+  .hero h1{ font-size: clamp(1.9rem, 5.6vw, 2.9rem); line-height:1.12; margin-bottom: 24px; }
+  .hero h1 em{ font-style: normal; color: var(--copper-bright); }
+
+  .scrolldown{
+    margin-top: 50px; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem;
+    color: var(--text-dim); letter-spacing: 0.08em; text-transform: uppercase;
+    display:flex; align-items:center; gap:8px;
+  }
+  .scrolldown::after{ content:"↓"; color: var(--copper-bright); animation: nudge 1.8s infinite ease-in-out; }
+  @media (prefers-reduced-motion: reduce){ .scrolldown::after{ animation:none; } }
+  @keyframes nudge{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(5px); } }
+
+  /* ---------- chip disciplinari (nuovo, motivo ricorrente di Genealogia · 3) ---------- */
+  .disc-chips{ display:flex; flex-wrap:wrap; gap:8px; margin: -6px 0 26px; }
+  .disc-chip{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.7rem; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--copper-bright);
+    border: 1px solid var(--copper); border-radius: 999px; padding: 4px 12px;
+    background: var(--surface);
+  }
+
+  /* ---------- tabella dei gap (nuovo, unica in 3.5) ---------- */
+  .gap-table{ width:100%; border-collapse: collapse; margin: 30px 0; font-size: 0.95rem; }
+  .gap-table th, .gap-table td{ padding: 14px 16px; border-bottom: 1px solid var(--line); text-align:left; vertical-align: top; }
+  .gap-table th{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--copper-bright); font-weight: 600;
+    border-bottom: 1px solid var(--copper);
+  }
+  .gap-table td{ color: var(--text-dim); }
+  .gap-table td:first-child{ color: var(--text); font-family:'Space Grotesk', sans-serif; font-weight: 600; }
+  .gap-table tr:last-child td{ border-bottom:none; }
+  @media (max-width: 640px){
+    .gap-table thead{ display:none; }
+    .gap-table, .gap-table tbody, .gap-table tr, .gap-table td{ display:block; width:100%; }
+    .gap-table tr{ margin-bottom: 22px; border-bottom: 1px solid var(--line); padding-bottom: 12px; }
+    .gap-table td{ border-bottom:none; padding: 4px 0; }
+    .gap-table td::before{
+      content: attr(data-label); display:block; font-family:'IBM Plex Mono', monospace;
+      font-size: 0.66rem; text-transform: uppercase; color: var(--copper-bright); margin-bottom: 2px;
+    }
+  }
+
+  /* ---------- chiusura ---------- */
+  .chiusura{ background: linear-gradient(180deg, var(--bg), var(--surface)); }
+  .footer-note{
+    margin-top: 46px; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem; color: var(--text-dim);
+  }
+</style>
+</head>
+<body>
+
+<nav class="sidebar" aria-label="Indice del saggio">
+  <div class="sidebar-kicker">Indice</div>
+  <div class="sidebar-title">Dal bit alle entità semantiche</div>
+
+  <div class="parte">
+    <details class="modulo">
+      <summary>Presentazione — Dal bit alle entità semantiche</summary>
+      <div class="unita-list">
+        <a href="presentazione.html#parte-1"><span class="num">1</span>Framework epistemologico: i limiti che condividiamo con le macchine</a>
+        <a href="presentazione.html#parte-2"><span class="num">2</span>Il dominio: struttura e composizione del saggio interattivo</a>
+        <a href="presentazione.html#parte-3"><span class="num">3</span>La lente semantica</a>
+      </div>
+    </details>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Parte I — Fondamenti</div>
+    <a class="voce-semplice" href="fondamenti-1-funzioni-booleane.html">1. Funzioni booleane</a>
+    <a class="voce-semplice" href="fondamenti-2-hardware-software.html">2. Hardware e software</a>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Parte II — Genealogia</div>
+
+    <details class="modulo">
+      <summary>1. Tre ore di disputa senza esito</summary>
+      <div class="unita-list">
+        <a href="genealogia-1-disputa.html#unit-a1"><span class="num">1.1</span>Dalla characteristica universalis alla pura ideografia</a>
+        <a href="genealogia-1-disputa.html#unit-a2"><span class="num">1.2</span>Gödel, Turing, Lucas</a>
+        <a href="genealogia-1-disputa.html#unit-a3"><span class="num">1.3</span>Il perceptron e la disgiunzione esclusiva (XOR)</a>
+        <a href="genealogia-1-disputa.html#unit-a4"><span class="num">1.4</span>Dai sistemi esperti alle macchine statistiche</a>
+        <a href="genealogia-1-disputa.html#unit-a5"><span class="num">1.5</span>Re, donna, regina</a>
+        <a href="genealogia-1-disputa.html#unit-a6"><span class="num">1.6</span>L'attenzione sostituisce la memoria</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>2. Il fenomeno e i suoi limiti</summary>
+      <div class="unita-list">
+        <a href="genealogia-2-limiti.html#unit-b1"><span class="num">2.1</span>Completamento statistico a scala massiva, in-context learning, transfer cross-dominio e altre capacità emergenti</a>
+        <a href="genealogia-2-limiti.html#unit-b2"><span class="num">2.2</span>Interpolazione, pesi statistici, metacognizione</a>
+        <a href="genealogia-2-limiti.html#unit-b3"><span class="num">2.3</span>Grounding, ragionamento causale, generalizzazione composizionale, cortocircuito dell'apprendimento</a>
+      </div>
+    </details>
+
+    <details class="modulo" open>
+      <summary class="current">3. Perché ci vuole un villaggio</summary>
+      <div class="unita-list scrollspy" id="local-scrollspy">
+        <a href="#unit-c1" data-spy-target="unit-c1"><span class="num">3.1</span>Il problema del significato</a>
+        <a href="#unit-c2" data-spy-target="unit-c2"><span class="num">3.2</span>Il problema della causalità</a>
+        <a href="#unit-c3" data-spy-target="unit-c3"><span class="num">3.3</span>Il problema biologico</a>
+        <a href="#unit-c4" data-spy-target="unit-c4"><span class="num">3.4</span>Il problema della coscienza</a>
+        <a href="#unit-c5" data-spy-target="unit-c5"><span class="num">3.5</span>Cosa siamo, per contrasto</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>4. Lo spazio, il corpo, la macchina</summary>
+      <div class="unita-list">
+        <a href="genealogia-4-corpo.html#unit-d1"><span class="num">4.1</span>Cos'è lo spazio? Il corpo come strumento di misura</a>
+        <a href="genealogia-4-corpo.html#unit-d2"><span class="num">4.2</span>Il corpo mancante</a>
+      </div>
+    </details>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Parte III — Meccanismo</div>
+
+    <details class="modulo">
+      <summary>1. Il testo come dato</summary>
+      <div class="unita-list">
+        <a href="meccanismo-1-testo-come-dato.html#unit-u1"><span class="num">1.1</span>Encoding</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u2"><span class="num">1.2</span>Tokenizzazione</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u3"><span class="num">1.3</span>Problema del vocabolario</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u4"><span class="num">1.4</span>Dagli ID al punto più discreto</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u5"><span class="num">1.5</span>Gödel</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>2. Probabilità e linguaggio</summary>
+      <div class="unita-list">
+        <a href="meccanismo-2-probabilita.html#unit-u1"><span class="num">2.1</span>Prevedere la parola successiva</a>
+        <a href="meccanismo-2-probabilita.html#unit-u2"><span class="num">2.2</span>Unigrammi/bigrammi, induzione, calibrazione</a>
+        <a href="meccanismo-2-probabilita.html#unit-u3"><span class="num">2.3</span>N-grammi e assunzione di Markov</a>
+        <a href="meccanismo-2-probabilita.html#unit-u4"><span class="num">2.4</span>Sparsità e dipendenze lontane</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>3. Parole come punti nello spazio</summary>
+      <div class="unita-list">
+        <a href="meccanismo-3-embedding.html#unit-u1"><span class="num">3.1</span>Il problema lasciato aperto</a>
+        <a href="meccanismo-3-embedding.html#unit-u2"><span class="num">3.2</span>Le parole come vettori (embedding)</a>
+        <a href="meccanismo-3-embedding.html#unit-u3"><span class="num">3.3</span>L'ipotesi distribuzionale</a>
+        <a href="meccanismo-3-embedding.html#unit-u4"><span class="num">3.4</span>L'aritmetica vettoriale</a>
+        <a href="meccanismo-3-embedding.html#unit-u5"><span class="num">3.5</span>Polisemia ed embedding statico</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>4. Reti neurali</summary>
+      <div class="unita-list">
+        <a href="meccanismo-4-reti-neurali.html#unit-u1"><span class="num">4.1</span>Dal neurone biologico al neurone artificiale</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u2"><span class="num">4.2</span>Il perceptron e XOR</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u3"><span class="num">4.3</span>Strati e profondità</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u4"><span class="num">4.4</span>La funzione di perdita</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u5"><span class="num">4.5</span>Il gradiente e la backpropagation</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>5. Il Transformer</summary>
+      <div class="unita-list">
+        <a href="meccanismo-5-transformer.html#unit-u1"><span class="num">5.1</span>Il problema che l'attenzione risolve</a>
+        <a href="meccanismo-5-transformer.html#unit-u2"><span class="num">5.2</span>L'idea dell'attention</a>
+        <a href="meccanismo-5-transformer.html#unit-u3"><span class="num">5.3</span>Query, Key, Value</a>
+        <a href="meccanismo-5-transformer.html#unit-u4"><span class="num">5.4</span>Embedding contestuale</a>
+        <a href="meccanismo-5-transformer.html#unit-u5"><span class="num">5.5</span>Multi-head e posizione</a>
+        <a href="meccanismo-5-transformer.html#unit-u6"><span class="num">5.6</span>Parallelismo e scala</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>6. Cosa significa "Large"</summary>
+      <div class="unita-list">
+        <a href="meccanismo-6-large.html#unit-u1"><span class="num">6.1</span>Scala</a>
+        <a href="meccanismo-6-large.html#unit-u2"><span class="num">6.2</span>Capacità emergenti</a>
+        <a href="meccanismo-6-large.html#unit-u3"><span class="num">6.3</span>I dati</a>
+        <a href="meccanismo-6-large.html#unit-u4"><span class="num">6.4</span>Fine-tuning</a>
+        <a href="meccanismo-6-large.html#unit-u5"><span class="num">6.5</span>RLHF</a>
+        <a href="meccanismo-6-large.html#unit-u6"><span class="num">6.6</span>Quantizzazione (chiusura dell'arco tecnico)</a>
+      </div>
+    </details>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Appendice</div>
+
+    <details class="modulo">
+      <summary>Dietro i widget</summary>
+      <div class="unita-list">
+        <a href="dietro-i-widget.html#unit-u1"><span class="num">A.1</span>Il tokenizzatore (Meccanismo · 1)</a>
+        <a href="dietro-i-widget.html#unit-u2"><span class="num">A.2</span>Il predittore n-grammi (Meccanismo · 2)</a>
+        <a href="dietro-i-widget.html#unit-u3"><span class="num">A.3</span>La mappa embedding (Meccanismo · 3)</a>
+        <a href="dietro-i-widget.html#unit-u4"><span class="num">A.4</span>Neurone, XOR, superficie di perdita (Meccanismo · 4)</a>
+        <a href="dietro-i-widget.html#unit-u5"><span class="num">A.5</span>L'attention (Meccanismo · 5)</a>
+        <a href="dietro-i-widget.html#unit-u6"><span class="num">A.6</span>Scala e capacità (Meccanismo · 6)</a>
+      </div>
+    </details>
+  </div>
+</nav>
+
+<main>
+
+<div class="unit-block" id="unit-c1" data-unit="c1">
+
+  <section id="c1-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Genealogia · 3.1</div>
+      <div class="disc-chips">
+        <span class="disc-chip">Filosofia del linguaggio</span>
+        <span class="disc-chip">Linguistica</span>
+        <span class="disc-chip">Semiotica</span>
+      </div>
+      <h1>Una domanda di Genealogia · 2.3 chiedeva: <em>il grounding richiede un corpo?</em> Prima va chiesto che cos'è, esattamente, il significato.</h1>
+      <p class="lede dim">Si immagini di leggere un dizionario cinese senza conoscere una parola di cinese. Ogni voce rimanda ad altre voci, in cinese, che a loro volta rimandano ad altre ancora. Si possono seguire questi rimandi per ore, costruendosi una fitta rete di associazioni tra simboli — senza mai arrivare a sapere che cosa uno solo di quei simboli <em>significhi</em> davvero.</p>
+      <p class="dim">Questo è, in miniatura, il problema che l'unità affronta: un sistema può manipolare simboli con perfetta coerenza interna, e restare comunque a vuoto — senza contenuto semantico reale. È il problema filosofico più antico dietro alla domanda più recente («un LLM capisce quello che dice?»).</p>
+
+      <div class="scrolldown">tre autori, tre porte sullo stesso problema</div>
+    </div>
+  </section>
+
+  <section id="c1-sez-frege">
+    <div class="wrap reveal">
+      <div class="eyebrow">Prima porta</div>
+      <h2 class="title">Frege: senso e riferimento</h2>
+      <p>Gottlob Frege — già incontrato in Genealogia · 1.1 come uno dei fondatori del sogno formale — distingue due componenti del significato di un'espressione: il <em>riferimento</em> (l'oggetto reale a cui l'espressione punta) e il <em>senso</em> (il modo particolare in cui quell'oggetto viene presentato). «La stella del mattino» e «la stella della sera» hanno lo stesso riferimento — il pianeta Venere — ma sensi diversi: chi le usa non sa, a priori, che parlano della stessa cosa.</p>
+
+      <p>Applicata a un LLM, la distinzione diventa scomoda: un modello può padroneggiare perfettamente il <em>senso</em> — la rete di relazioni linguistiche tra «stella del mattino» e ogni altra espressione — senza avere alcun accesso al <em>riferimento</em>, perché non ha mai osservato Venere, né alcun altro oggetto, al di fuori del testo che ne parla.</p>
+    </div>
+  </section>
+
+  <section id="c1-sez-wittgenstein">
+    <div class="wrap reveal">
+      <div class="eyebrow">Seconda porta</div>
+      <h2 class="title">Wittgenstein tardo: il significato come uso</h2>
+      <p>Il secondo Wittgenstein (quello delle <em>Ricerche filosofiche</em>, molto diverso dal primo Wittgenstein del <em>Tractatus</em>) propone un'idea che ha spostato l'intera disciplina: il significato di una parola non è un'entità nascosta a cui la parola punta, ma il suo <em>uso</em> all'interno di pratiche sociali condivise — quelli che Wittgenstein chiama «giochi linguistici». Chiedere «qual è il vero significato di questa parola» fuori da ogni pratica d'uso è, per lui, una domanda mal posta.</p>
+
+      <div class="aside">
+        <span class="label">Un'apertura, non una chiusura</span>
+        <p>Questa idea, letta con generosità, apre uno spiraglio proprio per un LLM: se il significato è uso, e un LLM ha assorbito un'enorme quantità di usi reali della lingua da parte di parlanti umani, forse partecipa, in modo derivato e indiretto, a quelle stesse pratiche — non le vive in prima persona, ma ne eredita la struttura. È una lettura contestata, non una conclusione pacifica.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="c1-sez-searle">
+    <div class="wrap reveal">
+      <div class="eyebrow">Terza porta · 1980</div>
+      <h2 class="title">Searle e la stanza cinese</h2>
+      <p>John Searle, nel 1980, propone l'esperimento mentale più citato — e più discusso — in questo campo. Un uomo, chiuso in una stanza, non conosce il cinese. Riceve, da una fessura, biglietti con simboli cinesi. Ha con sé un enorme manuale di regole, in italiano, che gli dice: «se ricevi questa sequenza di simboli, scrivi in risposta quest'altra sequenza». Seguendo il manuale alla lettera, produce risposte in cinese perfette — indistinguibili, da fuori, da quelle di un vero parlante. Ma dentro la stanza, nessuno ha capito una sola parola di cinese. C'è manipolazione sintattica pura, zero contenuto semantico.</p>
+
+      <p>La tesi di Searle: questo è esattamente ciò che fa un computer che elabora simboli secondo regole — e, per estensione contemporanea, ciò che fa un LLM. Sintassi senza semantica, competenza comportamentale senza comprensione.</p>
+
+      <div class="question">La risposta più comune a Searle è che la «comprensione», se esiste, appartiene al sistema nel suo complesso (uomo + manuale + stanza), non all'uomo isolato al suo interno. Ma se si accetta questa risposta per la stanza cinese, va accettata anche per un LLM (pesi + architettura + hardware)? O l'analogia si rompe proprio qui?</div>
+    </div>
+  </section>
+
+  <section id="c1-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">Tre porte, nessuna risposta condivisa</h2>
+      <p>Frege separa senso da riferimento e mostra dove un LLM ha solo il primo. Wittgenstein sposta il significato nell'uso, aprendo — con cautela — uno spiraglio di partecipazione derivata. Searle chiude lo spiraglio con un esperimento mentale pensato apposta per dimostrare che sintassi non è mai semantica, per quanto sofisticata la manipolazione simbolica diventi.</p>
+    </div>
+  </section>
+
+  <section id="c1-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura · la domanda di Genealogia · 2.3, ripresa</div>
+      <h2 class="title">Uno specchio, o un partecipante derivato?</h2>
+      <blockquote>
+        Il grounding richiede un corpo, o basta un modello del mondo sufficientemente ricco? Questa unità non la risolve — nessuno dei tre autori concorderebbe su una risposta univoca — ma la rende più precisa.
+      </blockquote>
+      <p style="margin-top:28px;">Un modello addestrato su testo umano partecipa in modo derivato a quelle pratiche linguistiche, o ne è solo uno specchio sofisticato, senza nessuno dall'altra parte? La prossima unità lascia da parte il linguaggio e guarda a un'altra facoltà data per scontata: la causalità.</p>
+
+      <div class="footer-note">Genealogia — 3.1 · Il problema del significato</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="unit-block" id="unit-c2" data-unit="c2">
+
+  <section id="c2-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Genealogia · 3.2</div>
+      <div class="disc-chips">
+        <span class="disc-chip">Statistica</span>
+        <span class="disc-chip">Epistemologia</span>
+        <span class="disc-chip">Scienze cognitive</span>
+      </div>
+      <h1>Il gallo canta ogni mattina. <em>Il sole si alza subito dopo.</em></h1>
+      <p class="lede dim">Un sistema che osservasse solo questa regolarità, per anni, senza altra informazione, potrebbe concludere che il canto del gallo causa il sorgere del sole. La correlazione è perfetta; la direzione causale è, ovviamente, l'opposto.</p>
+      <p class="dim">Il blocco precedente, Genealogia · 2.3, ha mostrato che un LLM opera quasi esclusivamente al livello dell'associazione — non dell'intervento, non del controfattuale. Questa unità chiede: da dove viene questa distinzione, e quanto è profonda?</p>
+
+      <div class="scrolldown">una scala a tre gradini, e un filosofo scozzese del Settecento</div>
+    </div>
+  </section>
+
+  <section id="c2-sez-scala-pearl">
+    <div class="wrap reveal">
+      <div class="eyebrow">Prima porta</div>
+      <h2 class="title">La scala causale di Pearl</h2>
+      <p>Judea Pearl formalizza tre livelli di conoscenza causale, ordinati per profondità crescente. Al livello 1, l'<em>associazione</em>: osservare che due eventi ricorrono insieme («i pazienti che assumono questo farmaco guariscono più spesso»). Al livello 2, l'<em>intervento</em>: agire attivamente su una variabile e osservarne l'effetto («se il farmaco viene somministrato a un gruppo scelto a caso, guarisce di più?») — la differenza tra osservare e <em>fare</em>. Al livello 3, il <em>controfattuale</em>: ragionare su che cosa sarebbe accaduto in un mondo alternativo («questo specifico paziente sarebbe guarito comunque, anche senza il farmaco?»).</p>
+
+      <p>Ogni livello richiede strumenti concettuali che il livello precedente non basta a fornire: nessuna quantità di dati puramente osservazionali, per quanto enorme, permette di rispondere da sola a una domanda del livello 2 o 3 — serve un modello esplicito della struttura causale, non solo della correlazione.</p>
+    </div>
+  </section>
+
+  <section id="c2-sez-llm-su-scala">
+    <div class="wrap reveal">
+      <div class="eyebrow">Seconda porta</div>
+      <h2 class="title">Dove si colloca un LLM su questa scala</h2>
+      <p>Un LLM addestrato su testo ha visto, moltissime volte, frasi in cui esseri umani <em>hanno già ragionato</em> ai livelli 2 e 3 — testi scientifici che descrivono esperimenti controllati, argomentazioni controfattuali in un saggio filosofico. Può quindi <em>riprodurre</em> la forma linguistica di quel ragionamento con notevole fluidità.</p>
+
+      <p>Ma la sua interazione diretta col mondo resta comunque quella del livello 1: correlazioni tra parole nel testo. Non esegue interventi, non osserva le loro conseguenze, non aggiorna un modello causale interno sulla base di un esperimento reale. Quando sembra ragionare al livello 3, sta interpolando tra esempi umani di ragionamento di livello 3 già scritti — non sta eseguendo, da sé, l'operazione cognitiva che genera quel livello.</p>
+
+      <div class="aside">
+        <span class="label">Perché non è un dettaglio tecnico</span>
+        <p>Questa distinzione ha conseguenze pratiche dirette. Un modello può descrivere in modo impeccabile un disegno sperimentale randomizzato controllato, e allo stesso tempo essere completamente incapace di stabilire, da solo, se una correlazione osservata in un nuovo insieme di dati sia causale — perché quella capacità richiede l'operazione stessa, non la sua descrizione.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="c2-sez-hume">
+    <div class="wrap reveal">
+      <div class="eyebrow">Terza porta · Settecento</div>
+      <h2 class="title">Hume: anche l'inferenza umana è indiretta</h2>
+      <p>David Hume, nel Settecento, arriva a una conclusione scomoda anche per la cognizione umana: la connessione causale non si <em>osserva</em> mai direttamente. Si osserva solo una <em>regolarità di successione</em> — A seguito sempre da B — e la mente inferisce, per abitudine, che A causi B. Non c'è, secondo Hume, alcuna percezione diretta del «potere causale» che lega i due eventi.</p>
+
+      <div class="question">Se anche l'inferenza causale umana è, in questo senso humeano, un'estrapolazione da regolarità osservate — non percezione diretta di una causa — in che cosa differisce, in linea di principio, dal processo statistico di un LLM che estrapola pattern da regolarità testuali? La risposta più comune è che l'essere umano può <em>intervenire</em> nel mondo per testare le proprie ipotesi causali (livello 2 di Pearl), mentre un LLM non interviene mai su nulla. Ma è una differenza di principio, o «solo» una differenza di accesso al mondo — colmabile, in linea teorica, da un sistema che agisse davvero?</div>
+    </div>
+  </section>
+
+  <section id="c2-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">Un vocabolario tecnico, e una domanda antica</h2>
+      <p>Pearl fornisce il vocabolario tecnico per dire con precisione dove un LLM si ferma. Hume, due secoli prima, mostra che la stessa domanda si può porre anche alla mente umana — spostando il problema da «gli LLM sono incapaci di causalità» a «che cosa, esattamente, rende diverso il modo umano di arrivarci».</p>
+    </div>
+  </section>
+
+  <section id="c2-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura · la domanda di Genealogia · 2.3, ripresa</div>
+      <h2 class="title">Un limite dell'architettura, o dell'assenza di un corpo?</h2>
+      <blockquote>
+        Il blocco precedente, Genealogia · 2.3, chiedeva: il ragionamento causale può emergere dal linguaggio con l'architettura giusta? Questa unità offre gli strumenti per renderla precisa, non per chiuderla.
+      </blockquote>
+      <p style="margin-top:28px;">Emergere dal linguaggio <em>da solo</em>, sembra improbabile finché manca un livello 2 — la possibilità di intervenire. Ma un sistema che unisse linguaggio e capacità di intervento reale (un agente, un robot) supererebbe questo limite per costruzione, o il limite è più profondo dell'assenza di un corpo? Resta aperta.</p>
+
+      <div class="footer-note">Genealogia — 3.2 · Il problema della causalità</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="unit-block" id="unit-c3" data-unit="c3">
+
+  <section id="c3-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Genealogia · 3.3</div>
+      <div class="disc-chips">
+        <span class="disc-chip">Neuroscienze</span>
+        <span class="disc-chip">Biologia computazionale</span>
+      </div>
+      <h1>Il cervello di chi legge questa frase consuma <em>circa 20 Watt.</em> Una lampadina debole.</h1>
+      <p class="lede dim">L'infrastruttura che fa girare un modello linguistico di grandi dimensioni consuma, per addestramento e utilizzo, ordini di grandezza in più — non il doppio, non il decuplo: ordini di grandezza. Eppure entrambi i sistemi — il cervello e la rete neurale artificiale — condividono un'origine concettuale comune.</p>
+      <p class="dim">Questa unità guarda a cosa l'ingegneria ha effettivamente preso in prestito dal biologico, cosa ha deliberatamente abbandonato, e cosa il biologico continua a insegnare — inascoltato — anche oggi.</p>
+
+      <div class="scrolldown">un debito dichiarato, e un divorzio silenzioso</div>
+    </div>
+  </section>
+
+  <section id="c3-sez-preso-dal-biologico">
+    <div class="wrap reveal">
+      <div class="eyebrow">Prima porta</div>
+      <h2 class="title">Cos'è stato preso dal biologico</h2>
+      <p>Il neurone artificiale nasce da un'analogia esplicita. Nel 1943, Warren McCulloch (neurofisiologo) e Walter Pitts (logico) propongono un modello matematico semplificatissimo del neurone biologico: un'unità che riceve segnali in ingresso, li somma con pesi, e si «attiva» solo se la somma supera una soglia — il primo antenato diretto di ogni neurone artificiale usato oggi. Nel 1949, Donald Hebb formula il principio nella sua forma originale, tecnica: due cellule che si attivano ripetutamente insieme rafforzano la connessione tra loro. Lo slogan con cui è oggi universalmente ricordato — <em>«neurons that fire together, wire together»</em> — non è suo: arriva decenni più tardi, coniato da Carla Shatz. È comunque l'intuizione germinale dietro ogni regola di apprendimento basata sul rinforzo delle connessioni.</p>
+
+      <p>Anche l'organizzazione a strati delle reti neurali profonde — bordi, poi forme, poi oggetti, in una rete convoluzionale per immagini — rispecchia, in modo dichiarato, l'organizzazione gerarchica scoperta nella corteccia visiva dei mammiferi da Hubel e Wiesel negli anni '60: strati di neuroni via via più specializzati nel riconoscere pattern via via più complessi.</p>
+    </div>
+  </section>
+
+  <section id="c3-sez-abbandonato">
+    <div class="wrap reveal">
+      <div class="eyebrow">Seconda porta</div>
+      <h2 class="title">Cos'è stato abbandonato</h2>
+      <p>Il <em>backpropagation</em> — l'algoritmo che permette a una rete neurale artificiale di imparare, propagando l'errore all'indietro attraverso tutti gli strati e aggiustando ogni peso in proporzione — non ha, ad oggi, un corrispettivo biologicamente plausibile confermato. I neuroni biologici comunicano con impulsi elettrici discreti nel tempo (<em>spike</em>), non con i numeri continui che circolano in una rete artificiale. E soprattutto: non esiste, nel cervello, un meccanismo noto capace di propagare un segnale di errore preciso all'indietro attraverso milioni di sinapsi, nella forma richiesta dal backpropagation matematico.</p>
+
+      <p>La plasticità sinaptica biologica, inoltre, è <em>continua e locale</em>: ogni sinapsi si aggiusta in base a segnali disponibili localmente, in tempo reale, mentre l'organismo vive. L'addestramento di una rete artificiale è invece tipicamente <em>discreto e globale</em>: un'enorme fase di addestramento separata, seguita da un utilizzo con pesi congelati — la stessa distinzione già incontrata in Genealogia · 2.3 come "apprendimento continuo assente".</p>
+    </div>
+  </section>
+
+  <section id="c3-sez-insegna-ancora">
+    <div class="wrap reveal">
+      <div class="eyebrow">Terza porta</div>
+      <h2 class="title">Cosa il biologico insegna, e l'ingegneria ancora ignora</h2>
+      <p>Tre lezioni che il cervello offre gratuitamente, e che l'ingegneria attuale non ha ancora saputo replicare. <em>Efficienza</em>: 20 Watt contro megawatt, un divario di sei ordini di grandezza per compiti in parte comparabili. <em>Apprendimento paucisample</em>: un bambino riconosce un nuovo animale — una zebra vista una sola volta in un libro — mentre un modello artificiale tipicamente richiede migliaia o milioni di esempi per imparare un nuovo concetto da zero. <em>Consolidamento e dimenticanza attivi</em>: il cervello non solo impara, ma dimentica selettivamente e consolida attivamente ciò che conta durante il sonno — un processo per cui i sistemi artificiali non hanno un vero equivalente.</p>
+
+      <div class="aside">
+        <span class="label">Ricerca attiva, non fantascienza</span>
+        <p>Spiking neural networks (reti che imitano più da vicino la comunicazione a impulsi dei neuroni biologici), few-shot learning (algoritmi pensati per imparare da pochissimi esempi), architetture ispirate all'organizzazione della corteccia prefrontale — sono tutti programmi di ricerca oggi attivi, non speculazione. Nessuno di questi, ad oggi, ha chiuso il divario con l'efficienza biologica.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="c3-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">Un debito dichiarato, un divorzio silenzioso</h2>
+      <p>Il rapporto tra reti neurali artificiali e biologia è un debito dichiarato all'origine (McCulloch-Pitts, Hebb, Hubel-Wiesel) seguito da un divorzio silenzioso sui meccanismi (backpropagation non plausibile, apprendimento discreto invece che continuo) — un divorzio che ha permesso progressi ingegneristici enormi, ma ha lasciato sul tavolo esattamente le proprietà — efficienza, apprendimento rapido, consolidamento — che restano più difficili da replicare.</p>
+    </div>
+  </section>
+
+  <section id="c3-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura · la domanda di Genealogia · 2.3, ripresa</div>
+      <h2 class="title">Distanza ingegneristica, o muro categoriale?</h2>
+      <blockquote>
+        Il blocco precedente, Genealogia · 2.3, chiedeva: la generalizzazione composizionale illimitata è un tratto esclusivo del biologico? Questa unità non risponde direttamente, ma restringe il campo.
+      </blockquote>
+      <p style="margin-top:28px;">Se il divario riguarda meccanismi di apprendimento (continuo, locale, paucisample) più che principi architetturali insormontabili, allora la risposta potrebbe essere «non esclusivo, ma non ancora replicato» — una distanza ingegneristica, non un muro categoriale. Ma è un'ipotesi, non una conclusione: nessuno, ad oggi, ha dimostrato quale delle due sia corretta.</p>
+
+      <div class="footer-note">Genealogia — 3.3 · Il problema biologico</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="unit-block" id="unit-c4" data-unit="c4">
+
+  <section id="c4-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Genealogia · 3.4</div>
+      <div class="disc-chips">
+        <span class="disc-chip">Filosofia della mente</span>
+        <span class="disc-chip">Neuroscienze</span>
+        <span class="disc-chip">Fisica teorica</span>
+      </div>
+      <h1>Spiegare <em>come</em> funziona la vista è facile. Spiegare perché <em>c'è qualcosa che fa effetto</em> vederla — è tutta un'altra storia.</h1>
+      <p class="lede dim">Un ingegnere può, in linea di principio, spiegare ogni singolo passaggio con cui la luce colpisce la retina, viene tradotta in impulsi elettrici, elaborata dalla corteccia visiva, fino a produrre una reazione comportamentale. Nessuno di questi passaggi, però, spiega perché tutto questo processo sia <em>accompagnato</em> da un'esperienza soggettiva — perché vedere il rosso «faccia un certo effetto» dall'interno.</p>
+      <p class="dim">Questa è l'unità più speculativa del blocco, e va trattata con l'onestà che merita: non ci sono qui risposte consolidate, solo programmi di ricerca seri che provano ad avvicinarsi a una domanda che resiste da secoli.</p>
+
+      <div class="scrolldown">il problema facile, il problema difficile, e tre teorie che provano a colmarlo</div>
+    </div>
+  </section>
+
+  <section id="c4-sez-chalmers">
+    <div class="wrap reveal">
+      <div class="eyebrow">Prima porta · 1995</div>
+      <h2 class="title">Chalmers: il problema facile e il problema difficile</h2>
+      <p>David Chalmers, nel 1995, dà un nome che è rimasto: il <em>problema facile</em> della coscienza riguarda i meccanismi — come il cervello integra informazione, discrimina stimoli, produce comportamento. «Facile» qui non vuol dire semplice da risolvere (richiede decenni di neuroscienza), ma facile <em>in linea di principio</em>: è noto che tipo di spiegazione cercare, meccanismi fisici che producono funzioni.</p>
+
+      <p>Il <em>problema difficile</em> è diverso di natura, non di grado: perché l'elaborazione dell'informazione sia accompagnata da un'esperienza soggettiva — il «che effetto fa» essere quel sistema, il <em>qualia</em> del rosso visto, del dolore provato — non è ovvio nemmeno che tipo di spiegazione risolverebbe la domanda. Anche una descrizione fisica completa del cervello, per Chalmers, lascerebbe questa domanda intatta.</p>
+    </div>
+  </section>
+
+  <section id="c4-sez-tre-programmi">
+    <div class="wrap reveal">
+      <div class="eyebrow">Seconda porta</div>
+      <h2 class="title">Tre programmi di ricerca</h2>
+      <p>La <em>Integrated Information Theory</em> di Giulio Tononi propone una misura quantitativa, chiamata Φ (phi), della quantità di informazione integrata in un sistema — l'idea è che la coscienza corrisponda al grado in cui un sistema è più-della-somma-delle-sue-parti dal punto di vista informazionale. Il problema pratico: calcolare Φ esattamente per un sistema di dimensioni realistiche (un cervello, o un modello con miliardi di parametri) è oggi computazionalmente intrattabile.</p>
+
+      <p>La <em>Global Workspace Theory</em> di Bernard Baars, sviluppata poi da Stanislas Dehaene, propone che la coscienza corrisponda alla trasmissione «globale» di un'informazione a molteplici sistemi cognitivi specializzati — un po' come un palco che rende visibile a tutto il teatro ciò che prima era confinato dietro le quinte.</p>
+
+      <div class="aside">
+        <span class="label">Un'analogia da maneggiare con cura</span>
+        <p>Il meccanismo di attention nei Transformer, che verrà spiegato in dettaglio in Meccanismo · 5, ha una somiglianza superficiale con questa idea — «portare in primo piano» certe informazioni rispetto ad altre. È un'analogia suggestiva, probabilmente fuorviante se presa alla lettera: l'attention è un meccanismo matematico di ponderazione, non è stato progettato con alcuna teoria della coscienza in mente, e nulla garantisce che risolva anche solo il problema facile, figuriamoci quello difficile.</p>
+      </div>
+
+      <p>Le <em>Higher-Order Theories</em> propongono che uno stato mentale sia cosciente solo se esiste, nello stesso sistema, una rappresentazione <em>di secondo ordine</em> — una rappresentazione che ha come oggetto la prima rappresentazione stessa («so di vedere il rosso», non solo «vedo il rosso»). Domanda diretta per un LLM: un modello che genera testo <em>su</em> testo — che descrive, commenta, rielabora i propri output precedenti nella stessa conversazione — soddisfa questo criterio, anche solo nella forma? O la rappresentazione di secondo ordine richiesta dalla teoria è di natura diversa da una semplice elaborazione testuale ricorsiva?</p>
+    </div>
+  </section>
+
+  <section id="c4-sez-perche-studiarle">
+    <div class="wrap reveal">
+      <div class="eyebrow">Terza porta</div>
+      <h2 class="title">Perché vale la pena studiarle sul serio</h2>
+      <div class="question">Si potrebbe obiettare che tutto questo sia speculazione filosofica, irrilevante per un corso su come funzionano gli LLM. Il punto pedagogico è l'opposto: queste teorie sono programmi di ricerca falsificabili — fanno previsioni verificabili su quali sistemi dovrebbero mostrare (o non mostrare) segni di coscienza, in linea di principio testabili. I modelli linguistici, proprio perché sono sistemi artificiali completamente osservabili e controllabili — a differenza di un cervello biologico — offrono per la prima volta un banco di prova concreto su cui testare, sperimentalmente, previsioni che prima restavano solo teoriche.</div>
+    </div>
+  </section>
+
+  <section id="c4-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">Tre criteri, nessun verdetto</h2>
+      <p>Tre teorie, tre criteri diversi per la stessa domanda: Φ misura l'integrazione, il Global Workspace misura la trasmissione globale, le Higher-Order Theories misurano l'auto-rappresentazione. Nessuna delle tre ha, ad oggi, un verdetto chiaro su un LLM — e questa incertezza stessa è il punto pedagogico da trattenere, non un difetto della spiegazione.</p>
+    </div>
+  </section>
+
+  <section id="c4-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura · la domanda di Genealogia · 2, ripresa</div>
+      <h2 class="title">C'è qualcuno in casa?</h2>
+      <blockquote>
+        Il blocco Genealogia · 2 chiedeva, nella sua forma più radicale: tolti grounding, causalità, apprendimento continuo, metacognizione calibrata — cosa resta dell'intelligenza? Questa unità aggiunge lo strato più profondo a quella domanda.
+      </blockquote>
+      <p style="margin-top:28px;">Anche se un sistema risolvesse tutti gli altri limiti — grounding, causalità, composizionalità, apprendimento continuo — resterebbe comunque aperta la domanda se ci sia «qualcuno in casa» a cui tutto questo farebbe effetto. Nessuna delle quattro unità di questo blocco pretende di rispondere. Insieme, mappano con precisione dove le risposte mancano.</p>
+
+      <div class="footer-note">Genealogia — 3.4 · Il problema della coscienza</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="unit-block" id="unit-c5" data-unit="c5">
+
+  <section id="c5-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Genealogia · 3.5</div>
+      <h1>Quattro nodi. <em>Sei discipline. Un solo territorio.</em></h1>
+      <p class="lede dim">I quattro nodi di questo blocco non sono un elenco casuale di curiosità interdisciplinari accostate agli LLM per colore. Ogni nodo nasce da una domanda specifica lasciata aperta in Genealogia · 2 — e ogni domanda, se seguita fino in fondo, porta dritta a una tradizione di ricerca che studia esattamente quel problema da decenni, a volte da secoli, indipendentemente dall'intelligenza artificiale.</p>
+
+      <div class="scrolldown">la mappa completa, in una tabella</div>
+    </div>
+  </section>
+
+  <section id="c5-sez-tabella">
+    <div class="wrap reveal">
+      <div class="eyebrow">La mappa</div>
+      <h2 class="title">La tabella riassuntiva dei gap</h2>
+
+      <table class="gap-table">
+        <thead>
+          <tr><th>Gap</th><th>Discipline coinvolte</th><th>Applicazioni se risolto</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-label="Gap">Grounding</td>
+            <td data-label="Discipline coinvolte">Filosofia, linguistica, robotica</td>
+            <td data-label="Applicazioni se risolto">Sistemi che capiscono, non solo parlano</td>
+          </tr>
+          <tr>
+            <td data-label="Gap">Causalità</td>
+            <td data-label="Discipline coinvolte">Statistica, epidemiologia, scienze cognitive</td>
+            <td data-label="Applicazioni se risolto">AI scientifica affidabile, diagnosi medica</td>
+          </tr>
+          <tr>
+            <td data-label="Gap">Efficienza biologica</td>
+            <td data-label="Discipline coinvolte">Neuroscienze, fisica</td>
+            <td data-label="Applicazioni se risolto">AI accessibile, su dispositivi piccoli</td>
+          </tr>
+          <tr>
+            <td data-label="Gap">Apprendimento continuo</td>
+            <td data-label="Discipline coinvolte">Biologia, psicologia cognitiva</td>
+            <td data-label="Applicazioni se risolto">Sistemi che si adattano senza riaddestrare</td>
+          </tr>
+          <tr>
+            <td data-label="Gap">Composizionalità</td>
+            <td data-label="Discipline coinvolte">Linguistica formale, logica</td>
+            <td data-label="Applicazioni se risolto">Generalizzazione fuori distribuzione</td>
+          </tr>
+          <tr>
+            <td data-label="Gap">Coscienza/esperienza</td>
+            <td data-label="Discipline coinvolte">Filosofia della mente, neuroscienze, fisica</td>
+            <td data-label="Applicazioni se risolto">Comprensione dell'intelligenza stessa</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>Da leggere non come un elenco di difetti, ma come un programma di ricerca in negativo: ogni riga descrive non solo cosa manca, ma quale comunità di ricerca è già attrezzata — con secoli di strumenti concettuali propri — per lavorarci.</p>
+    </div>
+  </section>
+
+  <section id="c5-sez-filo">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il filo</div>
+      <h2 class="title">Il filo che lega tutti i nodi</h2>
+      <p>Ripercorrendo i quattro nodi: nel problema del significato (3.1), la domanda «un LLM capisce?» risulta la stessa domanda che la filosofia del linguaggio pone da Frege in poi. Nel problema della causalità (3.2), «un LLM ragiona?» è la stessa domanda posta da Hume su che cosa significhi inferire una causa. Nel problema biologico (3.3), l'efficienza e l'apprendimento rapido, assenti negli LLM, risultano proprietà che la biologia ha risolto per altre vie, non ancora comprese abbastanza da essere copiate. Nel problema della coscienza (3.4), anche risolvendo tutto il resto, resterebbe una domanda che nessuna disciplina, da sola, sa ancora chiudere.</p>
+
+      <div class="aside">
+        <span class="label">Perché «villaggio» e non «squadra»</span>
+        <p>Una squadra ha un obiettivo comune e ruoli assegnati dall'alto. Un villaggio ha abitanti con mestieri diversi, ciascuno portatore di una tradizione propria, che si parlano tra loro senza che nessuno diriga il traffico. Studiare gli LLM seriamente richiede esattamente questo: non un manager che assegna compiti a filosofi e neuroscienziati, ma una conversazione autentica tra tradizioni che, fino a poco tempo fa, non avevano motivo di parlarsi.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="c5-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura</div>
+      <h2 class="title">Cosa siamo, per contrasto</h2>
+      <blockquote>
+        Studiare i limiti di un LLM è, per contrasto, studiare cosa siamo — perché non sappiamo ancora bene, con la precisione che vorremmo, come funzioni il significato nel linguaggio umano, come la mente inferisca la causalità, come un cervello da 20 Watt impari da un solo esempio, e se l'esperienza soggettiva sia qualcosa che si possa, anche in linea di principio, misurare.
+      </blockquote>
+      <p style="margin-top:28px;">Questo blocco si chiude qui: la parte introduttiva del saggio ha ora piantato ogni domanda che verrà scomposta, una alla volta, in meccanismo nelle sei unità di Meccanismo (1-6).</p>
+
+      <div class="footer-note">Genealogia — 3.5 · Cosa siamo, per contrasto</div>
+    </div>
+  </section>
+
+</div>
+
+</main>
+
+<script>
+  // --- reveal on scroll (globale, indipendente dall'unità attiva) ---
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => io.observe(el));
+
+  // --- scroll-spy sulla sidebar: illumina l'unità dell'accordion in vista ---
+  const spyLinks = document.querySelectorAll('#local-scrollspy a[data-spy-target]');
+  const unitBlocksForSpy = document.querySelectorAll('.unit-block');
+  const localSpy2 = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        spyLinks.forEach(a => a.classList.toggle('active', a.dataset.spyTarget === e.target.id));
+      }
+    });
+  }, { threshold: 0, rootMargin: '-45% 0px -45% 0px' });
+  unitBlocksForSpy.forEach(b => localSpy2.observe(b));
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meccanismo · 6 · Cosa significa "Large"</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0F2A22;
+    --surface: #173B30;
+    --surface-2: #1E4A3C;
+    --copper: #C97D3D;
+    --copper-bright: #F0A85E;
+    --text: #F2ECE0;
+    --text-dim: #A9BFB6;
+    --line: rgba(242,236,224,0.12);
+    --rail-w: 300px;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Source Serif 4', Georgia, serif;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,h2,h3, .display{
+    font-family: 'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+  .mono{ font-family: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace; }
+  a{ color: var(--copper-bright); }
+
+  /* ---------- layout shell: sidebar fissa con indice del sito ---------- */
+  .sidebar{
+    background: rgba(15,42,34,0.92);
+    border-bottom: 1px solid var(--line);
+    padding: 28px 24px 32px;
+  }
+  .sidebar-kicker{
+    font-family: 'IBM Plex Mono', monospace; font-size: .74rem; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px;
+  }
+  .sidebar-title{
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.02rem;
+    color: var(--text); margin-bottom: 22px;
+  }
+  .sidebar .parte{ margin-top: 26px; }
+  .sidebar .parte:first-of-type{ margin-top: 0; }
+  .sidebar .parte-heading{
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: .74rem;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--copper-bright);
+    padding-bottom: 10px; margin-bottom: 2px; border-bottom: 1px solid var(--line);
+  }
+  .sidebar .voce-semplice{
+    display: block; padding: 10px 4px; border-bottom: 1px solid var(--line);
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem;
+    color: var(--text); text-decoration: none;
+  }
+  .sidebar .voce-semplice:hover{ color: var(--copper-bright); }
+  .sidebar .voce-semplice.current{ color: var(--copper-bright); }
+  .sidebar details.modulo{ border-bottom: 1px solid var(--line); }
+  .sidebar details.modulo summary{
+    display: flex; align-items: center; gap: 8px; padding: 10px 4px; cursor: pointer;
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem; color: var(--text);
+    list-style: none;
+  }
+  .sidebar details.modulo summary.current{ color: var(--copper-bright); }
+  .sidebar details.modulo summary::-webkit-details-marker{ display: none; }
+  .sidebar details.modulo summary::before{
+    content: "›"; display: inline-block; font-family: 'IBM Plex Mono', monospace;
+    color: var(--text-dim); transition: transform .15s ease; flex-shrink: 0;
+  }
+  .sidebar details.modulo[open] summary::before{ transform: rotate(90deg); color: var(--copper-bright); }
+  .sidebar details.modulo summary:hover{ color: var(--copper-bright); }
+  .sidebar .unita-list{ padding: 2px 0 12px 22px; display: flex; flex-direction: column; gap: 1px; }
+  .sidebar .unita-list a{
+    display: block; padding: 6px 4px; font-size: .82rem; color: var(--text-dim); text-decoration: none;
+  }
+  .sidebar .unita-list a:hover{ color: var(--copper-bright); }
+  .sidebar .unita-list a .num{ color: var(--copper); margin-right: 6px; font-family: 'IBM Plex Mono', monospace; font-size: .74rem; }
+
+  /* pallini luminosi di scroll-spy, sulle voci dell'unità corrente */
+  .sidebar .unita-list.scrollspy a{ position: relative; padding-left: 20px; }
+  .sidebar .unita-list.scrollspy a::before{
+    content: "";
+    position: absolute; left: 2px; top: 50%;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--surface-2); border: 1px solid var(--line);
+    transform: translateY(-50%);
+    transition: background .25s, box-shadow .25s, transform .25s;
+  }
+  .sidebar .unita-list.scrollspy a.active{ color: var(--copper-bright); }
+  .sidebar .unita-list.scrollspy a.active::before{
+    background: var(--copper-bright);
+    box-shadow: 0 0 0 4px rgba(240,168,94,0.18);
+    transform: translateY(-50%) scale(1.2);
+  }
+
+  main{ padding-top: 0; }
+
+  @media (min-width: 900px){
+    .sidebar{
+      position: fixed; z-index: 50; top:0; bottom:0; left:0; width: var(--rail-w);
+      overflow-y: auto; border-bottom:none; border-right: 1px solid var(--line);
+    }
+    main{ padding-left: var(--rail-w); }
+  }
+
+  .wrap{ max-width: 740px; margin: 0 auto; padding: 0 24px; }
+
+  .unit-block section{ padding: 92px 0 84px; border-bottom: 1px solid var(--line); }
+  .unit-block:last-child section:last-of-type{ border-bottom:none; }
+
+  .eyebrow{
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--copper-bright);
+    margin-bottom: 14px; display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{ content:""; width: 22px; height:1px; background: var(--copper-bright); display:inline-block; }
+
+  h2.title{ font-size: clamp(1.6rem, 4vw, 2.3rem); margin-bottom: 20px; }
+
+  p{ margin: 0 0 18px; color: var(--text); font-size: 1.05rem; }
+  p.dim{ color: var(--text-dim); }
+  .lede{ font-size: 1.15rem; color: var(--text); }
+
+  .reveal{ opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.visible{ opacity:1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce){
+    .reveal{ transition: opacity .2s linear; transform:none; }
+    *{ scroll-behavior: auto !important; }
+  }
+
+  .aside{
+    margin: 26px 0; padding: 18px 20px; background: var(--surface);
+    border-left: 3px solid var(--copper); border-radius: 2px;
+  }
+  .aside .label{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--copper-bright); margin-bottom: 8px; display:block;
+  }
+  .aside p{ margin-bottom:0; font-size: 0.96rem; color: var(--text-dim); }
+
+  .question{
+    margin: 28px 0; padding: 20px 22px; border: 1px dashed var(--line); border-radius: 4px;
+    font-family: 'Space Grotesk', sans-serif; font-size: 1.0rem; color: var(--copper-bright);
+  }
+
+  blockquote{
+    margin: 0; padding-left: 22px; border-left: 2px solid var(--copper);
+    font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; color: var(--text);
+  }
+
+  /* ---------- hero ---------- */
+  .hero{ padding-top: 62px; }
+  .hero .kicker{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.8rem; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--text-dim); margin-bottom: 18px;
+  }
+  .hero h1{ font-size: clamp(1.9rem, 5.6vw, 2.9rem); line-height:1.12; margin-bottom: 24px; }
+  .hero h1 em{ font-style: normal; color: var(--copper-bright); }
+  .scrolldown{
+    margin-top: 50px; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem;
+    color: var(--text-dim); letter-spacing: 0.08em; text-transform: uppercase;
+    display:flex; align-items:center; gap:8px;
+  }
+  .scrolldown::after{ content:"↓"; color: var(--copper-bright); animation: nudge 1.8s infinite ease-in-out; }
+  @media (prefers-reduced-motion: reduce){ .scrolldown::after{ animation:none; } }
+  @keyframes nudge{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(5px); } }
+
+  /* ---------- widget: elementi condivisi ---------- */
+  .ptitle{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--copper-bright); margin-bottom: 14px; display:block;
+  }
+
+  /* ---------- widget: slider log-scala (6.1) ---------- */
+  .scale-widget{
+    margin: 30px 0; background: var(--surface); border: 1px solid var(--line);
+    border-radius: 10px; padding: 24px 26px;
+  }
+  .scale-slider{ width:100%; margin: 4px 0 6px; accent-color: var(--copper-bright); }
+  .scale-readout{
+    font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; color: var(--copper-bright);
+    margin: 16px 0 28px;
+  }
+  .scale-readout .nearest{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.76rem; color: var(--text-dim);
+    display:block; margin-top: 6px; letter-spacing: 0.01em;
+  }
+  .scale-track{ position: relative; height: 34px; margin-top: 4px; }
+  .scale-marker{
+    position:absolute; top:0; transform: translateX(-50%); text-align:center;
+    display:flex; flex-direction:column; align-items:center; gap:5px; width: 96px;
+  }
+  .scale-marker .dot{ width:7px; height:7px; border-radius:50%; background: var(--copper-bright); }
+  .scale-marker .lbl{
+    font-family:'IBM Plex Mono', monospace; font-size:0.62rem; color: var(--text-dim);
+    letter-spacing:0.01em; line-height: 1.3;
+  }
+
+  /* ---------- widget: grafico capacità emergenti (6.2) ---------- */
+  .emergent-widget{
+    margin: 30px 0; background: var(--surface); border: 1px solid var(--line);
+    border-radius: 10px; padding: 24px 26px;
+  }
+  .emergent-chart{ width:100%; height:auto; display:block; }
+  .emergent-chart .axis-label{ font-family:'IBM Plex Mono', monospace; font-size: 10px; fill: var(--text-dim); }
+  .emergent-chart .curve{ fill:none; stroke: var(--copper-bright); stroke-width: 2.5; }
+  .emergent-chart .point{ fill: var(--copper-bright); }
+  .emergent-chart .soglia-band{ fill: var(--copper); opacity: 0.2; }
+  .emergent-chart .soglia-label{
+    font-family:'IBM Plex Mono', monospace; font-size: 10px; fill: var(--copper-bright);
+    text-transform:uppercase; letter-spacing:0.05em;
+  }
+  .emergent-caption{ margin-top: 14px; font-size: 0.86rem; color: var(--text-dim); margin-bottom:0; }
+
+  /* ---------- timeline (riusata verbatim da genealogia-1-disputa.html) ---------- */
+  .timeline{
+    position: relative; margin: 32px 0 8px; padding-left: 30px;
+    border-left: 2px solid var(--line);
+  }
+  .tl-node{ position: relative; padding-bottom: 32px; }
+  .tl-node:last-child{ padding-bottom: 0; }
+  .tl-node::before{
+    content:""; position:absolute; left:-37px; top:3px;
+    width: 12px; height:12px; border-radius:50%;
+    background: var(--copper-bright);
+    box-shadow: 0 0 0 3px var(--bg), 0 0 0 4px var(--line);
+  }
+  .tl-node.tl-break::before{
+    background: var(--bg);
+    border: 2px solid var(--copper-bright);
+  }
+  .tl-tag{
+    display:inline-block; font-family:'IBM Plex Mono', monospace; font-size: 0.66rem;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--copper-bright);
+    border: 1px solid var(--copper); border-radius: 3px; padding: 2px 8px; margin-bottom: 8px;
+  }
+  .tl-date{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.76rem; letter-spacing:0.06em;
+    text-transform: uppercase; color: var(--copper-bright); margin-bottom: 6px;
+  }
+  .tl-title{
+    font-family:'Space Grotesk', sans-serif; font-size: 1.02rem; color: var(--text); margin-bottom: 6px;
+  }
+  .tl-desc{ font-size: 0.94rem; color: var(--text-dim); margin: 0; }
+
+  /* ---------- widget: toggle prima/dopo (6.4, 6.5) ---------- */
+  .tuning-toggle{
+    margin: 30px 0; background: var(--surface); border: 1px solid var(--line);
+    border-radius: 10px; padding: 24px 26px;
+  }
+  .tt-prompt{
+    font-size: 0.94rem; color: var(--copper-bright); margin-bottom: 16px;
+  }
+  .tt-switch{ display:flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tt-btn{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.76rem; color: var(--text-dim);
+    background: var(--bg); border: 1px solid var(--line); border-radius: 20px;
+    padding: 7px 16px; cursor: pointer; transition: color .2s, border-color .2s, background .2s;
+  }
+  .tt-btn.active{ color: var(--copper-bright); border-color: var(--copper); background: var(--surface-2); }
+  .tt-response{
+    font-size: 1.0rem; color: var(--text); padding: 14px 16px; background: var(--bg);
+    border-radius: 6px; border: 1px solid var(--line); transition: opacity .18s ease; min-height: 1.6em;
+  }
+  .tt-note{ margin-top: 12px; font-size: 0.86rem; }
+
+  /* ---------- widget: barra di quantizzazione (6.6) ---------- */
+  .quant-widget{
+    margin: 30px 0; background: var(--surface); border: 1px solid var(--line);
+    border-radius: 10px; padding: 24px 26px;
+  }
+  .quant-bar{
+    height: 44px; background: var(--bg); border: 1px solid var(--line); border-radius: 8px;
+    overflow: hidden; display:flex; padding: 5px; gap: 0;
+  }
+  .quant-fill{
+    flex:1; display:flex; gap: 3px;
+    background: linear-gradient(90deg, var(--copper), var(--copper-bright));
+    border-radius: 4px;
+  }
+  .quant-fill.segmented{ background: none; }
+  .quant-block{
+    background: linear-gradient(90deg, var(--copper), var(--copper-bright));
+    border-radius: 3px; transition: all .3s ease;
+  }
+  .quant-levels{ display:flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+  .quant-level-btn{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.76rem; color: var(--text-dim);
+    background: var(--bg); border: 1px solid var(--line); border-radius: 20px;
+    padding: 7px 16px; cursor: pointer; transition: color .2s, border-color .2s, background .2s;
+  }
+  .quant-level-btn.active{ color: var(--copper-bright); border-color: var(--copper); background: var(--surface-2); }
+  .quant-detail{ margin-top: 14px; font-size: 0.9rem; }
+
+  /* ---------- chiusura ---------- */
+  .chiusura{ background: linear-gradient(180deg, var(--bg), var(--surface)); }
+  .footer-note{
+    margin-top: 46px; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem; color: var(--text-dim);
+  }
+</style>
+</head>
+<body>
+
+<nav class="sidebar" aria-label="Indice del saggio">
+  <div class="sidebar-kicker">Indice</div>
+  <div class="sidebar-title">Dal bit alle entità semantiche</div>
+
+  <div class="parte">
+    <details class="modulo">
+      <summary>Presentazione — Dal bit alle entità semantiche</summary>
+      <div class="unita-list">
+        <a href="presentazione.html#parte-1"><span class="num">1</span>Framework epistemologico: i limiti che condividiamo con le macchine</a>
+        <a href="presentazione.html#parte-2"><span class="num">2</span>Il dominio: struttura e composizione del saggio interattivo</a>
+        <a href="presentazione.html#parte-3"><span class="num">3</span>La lente semantica</a>
+      </div>
+    </details>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Parte I — Fondamenti</div>
+    <a class="voce-semplice" href="fondamenti-1-funzioni-booleane.html">1. Funzioni booleane</a>
+    <a class="voce-semplice" href="fondamenti-2-hardware-software.html">2. Hardware e software</a>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Parte II — Genealogia</div>
+
+    <details class="modulo">
+      <summary>1. Tre ore di disputa senza esito</summary>
+      <div class="unita-list">
+        <a href="genealogia-1-disputa.html#unit-a1"><span class="num">1.1</span>Dalla characteristica universalis alla pura ideografia</a>
+        <a href="genealogia-1-disputa.html#unit-a2"><span class="num">1.2</span>Gödel, Turing, Lucas</a>
+        <a href="genealogia-1-disputa.html#unit-a3"><span class="num">1.3</span>Il perceptron e la disgiunzione esclusiva (XOR)</a>
+        <a href="genealogia-1-disputa.html#unit-a4"><span class="num">1.4</span>Dai sistemi esperti alle macchine statistiche</a>
+        <a href="genealogia-1-disputa.html#unit-a5"><span class="num">1.5</span>Re, donna, regina</a>
+        <a href="genealogia-1-disputa.html#unit-a6"><span class="num">1.6</span>L'attenzione sostituisce la memoria</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>2. Il fenomeno e i suoi limiti</summary>
+      <div class="unita-list">
+        <a href="genealogia-2-limiti.html#unit-b1"><span class="num">2.1</span>Completamento statistico a scala massiva, in-context learning, transfer cross-dominio e altre capacità emergenti</a>
+        <a href="genealogia-2-limiti.html#unit-b2"><span class="num">2.2</span>Interpolazione, pesi statistici, metacognizione</a>
+        <a href="genealogia-2-limiti.html#unit-b3"><span class="num">2.3</span>Grounding, ragionamento causale, generalizzazione composizionale, cortocircuito dell'apprendimento</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>3. Perché ci vuole un villaggio</summary>
+      <div class="unita-list">
+        <a href="genealogia-3-villaggio.html#unit-c1"><span class="num">3.1</span>Il problema del significato</a>
+        <a href="genealogia-3-villaggio.html#unit-c2"><span class="num">3.2</span>Il problema della causalità</a>
+        <a href="genealogia-3-villaggio.html#unit-c3"><span class="num">3.3</span>Il problema biologico</a>
+        <a href="genealogia-3-villaggio.html#unit-c4"><span class="num">3.4</span>Il problema della coscienza</a>
+        <a href="genealogia-3-villaggio.html#unit-c5"><span class="num">3.5</span>Cosa siamo, per contrasto</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>4. Lo spazio, il corpo, la macchina</summary>
+      <div class="unita-list">
+        <a href="genealogia-4-corpo.html#unit-d1"><span class="num">4.1</span>Cos'è lo spazio? Il corpo come strumento di misura</a>
+        <a href="genealogia-4-corpo.html#unit-d2"><span class="num">4.2</span>Il corpo mancante</a>
+      </div>
+    </details>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Parte III — Meccanismo</div>
+
+    <details class="modulo">
+      <summary>1. Il testo come dato</summary>
+      <div class="unita-list">
+        <a href="meccanismo-1-testo-come-dato.html#unit-u1"><span class="num">1.1</span>Encoding</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u2"><span class="num">1.2</span>Tokenizzazione</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u3"><span class="num">1.3</span>Problema del vocabolario</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u4"><span class="num">1.4</span>Dagli ID al punto più discreto</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u5"><span class="num">1.5</span>Gödel</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>2. Probabilità e linguaggio</summary>
+      <div class="unita-list">
+        <a href="meccanismo-2-probabilita.html#unit-u1"><span class="num">2.1</span>Prevedere la parola successiva</a>
+        <a href="meccanismo-2-probabilita.html#unit-u2"><span class="num">2.2</span>Unigrammi/bigrammi, induzione, calibrazione</a>
+        <a href="meccanismo-2-probabilita.html#unit-u3"><span class="num">2.3</span>N-grammi e assunzione di Markov</a>
+        <a href="meccanismo-2-probabilita.html#unit-u4"><span class="num">2.4</span>Sparsità e dipendenze lontane</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>3. Parole come punti nello spazio</summary>
+      <div class="unita-list">
+        <a href="meccanismo-3-embedding.html#unit-u1"><span class="num">3.1</span>Il problema lasciato aperto</a>
+        <a href="meccanismo-3-embedding.html#unit-u2"><span class="num">3.2</span>Le parole come vettori (embedding)</a>
+        <a href="meccanismo-3-embedding.html#unit-u3"><span class="num">3.3</span>L'ipotesi distribuzionale</a>
+        <a href="meccanismo-3-embedding.html#unit-u4"><span class="num">3.4</span>L'aritmetica vettoriale</a>
+        <a href="meccanismo-3-embedding.html#unit-u5"><span class="num">3.5</span>Polisemia ed embedding statico</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>4. Reti neurali</summary>
+      <div class="unita-list">
+        <a href="meccanismo-4-reti-neurali.html#unit-u1"><span class="num">4.1</span>Dal neurone biologico al neurone artificiale</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u2"><span class="num">4.2</span>Il perceptron e XOR</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u3"><span class="num">4.3</span>Strati e profondità</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u4"><span class="num">4.4</span>La funzione di perdita</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u5"><span class="num">4.5</span>Il gradiente e la backpropagation</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>5. Il Transformer</summary>
+      <div class="unita-list">
+        <a href="meccanismo-5-transformer.html#unit-u1"><span class="num">5.1</span>Il problema che l'attenzione risolve</a>
+        <a href="meccanismo-5-transformer.html#unit-u2"><span class="num">5.2</span>L'idea dell'attention</a>
+        <a href="meccanismo-5-transformer.html#unit-u3"><span class="num">5.3</span>Query, Key, Value</a>
+        <a href="meccanismo-5-transformer.html#unit-u4"><span class="num">5.4</span>Embedding contestuale</a>
+        <a href="meccanismo-5-transformer.html#unit-u5"><span class="num">5.5</span>Multi-head e posizione</a>
+        <a href="meccanismo-5-transformer.html#unit-u6"><span class="num">5.6</span>Parallelismo e scala</a>
+      </div>
+    </details>
+
+    <details class="modulo" open>
+      <summary class="current">6. Cosa significa "Large"</summary>
+      <div class="unita-list scrollspy" id="local-scrollspy">
+        <a href="#unit-u1" data-spy-target="unit-u1"><span class="num">6.1</span>Scala</a>
+        <a href="#unit-u2" data-spy-target="unit-u2"><span class="num">6.2</span>Capacità emergenti</a>
+        <a href="#unit-u3" data-spy-target="unit-u3"><span class="num">6.3</span>I dati</a>
+        <a href="#unit-u4" data-spy-target="unit-u4"><span class="num">6.4</span>Fine-tuning</a>
+        <a href="#unit-u5" data-spy-target="unit-u5"><span class="num">6.5</span>RLHF</a>
+        <a href="#unit-u6" data-spy-target="unit-u6"><span class="num">6.6</span>Quantizzazione (chiusura dell'arco tecnico)</a>
+      </div>
+    </details>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Appendice</div>
+
+    <details class="modulo">
+      <summary>Dietro i widget</summary>
+      <div class="unita-list">
+        <a href="dietro-i-widget.html#unit-u1"><span class="num">A.1</span>Il tokenizzatore (Meccanismo · 1)</a>
+        <a href="dietro-i-widget.html#unit-u2"><span class="num">A.2</span>Il predittore n-grammi (Meccanismo · 2)</a>
+        <a href="dietro-i-widget.html#unit-u3"><span class="num">A.3</span>La mappa embedding (Meccanismo · 3)</a>
+        <a href="dietro-i-widget.html#unit-u4"><span class="num">A.4</span>Neurone, XOR, superficie di perdita (Meccanismo · 4)</a>
+        <a href="dietro-i-widget.html#unit-u5"><span class="num">A.5</span>L'attention (Meccanismo · 5)</a>
+        <a href="dietro-i-widget.html#unit-u6"><span class="num">A.6</span>Scala e capacità (Meccanismo · 6)</a>
+      </div>
+    </details>
+  </div>
+</nav>
+
+<main>
+
+<div class="unit-block" id="unit-u1" data-unit="u1">
+
+  <section id="u1-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Meccanismo · 6 · Cosa significa "Large" · Unità 6.1</div>
+      <h1>Quanto è <em>davvero grande</em> un modello linguistico?</h1>
+      <p class="lede dim">Il nome stesso — Large Language Model — mette la grandezza al centro. Ma «grande» è un aggettivo vago finché non lo si confronta con qualcosa. Questa unità non chiede di memorizzare cifre: chiede di sentirne l'ordine di grandezza, prendendo come primo termine di paragone l'oggetto più grande già noto — il cervello di chi legge questa frase.</p>
+      <div class="scrolldown">numeri che si misurano in miliardi, non in memoria</div>
+    </div>
+  </section>
+
+  <section id="u1-sez-scala">
+    <div class="wrap reveal">
+      <div class="eyebrow">Tre assi di grandezza</div>
+      <h2 class="title">Parametri, dati, calcolo</h2>
+      <p>«Large» in «Large Language Model» non è un'etichetta di marketing: indica una scelta tecnica precisa, misurabile lungo almeno tre assi diversi, spesso confusi tra loro. Il primo è il numero di <strong>parametri</strong>: i pesi continui — le «manopole» regolabili che l'addestramento aggiusta una per una — più sono, più capacità di rappresentare pattern complessi, ma anche più memoria e più calcolo richiesti. Il secondo è il volume dei <strong>dati di addestramento</strong>: quanto testo il modello ha visto prima di essere pronto. Il terzo è il <strong>costo computazionale</strong>: quanta potenza di calcolo — GPU, energia, tempo — è servita per arrivare a quel risultato. I tre assi crescono insieme, ma non sono la stessa cosa.</p>
+
+      <p>GPT-3 (Brown et al., 2020) esiste in otto varianti di dimensione, dalla più piccola con 125 milioni di parametri fino alla versione completa con 175 miliardi, addestrata su 570 gigabyte di testo. PaLM (Chowdhery et al., Google, 2022) arriva a 540 miliardi di parametri, addestrato su 780 miliardi di token. Sono cifre storiche, non le più recenti possibili — scelte deliberatamente perché stabili e verificabili nel tempo, non perché siano il record del momento: il punto pedagogico è l'ordine di grandezza, non la cronaca dell'ultimo modello uscito.</p>
+
+      <p>Lo slider qui sotto copre uno spazio enorme — da centinaia di milioni a mille miliardi — su una scala <em>logaritmica</em>: l'unico modo per far stare, in uno stesso spazio visivo, grandezze così diverse tra loro. Muovendolo, confronti il valore corrente con i punti di ancoraggio reali appena visti, più un quarto termine di paragone: il cervello umano.</p>
+
+      <div class="scale-widget">
+        <span class="ptitle">Esplora la scala</span>
+        <input type="range" class="scale-slider" id="scale-slider" min="0" max="1000" step="1" value="500" aria-label="Scala logaritmica di grandezza, da 100 milioni a mille miliardi">
+        <div class="scale-track" id="scale-track"></div>
+        <div class="scale-readout" id="scale-readout"></div>
+      </div>
+
+      <p class="dim">Il cervello umano ha circa 86 miliardi di neuroni (Herculano-Houzel, 2009) — un numero che si confronta, nell'ordine di grandezza, con i modelli più grandi di questa generazione. In Genealogia · 3.3 era già stato introdotto l'altro lato del confronto: circa 20 Watt contro i megawatt richiesti per addestrare un modello di queste dimensioni, un divario di efficienza di sei ordini di grandezza.</p>
+
+      <div class="aside">
+        <span class="label">Da tenere a mente</span>
+        <p>Un neurone biologico non è un parametro artificiale: il primo è collegato a migliaia di altri tramite sinapsi, il secondo è un singolo numero. Il confronto appena fatto è un ordine di grandezza indicativo, non un'equivalenza diretta.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="u1-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">La scala è reale, ma non spiega tutto da sola</h2>
+      <p>Questi numeri sono reali e verificabili, non aneddotici. Ma la domanda pedagogicamente più interessante non è quanto un modello sia grande — è cosa succede, di preciso, quando si supera una certa soglia di grandezza: se compaiano capacità che a scale inferiori semplicemente non c'erano. È la domanda dell'unità successiva.</p>
+    </div>
+  </section>
+
+  <section id="u1-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura — Unità 6.1</div>
+      <blockquote>
+        Un modello da 175 miliardi di parametri non è «cento volte più intelligente» di uno da 1,75 miliardi. È solo, per ora, l'unico modo disponibile per scoprire cosa la scala, da sola, può o non può produrre.
+      </blockquote>
+      <p style="margin-top:28px;">Nell'unità successiva: che cosa accade quando la quantità sembra trasformarsi in qualità — le cosiddette capacità emergenti, e perché il dibattito su che cosa siano davvero resta aperto.</p>
+
+      <div class="footer-note">Meccanismo · 6 — Cosa significa "Large" · Unità 6.1 — Quanto è grande? Numeri che danno la scala</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="unit-block" id="unit-u2" data-unit="u2">
+
+  <section id="u2-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Meccanismo · 6 · Cosa significa "Large" · Unità 6.2</div>
+      <h1>Quando la quantità sembra diventare <em>qualità</em></h1>
+      <p class="lede dim">In Genealogia · 2.1 era già stato nominato, senza svilupparlo: un modello linguistico può acquisire capacità che sembrano comparire dal nulla, senza che nessuno le abbia programmate direttamente.</p>
+      <div class="scrolldown">una soglia, non una rampa</div>
+    </div>
+  </section>
+
+  <section id="u2-sez-emergenza">
+    <div class="wrap reveal">
+      <div class="eyebrow">Una soglia, non una rampa</div>
+      <h2 class="title">Capacità che restano piatte, poi saltano</h2>
+      <p>Alcune capacità — l'aritmetica a più cifre, il ragionamento a più passi — non migliorano gradualmente al crescere della scala del modello. Restano vicine allo zero fino a una certa soglia di parametri o dati, poi appaiono in modo quasi discontinuo, come se una soglia fosse stata superata. Il termine tecnico per questo fenomeno, coniato da Wei e colleghi (2022), è «capacità emergenti».</p>
+
+      <p>Il grafico qui sotto illustra il tipo di andamento descritto in letteratura per un compito come l'aritmetica a più cifre: piatto per la maggior parte della scala, poi un salto rapido oltre una certa soglia.</p>
+
+      <div class="emergent-widget">
+        <span class="ptitle">Capacità emergenti — curva illustrativa</span>
+        <div id="emergent-chart-container"></div>
+        <p class="emergent-caption">Curva illustrativa — non dati misurati di un paper specifico. Origine del framing: Wei et al., "Emergent Abilities of Large Language Models", TMLR 2022 (arXiv:2206.07682).</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="u2-sez-dibattito">
+    <div class="wrap reveal">
+      <div class="eyebrow">Un dibattito aperto</div>
+      <h2 class="title">Salto reale, o artefatto della metrica?</h2>
+      <p>Non tutti concordano che il salto sia un fenomeno reale nel senso in cui sembra a prima vista. Alcuni lavori (Schaeffer, Miranda, Koyejo, 2023) sostengono che parte dell'«emergenza» osservata sia un artefatto delle metriche usate per misurare la performance — metriche discontinue (tutto giusto o niente) che nascondono un miglioramento in realtà graduale, mascherato solo dal modo in cui viene contato.</p>
+
+      <div class="question">Il salto è una proprietà del modello, o un effetto di come scegliamo di misurarlo? Questo corso non lo risolve — resta un programma di ricerca attivo, non una conclusione già scritta.</div>
+    </div>
+  </section>
+
+  <section id="u2-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">Un fenomeno osservato, un meccanismo dibattuto</h2>
+      <p>La scala produce, in alcuni casi, comportamenti che nessuno ha programmato direttamente componente per componente. Se questo richieda un vero salto qualitativo, o sia in parte un artefatto di come misuriamo, resta onestamente senza risposta definitiva — tenerlo aperto è più onesto che chiuderlo per comodità narrativa. Ma quella scala, comunque la si legga, ha bisogno di qualcosa da cui imparare: da dove viene tutto quel testo?</p>
+    </div>
+  </section>
+
+  <section id="u2-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura — Unità 6.2</div>
+      <blockquote>
+        Una soglia che sposta la domanda in avanti, non che la chiude: sappiamo che qualcosa cambia, non ancora con certezza perché.
+      </blockquote>
+      <p style="margin-top:28px;">Nell'unità successiva: da dove viene tutto il testo con cui questi modelli vengono addestrati — un arco che comincia molto prima di qualunque computer.</p>
+
+      <div class="footer-note">Meccanismo · 6 — Cosa significa "Large" · Unità 6.2 — Capacità emergenti: quando la quantità diventa qualità</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="unit-block" id="unit-u3" data-unit="u3">
+
+  <section id="u3-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Meccanismo · 6 · Cosa significa "Large" · Unità 6.3</div>
+      <h1>Da dove viene <em>tutto questo testo</em>?</h1>
+      <p class="lede dim">Nell'Unità 1.1 era stata piantata una tesi: la discretizzazione del linguaggio non nasce col computer, nasce con la scrittura, tremila anni fa. Il testo di addestramento di un LLM non è un fatto isolato — è l'ultimo, più grande, anello di quello stesso arco.</p>
+      <div class="scrolldown">un arco che comincia molto prima di qualunque computer</div>
+    </div>
+  </section>
+
+  <section id="u3-sez-arco-storico">
+    <div class="wrap reveal">
+      <div class="eyebrow">Un arco di tremila anni</div>
+      <h2 class="title">Dall'alfabeto ai corpora di addestramento</h2>
+      <p>L'alfabeto è il primo grande atto di discretizzazione della storia umana — trasforma il continuo del parlato in simboli finiti e ricombinabili, senza che esistesse ancora una parola per nominare l'operazione. Il concetto diventa consapevole solo nel Novecento, con von Neumann. Diventa esplicito e industriale solo con i grandi progetti di digitalizzazione di massa delle biblioteche, all'inizio degli anni 2000. Il testo con cui si addestra un LLM oggi è, in questo senso, l'ultimo anello — non il primo — di un arco molto più lungo.</p>
+
+      <div class="timeline" id="timeline-6-3"></div>
+    </div>
+  </section>
+
+  <section id="u3-sez-collegamento">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il filo verso il Meccanismo · 5</div>
+      <h2 class="title">Una profezia in prosa, poi una tecnica esatta</h2>
+      <p>I progetti di digitalizzazione di massa dei primi anni 2000 promettevano, in termini allora quasi utopistici, qualcosa come «ogni parola connessa a ogni altra, in un solo tessuto». Era una metafora, non una tecnica — nessuno sapeva ancora come realizzarla meccanicamente. In Meccanismo · 5 è mostrato come quella stessa idea — ogni parola in relazione con ogni altra — diventi, tramite l'attention, una descrizione tecnica precisa e calcolabile, non più solo una promessa. La profezia ingenua di un'epoca diventa la meccanica esatta di un'altra.</p>
+
+      <div class="aside">
+        <span class="label">Un accenno da tenere a mente</span>
+        <p>I dati con cui un modello viene addestrato determinano in parte che cosa il modello «sa» e come lo sa — collegandosi a «conoscenza compressa nei pesi», già vista in Genealogia · 2.2. Non è un dettaglio tecnico neutro: è la materia prima di tutto ciò che segue.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="u3-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">Quantità e qualità restano in tensione</h2>
+      <p>Più testo non significa automaticamente un modello migliore in ogni senso: la qualità, la varietà, i pregiudizi impliciti in quel testo si trasferiscono al modello tanto quanto la sua quantità. L'idea che l'informazione sul mondo possa, in gran parte, sostituire il mondo — anche quando lo fa in modo parziale o errato — precede l'intelligenza artificiale di secoli.</p>
+    </div>
+  </section>
+
+  <section id="u3-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura — Unità 6.3</div>
+      <blockquote>
+        <em>Veritas filia temporis</em> — la verità è figlia del tempo, diceva Bacone. <em>Error filius temporis</em>, ribatteva Bayle secoli dopo — anche l'errore lo è. Un modello addestrato su tutto il testo che l'umanità ha scritto eredita entrambe le filiazioni, senza poterle sempre distinguere.
+      </blockquote>
+      <p style="margin-top:28px;">Nell'unità successiva: cosa succede dopo che tutto questo testo ha già fatto il suo lavoro — quando un modello di base, puro predittore statistico, viene adattato per rispondere davvero.</p>
+
+      <div class="footer-note">Meccanismo · 6 — Cosa significa "Large" · Unità 6.3 — Dati: da dove viene tutto questo testo</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="unit-block" id="unit-u4" data-unit="u4">
+
+  <section id="u4-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Meccanismo · 6 · Cosa significa "Large" · Unità 6.4</div>
+      <h1>Un predittore statistico non è ancora <em>un assistente</em></h1>
+      <p class="lede dim">Tutto quello che questo corso ha descritto finora — token, probabilità, embedding, attention, scala — produce, alla fine del pre-addestramento, un oggetto preciso: un modello che predice bene la parola successiva. Non è ancora, per questo, qualcosa che risponde a una domanda.</p>
+      <div class="scrolldown">dal completare frasi al seguire istruzioni</div>
+    </div>
+  </section>
+
+  <section id="u4-sez-base">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il modello di base</div>
+      <h2 class="title">Un predittore, senza comportamento intrinseco</h2>
+      <p>Il pre-addestramento — tutto ciò che questo corso ha descritto finora — produce un <strong>modello di base</strong>: un predittore statistico puro, addestrato solo a stimare quale token venga dopo un altro in un testo enorme. Non ha, per costruzione, alcun comportamento conversazionale intrinseco. Di fronte a un prompt che assomiglia a un'istruzione, il modello di base non «capisce» di dover eseguire un compito — continua semplicemente il pattern superficiale del testo che ha di fronte, qualunque esso sia.</p>
+    </div>
+  </section>
+
+  <section id="u4-sez-finetuning">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il fine-tuning</div>
+      <h2 class="title">Adattare il comportamento, con dati più piccoli e curati</h2>
+      <p>Il <strong>fine-tuning</strong> prende quel modello di base e lo addestra ulteriormente su un insieme di dati molto più piccolo e curato — spesso esempi scritti apposta di istruzione e risposta corretta — per orientarlo verso un comportamento specifico: seguire istruzioni, rispondere in un certo stile, invece di limitarsi a continuare un pattern testuale. Il fenomeno è reale e documentato (Ouyang et al., 2022, il lavoro che introduce InstructGPT). Confronti le due risposte allo stesso identico prompt.</p>
+
+      <div class="tuning-toggle" id="tuning-widget-64">
+        <span class="ptitle">Stesso prompt, due modelli</span>
+        <div class="tt-prompt mono"></div>
+        <div class="tt-switch">
+          <button class="tt-btn active" data-mode="base">Modello di base</button>
+          <button class="tt-btn" data-mode="tuned">Fine-tuned</button>
+        </div>
+        <div class="tt-response"></div>
+        <div class="tt-note dim"></div>
+      </div>
+
+      <p class="dim">Il modello di base non «sbaglia» in senso generico: continua un pattern testuale plausibile — una lista di richieste simili — perché non ha alcun motivo, per costruzione, di trattare quella frase come un'istruzione da eseguire piuttosto che come l'inizio di un elenco.</p>
+    </div>
+  </section>
+
+  <section id="u4-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">Il fine-tuning cambia il comportamento, non solo i fatti</h2>
+      <p>Il modello di base e quello fine-tuned condividono, in larga parte, la stessa conoscenza appresa nel pre-addestramento — cambia soprattutto come quella conoscenza viene messa in forma di risposta. Ma da dove viene, esattamente, il segnale che orienta questo cambiamento di comportamento? È la domanda dell'unità successiva.</p>
+    </div>
+  </section>
+
+  <section id="u4-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura — Unità 6.4</div>
+      <blockquote>
+        Lo stesso identico modello, gli stessi pesi appresi — solo orientati, dopo, verso un comportamento diverso da quello con cui erano nati.
+      </blockquote>
+      <p style="margin-top:28px;">Nell'unità successiva: come le preferenze umane, non solo i fatti, diventano un segnale di addestramento — e da dove viene davvero la «personalità» di un assistente conversazionale.</p>
+
+      <div class="footer-note">Meccanismo · 6 — Cosa significa "Large" · Unità 6.4 — Dal modello di base al modello che risponde: il fine-tuning</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="unit-block" id="unit-u5" data-unit="u5">
+
+  <section id="u5-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Meccanismo · 6 · Cosa significa "Large" · Unità 6.5</div>
+      <h1>Insegnare le <em>preferenze</em>, non solo i fatti</h1>
+      <p class="lede dim">Il fine-tuning dell'unità precedente adatta il modello a seguire istruzioni. Ma la «personalità» di un assistente conversazionale — quanto è disponibile, come si esprime, quando si rifiuta di rispondere — viene soprattutto da un passo ulteriore: l'RLHF, l'apprendimento per rinforzo da feedback umano.</p>
+      <div class="scrolldown">valutazioni umane trasformate in segnale di addestramento</div>
+    </div>
+  </section>
+
+  <section id="u5-sez-rlhf">
+    <div class="wrap reveal">
+      <div class="eyebrow">Dalle preferenze umane a un segnale di addestramento</div>
+      <h2 class="title">Come si insegna una preferenza a un modello</h2>
+      <p>Nell'RLHF (<em>Reinforcement Learning from Human Feedback</em>), a valutatori umani vengono mostrate più risposte possibili a uno stesso prompt, e viene chiesto di ordinarle dalla migliore alla peggiore. Queste classifiche addestrano un secondo modello — un modello di ricompensa — a stimare quanto una risposta sarebbe piaciuta a un valutatore umano. Il modello principale viene poi ulteriormente addestrato, con tecniche di apprendimento per rinforzo, a produrre risposte che quel modello di ricompensa valuta più alte. Lo stesso identico confronto già visto in 6.4 — modello di base contro modello adattato — mostra anche l'effetto di questa fase: non solo l'istruzione viene eseguita, ma il tono e la forma della risposta riflettono ciò che i valutatori umani hanno premiato.</p>
+
+      <div class="tuning-toggle" id="tuning-widget-65">
+        <span class="ptitle">Lo stesso confronto, letto attraverso le preferenze</span>
+        <div class="tt-prompt mono"></div>
+        <div class="tt-switch">
+          <button class="tt-btn active" data-mode="base">Prima dell'RLHF</button>
+          <button class="tt-btn" data-mode="tuned">Dopo l'RLHF</button>
+        </div>
+        <div class="tt-response"></div>
+        <div class="tt-note dim"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="u5-sez-personalita">
+    <div class="wrap reveal">
+      <div class="eyebrow">Personalità addestrata</div>
+      <h2 class="title">Non solo cosa risponde — anche come</h2>
+      <p>Punto pedagogico centrale di questa unità: la disponibilità, il tono, persino i rifiuti di un assistente conversazionale vengono soprattutto da questa fase — non dal semplice predire-la-parola-successiva del pre-addestramento. Si ricollega a quanto già visto in Genealogia · 2.2 su «cosa simulano di saper fare» i modelli linguistici: anche l'aria di comportamento intenzionale, premuroso o cauto di un assistente è, in parte, un comportamento addestrato — non una proprietà che emerge da sola dal semplice fatto di essere grande.</p>
+    </div>
+  </section>
+
+  <section id="u5-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">Anche l'intenzionalità apparente è, in parte, addestrata</h2>
+      <p>Fine-tuning e RLHF insieme spiegano perché due modelli con gli stessi identici pesi di pre-addestramento possano comportarsi in modo molto diverso: uno segue pattern testuali, l'altro segue preferenze umane esplicitamente insegnate. Resta un'ultima domanda, che chiude l'intero arco tecnico del corso: quei pesi, per quanto adattati e riadattati, restano comunque numeri continui — cosa succede quando anche questi vengono, di nuovo, resi discreti?</p>
+    </div>
+  </section>
+
+  <section id="u5-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura — Unità 6.5</div>
+      <blockquote>
+        Non solo cosa un modello sa dire, ma come ha imparato a volerlo dire in un certo modo — anche questo si può insegnare, un giudizio umano alla volta.
+      </blockquote>
+      <p style="margin-top:28px;">Nell'ultima unità del corso: che cosa accade quando anche i pesi, continui per tutto il percorso di addestramento, vengono deliberatamente ridiscretizzati — e la domanda, mai davvero risolta, su che cosa venga prima tra discreto e continuo.</p>
+
+      <div class="footer-note">Meccanismo · 6 — Cosa significa "Large" · Unità 6.5 — RLHF: insegnare le preferenze, non solo i fatti</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="unit-block" id="unit-u6" data-unit="u6">
+
+  <section id="u6-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Meccanismo · 6 · Cosa significa "Large" · Unità 6.6</div>
+      <h1>Il computer non capiva niente. <em>Ancora non capisce niente.</em></h1>
+      <p class="lede dim">Il corso è cominciato da qui, in Fondamenti · 1: sotto ogni livello di sofisticazione, un computer resta un insieme di interruttori discreti, acceso o spento, uno o zero. Questa unità chiude l'intero arco tecnico dei Moduli 1-6 ritornando, di proposito, esattamente a quel punto di partenza.</p>
+      <div class="scrolldown">l'ultimo ritorno al discreto, e una domanda mai chiusa</div>
+    </div>
+  </section>
+
+  <section id="u6-sez-quantizzazione">
+    <div class="wrap reveal">
+      <div class="eyebrow">Tornare al discreto, di proposito</div>
+      <h2 class="title">La quantizzazione</h2>
+      <p>Durante l'addestramento, i pesi di un modello sono numeri continui ad alta precisione — tipicamente a 32 bit (FP32). Una volta addestrato, per il deployment — far girare il modello in pratica, su hardware con memoria ed energia limitate — questi pesi vengono spesso compressi riducendo deliberatamente la precisione numerica con cui sono rappresentati. È un ritorno, per scelta ingegneristica esplicita, verso il discreto: meno valori distinti possibili, meno memoria, meno energia, a fronte di una perdita di precisione che si cerca di mantenere il più possibile trascurabile.</p>
+
+      <div class="quant-widget">
+        <span class="ptitle">Da continuo a discreto: livelli reali di quantizzazione</span>
+        <div class="quant-bar" id="quant-bar"><div class="quant-fill" id="quant-fill"></div></div>
+        <div class="quant-levels" id="quant-levels"></div>
+        <div class="quant-detail dim" id="quant-detail"></div>
+      </div>
+
+      <p class="dim">FP32 e FP16/BF16 sono gli standard più comuni in addestramento; INT8 e INT4 sono i livelli tipici di compressione per il deployment su hardware con risorse più limitate — INT4, in particolare, è il compromesso più estremo, usato da strumenti come llama.cpp per far girare modelli anche su un singolo computer di fascia consumer.</p>
+    </div>
+  </section>
+
+  <section id="u6-sez-domanda-finale">
+    <div class="wrap reveal">
+      <div class="eyebrow">La domanda finale del corso</div>
+      <h2 class="title">Cosa viene prima: il discreto, o il continuo?</h2>
+      <p>Tutto il corso, da 1.1 in avanti, ha trattato il discreto — i transistor, i bit, gli interruttori — come il livello fisico di base, e il continuo — la probabilità, gli embedding, i pesi di una rete — come qualcosa che <em>emerge</em> sopra di esso, quando la scala è sufficiente. È la lettura implicita in tutto ciò che questo corso ha raccontato finora.</p>
+
+      <p>Ma esiste una lettura opposta, altrettanto seria: che il continuo sia ciò che viene prima, primitivo — e che il discreto sia solo un modo di <em>misurarlo</em> o <em>ritagliarlo</em>, un «derivato» del continuo, non il suo fondamento. Nella geometria differenziale sintetica di William Lawvere, ad esempio, il continuo è preso come nozione primitiva e il discreto ne è, in un senso tecnico preciso, un caso derivato — non il contrario. In questa lettura, la quantizzazione appena vista non sarebbe affatto un «ritorno» al discreto fondamentale: sarebbe solo un altro modo, tra i tanti possibili, di ritagliare qualcosa che resta comunque, alla radice, continuo.</p>
+
+      <div class="question">Il discreto è il fondamento e il continuo un suo effetto di scala — o è il contrario? Questo corso non prende posizione. Le lascia entrambe sul tavolo, come le altre domande aperte già incontrate lungo il percorso.</div>
+    </div>
+  </section>
+
+  <section id="u6-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">Il cerchio si chiude</h2>
+      <p>Tutto è cominciato dagli interruttori, in Fondamenti · 1. Tutto finisce qui, in Meccanismo · 6, tornando deliberatamente a un'altra forma dello stesso principio: comprimere, discretizzare, ridurre — per ragioni di efficienza che il cervello umano, con i suoi 86 miliardi di neuroni e i suoi 20 Watt, risolve già da solo, senza aver mai avuto bisogno di un passaggio esplicito di quantizzazione. L'intero arco tecnico di questo corso, dal primo carattere digitato in 1.1 fino a questo punto, si richiude su se stesso.</p>
+    </div>
+  </section>
+
+  <section id="u6-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura — Meccanismo · 6 e dell'intero arco tecnico (Moduli 1-6)</div>
+      <blockquote>
+        Un computer non ha mai capito niente — non all'inizio di questo corso, non alla fine. Ha imparato, però, a maneggiare una quantità di continuo sufficiente a produrre qualcosa che, da fuori, assomiglia sempre di più alla comprensione. Se questo basti a chiamarlo comprensione resta, onestamente, una domanda aperta — non diversa, nella sua struttura, da quella con cui questo modulo si chiude.
+      </blockquote>
+
+      <div class="footer-note">Meccanismo · 6 — Cosa significa "Large" · Unità 6.6 — Chiusura del filo discreto/continuo: la quantizzazione · Fine dell'arco tecnico Moduli 1-6</div>
+    </div>
+  </section>
+
+</div>
+
+</main>
+
+<script>
+  // ============ dati incorporati (scala, Meccanismo · 6 unità 6.1) ============
+  const SCALA_DATA = {"punti_di_ancoraggio": [
+    {"nome": "Cervello umano", "tipo": "neuroni biologici", "valore": 86000000000, "valore_leggibile": "86 miliardi", "fonte": "Herculano-Houzel 2009"},
+    {"nome": "GPT-3 (variante piu' piccola)", "tipo": "parametri", "valore": 125000000, "valore_leggibile": "125 milioni", "fonte": "Brown et al. 2020"},
+    {"nome": "GPT-3 (variante completa)", "tipo": "parametri", "valore": 175000000000, "valore_leggibile": "175 miliardi", "fonte": "Brown et al. 2020"},
+    {"nome": "PaLM", "tipo": "parametri", "valore": 540000000000, "fonte": "Chowdhery et al. 2022 (Google)", "valore_leggibile": "540 miliardi"}
+  ]};
+
+  // ============ reveal on scroll ============
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => io.observe(el));
+
+  // ============ scroll-spy sulla sidebar ============
+  const spyLinks = document.querySelectorAll('#local-scrollspy a[data-spy-target]');
+  const unitBlocksForSpy = document.querySelectorAll('.unit-block');
+  const localSpy2 = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        spyLinks.forEach(a => a.classList.toggle('active', a.dataset.spyTarget === e.target.id));
+      }
+    });
+  }, { threshold: 0, rootMargin: '-45% 0px -45% 0px' });
+  unitBlocksForSpy.forEach(b => localSpy2.observe(b));
+
+  // ============ widget: slider log-scala (6.1) ============
+  const LOG_MIN = Math.log10(1e8);
+  const LOG_MAX = Math.log10(1e12);
+
+  function sliderToValue(pos){
+    const t = pos / 1000;
+    return Math.pow(10, LOG_MIN + t * (LOG_MAX - LOG_MIN));
+  }
+  function valueToSliderPos(value){
+    const t = (Math.log10(value) - LOG_MIN) / (LOG_MAX - LOG_MIN);
+    return Math.round(t * 1000);
+  }
+  function formatValue(v){
+    let num, unit;
+    if(v >= 1e9){ num = v / 1e9; unit = 'miliardi'; }
+    else { num = v / 1e6; unit = 'milioni'; }
+    const decimals = num < 10 ? 1 : 0;
+    return num.toFixed(decimals).replace('.', ',') + ' ' + unit;
+  }
+  function nearestPoint(v){
+    let best = null, bestDist = Infinity;
+    SCALA_DATA.punti_di_ancoraggio.forEach(p => {
+      const d = Math.abs(Math.log10(v) - Math.log10(p.valore));
+      if(d < bestDist){ bestDist = d; best = p; }
+    });
+    return best;
+  }
+
+  const scaleSlider = document.getElementById('scale-slider');
+  const scaleReadout = document.getElementById('scale-readout');
+  const scaleTrack = document.getElementById('scale-track');
+
+  function updateScaleWidget(){
+    const pos = Number(scaleSlider.value);
+    const val = sliderToValue(pos);
+    const near = nearestPoint(val);
+    scaleReadout.innerHTML = `≈ ${formatValue(val)}<span class="nearest">più vicino a: ${near.nome.replace("piu'", 'più')} — ${near.valore_leggibile} ${near.tipo} (${near.fonte})</span>`;
+  }
+  scaleSlider.addEventListener('input', updateScaleWidget);
+  updateScaleWidget();
+
+  function renderScaleMarkers(){
+    scaleTrack.innerHTML = SCALA_DATA.punti_di_ancoraggio.map(p => {
+      const pos = valueToSliderPos(p.valore);
+      const pct = Math.min(97, Math.max(3, pos / 10));
+      return `<div class="scale-marker" style="left:${pct}%"><div class="dot"></div><div class="lbl">${p.nome.replace("piu'", 'più')}</div></div>`;
+    }).join('');
+  }
+  renderScaleMarkers();
+
+  // ============ widget: grafico capacità emergenti (6.2) ============
+  const EMERGENTI_DATA = {"punti": [
+    {"scala_parametri": 100000000.0, "accuratezza": 0.02},
+    {"scala_parametri": 1000000000.0, "accuratezza": 0.03},
+    {"scala_parametri": 10000000000.0, "accuratezza": 0.05},
+    {"scala_parametri": 30000000000.0, "accuratezza": 0.08},
+    {"scala_parametri": 70000000000.0, "accuratezza": 0.15},
+    {"scala_parametri": 130000000000.0, "accuratezza": 0.42},
+    {"scala_parametri": 175000000000.0, "accuratezza": 0.68},
+    {"scala_parametri": 540000000000.0, "accuratezza": 0.81}
+  ]};
+  const SOGLIA_EMERGENTI = [7e10, 1.3e11]; // dalla nota di capacita_emergenti_modulo6.json
+
+  const SUP_DIGITS = {8:'⁸', 9:'⁹', 10:'¹⁰', 11:'¹¹', 12:'¹²'};
+
+  function renderEmergentChart(){
+    const W = 640, H = 300, padL = 40, padR = 20, padT = 30, padB = 40;
+    const pts = EMERGENTI_DATA.punti;
+    const xs = pts.map(p => Math.log10(p.scala_parametri));
+    const xMin = xs[0], xMax = xs[xs.length - 1];
+    const yMin = 0, yMax = 1;
+
+    const xScale = x => padL + (x - xMin) / (xMax - xMin) * (W - padL - padR);
+    const yScale = y => (H - padB) - (y - yMin) / (yMax - yMin) * (H - padT - padB);
+
+    const coords = pts.map(p => [xScale(Math.log10(p.scala_parametri)), yScale(p.accuratezza)]);
+    const pathD = coords.map((c, i) => (i === 0 ? 'M' : 'L') + c[0].toFixed(1) + ',' + c[1].toFixed(1)).join(' ');
+    const circles = coords.map(c => `<circle class="point" cx="${c[0].toFixed(1)}" cy="${c[1].toFixed(1)}" r="4"></circle>`).join('');
+
+    const soglX1 = xScale(Math.log10(SOGLIA_EMERGENTI[0]));
+    const soglX2 = xScale(Math.log10(SOGLIA_EMERGENTI[1]));
+
+    const tickPowers = [8, 9, 10, 11, 12];
+    const ticks = tickPowers.map(p => {
+      const x = xScale(p);
+      return `<line x1="${x.toFixed(1)}" y1="${H - padB}" x2="${x.toFixed(1)}" y2="${H - padB + 5}" stroke="var(--line)"></line>
+        <text class="axis-label" x="${x.toFixed(1)}" y="${H - padB + 18}" text-anchor="middle">10${SUP_DIGITS[p]}</text>`;
+    }).join('');
+
+    const svg = `<svg class="emergent-chart" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+      <rect class="soglia-band" x="${soglX1.toFixed(1)}" y="${padT}" width="${(soglX2 - soglX1).toFixed(1)}" height="${H - padT - padB}"></rect>
+      <text class="soglia-label" x="${((soglX1 + soglX2) / 2).toFixed(1)}" y="${padT - 8}" text-anchor="middle">soglia (illustrativa)</text>
+      <line x1="${padL}" y1="${padT}" x2="${padL}" y2="${H - padB}" stroke="var(--line)"></line>
+      <line x1="${padL}" y1="${H - padB}" x2="${W - padR}" y2="${H - padB}" stroke="var(--line)"></line>
+      ${ticks}
+      <text class="axis-label" x="10" y="${(yScale(1) + 4).toFixed(1)}">1.0</text>
+      <text class="axis-label" x="10" y="${(yScale(0) + 4).toFixed(1)}">0.0</text>
+      <text class="axis-label" x="${(padL + (W - padL - padR) / 2).toFixed(1)}" y="${H - 4}" text-anchor="middle">parametri del modello (scala log)</text>
+      <path class="curve" d="${pathD}"></path>
+      ${circles}
+    </svg>`;
+    document.getElementById('emergent-chart-container').innerHTML = svg;
+  }
+  renderEmergentChart();
+
+  // ============ widget: timeline (6.3) ============
+  const TIMELINE_DATA = [
+    {"tag": "SCRITTURA", "data": "ca. XI–X secolo a.C.", "titolo": "L'alfabeto fenicio", "descrizione": "Il primo grande atto di discretizzazione della storia umana: il continuo del parlato trasformato in un insieme finito di simboli discreti e ricombinabili - senza che esistesse ancora una parola per nominare l'operazione."},
+    {"tag": "CONSAPEVOLEZZA", "data": "1958", "titolo": "Von Neumann — The Computer and the Brain", "descrizione": "Il concetto di 'digitalizzazione' diventa consapevole: un libro che mette a confronto esplicitamente il computer e il cervello, la stessa domanda affrontata meccanicamente in Meccanismo · 4."},
+    {"tag": "ESPLICITAZIONE", "data": "14 dicembre 2004", "titolo": "Google annuncia il Google Books Library Project", "descrizione": "Accordi con cinque biblioteche di ricerca (Michigan, Harvard, Stanford, Oxford, New York Public Library) per digitalizzare milioni di libri - la digitalizzazione diventa esplicita e industriale su scala."},
+    {"tag": "OGGI", "data": "2018–oggi", "titolo": "I corpora di addestramento degli LLM", "descrizione": "L'ultimo, più grande, anello dello stesso arco: testo raccolto su scala ancora maggiore per addestrare i modelli linguistici di questo corso."}
+  ];
+
+  function renderTimeline(containerId){
+    document.getElementById(containerId).innerHTML = TIMELINE_DATA.map(v =>
+      `<div class="tl-node">
+        <span class="tl-tag">${v.tag}</span>
+        <div class="tl-date">${v.data}</div>
+        <div class="tl-title">${v.titolo}</div>
+        <p class="tl-desc">${v.descrizione}</p>
+      </div>`
+    ).join('');
+  }
+  renderTimeline('timeline-6-3');
+
+  // ============ widget: toggle prima/dopo (6.4, 6.5) ============
+  const TUNING_DATA = {
+    "prompt": "Spiegami come funziona la fotosintesi.",
+    "risposta_base": "Spiegami come funziona la respirazione cellulare. Spiegami come funziona il ciclo dell'acqua. Spiegami come funziona la gravità.",
+    "nota_base": "Il modello di base continua il pattern superficiale della frase (una lista di richieste 'Spiegami come funziona X') invece di riconoscerla come un'istruzione da eseguire - comportamento reale e documentato, non un modello che 'funziona male' in senso generico.",
+    "risposta_tuned": "La fotosintesi è il processo con cui le piante usano la luce solare per trasformare acqua e anidride carbonica in zucchero (energia chimica) e ossigeno. Avviene principalmente nelle foglie, grazie alla clorofilla che cattura la luce.",
+    "nota_tuned": "Dopo fine-tuning e RLHF, il modello riconosce l'istruzione e risponde direttamente - questo comportamento è il risultato di una fase di addestramento ulteriore, non del semplice pre-addestramento predici-il-token-successivo."
+  };
+
+  function initTuningWidget(containerId){
+    const root = document.getElementById(containerId);
+    const promptEl = root.querySelector('.tt-prompt');
+    const responseEl = root.querySelector('.tt-response');
+    const noteEl = root.querySelector('.tt-note');
+    const btns = root.querySelectorAll('.tt-btn');
+    promptEl.textContent = TUNING_DATA.prompt;
+    function render(mode){
+      responseEl.style.opacity = 0;
+      setTimeout(() => {
+        responseEl.textContent = mode === 'base' ? TUNING_DATA.risposta_base : TUNING_DATA.risposta_tuned;
+        noteEl.textContent = mode === 'base' ? TUNING_DATA.nota_base : TUNING_DATA.nota_tuned;
+        responseEl.style.opacity = 1;
+      }, 120);
+      btns.forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+    }
+    btns.forEach(b => b.addEventListener('click', () => render(b.dataset.mode)));
+    render('base');
+  }
+  initTuningWidget('tuning-widget-64');
+  initTuningWidget('tuning-widget-65');
+
+  // ============ widget: barra di quantizzazione (6.6) ============
+  const QUANT_DATA = [
+    {"nome": "FP32", "bit": 32, "uso_reale": "Precisione standard storica per l'addestramento (piena precisione in virgola mobile a 32 bit)."},
+    {"nome": "FP16 / BF16", "bit": 16, "uso_reale": "Precisione mista, oggi la più comune in addestramento - dimezza la memoria rispetto a FP32 con perdita di precisione minima per la maggior parte dei task."},
+    {"nome": "INT8", "bit": 8, "uso_reale": "Livello comune di quantizzazione per il deployment (inferenza) - riduce ulteriormente memoria ed energia."},
+    {"nome": "INT4", "bit": 4, "uso_reale": "Quantizzazione aggressiva per deployment su hardware con risorse limitate (es. strumenti come llama.cpp) - il compromesso più estremo tra dimensione e qualità."}
+  ];
+  // Segmenti visivi solo per i livelli effettivamente quantizzati (16/8/4 bit) - non è il bit-width
+  // letterale, solo una scala decrescente per la leggibilità: meno bit, blocchi più grandi. FP32 non
+  // compare qui: viene sempre reso come barra unica continua (nessuna divisione), a rappresentare
+  // lo stato "non ancora quantizzato" indipendentemente da questa mappa.
+  const BIT_TO_SEGMENTS = { 16: 12, 8: 6, 4: 3 };
+
+  let quantIdx = 0;
+
+  function renderQuantLevels(){
+    document.getElementById('quant-levels').innerHTML = QUANT_DATA.map((lvl, i) =>
+      `<button class="quant-level-btn${i === quantIdx ? ' active' : ''}" data-idx="${i}">${lvl.nome}</button>`
+    ).join('');
+    document.querySelectorAll('.quant-level-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        quantIdx = Number(btn.dataset.idx);
+        renderQuantLevels();
+        renderQuantBar();
+        renderQuantDetail();
+      });
+    });
+  }
+
+  function renderQuantBar(){
+    const level = QUANT_DATA[quantIdx];
+    const fillEl = document.getElementById('quant-fill');
+    if(level.bit === 32){
+      fillEl.classList.remove('segmented');
+      fillEl.innerHTML = '';
+    } else {
+      const segments = BIT_TO_SEGMENTS[level.bit];
+      fillEl.classList.add('segmented');
+      fillEl.innerHTML = Array.from({length: segments}, () => `<div class="quant-block" style="flex:1"></div>`).join('');
+    }
+  }
+
+  function renderQuantDetail(){
+    const level = QUANT_DATA[quantIdx];
+    document.getElementById('quant-detail').textContent = `${level.nome} — ${level.bit} bit: ${level.uso_reale}`;
+  }
+
+  renderQuantLevels();
+  renderQuantBar();
+  renderQuantDetail();
+</script>
+
+</body>
+</html>

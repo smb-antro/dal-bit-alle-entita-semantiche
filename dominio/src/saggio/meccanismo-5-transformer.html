@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meccanismo · 5 · Il Transformer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0F2A22;
+    --surface: #173B30;
+    --surface-2: #1E4A3C;
+    --copper: #C97D3D;
+    --copper-bright: #F0A85E;
+    --text: #F2ECE0;
+    --text-dim: #A9BFB6;
+    --line: rgba(242,236,224,0.12);
+    --rail-w: 300px;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Source Serif 4', Georgia, serif;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,h2,h3, .display{
+    font-family: 'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+  .mono{ font-family: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace; }
+  a{ color: var(--copper-bright); }
+
+  /* ---------- layout shell: sidebar fissa con indice del sito ---------- */
+  .sidebar{
+    background: rgba(15,42,34,0.92);
+    border-bottom: 1px solid var(--line);
+    padding: 28px 24px 32px;
+  }
+  .sidebar-kicker{
+    font-family: 'IBM Plex Mono', monospace; font-size: .74rem; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px;
+  }
+  .sidebar-title{
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.02rem;
+    color: var(--text); margin-bottom: 22px;
+  }
+  .sidebar .parte{ margin-top: 26px; }
+  .sidebar .parte:first-of-type{ margin-top: 0; }
+  .sidebar .parte-heading{
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: .74rem;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--copper-bright);
+    padding-bottom: 10px; margin-bottom: 2px; border-bottom: 1px solid var(--line);
+  }
+  .sidebar .voce-semplice{
+    display: block; padding: 10px 4px; border-bottom: 1px solid var(--line);
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem;
+    color: var(--text); text-decoration: none;
+  }
+  .sidebar .voce-semplice:hover{ color: var(--copper-bright); }
+  .sidebar .voce-semplice.current{ color: var(--copper-bright); }
+  .sidebar details.modulo{ border-bottom: 1px solid var(--line); }
+  .sidebar details.modulo summary{
+    display: flex; align-items: center; gap: 8px; padding: 10px 4px; cursor: pointer;
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem; color: var(--text);
+    list-style: none;
+  }
+  .sidebar details.modulo summary.current{ color: var(--copper-bright); }
+  .sidebar details.modulo summary::-webkit-details-marker{ display: none; }
+  .sidebar details.modulo summary::before{
+    content: "›"; display: inline-block; font-family: 'IBM Plex Mono', monospace;
+    color: var(--text-dim); transition: transform .15s ease; flex-shrink: 0;
+  }
+  .sidebar details.modulo[open] summary::before{ transform: rotate(90deg); color: var(--copper-bright); }
+  .sidebar details.modulo summary:hover{ color: var(--copper-bright); }
+  .sidebar .unita-list{ padding: 2px 0 12px 22px; display: flex; flex-direction: column; gap: 1px; }
+  .sidebar .unita-list a{
+    display: block; padding: 6px 4px; font-size: .82rem; color: var(--text-dim); text-decoration: none;
+  }
+  .sidebar .unita-list a:hover{ color: var(--copper-bright); }
+  .sidebar .unita-list a .num{ color: var(--copper); margin-right: 6px; font-family: 'IBM Plex Mono', monospace; font-size: .74rem; }
+
+  /* pallini luminosi di scroll-spy, sulle voci dell'unità corrente */
+  .sidebar .unita-list.scrollspy a{ position: relative; padding-left: 20px; }
+  .sidebar .unita-list.scrollspy a::before{
+    content: "";
+    position: absolute; left: 2px; top: 50%;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--surface-2); border: 1px solid var(--line);
+    transform: translateY(-50%);
+    transition: background .25s, box-shadow .25s, transform .25s;
+  }
+  .sidebar .unita-list.scrollspy a.active{ color: var(--copper-bright); }
+  .sidebar .unita-list.scrollspy a.active::before{
+    background: var(--copper-bright);
+    box-shadow: 0 0 0 4px rgba(240,168,94,0.18);
+    transform: translateY(-50%) scale(1.2);
+  }
+
+  main{ padding-top: 0; }
+
+  @media (min-width: 900px){
+    .sidebar{
+      position: fixed; z-index: 50; top:0; bottom:0; left:0; width: var(--rail-w);
+      overflow-y: auto; border-bottom:none; border-right: 1px solid var(--line);
+    }
+    main{ padding-left: var(--rail-w); }
+  }
+
+  .wrap{ max-width: 740px; margin: 0 auto; padding: 0 24px; }
+
+  .unit-block section{ padding: 92px 0 84px; border-bottom: 1px solid var(--line); }
+  .unit-block:last-child section:last-of-type{ border-bottom:none; }
+
+  .eyebrow{
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--copper-bright);
+    margin-bottom: 14px; display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{ content:""; width: 22px; height:1px; background: var(--copper-bright); display:inline-block; }
+
+  h2.title{ font-size: clamp(1.6rem, 4vw, 2.3rem); margin-bottom: 20px; }
+
+  p{ margin: 0 0 18px; color: var(--text); font-size: 1.05rem; }
+  p.dim{ color: var(--text-dim); }
+  .lede{ font-size: 1.15rem; color: var(--text); }
+
+  .reveal{ opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.visible{ opacity:1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce){
+    .reveal{ transition: opacity .2s linear; transform:none; }
+    *{ scroll-behavior: auto !important; }
+  }
+
+  .aside{
+    margin: 26px 0; padding: 18px 20px; background: var(--surface);
+    border-left: 3px solid var(--copper); border-radius: 2px;
+  }
+  .aside .label{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--copper-bright); margin-bottom: 8px; display:block;
+  }
+  .aside p{ margin-bottom:0; font-size: 0.96rem; color: var(--text-dim); }
+
+  .question{
+    margin: 28px 0; padding: 20px 22px; border: 1px dashed var(--line); border-radius: 4px;
+    font-family: 'Space Grotesk', sans-serif; font-size: 1.0rem; color: var(--copper-bright);
+  }
+
+  blockquote{
+    margin: 0; padding-left: 22px; border-left: 2px solid var(--copper);
+    font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; color: var(--text);
+  }
+
+  /* ---------- hero ---------- */
+  .hero{ padding-top: 62px; }
+  .hero .kicker{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.8rem; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--text-dim); margin-bottom: 18px;
+  }
+  .hero h1{ font-size: clamp(1.9rem, 5.6vw, 2.9rem); line-height:1.12; margin-bottom: 24px; }
+  .hero h1 em{ font-style: normal; color: var(--copper-bright); }
+  .scrolldown{
+    margin-top: 50px; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem;
+    color: var(--text-dim); letter-spacing: 0.08em; text-transform: uppercase;
+    display:flex; align-items:center; gap:8px;
+  }
+  .scrolldown::after{ content:"↓"; color: var(--copper-bright); animation: nudge 1.8s infinite ease-in-out; }
+  @media (prefers-reduced-motion: reduce){ .scrolldown::after{ animation:none; } }
+  @keyframes nudge{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(5px); } }
+
+  /* ---------- contenitore generico dei widget ---------- */
+  .playground{
+    margin: 30px 0; background: var(--surface); border: 1px solid var(--line);
+    border-radius: 10px; padding: 24px 26px;
+  }
+  .playground .ptitle{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--copper-bright); margin-bottom: 14px; display:block;
+  }
+
+  /* ---------- widget: frase cliccabile con attention ---------- */
+  .at-wrap{ position: relative; padding-top: 96px; }
+  .at-svg{ position:absolute; left:0; top:0; pointer-events:none; overflow: visible; }
+  .at-chips{ position: relative; display:flex; flex-wrap: wrap; gap: 8px; }
+  .at-chip{
+    font-family: 'Space Grotesk', sans-serif; font-size: 1.0rem; color: var(--text);
+    background: var(--bg); border: 1px solid var(--line); border-radius: 6px;
+    padding: 8px 12px; cursor: pointer;
+    transition: border-color .2s, background .2s, color .2s;
+  }
+  .at-chip:hover{ border-color: var(--copper); }
+  .at-chip.active{ border-color: var(--copper-bright); color: var(--copper-bright); background: var(--surface-2); }
+  .at-wrap.locked .at-chip{ cursor: default; }
+  .at-weight{ font-family:'IBM Plex Mono', monospace; font-size: 10px; fill: var(--copper-bright); }
+  .at-hint{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.78rem; color: var(--text-dim);
+    margin: 14px 0 0; min-height: 1.3em;
+  }
+  .at-tabs{ display:flex; flex-wrap:wrap; gap: 8px; margin-bottom: 18px; }
+  .at-tab{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.74rem; letter-spacing: 0.04em;
+    color: var(--text-dim); background: transparent;
+    border: 1px solid var(--line); border-radius: 20px; padding: 6px 14px;
+    cursor: pointer; transition: color .2s, border-color .2s, background .2s;
+  }
+  .at-tab:hover{ border-color: var(--copper); }
+  .at-tab.active{ color: var(--copper-bright); border-color: var(--copper); background: var(--surface-2); }
+  .at-caption{ margin-top: 16px; font-size: 0.92rem; color: var(--text-dim); }
+
+  /* ---------- widget 5.4: contesto + mini-mappa ---------- */
+  .ctx-grid{ display:grid; grid-template-columns: 1fr; gap: 26px; margin-top: 6px; }
+  @media (min-width: 900px){
+    .ctx-grid{ grid-template-columns: 3fr 2fr; align-items: start; }
+  }
+  .ctx-pane-label{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px;
+  }
+  .mm-svg{
+    display:block; width:100%; height:auto;
+    background: var(--bg); border: 1px solid var(--line); border-radius: 8px;
+  }
+  .mm-label{ font-family:'IBM Plex Mono', monospace; font-size: 9px; fill: var(--text-dim); }
+  .mm-label.accent{ fill: var(--copper-bright); }
+  .mm-calcio{ transition: transform .45s ease; }
+  @media (prefers-reduced-motion: reduce){ .mm-calcio{ transition: none; } }
+
+  /* ---------- widget 5.5: codifica di posizione ---------- */
+  .pos-chips{ display:flex; flex-wrap: wrap; gap: 14px; padding-top: 10px; }
+  .pos-chip{
+    position: relative;
+    font-family: 'Space Grotesk', sans-serif; font-size: 1.0rem; color: var(--text);
+    background: var(--bg); border: 1px solid var(--line); border-radius: 6px;
+    padding: 8px 12px;
+  }
+  .pos-badge{
+    position:absolute; top: -9px; right: -9px; width: 19px; height: 19px;
+    display:flex; align-items:center; justify-content:center;
+    background: var(--copper); color: var(--bg); border-radius: 50%;
+    font-family:'IBM Plex Mono', monospace; font-size: 0.62rem; font-weight: 600;
+  }
+  .pos-btns{ display:flex; flex-wrap:wrap; gap: 10px; margin-top: 22px; }
+  .w-btn{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.82rem; color: var(--bg);
+    background: var(--copper-bright); border: none; border-radius: 6px;
+    padding: 10px 18px; cursor: pointer; font-weight: 600;
+  }
+  .w-btn:hover{ background: var(--copper); }
+  .w-btn.ghost{
+    background: transparent; color: var(--copper-bright);
+    border: 1px solid var(--copper);
+  }
+  .w-btn.ghost:hover{ background: var(--surface-2); }
+
+  /* ---------- chiusura ---------- */
+  .chiusura{ background: linear-gradient(180deg, var(--bg), var(--surface)); }
+  .footer-note{
+    margin-top: 46px; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem; color: var(--text-dim);
+  }
+</style>
+</head>
+<body>
+
+<nav class="sidebar" aria-label="Indice del saggio">
+  <div class="sidebar-kicker">Indice</div>
+  <div class="sidebar-title">Dal bit alle entità semantiche</div>
+
+  <div class="parte">
+    <details class="modulo">
+      <summary>Presentazione — Dal bit alle entità semantiche</summary>
+      <div class="unita-list">
+        <a href="presentazione.html#parte-1"><span class="num">1</span>Framework epistemologico: i limiti che condividiamo con le macchine</a>
+        <a href="presentazione.html#parte-2"><span class="num">2</span>Il dominio: struttura e composizione del saggio interattivo</a>
+        <a href="presentazione.html#parte-3"><span class="num">3</span>La lente semantica</a>
+      </div>
+    </details>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Parte I — Fondamenti</div>
+    <a class="voce-semplice" href="fondamenti-1-funzioni-booleane.html">1. Funzioni booleane</a>
+    <a class="voce-semplice" href="fondamenti-2-hardware-software.html">2. Hardware e software</a>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Parte II — Genealogia</div>
+
+    <details class="modulo">
+      <summary>1. Tre ore di disputa senza esito</summary>
+      <div class="unita-list">
+        <a href="genealogia-1-disputa.html#unit-a1"><span class="num">1.1</span>Dalla characteristica universalis alla pura ideografia</a>
+        <a href="genealogia-1-disputa.html#unit-a2"><span class="num">1.2</span>Gödel, Turing, Lucas</a>
+        <a href="genealogia-1-disputa.html#unit-a3"><span class="num">1.3</span>Il perceptron e la disgiunzione esclusiva (XOR)</a>
+        <a href="genealogia-1-disputa.html#unit-a4"><span class="num">1.4</span>Dai sistemi esperti alle macchine statistiche</a>
+        <a href="genealogia-1-disputa.html#unit-a5"><span class="num">1.5</span>Re, donna, regina</a>
+        <a href="genealogia-1-disputa.html#unit-a6"><span class="num">1.6</span>L'attenzione sostituisce la memoria</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>2. Il fenomeno e i suoi limiti</summary>
+      <div class="unita-list">
+        <a href="genealogia-2-limiti.html#unit-b1"><span class="num">2.1</span>Completamento statistico a scala massiva, in-context learning, transfer cross-dominio e altre capacità emergenti</a>
+        <a href="genealogia-2-limiti.html#unit-b2"><span class="num">2.2</span>Interpolazione, pesi statistici, metacognizione</a>
+        <a href="genealogia-2-limiti.html#unit-b3"><span class="num">2.3</span>Grounding, ragionamento causale, generalizzazione composizionale, cortocircuito dell'apprendimento</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>3. Perché ci vuole un villaggio</summary>
+      <div class="unita-list">
+        <a href="genealogia-3-villaggio.html#unit-c1"><span class="num">3.1</span>Il problema del significato</a>
+        <a href="genealogia-3-villaggio.html#unit-c2"><span class="num">3.2</span>Il problema della causalità</a>
+        <a href="genealogia-3-villaggio.html#unit-c3"><span class="num">3.3</span>Il problema biologico</a>
+        <a href="genealogia-3-villaggio.html#unit-c4"><span class="num">3.4</span>Il problema della coscienza</a>
+        <a href="genealogia-3-villaggio.html#unit-c5"><span class="num">3.5</span>Cosa siamo, per contrasto</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>4. Lo spazio, il corpo, la macchina</summary>
+      <div class="unita-list">
+        <a href="genealogia-4-corpo.html#unit-d1"><span class="num">4.1</span>Cos'è lo spazio? Il corpo come strumento di misura</a>
+        <a href="genealogia-4-corpo.html#unit-d2"><span class="num">4.2</span>Il corpo mancante</a>
+      </div>
+    </details>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Parte III — Meccanismo</div>
+
+    <details class="modulo">
+      <summary>1. Il testo come dato</summary>
+      <div class="unita-list">
+        <a href="meccanismo-1-testo-come-dato.html#unit-u1"><span class="num">1.1</span>Encoding</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u2"><span class="num">1.2</span>Tokenizzazione</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u3"><span class="num">1.3</span>Problema del vocabolario</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u4"><span class="num">1.4</span>Dagli ID al punto più discreto</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u5"><span class="num">1.5</span>Gödel</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>2. Probabilità e linguaggio</summary>
+      <div class="unita-list">
+        <a href="meccanismo-2-probabilita.html#unit-u1"><span class="num">2.1</span>Prevedere la parola successiva</a>
+        <a href="meccanismo-2-probabilita.html#unit-u2"><span class="num">2.2</span>Unigrammi/bigrammi, induzione, calibrazione</a>
+        <a href="meccanismo-2-probabilita.html#unit-u3"><span class="num">2.3</span>N-grammi e assunzione di Markov</a>
+        <a href="meccanismo-2-probabilita.html#unit-u4"><span class="num">2.4</span>Sparsità e dipendenze lontane</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>3. Parole come punti nello spazio</summary>
+      <div class="unita-list">
+        <a href="meccanismo-3-embedding.html#unit-u1"><span class="num">3.1</span>Il problema lasciato aperto</a>
+        <a href="meccanismo-3-embedding.html#unit-u2"><span class="num">3.2</span>Le parole come vettori (embedding)</a>
+        <a href="meccanismo-3-embedding.html#unit-u3"><span class="num">3.3</span>L'ipotesi distribuzionale</a>
+        <a href="meccanismo-3-embedding.html#unit-u4"><span class="num">3.4</span>L'aritmetica vettoriale</a>
+        <a href="meccanismo-3-embedding.html#unit-u5"><span class="num">3.5</span>Polisemia ed embedding statico</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>4. Reti neurali</summary>
+      <div class="unita-list">
+        <a href="meccanismo-4-reti-neurali.html#unit-u1"><span class="num">4.1</span>Dal neurone biologico al neurone artificiale</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u2"><span class="num">4.2</span>Il perceptron e XOR</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u3"><span class="num">4.3</span>Strati e profondità</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u4"><span class="num">4.4</span>La funzione di perdita</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u5"><span class="num">4.5</span>Il gradiente e la backpropagation</a>
+      </div>
+    </details>
+
+    <details class="modulo" open>
+      <summary class="current">5. Il Transformer</summary>
+      <div class="unita-list scrollspy" id="local-scrollspy">
+        <a href="#unit-u1" data-spy-target="unit-u1"><span class="num">5.1</span>Il problema che l'attenzione risolve</a>
+        <a href="#unit-u2" data-spy-target="unit-u2"><span class="num">5.2</span>L'idea dell'attention</a>
+        <a href="#unit-u3" data-spy-target="unit-u3"><span class="num">5.3</span>Query, Key, Value</a>
+        <a href="#unit-u4" data-spy-target="unit-u4"><span class="num">5.4</span>Embedding contestuale</a>
+        <a href="#unit-u5" data-spy-target="unit-u5"><span class="num">5.5</span>Multi-head e posizione</a>
+        <a href="#unit-u6" data-spy-target="unit-u6"><span class="num">5.6</span>Parallelismo e scala</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>6. Cosa significa "Large"</summary>
+      <div class="unita-list">
+        <a href="meccanismo-6-large.html#unit-u1"><span class="num">6.1</span>Scala</a>
+        <a href="meccanismo-6-large.html#unit-u2"><span class="num">6.2</span>Capacità emergenti</a>
+        <a href="meccanismo-6-large.html#unit-u3"><span class="num">6.3</span>I dati</a>
+        <a href="meccanismo-6-large.html#unit-u4"><span class="num">6.4</span>Fine-tuning</a>
+        <a href="meccanismo-6-large.html#unit-u5"><span class="num">6.5</span>RLHF</a>
+        <a href="meccanismo-6-large.html#unit-u6"><span class="num">6.6</span>Quantizzazione (chiusura dell'arco tecnico)</a>
+      </div>
+    </details>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Appendice</div>
+
+    <details class="modulo">
+      <summary>Dietro i widget</summary>
+      <div class="unita-list">
+        <a href="dietro-i-widget.html#unit-u1"><span class="num">A.1</span>Il tokenizzatore (Meccanismo · 1)</a>
+        <a href="dietro-i-widget.html#unit-u2"><span class="num">A.2</span>Il predittore n-grammi (Meccanismo · 2)</a>
+        <a href="dietro-i-widget.html#unit-u3"><span class="num">A.3</span>La mappa embedding (Meccanismo · 3)</a>
+        <a href="dietro-i-widget.html#unit-u4"><span class="num">A.4</span>Neurone, XOR, superficie di perdita (Meccanismo · 4)</a>
+        <a href="dietro-i-widget.html#unit-u5"><span class="num">A.5</span>L'attention (Meccanismo · 5)</a>
+        <a href="dietro-i-widget.html#unit-u6"><span class="num">A.6</span>Scala e capacità (Meccanismo · 6)</a>
+      </div>
+    </details>
+  </div>
+</nav>
+
+<main>
+
+<div class="unit-block" id="unit-u1" data-unit="u1">
+
+  <section id="m5-u1-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Meccanismo · 5 · Il Transformer · Unità 5.1</div>
+      <h1>Due problemi aperti, <em>una sola soluzione</em></h1>
+      <p class="lede dim">Il corso ha lasciato indietro due debiti. In Meccanismo · 2 ci si era arresi davanti alle dipendenze a lungo raggio: un n-gramma non può collegare parole troppo distanti, per costruzione. In Meccanismo · 3 ci si era fermati sulla polisemia: un embedding statico dà a «calcio» lo stesso punto in ogni frase possibile. Questo modulo li salda entrambi — con lo stesso, singolo meccanismo.</p>
+      <div class="scrolldown">prima, però, un tentativo che non bastò</div>
+    </div>
+  </section>
+
+  <section id="m5-u1-sez-ponte">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il ponte</div>
+      <h2 class="title">Una memoria che sbiadisce con la distanza</h2>
+      <p>Tra gli embedding del 2013 e la svolta del 2017 ci fu un tentativo intermedio, che qui basta descrivere senza nominare: elaborare il testo in sequenza, una parola alla volta, portando avanti una specie di <em>memoria</em> dello stato precedente — leggo una parola, aggiorno ciò che ricordo, passo alla successiva. Funzionava, per frasi brevi. Ma quella memoria perdeva forza quanto più cresceva la distanza tra le parole rilevanti: per collegare un pronome al nome comparso venti parole prima, il ricordo doveva sopravvivere a venti aggiornamenti consecutivi, e di solito non sopravviveva.</p>
+      <p>Il difetto era strutturale, non di ingegneria: se l'informazione deve viaggiare <em>attraverso</em> tutti i passi intermedi, ogni passo è un'occasione per diluirla. La domanda giusta, col senno di poi, era un'altra: e se l'informazione non dovesse viaggiare affatto?</p>
+    </div>
+  </section>
+
+  <section id="m5-u1-sez-unificante">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il momento unificante</div>
+      <h2 class="title">Perché i due debiti si pagano insieme</h2>
+      <p>L'idea che dà il titolo a questo modulo si chiama <strong>attention</strong>, e la sua proprietà notevole è che risolve entrambi i problemi lasciati aperti, con una sola mossa. Le dipendenze lunghe: se ogni parola può guardare direttamente ogni altra parola della frase, la distanza smette di essere un ostacolo — non c'è più nessun tragitto in cui il segnale si diluisce. Gli embedding statici: se la rappresentazione di ogni parola viene ricalcolata a partire da ciò che essa guarda in <em>questa</em> frase, allora smette di essere statica — «calcio» vicino a «partita» e «calcio» vicino a «ossa» produrranno due risultati diversi.</p>
+      <div class="aside">
+        <span class="label">Da tenere a mente</span>
+        <p>Non è frequente che due problemi apparentemente scollegati — uno di distanza, uno di ambiguità — cadano sotto lo stesso colpo. Quando succede, di solito significa che erano lo stesso problema visto da due lati: entrambi chiedevano che ogni parola potesse consultare il proprio contesto per intero, senza intermediari.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="m5-u1-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">Cosa deve fare il meccanismo</h2>
+      <p>Ricapitolando i requisiti raccolti finora: ogni parola deve poter raggiungere ogni altra parola in un passo solo; il legame non deve essere tutto-o-niente ma graduato — quanto è rilevante ciascuna parola per ciascun'altra; e il risultato deve dipendere dalla frase concreta, non dal vocabolario. Il resto del modulo costruisce esattamente questo, un pezzo alla volta.</p>
+    </div>
+  </section>
+
+  <section id="m5-u1-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura — Unità 5.1</div>
+      <blockquote>
+        La soluzione non fu una memoria migliore. Fu abolire il bisogno di ricordare: tutto resta in vista, sempre.
+      </blockquote>
+      <p style="margin-top:28px;">Nell'unità successiva: l'idea dell'attention resa visibile — una frase in cui ogni parola può guardare ogni altra, e i legami hanno un peso.</p>
+      <div class="footer-note">Meccanismo · 5 — Il Transformer · Unità 5.1 — Il problema che l'attenzione risolve</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="unit-block" id="unit-u2" data-unit="u2">
+
+  <section id="m5-u2-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Meccanismo · 5 · Il Transformer · Unità 5.2</div>
+      <h1>Ogni parola guarda <em>tutte le altre</em></h1>
+      <p class="lede dim">«Il gatto che il vicino aveva adottato dormiva sul divano.» Chi dormiva? Il gatto — non il vicino, che pure è più vicino al verbo. Qualunque lettore lo sa senza pensarci. Un meccanismo che elabora la frase deve poter collegare «dormiva» a «gatto» scavalcando cinque parole di inciso, senza perdere il filo.</p>
+      <div class="scrolldown">i legami, resi visibili</div>
+    </div>
+  </section>
+
+  <section id="m5-u2-sez-idea">
+    <div class="wrap reveal">
+      <div class="eyebrow">L'intuizione centrale</div>
+      <h2 class="title">Accesso diretto, pesato</h2>
+      <p>L'attention è, alla radice, questo: per ogni parola della frase, un insieme di <em>pesi</em> — un numero per ogni altra parola — che dice quanto quella parola conta per interpretarla. «Dormiva» assegnerà un peso alto a «gatto» (il suo soggetto, per quanto lontano) e pesi bassi agli articoli. Nessuna parola è irraggiungibile: il pronome trova il nome comparso molte parole prima con la stessa facilità con cui trova il suo vicino immediato, perché tutti i collegamenti sono diretti.</p>
+      <p>I pesi non sono scritti da un linguista: emergono dall'addestramento, come le coordinate degli embedding in Meccanismo · 3. E non sono zero-o-uno: sono gradazioni — un'altra comparsa della prima «crepa nel discreto» aperta dalla probabilità in Meccanismo · 2.</p>
+    </div>
+  </section>
+
+  <section id="m5-u2-sez-widget">
+    <div class="wrap reveal">
+      <div class="eyebrow">Dal vivo</div>
+      <h2 class="title">Clicchi una parola</h2>
+      <p>Qui sotto c'è la frase di apertura. Clicchi una parola qualsiasi: le curve mostrano dove va la sua attenzione, con spessore e opacità proporzionali al peso. Provi «dormiva», poi «che», poi «adottato» — e osservi quali legami scavalcano l'inciso.</p>
+      <div class="playground">
+        <span class="ptitle">Attention — chi guarda chi, e con che peso</span>
+        <div id="m5-att-52"></div>
+      </div>
+      <div class="aside">
+        <span class="label">Onestà sui dati</span>
+        <p>I pesi di questo widget sono illustrativi: scritti a mano per chiarezza pedagogica, per mostrare i pattern che contano (soggetto-verbo a distanza, coreferenza, disambiguazione). Non sono l'output di un vero Transformer — nessun modello è stato eseguito. La forma del meccanismo, però, è esattamente questa: una riga di pesi per ogni parola.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="m5-u2-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">Un grafo completo, non una catena</h2>
+      <p>La differenza col tentativo sequenziale di 5.1 si può dire in una riga: là la frase era una catena, e l'informazione doveva percorrerla; qui la frase è un grafo completo, e ogni nodo tocca ogni altro. Resta da capire da dove vengano i pesi — con quale criterio «dormiva» decida di guardare «gatto» più di «divano». È la meccanica dell'unità successiva.</p>
+    </div>
+  </section>
+
+  <section id="m5-u2-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura — Unità 5.2</div>
+      <blockquote>
+        Distanza, nella frase, smette di significare lontananza: ogni parola è a un passo da ogni altra.
+      </blockquote>
+      <p style="margin-top:28px;">Nell'unità successiva: la meccanica in tre mosse — cosa cerco, cosa offro, cosa porto con me. Query, Key, Value.</p>
+      <div class="footer-note">Meccanismo · 5 — Il Transformer · Unità 5.2 — Guardare tutto insieme: l'idea dell'attention</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="unit-block" id="unit-u3" data-unit="u3">
+
+  <section id="m5-u3-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Meccanismo · 5 · Il Transformer · Unità 5.3</div>
+      <h1>Cosa cerco, cosa offri, <em>cosa porti con te</em></h1>
+      <p class="lede dim">I pesi dell'unità precedente non piovono dal cielo: vengono calcolati, per ogni coppia di parole, da un confronto. La meccanica ha tre ingredienti dai nomi inglesi ormai intraducibili — Query, Key, Value — ma l'analogia giusta è quotidiana: una ricerca in biblioteca.</p>
+      <div class="scrolldown">tre mosse, nessuna formula</div>
+    </div>
+  </section>
+
+  <section id="m5-u3-sez-qkv">
+    <div class="wrap reveal">
+      <div class="eyebrow">La meccanica in tre mosse</div>
+      <h2 class="title">Query, Key, Value</h2>
+      <p>Si immagini ogni parola della frase come una scheda in un archivio, con tre facce. La <strong>Query</strong> è ciò che la parola sta cercando: «dormiva», da verbo, cerca qualcosa come <em>un soggetto animato</em>. La <strong>Key</strong> è l'etichetta che ogni parola espone al mondo: «gatto» espone qualcosa come <em>nome, animato, singolare</em>. Il punteggio di compatibilità tra la query di una parola e la key di ciascun'altra dice quanto l'offerta corrisponde alla domanda. Il <strong>Value</strong>, infine, è ciò che la parola porta con sé se viene scelta — il suo contenuto effettivo, quello che verrà davvero mescolato nella rappresentazione di chi la stava cercando.</p>
+      <p>Manca un dettaglio, ed è quello che collega questo modulo a Meccanismo · 2: i punteggi grezzi di compatibilità vengono trasformati in pesi che <strong>sommano a 1</strong> (l'operazione si chiama softmax). Ogni parola dispone, per così dire, di un budget fisso di attenzione da distribuire: dare di più a «gatto» significa necessariamente dare di meno a tutto il resto. Una distribuzione — la stessa struttura matematica delle probabilità, la prima crepa nel discreto, che continua ad allargarsi.</p>
+    </div>
+  </section>
+
+  <section id="m5-u3-sez-widget">
+    <div class="wrap reveal">
+      <div class="eyebrow">Lo stesso widget, riletto</div>
+      <h2 class="title">Ora sa cosa sta guardando</h2>
+      <p>Il widget è lo stesso di 5.2 — ma ora ogni elemento dell'interazione ha un nome tecnico. Riprovi, con la nuova lettura in mente.</p>
+      <div class="playground">
+        <span class="ptitle">Attention riletta — query, key, value</span>
+        <div id="m5-att-53"></div>
+        <p class="at-caption">Rilettura: la parola che clicca è la <strong>query</strong> — sta chiedendo qualcosa al resto della frase. Il peso verso ogni altra parola misura quanto la <strong>key</strong> di quella parola corrisponde alla richiesta. E lo spessore/opacità della curva rappresenta quanta parte del <strong>value</strong> di quella parola — il suo contenuto — verrà effettivamente usata nel ricalcolo. Noti che i pesi visualizzati sommano a 1 lungo le curve di ogni parola cliccata: è il budget fisso della softmax.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="m5-u3-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">Un confronto tutti-con-tutti, poi una media pesata</h2>
+      <p>Tutta la meccanica, senza formule: ogni parola confronta la propria query con le key di tutte le altre; i punteggi diventano pesi che sommano a 1; la nuova rappresentazione della parola è la media dei value di tutte, pesata da quei numeri. Tre mosse, ripetute per ogni parola della frase. Ciò che ne esce non è più l'embedding di partenza: è qualcosa di nuovo, fabbricato sul posto. Le conseguenze di questo fatto meritano un'unità a parte — la prossima.</p>
+    </div>
+  </section>
+
+  <section id="m5-u3-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura — Unità 5.3</div>
+      <blockquote>
+        Cercare, offrire, portare: la grammatica dell'attention sta in tre verbi — e in un budget che somma sempre a uno.
+      </blockquote>
+      <p style="margin-top:28px;">Nell'unità successiva: cosa significa, fino in fondo, che la rappresentazione viene fabbricata sul posto. Il debito di Meccanismo · 3 si chiude — e una certezza galileiana si incrina.</p>
+      <div class="footer-note">Meccanismo · 5 — Il Transformer · Unità 5.3 — Query, Key, Value: la meccanica in tre mosse</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="unit-block" id="unit-u4" data-unit="u4">
+
+  <section id="m5-u4-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Meccanismo · 5 · Il Transformer · Unità 5.4</div>
+      <h1>La stessa parola, <em>mai lo stesso significato</em></h1>
+      <p class="lede dim">Nell'unità 3.5 si era arrivati a un punto fermo nello spazio: «calcio», un vettore solo per due mondi. Ora il meccanismo c'è: se la rappresentazione di ogni parola è una media pesata dei value delle parole che la circondano, allora «calcio» accanto a «partita» e «calcio» accanto a «ossa» non possono più produrre lo stesso risultato. L'embedding è diventato contestuale.</p>
+      <div class="scrolldown">il punto fermo si muove</div>
+    </div>
+  </section>
+
+  <section id="m5-u4-sez-widget">
+    <div class="wrap reveal">
+      <div class="eyebrow">Dal vivo</div>
+      <h2 class="title">Due frasi, due «calcio»</h2>
+      <p>Scelga un contesto. A sinistra, la frase con «calcio» evidenziato e i suoi pesi di attention verso le altre parole. A destra, una mini-mappa con le stesse ventitré parole di Meccanismo · 3: quando sceglie un contesto, il punto di «calcio» scivola verso il baricentro del gruppo corrispondente.</p>
+      <div class="playground">
+        <span class="ptitle">Il collasso contestuale — «calcio» misurato in due frasi</span>
+        <div class="at-tabs" id="m5-ctx-tabs">
+          <button class="at-tab" data-ctx="sportivo">Contesto sportivo</button>
+          <button class="at-tab" data-ctx="chimico">Contesto chimico</button>
+        </div>
+        <div class="ctx-grid">
+          <div>
+            <div class="ctx-pane-label">La frase — attention di "calcio"</div>
+            <div id="m5-att-54"></div>
+            <p class="at-hint" id="m5-ctx-hint">Scelga un contesto qui sopra per cominciare.</p>
+          </div>
+          <div>
+            <div class="ctx-pane-label">Mini-mappa — il punto di "calcio"</div>
+            <div id="m5-minimappa"></div>
+          </div>
+        </div>
+        <p class="at-caption"><strong>Avvertenza esplicita, da leggere:</strong> lo spostamento del punto nella mini-mappa è un'illustrazione concettuale del "collasso contestuale", non un vero embedding contestuale calcolato da un modello. Il punto di partenza di "calcio" e i punti da cui sono calcolati i due centroidi sono reali (vettori fastText, proiettati in 2D); lo spostamento è un'interpolazione convenzionale — il punto percorre il 60% della strada verso il centroide del gruppo scelto. Anche i pesi di attention delle due frasi sono illustrativi, scritti a mano come quelli di 5.2.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="m5-u4-sez-quantistico">
+    <div class="wrap reveal">
+      <div class="eyebrow">Cuore concettuale</div>
+      <h2 class="title">Il crollo di un presupposto galileiano</h2>
+      <p>Questa non è una decorazione filosofica: è il punto dell'unità. Si ricordi la mossa dell'unità 3.2 — misurare il significato era estendere il programma galileiano al territorio delle qualità secondarie. Ma si guardi ora che cosa era rimasto, in quell'operazione, di intatto e galileiano: l'embedding statico era ancora una qualità <em>primaria</em> — un valore fisso, che sta lì indipendentemente da chi lo osserva e da quando. Il punto di «calcio» sulla mappa di Meccanismo · 3 esisteva prima di qualunque frase, come la massa di un sasso esiste prima di qualunque pesata.</p>
+      <p>È questo presupposto che è appena crollato. Il vettore contestuale di «calcio» <em>non ha</em> un valore che esiste a prescindere: assume un valore solo nel momento in cui viene calcolato insieme alle parole che lo circondano — «misurato» nel contesto, si potrebbe dire, e la scelta del verbo non è casuale. È la stessa mossa concettuale della meccanica quantistica: posizione e quantità di moto di una particella non sono entrambe definite indipendentemente dalla misura; la domanda «dov'era la particella prima che si guardasse?» è mal posta. Allo stesso modo, la domanda «qual è il vettore di calcio?» non ha più risposta — ne ha una soltanto la domanda «qual è il vettore di calcio <em>in questa frase</em>?».</p>
+      <div class="aside">
+        <span class="label">Quattro secoli, due mosse</span>
+        <p>Prima mossa (Meccanismo · 3): il significato, qualità secondaria per eccellenza, viene quantificato — il programma galileiano vince un territorio nuovo. Seconda mossa (qui): la quantità ottenuta si rivela osservatore-dipendente — proprio la proprietà che per Galileo separava il primario dal secondario si dissolve. Non un'analogia decorativa: la stessa mossa concettuale, quattro secoli dopo, in un dominio completamente diverso.</p>
+      </div>
+      <div class="question">Se il significato di una parola esiste solo quando viene calcolato in un contesto — esisteva davvero, prima, il significato "della parola"? O abbiamo sempre e solo conosciuto significati di parole-in-frasi?</div>
+    </div>
+  </section>
+
+  <section id="m5-u4-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">Il debito di Meccanismo · 3 è chiuso</h2>
+      <p>La polisemia non è più un limite strutturale: «calcio» riceve una rappresentazione diversa in ogni frase, perché la rappresentazione è il <em>risultato</em> di un'attenzione calcolata sul contesto specifico, non una voce fissa in una tabella. Restano due questioni pratiche, e sono le ultime del modulo: come catturare tipi diversi di relazione contemporaneamente, e come non perdere l'ordine delle parole per strada.</p>
+    </div>
+  </section>
+
+  <section id="m5-u4-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura — Unità 5.4</div>
+      <blockquote>
+        L'embedding statico era un valore che aspettava di essere letto. Quello contestuale è un valore che non esiste finché non viene calcolato.
+      </blockquote>
+      <p style="margin-top:28px;">Nell'unità successiva: più teste che guardano la stessa frase con criteri diversi, e un numero di pagina cucito addosso a ogni parola.</p>
+      <div class="footer-note">Meccanismo · 5 — Il Transformer · Unità 5.4 — Perché ora ogni parola ha un significato diverso in ogni frase</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="unit-block" id="unit-u5" data-unit="u5">
+
+  <section id="m5-u5-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Meccanismo · 5 · Il Transformer · Unità 5.5</div>
+      <h1>Più teste, <em>e un numero di pagina</em></h1>
+      <p class="lede dim">Una sola attention deve scegliere: seguire la grammatica, o la vicinanza, o il tema? La risposta del Transformer è: non scegliere. Più "teste" di attenzione lavorano in parallelo sulla stessa frase, ciascuna con i propri criteri. E un ultimo problema, quasi banale ma fondamentale: per un meccanismo che guarda tutto insieme, la frase è un insieme senza ordine — l'ordine va reinserito a parte.</p>
+      <div class="scrolldown">tre teste sulla stessa frase</div>
+    </div>
+  </section>
+
+  <section id="m5-u5-sez-multihead">
+    <div class="wrap reveal">
+      <div class="eyebrow">Multi-head</div>
+      <h2 class="title">La stessa frase, tre paia di occhi</h2>
+      <p>Ogni testa di attention ha le proprie query, le proprie key, i propri value — e quindi i propri pesi. Una testa può specializzarsi nelle dipendenze grammaticali, un'altra nella semplice vicinanza posizionale, un'altra nelle coppie tematiche che legano un soggetto alla sua azione a qualunque distanza. I risultati vengono poi ricombinati. Qui sotto, la stessa frase di 5.2 vista da tre teste: passi dall'una all'altra e clicchi le stesse parole — «gatto», ad esempio — per vedere quanto cambia dove va l'attenzione.</p>
+      <div class="playground">
+        <span class="ptitle">Multi-head — tre criteri in parallelo</span>
+        <div class="at-tabs" id="m5-head-tabs">
+          <button class="at-tab active" data-head="sintattico">Testa 1 — dipendenze grammaticali</button>
+          <button class="at-tab" data-head="posizionale">Testa 2 — vicinanza posizionale</button>
+          <button class="at-tab" data-head="tematico">Testa 3 — coppie tematiche</button>
+        </div>
+        <div id="m5-att-55"></div>
+        <p class="at-caption">Come sempre in questo modulo: pesi illustrativi, scritti (o generati da una formula, nel caso della testa posizionale) per rendere leggibile ciò che ogni testa cattura — non l'output di un modello reale. In un Transformer vero le teste sono decine, e la loro "specializzazione" emerge dall'addestramento, spesso in forme meno pulite di queste.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="m5-u5-sez-posizione">
+    <div class="wrap reveal">
+      <div class="eyebrow">La codifica di posizione</div>
+      <h2 class="title">Numerare le pagine del libro</h2>
+      <p>C'è un prezzo nascosto nel guardare tutto insieme: l'attention, da sola, tratterebbe la frase come un sacchetto di parole senza ordine — «il gatto morde il cane» e «il cane morde il gatto» sarebbero indistinguibili. La soluzione è la stessa dei libri: numerare le pagine. A ogni parola viene aggiunto un codice che ne rappresenta la posizione nella frase; il codice si somma alla rappresentazione della parola, così l'attenzione riceve comunque l'informazione su chi viene prima e chi dopo. E come il numero stampato su una pagina, il codice resta attaccato alla sua parola anche se l'ordine visivo viene stravolto.</p>
+      <div class="playground">
+        <span class="ptitle">L'ordine va inserito a parte — le pagine mescolate</span>
+        <div class="pos-chips" id="m5-pos-chips"></div>
+        <div class="pos-btns">
+          <button class="w-btn" id="m5-pos-shuffle">Mescola l'ordine</button>
+          <button class="w-btn ghost" id="m5-pos-reset">Ripristina l'ordine originale</button>
+        </div>
+        <p class="at-caption">Mescoli le parole: il badge numerico non si rinumera — segue la sua parola ovunque vada, come il numero di pagina segue la pagina. È esattamente ciò che serve a un meccanismo senza nozione nativa di ordine: l'ordine non è gratuito, va inserito a parte, e una volta inserito sopravvive a qualunque permutazione.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="m5-u5-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">L'architettura, vista da lontano</h2>
+      <p>Ora tutti i pezzi ci sono, e l'architettura complessiva si può dire in una frase: embedding delle parole, più informazione di posizione, poi strati di attention multi-head ripetuti in blocchi, uno sopra l'altro — ogni blocco raffina le rappresentazioni contestuali del precedente. Questo oggetto ha un nome: <strong>Transformer</strong>. Resta un'ultima domanda, la più concreta di tutte: perché proprio questo progetto, tra i tanti possibili, ha sbloccato tutto?</p>
+    </div>
+  </section>
+
+  <section id="m5-u5-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura — Unità 5.5</div>
+      <blockquote>
+        Molte teste per non scegliere un criterio solo; un numero cucito addosso a ogni parola per non perdere l'ordine. Il progetto è completo.
+      </blockquote>
+      <p style="margin-top:28px;">Nell'ultima unità: la ragione — quasi volgare a dirsi, dopo tanta filosofia — per cui questa architettura ha vinto. Non era più intelligente. Era più parallela.</p>
+      <div class="footer-note">Meccanismo · 5 — Il Transformer · Unità 5.5 — Multi-head attention e l'architettura ad alto livello</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="unit-block" id="unit-u6" data-unit="u6">
+
+  <section id="m5-u6-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Meccanismo · 5 · Il Transformer · Unità 5.6</div>
+      <h1>Non più intelligente: <em>più parallela</em></h1>
+      <p class="lede dim">Il tentativo sequenziale di 5.1 aveva un vincolo che nessuna astuzia poteva aggirare: per elaborare la parola numero venti bisognava aver finito la diciannove. L'attention no: tutti i confronti tra tutte le coppie di parole sono indipendenti tra loro, e si possono calcolare nello stesso istante.</p>
+      <div class="scrolldown">l'hardware incontra l'architettura</div>
+    </div>
+  </section>
+
+  <section id="m5-u6-sez-parallelismo">
+    <div class="wrap reveal">
+      <div class="eyebrow">Parallelismo</div>
+      <h2 class="title">Migliaia di operai, finalmente tutti al lavoro</h2>
+      <p>Si ricordi la GPU della lezione sull'hardware (Fondamenti · 2): non un operaio velocissimo ma <em>migliaia di operai</em> che eseguono la stessa operazione semplice su dati diversi, nello stesso istante. Un'architettura sequenziale lascia quasi tutti quegli operai fermi: c'è un solo passo da fare alla volta. L'attention, invece, è fatta su misura per loro — il confronto tra la query di «dormiva» e la key di «gatto» non dipende dal confronto tra «il» e «divano», e tutti i confronti dell'intera frase si distribuiscono sugli operai in un colpo solo.</p>
+      <p>Le conseguenze sono di scala, non di eleganza: addestramenti che richiedevano settimane si comprimono; corpora che erano fuori portata diventano trattabili; e la dimensione dei modelli può crescere di ordini di grandezza, perché l'hardware, finalmente, viene usato per intero. La storia di Meccanismo · 6 — che cosa accade quando «grande» diventa «molto grande» — comincia esattamente qui.</p>
+      <div class="aside">
+        <span class="label">Un tema del corso, di nuovo</span>
+        <p>Non è la prima volta che il corso incontra questa lezione: le architetture non vincono in astratto, vincono <em>su un hardware</em>. Il Transformer ha vinto anche perché è l'architettura che meglio coincide con la forma del calcolo che le GPU sanno fare — un incontro tra un'idea e un silicio.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="m5-u6-sez-2017">
+    <div class="wrap reveal">
+      <div class="eyebrow">2017</div>
+      <h2 class="title">"Attention is All You Need"</h2>
+      <p>In Genealogia · 1.6 era già stata raccontata la data dall'alto: 2017, un articolo di ricercatori di Google dal titolo insolitamente spavaldo — <em>Attention is All You Need</em>, «l'attenzione è tutto ciò che serve». Ora quel titolo si può leggere tecnicamente, ed è una dichiarazione precisa: via la ricorrenza, via l'elaborazione sequenziale, via le impalcature — restino solo attention, informazione di posizione e strati impilati. Il modulo appena attraversato è, in sostanza, il contenuto di quell'articolo raccontato senza formule.</p>
+      <p>Ogni LLM oggi in servizio — incluso quello con cui forse ha conversato oggi — è un discendente diretto di quell'architettura. Ciò che è cambiato da allora, più di ogni raffinamento strutturale, è una sola variabile: la scala.</p>
+    </div>
+  </section>
+
+  <section id="m5-u6-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">Cos'è stato saldato, cosa si apre</h2>
+      <p>Bilancio del modulo. Saldati: le dipendenze lunghe di Meccanismo · 2 (accesso diretto, nessuna diluizione), gli embedding statici di Meccanismo · 3 (rappresentazioni ricalcolate frase per frase), e persino un presupposto filosofico che sembrava intoccabile (il valore fisso, osservatore-indipendente). Aperto: cosa succede quando questa macchina, così parallelizzabile, viene ingrandita di mille volte e nutrita con una frazione significativa del testo mai scritto. È la domanda di Meccanismo · 6 — l'ultima dell'arco tecnico.</p>
+    </div>
+  </section>
+
+  <section id="m5-u6-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura — Meccanismo · 5</div>
+      <blockquote>
+        Un meccanismo solo — guardare tutto, pesare tutto, ricalcolare tutto — ha chiuso i debiti di tre moduli. E il suo pregio decisivo non era concettuale: era che si poteva calcolare tutto insieme.
+      </blockquote>
+      <p style="margin-top:28px;">Il modulo successivo, Meccanismo · 6, riprende da qui: cosa significa "Large" in "Large Language Model" — la scala, le sue leggi empiriche, le sue sorprese, e il ritorno del filo discreto/continuo là dove meno lo si aspetta.</p>
+      <div class="footer-note">Meccanismo · 5 — Il Transformer · Unità 5.6 — Perché questo ha sbloccato tutto: parallelismo e scala</div>
+    </div>
+  </section>
+
+</div>
+
+</main>
+
+<script>
+  // ============ dati incorporati ============
+  // Pesi di attention ILLUSTRATIVI (scritti a mano per chiarezza pedagogica, non output di un modello reale — vedi _metadata.natura_dei_dati)
+  const ATT = {"_metadata":{"descrizione":"Pesi di attention illustrativi per il widget 'frase cliccabile' di Meccanismo · 5 (riferimento: struttura_moduli_1-6.md, sezione Modulo 5).","natura_dei_dati":"ATTENZIONE: questi pesi sono scritti a mano per chiarezza pedagogica (mostrare pattern di dipendenza a lungo raggio, coreferenza, disambiguazione contestuale). NON sono l'output di un vero Transformer addestrato — nessun modello è stato eseguito. Stesso trattamento di onestà già usato per la curva delle capacità emergenti in lezioni/capacita_emergenti_modulo6.json (dichiarata illustrativa, non un dato di un paper).","frase_principale":"Il gatto che il vicino aveva adottato dormiva sul divano.","heads":{"sintattico":"Scritto a mano: dipendenze soggetto-verbo e proposizione relativa a lungo raggio (usato in 5.2/5.3 e come Head A in 5.5).","posizionale":"Generato da formula deterministica, non scritto a mano: peso(i,j) per i!=j proporzionale a 1/|i-j|^2, peso(i,i) fissato a un valore raw di 0.3 (moderato, inferiore al vicino immediato), poi normalizzato per riga. Proprietà verificabile: il massimo di ogni riga cade sempre su i-1 o i+1, mai su un token non adiacente né (per le righe interne) sul token stesso.","tematico":"Scritto a mano: coppie tema-azione indipendenti dalla distanza (gatto<->dormiva, vicino<->adottato, divano<->sul); 'che' riusa la riga sintattica (è comunque un caso di coreferenza); il resto delle parole funzionali ha attenzione uniforme (nessun segnale tematico forte)."},"calcio_contesto":{"descrizione":"Due frasi brevi con 'calcio' in contesto diverso (Meccanismo · 5, unità 5.4) — solo la riga di attention di 'calcio' è fornita in ciascuna, perché nel widget è l'unico token attivabile in questo sotto-esempio.","sportivo":"Ieri la squadra ha vinto la partita di calcio.","chimico":"Il calcio rinforza le ossa insieme al ferro."},"fattore_interpolazione_minimappa":{"valore":0.6,"descrizione":"Usato solo nella mini-mappa di 5.4 per animare il punto 'calcio' dalla sua posizione statica reale (coordinate 'polisemia' di Meccanismo · 3) verso il centroide sportivo o chimico (calcolato dal vivo, media reale dei punti del gruppo): nuova_posizione = statica + 0.6 * (centroide - statica). Dichiarato esplicitamente come illustrazione concettuale del 'collasso contestuale', non un vero embedding contestuale calcolato da un modello."}},"frase_principale":{"tokens":["Il","gatto","che","il","vicino","aveva","adottato","dormiva","sul","divano"],"heads":{"sintattico":[[0.1,0.5,0.05,0.03,0.05,0.05,0.07,0.08,0.04,0.03],[0.03,0.08,0.2,0.02,0.05,0.05,0.25,0.25,0.03,0.04],[0.02,0.35,0.05,0.02,0.08,0.1,0.3,0.03,0.02,0.03],[0.03,0.05,0.05,0.1,0.55,0.06,0.06,0.04,0.03,0.03],[0.05,0.1,0.08,0.05,0.06,0.2,0.4,0.03,0.02,0.01],[0.02,0.08,0.05,0.03,0.3,0.05,0.42,0.02,0.02,0.01],[0.02,0.3,0.1,0.02,0.35,0.12,0.05,0.02,0.01,0.01],[0.02,0.35,0.03,0.02,0.03,0.03,0.05,0.07,0.1,0.3],[0.02,0.05,0.02,0.02,0.02,0.02,0.02,0.15,0.08,0.6],[0.02,0.1,0.02,0.02,0.02,0.02,0.02,0.35,0.35,0.08]],"posizionale":[[0.1631,0.5435,0.1359,0.0604,0.034,0.0217,0.0151,0.0111,0.0085,0.0067],[0.3537,0.1061,0.3537,0.0884,0.0393,0.0221,0.0141,0.0098,0.0072,0.0056],[0.0817,0.3266,0.098,0.3266,0.0817,0.0363,0.0204,0.0131,0.0091,0.0065],[0.0352,0.0793,0.3172,0.0952,0.3172,0.0793,0.0352,0.0198,0.0127,0.0089],[0.0196,0.0349,0.0784,0.3138,0.0941,0.3138,0.0784,0.0349,0.0196,0.0125],[0.0126,0.0196,0.0349,0.0784,0.3138,0.0941,0.3138,0.0784,0.0349,0.0195],[0.0088,0.0127,0.0198,0.0352,0.0793,0.3172,0.0952,0.3172,0.0793,0.0353],[0.0067,0.0091,0.0131,0.0204,0.0363,0.0817,0.3266,0.098,0.3266,0.0815],[0.0055,0.0072,0.0098,0.0141,0.0221,0.0393,0.0884,0.3537,0.1061,0.3538],[0.0067,0.0085,0.0111,0.0151,0.0217,0.034,0.0604,0.1359,0.5435,0.1631]],"tematico":[[0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1],[0.02,0.08,0.02,0.02,0.02,0.02,0.02,0.75,0.02,0.03],[0.02,0.35,0.05,0.02,0.08,0.1,0.3,0.03,0.02,0.03],[0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1],[0.02,0.02,0.02,0.02,0.08,0.02,0.75,0.02,0.02,0.03],[0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1],[0.02,0.02,0.02,0.02,0.75,0.02,0.08,0.02,0.02,0.03],[0.02,0.75,0.02,0.02,0.02,0.02,0.02,0.08,0.02,0.03],[0.02,0.02,0.02,0.02,0.02,0.02,0.02,0.02,0.08,0.76],[0.02,0.02,0.02,0.02,0.02,0.02,0.02,0.02,0.76,0.08]]}},"calcio_contesto":{"sportivo":{"frase":"Ieri la squadra ha vinto la partita di calcio.","tokens":["Ieri","la","squadra","ha","vinto","la","partita","di","calcio"],"indice_calcio":8,"riga_attention_calcio":[0.03,0.03,0.25,0.03,0.15,0.05,0.35,0.06,0.05]},"chimico":{"frase":"Il calcio rinforza le ossa insieme al ferro.","tokens":["Il","calcio","rinforza","le","ossa","insieme","al","ferro"],"indice_calcio":1,"riga_attention_calcio":[0.05,0.05,0.2,0.03,0.3,0.05,0.05,0.27]}}};
+
+  // Copia indipendente delle coordinate "polisemia" di Meccanismo · 3 (vettori reali fastText proiettati in 2D) — nessun riferimento al file di Meccanismo · 3
+  const POLI5 = {"uomo":[-0.02911896400654171,-0.24407564174942215],"squadra":[-0.503888427893004,0.15979508843329443],"donna":[-0.09625328969259292,-0.4639928000445714],"re":[0.04526637769699491,-0.23566435439852956],"calcio":[-0.3678312987471762,0.37858724136362015],"partita":[-0.5308970968303808,0.2611664475623699],"allenatore":[-0.47303033388204907,0.14505499244945297],"elemento":[0.2853340123531901,0.06612358859265574],"gol":[-0.4396267022831467,0.31443896469654903],"principe":[0.02710948162592133,-0.3604455178813737],"ferro":[0.28897023488951346,0.19216733572712238],"cavallo":[-0.010823304886241369,-0.1836604551297416],"cane":[-0.05601828652605856,-0.2985085691027348],"regina":[-0.04783157486913145,-0.43982423206139687],"principessa":[-0.039420458604052876,-0.47287541291520785],"gatto":[-0.04425433323595154,-0.3330676204928136],"maschio":[0.008610059914652378,-0.4483205880013499],"femmina":[-0.04358888035482021,-0.5290578153138819],"ossigeno":[0.4193865024381095,0.38434215465003907],"pallone":[-0.3546153497441052,0.31769714884421174],"leone":[-0.01684201440456492,-0.2750817134856416],"idrogeno":[0.4707040970911973,0.3442842645658094],"sodio":[0.38939674157666937,0.3270325592556218]};
+  const POLI5_GRUPPI = {"reale_genere":["re","regina","principe","principessa","uomo","donna","maschio","femmina"],"sportivo":["calcio","pallone","gol","squadra","partita","allenatore"],"chimico":["sodio","ferro","ossigeno","idrogeno","elemento"],"animali":["gatto","cane","cavallo","leone"]};
+
+  const POLI5_GROUP_OF = {};
+  Object.entries(POLI5_GRUPPI).forEach(([gruppo, parole]) => {
+    parole.forEach(p => { if(!(p in POLI5_GROUP_OF)) POLI5_GROUP_OF[p] = gruppo; });
+  });
+  const POLI5_COLORS = {
+    reale_genere: '#F0A85E',
+    sportivo: '#7EB8D4',
+    chimico: '#B79FD6',
+    animali: '#8FC9A0'
+  };
+
+  // ============ widget riusabile: frase cliccabile con attention ============
+  function createAttentionWidget(containerId, config){
+    const wrap = document.getElementById(containerId);
+    wrap.classList.add('at-wrap');
+    if(config.clickable === false) wrap.classList.add('locked');
+    wrap.innerHTML = '<svg class="at-svg"></svg><div class="at-chips"></div><p class="at-hint"></p>';
+    const svg = wrap.querySelector('.at-svg');
+    const chipsEl = wrap.querySelector('.at-chips');
+    const hintEl = wrap.querySelector('.at-hint');
+    const state = {
+      tokens: config.tokens,
+      getRow: config.getRow,
+      active: (config.active === undefined ? null : config.active),
+      clickable: config.clickable !== false
+    };
+
+    function buildChips(){
+      chipsEl.innerHTML = state.tokens.map((t, i) =>
+        `<button class="at-chip" data-i="${i}">${t}</button>`
+      ).join('');
+      chipsEl.querySelectorAll('.at-chip').forEach(btn => {
+        btn.addEventListener('click', () => {
+          if(!state.clickable) return;
+          const i = Number(btn.dataset.i);
+          state.active = (state.active === i) ? null : i;
+          drawLines();
+        });
+      });
+    }
+
+    function lineOp(w){ return Math.min(1, 0.05 + w * 1.5).toFixed(2); }
+    function labelOp(w){ return Math.min(1, 0.25 + w * 1.5).toFixed(2); }
+
+    function drawLines(){
+      chipsEl.querySelectorAll('.at-chip').forEach(btn =>
+        btn.classList.toggle('active', Number(btn.dataset.i) === state.active)
+      );
+      const wr = wrap.getBoundingClientRect();
+      svg.setAttribute('width', wr.width);
+      svg.setAttribute('height', wr.height);
+      svg.setAttribute('viewBox', `0 0 ${wr.width} ${wr.height}`);
+      if(state.active === null || !state.tokens.length){
+        svg.innerHTML = '';
+        hintEl.textContent = (state.clickable && state.tokens.length) ? 'Clicchi una parola per vedere dove va la sua attenzione.' : '';
+        return;
+      }
+      hintEl.textContent = '';
+      const row = state.getRow(state.active);
+      const rects = [...chipsEl.querySelectorAll('.at-chip')].map(b => {
+        const r = b.getBoundingClientRect();
+        return { x: r.left + r.width / 2 - wr.left, y: r.top - wr.top };
+      });
+      const a = rects[state.active];
+      const parts = [];
+      row.forEach((w, j) => {
+        if(j === state.active){
+          parts.push(`<text class="at-weight" x="${a.x}" y="${a.y - 6}" text-anchor="middle" opacity="${labelOp(w)}">${w.toFixed(2)}</text>`);
+          return;
+        }
+        const t = rects[j];
+        const mx = (a.x + t.x) / 2;
+        const lift = 26 + Math.min(60, Math.abs(a.x - t.x) * 0.12);
+        const my = Math.min(a.y, t.y) - lift;
+        parts.push(`<path d="M ${a.x} ${a.y} Q ${mx} ${my} ${t.x} ${t.y}" fill="none" stroke="var(--copper-bright)" stroke-width="${(0.5 + w * 8).toFixed(2)}" opacity="${lineOp(w)}" stroke-linecap="round"/>`);
+        parts.push(`<text class="at-weight" x="${t.x}" y="${t.y - 6}" text-anchor="middle" opacity="${labelOp(w)}">${w.toFixed(2)}</text>`);
+      });
+      svg.innerHTML = parts.join('');
+    }
+
+    buildChips();
+    drawLines();
+    window.addEventListener('resize', drawLines);
+    window.addEventListener('load', drawLines);
+    return {
+      redraw: drawLines,
+      setTokens(tokens, getRow, active){
+        state.tokens = tokens;
+        state.getRow = getRow;
+        state.active = (active === undefined ? null : active);
+        buildChips();
+        drawLines();
+      }
+    };
+  }
+
+  // ============ reveal on scroll ============
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => io.observe(el));
+
+  // ============ scroll-spy sulla sidebar ============
+  const spyLinks = document.querySelectorAll('#local-scrollspy a[data-spy-target]');
+  const unitBlocksForSpy = document.querySelectorAll('.unit-block');
+  const localSpy2 = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        spyLinks.forEach(a => a.classList.toggle('active', a.dataset.spyTarget === e.target.id));
+      }
+    });
+  }, { threshold: 0, rootMargin: '-45% 0px -45% 0px' });
+  unitBlocksForSpy.forEach(b => localSpy2.observe(b));
+
+  // ============ istanza 5.2: head sintattico, cliccabile ============
+  createAttentionWidget('m5-att-52', {
+    tokens: ATT.frase_principale.tokens,
+    getRow: i => ATT.frase_principale.heads.sintattico[i]
+  });
+
+  // ============ istanza 5.3: stesso head, rilettura QKV ============
+  createAttentionWidget('m5-att-53', {
+    tokens: ATT.frase_principale.tokens,
+    getRow: i => ATT.frase_principale.heads.sintattico[i]
+  });
+
+  // ============ istanza 5.4: "calcio" in due contesti + mini-mappa ============
+  function centroid5(gruppo){
+    const pts = Object.entries(POLI5)
+      .filter(([w]) => POLI5_GROUP_OF[w] === gruppo)
+      .map(([, c]) => c);
+    const cx = pts.reduce((s, c) => s + c[0], 0) / pts.length;
+    const cy = pts.reduce((s, c) => s + c[1], 0) / pts.length;
+    return [cx, cy];
+  }
+
+  function renderMiniMap(containerId){
+    const holder = document.getElementById(containerId);
+    const W = 420, H = 380, PAD = 12;
+    const statica = POLI5.calcio;
+    const F = ATT._metadata.fattore_interpolazione_minimappa.valore;
+    const centri = { sportivo: centroid5('sportivo'), chimico: centroid5('chimico') };
+    const target = ctx => [
+      statica[0] + F * (centri[ctx][0] - statica[0]),
+      statica[1] + F * (centri[ctx][1] - statica[1])
+    ];
+
+    const xs = [], ys = [];
+    Object.values(POLI5).forEach(([x, y]) => { xs.push(x); ys.push(y); });
+    [centri.sportivo, centri.chimico, target('sportivo'), target('chimico')].forEach(([x, y]) => { xs.push(x); ys.push(y); });
+    let minX = Math.min(...xs), maxX = Math.max(...xs);
+    let minY = Math.min(...ys), maxY = Math.max(...ys);
+    const rx = (maxX - minX) || 1, ry = (maxY - minY) || 1;
+    minX -= rx * 0.15; maxX += rx * 0.15;
+    minY -= ry * 0.15; maxY += ry * 0.15;
+    const sx = x => PAD + (x - minX) / (maxX - minX) * (W - 2 * PAD);
+    const sy = y => H - PAD - (y - minY) / (maxY - minY) * (H - 2 * PAD);
+
+    const parts = [];
+    const centroMark = (c, color) =>
+      `<g><circle cx="${sx(c[0])}" cy="${sy(c[1])}" r="7" fill="none" stroke="${color}" stroke-width="1.4" stroke-dasharray="2 2"/>` +
+      `<line x1="${sx(c[0]) - 3.5}" y1="${sy(c[1])}" x2="${sx(c[0]) + 3.5}" y2="${sy(c[1])}" stroke="${color}" stroke-width="1.2"/>` +
+      `<line x1="${sx(c[0])}" y1="${sy(c[1]) - 3.5}" x2="${sx(c[0])}" y2="${sy(c[1]) + 3.5}" stroke="${color}" stroke-width="1.2"/></g>`;
+    parts.push(centroMark(centri.sportivo, POLI5_COLORS.sportivo));
+    parts.push(centroMark(centri.chimico, POLI5_COLORS.chimico));
+    Object.entries(POLI5).forEach(([parola, [x, y]]) => {
+      if(parola === 'calcio') return;
+      parts.push(`<g><circle cx="${sx(x)}" cy="${sy(y)}" r="3.5" fill="${POLI5_COLORS[POLI5_GROUP_OF[parola]]}" opacity="0.75"/>` +
+        `<text class="mm-label" x="${sx(x) + 6}" y="${sy(y) + 3}">${parola}</text></g>`);
+    });
+    parts.push(`<g class="mm-calcio"><circle cx="${sx(statica[0])}" cy="${sy(statica[1])}" r="6" fill="var(--copper-bright)" stroke="var(--bg)" stroke-width="1.5"/>` +
+      `<text class="mm-label accent" x="${sx(statica[0]) + 9}" y="${sy(statica[1]) + 3}">calcio</text></g>`);
+    holder.innerHTML = `<svg class="mm-svg" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Mini-mappa: il punto di calcio si sposta col contesto">${parts.join('')}</svg>`;
+    const calcioG = holder.querySelector('.mm-calcio');
+
+    return {
+      setContext(ctx){
+        if(!ctx){
+          calcioG.style.transform = 'translate(0px, 0px)';
+          return;
+        }
+        const t = target(ctx);
+        const dx = sx(t[0]) - sx(statica[0]);
+        const dy = sy(t[1]) - sy(statica[1]);
+        calcioG.style.transform = `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px)`;
+      }
+    };
+  }
+
+  const att54 = createAttentionWidget('m5-att-54', { tokens: [], getRow: () => [], clickable: false });
+  const miniMap = renderMiniMap('m5-minimappa');
+  const ctxTabs = document.querySelectorAll('#m5-ctx-tabs .at-tab');
+  const ctxHint = document.getElementById('m5-ctx-hint');
+  ctxTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const ctx = tab.dataset.ctx;
+      ctxTabs.forEach(t2 => t2.classList.toggle('active', t2 === tab));
+      const dati = ATT.calcio_contesto[ctx];
+      att54.setTokens(dati.tokens, () => dati.riga_attention_calcio, dati.indice_calcio);
+      miniMap.setContext(ctx);
+      ctxHint.textContent = '';
+    });
+  });
+
+  // ============ istanza 5.5: multi-head, interruttore a 3 posizioni ============
+  let currentHead = 'sintattico';
+  const att55 = createAttentionWidget('m5-att-55', {
+    tokens: ATT.frase_principale.tokens,
+    getRow: i => ATT.frase_principale.heads[currentHead][i]
+  });
+  document.querySelectorAll('#m5-head-tabs .at-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      currentHead = tab.dataset.head;
+      document.querySelectorAll('#m5-head-tabs .at-tab').forEach(t2 =>
+        t2.classList.toggle('active', t2 === tab)
+      );
+      att55.redraw();
+    });
+  });
+
+  // ============ widget 5.5: codifica di posizione (mescola/ripristina) ============
+  const posChipsEl = document.getElementById('m5-pos-chips');
+  posChipsEl.innerHTML = ATT.frase_principale.tokens.map((t, i) =>
+    `<span class="pos-chip" data-i="${i}" style="order:${i}"><span class="pos-badge">${i + 1}</span>${t}</span>`
+  ).join('');
+  const POS_PERM = [3, 7, 1, 9, 0, 5, 2, 8, 4, 6];
+  const POS_ORIG = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+  function setPosOrder(orderArr){
+    const els = [...posChipsEl.querySelectorAll('.pos-chip')];
+    const first = new Map(els.map(el => [el, el.getBoundingClientRect()]));
+    els.forEach(el => {
+      el.style.order = orderArr.indexOf(Number(el.dataset.i));
+    });
+    els.forEach(el => {
+      const f = first.get(el);
+      const l = el.getBoundingClientRect();
+      const dx = f.left - l.left, dy = f.top - l.top;
+      el.style.transition = 'none';
+      el.style.transform = `translate(${dx}px, ${dy}px)`;
+    });
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        els.forEach(el => {
+          el.style.transition = 'transform .45s ease';
+          el.style.transform = 'translate(0px, 0px)';
+        });
+      });
+    });
+  }
+  document.getElementById('m5-pos-shuffle').addEventListener('click', () => setPosOrder(POS_PERM));
+  document.getElementById('m5-pos-reset').addEventListener('click', () => setPosOrder(POS_ORIG));
+</script>
+
+</body>
+</html>

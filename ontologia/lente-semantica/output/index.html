@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lente semantica — Vocabolario del saggio «Dal bit alle entità semantiche»</title>
+<link rel="stylesheet" href="lente.css">
+</head>
+<body>
+<div class="pagina-lente">
+  <nav class="briciole-root"><a href="../../output/index.html">Home</a><span class="sep">›</span>Lente semantica</nav>
+  <header class="testata-lente">
+    <span class="apparato">Dentro il grafo del saggio «Dal bit alle entità semantiche»</span>
+    <h1>Lente semantica</h1>
+    <p class="sottotitolo">Una lente per esplorare come il significato prende forma, un termine alla volta.</p>
+  </header>
+
+  <div class="controlli-riga">
+    <span class="apparato">Contesto</span>
+    <button id="btn-grado-1" class="toggle-grado attivo" type="button">Vicini di 1° grado</button>
+    <button id="btn-grado-2" class="toggle-grado" type="button">+ 2° grado</button>
+  </div>
+
+  <div class="corpo-lente">
+    <aside class="sidebar-lente">
+      <input id="ricerca" type="search" placeholder="Cerca fra … nodi…" autocomplete="off">
+      <div id="lista-nodi"></div>
+    </aside>
+    <main class="pannello-grafo">
+      <div id="breadcrumb-nodo" class="breadcrumb-nodo"></div>
+      <div class="grafo-riquadro">
+        <svg id="svg-grafo" viewBox="0 0 880 880" role="img" aria-label="Grafo dei termini vicini al nodo selezionato"></svg>
+        <div id="badge-relazione" class="badge-relazione"></div>
+      </div>
+      <div id="legenda" class="legenda"></div>
+      <details class="glossario-lente">
+        <summary>Glossario delle relazioni</summary>
+        <div id="glossario-relazioni"></div>
+      </details>
+    </main>
+  </div>
+
+  <footer class="piede-lente">
+    Generato da <code>scripts/genera_grafo.py</code> a partire dagli stessi
+    <code>src/*.ttl</code> del vocabolario e dell'ontologia — nessuna nuova
+    modellazione qui, solo una vista diversa dello stesso grafo. D3 self-hosted
+    (<code>output/vendor/d3.v7.min.js</code>), nessuna chiamata di rete.
+  </footer>
+</div>
+<script src="../src/grafo.js"></script>
+<script src="vendor/d3.v7.min.js"></script>
+<script src="lente.js"></script>
+</body>
+</html>

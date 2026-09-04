@@ -1,0 +1,51 @@
+{
+ "_metadata": {
+  "descrizione": "Dati illustrativi per il grafico delle capacita' emergenti, Meccanismo · 6 unita 6.2 - deliberatamente poco interattivo, per non dare falsa certezza a un fenomeno ancora dibattuto (principio gia' fissato nell'inventario grafico).",
+  "allineamento_con_genealogia_2": "Testo verificato in Genealogia · 2 (Capacita' 04): usa esattamente gli esempi 'aritmetica a più cifre' e 'ragionamento a più passi' come capacita' che 'non migliorano gradualmente... restano vicine allo zero fino a una certa soglia... poi appaiono in modo quasi discontinuo'. Lo stesso file cita gia' 'Schaeffer e colleghi, 2023' per la critica. Questi dati riusano lo stesso esempio (aritmetica a più cifre) per coerenza terminologica.",
+  "stato_dichiarato": "ILLUSTRATIVO - una curva stilizzata che mostra il tipo di andamento descritto nella letteratura, NON una riproduzione di dati specifici pubblicati in un paper. Dichiarato esplicitamente per evitare di spacciare un'illustrazione per un risultato misurato.",
+  "citazioni_reali": {
+   "origine_del_fenomeno": "Wei et al., 'Emergent Abilities of Large Language Models', TMLR 2022 (arXiv:2206.07682) - introduce il framing e mostra pattern di questo tipo su task come l'aritmetica multi-cifra.",
+   "critica_reale": "Schaeffer, Miranda, Koyejo, 'Are Emergent Abilities of Large Language Models a Mirage?', 2023 - gia' citata in Genealogia · 2 - sostiene che parte dell'emergenza osservata sia un artefatto di metriche discontinue (tutto giusto o niente) che nascondono un miglioramento in realta' graduale."
+  }
+ },
+ "curva_illustrativa": {
+  "task_esempio": "aritmetica a più cifre (stesso esempio usato in Genealogia · 2)",
+  "asse_x": "scala del modello (parametri, log)",
+  "asse_y": "accuratezza sul task (0-1)",
+  "punti": [
+   {
+    "scala_parametri": 100000000.0,
+    "accuratezza": 0.02
+   },
+   {
+    "scala_parametri": 1000000000.0,
+    "accuratezza": 0.03
+   },
+   {
+    "scala_parametri": 10000000000.0,
+    "accuratezza": 0.05
+   },
+   {
+    "scala_parametri": 30000000000.0,
+    "accuratezza": 0.08
+   },
+   {
+    "scala_parametri": 70000000000.0,
+    "accuratezza": 0.15
+   },
+   {
+    "scala_parametri": 130000000000.0,
+    "accuratezza": 0.42
+   },
+   {
+    "scala_parametri": 175000000000.0,
+    "accuratezza": 0.68
+   },
+   {
+    "scala_parametri": 540000000000.0,
+    "accuratezza": 0.81
+   }
+  ],
+  "nota": "Soglia illustrativa collocata tra 7e10 e 1.3e11 parametri (ordine di grandezza coerente con gli anchor reali di scala_modulo6.json, non scelta arbitrariamente) - il salto da 0.15 a 0.42 e' il punto pedagogico: prima della soglia il miglioramento e' quasi piatto, dopo diventa rapido."
+ }
+}

@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fondamenti · 2 — Hardware e software</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0F2A22;
+    --surface: #173B30;
+    --surface-2: #1E4A3C;
+    --copper: #C97D3D;
+    --copper-bright: #F0A85E;
+    --text: #F2ECE0;
+    --text-dim: #A9BFB6;
+    --line: rgba(242,236,224,0.12);
+    --rail-w: 300px;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html{ scroll-behavior: smooth; }
+
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Source Serif 4', Georgia, serif;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,h2,h3, .display{
+    font-family: 'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+
+  .mono{
+    font-family: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+  }
+
+  a{ color: var(--copper-bright); }
+
+  /* ---------- layout shell: sidebar fissa con indice del sito ---------- */
+
+  .sidebar{
+    background: rgba(15,42,34,0.92);
+    border-bottom: 1px solid var(--line);
+    padding: 28px 24px 32px;
+  }
+  .sidebar-kicker{
+    font-family: 'IBM Plex Mono', monospace; font-size: .74rem; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px;
+  }
+  .sidebar-title{
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.02rem;
+    color: var(--text); margin-bottom: 22px;
+  }
+  .sidebar .parte{ margin-top: 26px; }
+  .sidebar .parte:first-of-type{ margin-top: 0; }
+  .sidebar .parte-heading{
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: .74rem;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--copper-bright);
+    padding-bottom: 10px; margin-bottom: 2px; border-bottom: 1px solid var(--line);
+  }
+  .sidebar .voce-semplice{
+    display: block; padding: 10px 4px; border-bottom: 1px solid var(--line);
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem;
+    color: var(--text); text-decoration: none;
+  }
+  .sidebar .voce-semplice:hover{ color: var(--copper-bright); }
+  .sidebar .voce-semplice.current{ color: var(--copper-bright); }
+  .sidebar details.modulo{ border-bottom: 1px solid var(--line); }
+  .sidebar details.modulo summary{
+    display: flex; align-items: center; gap: 8px; padding: 10px 4px; cursor: pointer;
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem; color: var(--text);
+    list-style: none;
+  }
+  .sidebar details.modulo summary.current{ color: var(--copper-bright); }
+  .sidebar details.modulo summary::-webkit-details-marker{ display: none; }
+  .sidebar details.modulo summary::before{
+    content: "›"; display: inline-block; font-family: 'IBM Plex Mono', monospace;
+    color: var(--text-dim); transition: transform .15s ease; flex-shrink: 0;
+  }
+  .sidebar details.modulo[open] summary::before{ transform: rotate(90deg); color: var(--copper-bright); }
+  .sidebar details.modulo summary:hover{ color: var(--copper-bright); }
+  .sidebar .unita-list{ padding: 2px 0 12px 22px; display: flex; flex-direction: column; gap: 1px; }
+  .sidebar .unita-list a{
+    display: block; padding: 6px 4px; font-size: .82rem; color: var(--text-dim); text-decoration: none;
+  }
+  .sidebar .unita-list a:hover{ color: var(--copper-bright); }
+  .sidebar .unita-list a .num{ color: var(--copper); margin-right: 6px; font-family: 'IBM Plex Mono', monospace; font-size: .74rem; }
+
+  /* pallini luminosi di scroll-spy, sulle voci dell'unità corrente */
+  .sidebar .unita-list.scrollspy a{ position: relative; padding-left: 20px; }
+  .sidebar .unita-list.scrollspy a::before{
+    content: "";
+    position: absolute; left: 2px; top: 50%;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--surface-2); border: 1px solid var(--line);
+    transform: translateY(-50%);
+    transition: background .25s, box-shadow .25s, transform .25s;
+  }
+  .sidebar .unita-list.scrollspy a.active{ color: var(--copper-bright); }
+  .sidebar .unita-list.scrollspy a.active::before{
+    background: var(--copper-bright);
+    box-shadow: 0 0 0 4px rgba(240,168,94,0.18);
+    transform: translateY(-50%) scale(1.2);
+  }
+
+  main{ padding-top: 0; }
+
+  @media (min-width: 900px){
+    .sidebar{
+      position: fixed; z-index: 50; top:0; bottom:0; left:0; width: var(--rail-w);
+      overflow-y: auto; border-bottom:none; border-right: 1px solid var(--line);
+    }
+    main{ padding-left: var(--rail-w); }
+  }
+
+  .wrap{
+    max-width: 740px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  section{
+    padding: 96px 0 88px;
+    border-bottom: 1px solid var(--line);
+  }
+  section:last-of-type{ border-bottom:none; }
+
+  .eyebrow{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--copper-bright);
+    margin-bottom: 14px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{
+    content:"";
+    width: 22px; height:1px;
+    background: var(--copper-bright);
+    display:inline-block;
+  }
+
+  h2.title{
+    font-size: clamp(1.7rem, 4vw, 2.4rem);
+    margin-bottom: 22px;
+  }
+
+  p{ margin: 0 0 18px; color: var(--text); font-size: 1.06rem; }
+  p.dim{ color: var(--text-dim); }
+
+  .lede{
+    font-size: 1.2rem;
+    color: var(--text);
+  }
+
+  /* reveal-on-scroll */
+  .reveal{
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity .7s ease, transform .7s ease;
+  }
+  .reveal.visible{ opacity:1; transform: translateY(0); }
+
+  @media (prefers-reduced-motion: reduce){
+    .reveal{ transition: opacity .2s linear; transform:none; }
+    *{ scroll-behavior: auto !important; }
+  }
+
+  /* ---------- callouts ---------- */
+
+  .aside{
+    margin: 28px 0;
+    padding: 18px 20px;
+    background: var(--surface);
+    border-left: 3px solid var(--copper);
+    border-radius: 2px;
+  }
+  .aside .label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--copper-bright);
+    margin-bottom: 8px;
+    display:block;
+  }
+  .aside p{ margin-bottom:0; font-size: 0.98rem; color: var(--text-dim); }
+
+  .question{
+    margin: 30px 0;
+    padding: 20px 22px;
+    border: 1px dashed var(--line);
+    border-radius: 4px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.02rem;
+    color: var(--copper-bright);
+  }
+
+  blockquote{
+    margin: 0;
+    padding-left: 22px;
+    border-left: 2px solid var(--copper);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.15rem;
+    color: var(--text);
+  }
+
+  /* ---------- hero ---------- */
+
+  .hero{
+    padding-top: 64px;
+    text-align:left;
+  }
+  .hero .kicker{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 18px;
+  }
+  .hero h1{
+    font-size: clamp(2rem, 6vw, 3.1rem);
+    line-height:1.08;
+    margin-bottom: 26px;
+  }
+  .hero h1 em{
+    font-style: normal;
+    color: var(--copper-bright);
+  }
+
+  .chatmock{
+    margin-top: 44px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 22px;
+    max-width: 480px;
+  }
+  .bubble{
+    display:inline-block;
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.94rem;
+    margin-bottom: 10px;
+  }
+  .bubble.user{
+    background: var(--surface-2);
+    color: var(--text);
+    border-bottom-right-radius: 4px;
+  }
+  .bubble-row{ display:flex; justify-content:flex-end; }
+  .bubble-row.left{ justify-content:flex-start; }
+
+  .typing{
+    display:flex; gap:5px; align-items:center;
+    padding: 12px 14px;
+  }
+  .typing span{
+    width:6px; height:6px; border-radius:50%;
+    background: var(--copper-bright);
+    opacity: .35;
+    animation: blink 1.2s infinite ease-in-out;
+  }
+  .typing span:nth-child(2){ animation-delay:.2s; }
+  .typing span:nth-child(3){ animation-delay:.4s; }
+  @keyframes blink{ 0%,80%,100%{opacity:.25;} 40%{opacity:1;} }
+
+  .timer{
+    margin-top: 12px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+  }
+  .timer b{ color: var(--copper-bright); }
+
+  .scrolldown{
+    margin-top: 56px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    display:flex; align-items:center; gap:8px;
+  }
+  .scrolldown::after{
+    content:"↓";
+    color: var(--copper-bright);
+    animation: nudge 1.8s infinite ease-in-out;
+  }
+  @media (prefers-reduced-motion: reduce){ .scrolldown::after{ animation:none; } }
+  @keyframes nudge{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(5px); } }
+
+  /* ---------- strato 1: function box ---------- */
+
+  .fnbox{
+    display:flex;
+    align-items:center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin: 30px 0;
+    font-family:'IBM Plex Mono', monospace;
+  }
+  .fnbox .node{
+    padding: 14px 18px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    font-size: 0.92rem;
+  }
+  .fnbox .node.blackbox{
+    border-style: dashed;
+    border-color: var(--copper);
+    color: var(--copper-bright);
+  }
+  .fnbox .arrow{ color: var(--text-dim); }
+
+  /* ---------- strato 2: data center ---------- */
+
+  .rack-grid{
+    display:grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 6px;
+    margin: 30px 0;
+    max-width: 420px;
+  }
+  .rack{
+    aspect-ratio: 1 / 2.4;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    display:flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items:center;
+    padding: 6px 0;
+  }
+  .rack .led{
+    width: 4px; height:4px; border-radius:50%;
+    background: var(--copper-bright);
+    opacity: .25;
+    animation: glow 3s infinite ease-in-out;
+  }
+  .rack:nth-child(odd) .led{ animation-delay: .6s; }
+  .rack:nth-child(3n) .led{ animation-delay: 1.3s; }
+  @keyframes glow{ 0%,100%{opacity:.2;} 50%{opacity:.8;} }
+  @media (prefers-reduced-motion: reduce){ .rack .led{ animation:none; opacity:.5; } }
+
+  .stat-pair{
+    display:flex;
+    gap: 28px;
+    margin: 28px 0;
+    flex-wrap: wrap;
+  }
+  .stat{
+    flex: 1 1 160px;
+  }
+  .stat .num{
+    font-family:'Space Grotesk', sans-serif;
+    font-size: 2.1rem;
+    color: var(--copper-bright);
+    line-height:1;
+  }
+  .stat .lbl{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-dim);
+    margin-top: 6px;
+  }
+
+  /* ---------- strato 3: cpu vs gpu ---------- */
+
+  .compare{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+    margin: 30px 0;
+  }
+  @media (min-width: 640px){ .compare{ grid-template-columns: 1fr 1fr; } }
+
+  .compare-card{
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 20px;
+  }
+  .compare-card h3{
+    font-size: 1rem;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .compare-card .role{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.74rem;
+    color: var(--copper-bright);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 16px;
+    display:block;
+  }
+
+  .cpu-viz{ display:flex; gap:8px; margin: 18px 0; }
+  .cpu-block{
+    width: 38px; height:38px;
+    border-radius: 4px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+  }
+  .cpu-block.on{
+    background: var(--copper);
+    animation: cpu-seq 2.4s infinite;
+  }
+  .cpu-block:nth-child(1){ animation-delay: 0s; }
+  .cpu-block:nth-child(2){ animation-delay: .6s; }
+  .cpu-block:nth-child(3){ animation-delay: 1.2s; }
+  .cpu-block:nth-child(4){ animation-delay: 1.8s; }
+  @keyframes cpu-seq{ 0%,15%{ background: var(--copper); } 25%,100%{ background: var(--surface-2); } }
+
+  .gpu-viz{
+    display:grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 4px;
+    margin: 18px 0;
+  }
+  .gpu-cell{
+    width: 100%; aspect-ratio:1;
+    border-radius:2px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    animation: gpu-pulse 2.4s infinite;
+  }
+  @keyframes gpu-pulse{ 0%,100%{ background: var(--surface-2); } 50%{ background: var(--copper); } }
+  @media (prefers-reduced-motion: reduce){
+    .cpu-block.on, .gpu-cell{ animation:none; }
+    .cpu-block.on{ background: var(--copper); }
+    .gpu-cell:nth-child(odd){ background: var(--copper); }
+  }
+
+  /* ---------- strato 4: transistor + ladder ---------- */
+
+  .transistor-panel{
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 28px;
+    margin: 30px 0;
+    text-align:center;
+  }
+  .switch{
+    width: 90px; height: 44px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    position: relative;
+    margin: 0 auto 16px;
+    cursor: pointer;
+    padding:0;
+  }
+  .switch .knob{
+    position:absolute;
+    top:3px; left:3px;
+    width: 36px; height:36px;
+    border-radius:50%;
+    background: var(--text-dim);
+    transition: transform .25s ease, background .25s ease;
+  }
+  .switch.on .knob{
+    transform: translateX(44px);
+    background: var(--copper-bright);
+  }
+  .switch:focus-visible{ outline: 2px solid var(--copper-bright); outline-offset:4px; }
+
+  .switch-state{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    margin-bottom: 30px;
+  }
+  .switch-state b{ color: var(--copper-bright); font-size: 1.1rem; }
+
+  .ladder{
+    display:flex;
+    flex-direction: column;
+    gap: 6px;
+    text-align:left;
+    max-width: 340px;
+    margin: 0 auto;
+  }
+  .ladder-item{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.86rem;
+    padding: 9px 12px;
+    border-radius: 4px;
+    background: var(--surface-2);
+    color: var(--text-dim);
+    border-left: 2px solid transparent;
+    transition: background .3s, color .3s, border-color .3s;
+  }
+  .ladder-item.lit{
+    background: rgba(201,125,61,0.18);
+    color: var(--copper-bright);
+    border-left-color: var(--copper-bright);
+  }
+
+  .truth-table{
+    margin: 28px 0;
+    border-collapse: collapse;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.92rem;
+  }
+  .truth-table caption{
+    text-align:left;
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    margin-bottom: 10px;
+    caption-side: top;
+  }
+  .truth-table th, .truth-table td{
+    border: 1px solid var(--line);
+    padding: 8px 16px;
+    text-align:center;
+  }
+  .truth-table th{ color: var(--copper-bright); background: var(--surface); }
+  .truth-table td.true{ color: var(--copper-bright); }
+  .truth-table td.false{ color: var(--text-dim); }
+
+  /* ---------- strato 5: hw/sw cards ---------- */
+
+  .hwsw{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin: 30px 0;
+  }
+  @media (min-width: 640px){ .hwsw{ grid-template-columns: 1fr 1fr; } }
+  .hwsw-card{
+    background: var(--surface);
+    border-radius: 8px;
+    padding: 22px;
+    border-top: 3px solid var(--copper);
+  }
+  .hwsw-card h3{ margin-bottom:10px; font-size: 1.05rem; }
+  .hwsw-card p{ font-size: 0.96rem; color: var(--text-dim); margin-bottom:0; }
+
+  /* ---------- chiusura ---------- */
+
+  .chiusura{
+    background: linear-gradient(180deg, var(--bg), var(--surface));
+  }
+  .chiusura blockquote{ font-size: 1.3rem; }
+  .footer-note{
+    margin-top: 50px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+  }
+</style>
+</head>
+<body>
+
+<nav class="sidebar" aria-label="Indice del saggio">
+  <div class="sidebar-kicker">Indice</div>
+  <div class="sidebar-title">Dal bit alle entità semantiche</div>
+
+  <div class="parte">
+    <details class="modulo">
+      <summary>Presentazione — Dal bit alle entità semantiche</summary>
+      <div class="unita-list">
+        <a href="presentazione.html#parte-1"><span class="num">1</span>Framework epistemologico: i limiti che condividiamo con le macchine</a>
+        <a href="presentazione.html#parte-2"><span class="num">2</span>Il dominio: struttura e composizione del saggio interattivo</a>
+        <a href="presentazione.html#parte-3"><span class="num">3</span>La lente semantica</a>
+      </div>
+    </details>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Parte I — Fondamenti</div>
+    <a class="voce-semplice" href="fondamenti-1-funzioni-booleane.html">1. Funzioni booleane</a>
+    <a class="voce-semplice current" href="fondamenti-2-hardware-software.html">2. Hardware e software</a>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Parte II — Genealogia</div>
+
+    <details class="modulo">
+      <summary>1. Tre ore di disputa senza esito</summary>
+      <div class="unita-list">
+        <a href="genealogia-1-disputa.html#unit-a1"><span class="num">1.1</span>Dalla characteristica universalis alla pura ideografia</a>
+        <a href="genealogia-1-disputa.html#unit-a2"><span class="num">1.2</span>Gödel, Turing, Lucas</a>
+        <a href="genealogia-1-disputa.html#unit-a3"><span class="num">1.3</span>Il perceptron e la disgiunzione esclusiva (XOR)</a>
+        <a href="genealogia-1-disputa.html#unit-a4"><span class="num">1.4</span>Dai sistemi esperti alle macchine statistiche</a>
+        <a href="genealogia-1-disputa.html#unit-a5"><span class="num">1.5</span>Re, donna, regina</a>
+        <a href="genealogia-1-disputa.html#unit-a6"><span class="num">1.6</span>L'attenzione sostituisce la memoria</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>2. Il fenomeno e i suoi limiti</summary>
+      <div class="unita-list">
+        <a href="genealogia-2-limiti.html#unit-b1"><span class="num">2.1</span>Completamento statistico a scala massiva, in-context learning, transfer cross-dominio e altre capacità emergenti</a>
+        <a href="genealogia-2-limiti.html#unit-b2"><span class="num">2.2</span>Interpolazione, pesi statistici, metacognizione</a>
+        <a href="genealogia-2-limiti.html#unit-b3"><span class="num">2.3</span>Grounding, ragionamento causale, generalizzazione composizionale, cortocircuito dell'apprendimento</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>3. Perché ci vuole un villaggio</summary>
+      <div class="unita-list">
+        <a href="genealogia-3-villaggio.html#unit-c1"><span class="num">3.1</span>Il problema del significato</a>
+        <a href="genealogia-3-villaggio.html#unit-c2"><span class="num">3.2</span>Il problema della causalità</a>
+        <a href="genealogia-3-villaggio.html#unit-c3"><span class="num">3.3</span>Il problema biologico</a>
+        <a href="genealogia-3-villaggio.html#unit-c4"><span class="num">3.4</span>Il problema della coscienza</a>
+        <a href="genealogia-3-villaggio.html#unit-c5"><span class="num">3.5</span>Cosa siamo, per contrasto</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>4. Lo spazio, il corpo, la macchina</summary>
+      <div class="unita-list">
+        <a href="genealogia-4-corpo.html#unit-d1"><span class="num">4.1</span>Cos'è lo spazio? Il corpo come strumento di misura</a>
+        <a href="genealogia-4-corpo.html#unit-d2"><span class="num">4.2</span>Il corpo mancante</a>
+      </div>
+    </details>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Parte III — Meccanismo</div>
+
+    <details class="modulo">
+      <summary>1. Il testo come dato</summary>
+      <div class="unita-list">
+        <a href="meccanismo-1-testo-come-dato.html#unit-u1"><span class="num">1.1</span>Encoding</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u2"><span class="num">1.2</span>Tokenizzazione</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u3"><span class="num">1.3</span>Problema del vocabolario</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u4"><span class="num">1.4</span>Dagli ID al punto più discreto</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u5"><span class="num">1.5</span>Gödel</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>2. Probabilità e linguaggio</summary>
+      <div class="unita-list">
+        <a href="meccanismo-2-probabilita.html#unit-u1"><span class="num">2.1</span>Prevedere la parola successiva</a>
+        <a href="meccanismo-2-probabilita.html#unit-u2"><span class="num">2.2</span>Unigrammi/bigrammi, induzione, calibrazione</a>
+        <a href="meccanismo-2-probabilita.html#unit-u3"><span class="num">2.3</span>N-grammi e assunzione di Markov</a>
+        <a href="meccanismo-2-probabilita.html#unit-u4"><span class="num">2.4</span>Sparsità e dipendenze lontane</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>3. Parole come punti nello spazio</summary>
+      <div class="unita-list">
+        <a href="meccanismo-3-embedding.html#unit-u1"><span class="num">3.1</span>Il problema lasciato aperto</a>
+        <a href="meccanismo-3-embedding.html#unit-u2"><span class="num">3.2</span>Le parole come vettori (embedding)</a>
+        <a href="meccanismo-3-embedding.html#unit-u3"><span class="num">3.3</span>L'ipotesi distribuzionale</a>
+        <a href="meccanismo-3-embedding.html#unit-u4"><span class="num">3.4</span>L'aritmetica vettoriale</a>
+        <a href="meccanismo-3-embedding.html#unit-u5"><span class="num">3.5</span>Polisemia ed embedding statico</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>4. Reti neurali</summary>
+      <div class="unita-list">
+        <a href="meccanismo-4-reti-neurali.html#unit-u1"><span class="num">4.1</span>Dal neurone biologico al neurone artificiale</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u2"><span class="num">4.2</span>Il perceptron e XOR</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u3"><span class="num">4.3</span>Strati e profondità</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u4"><span class="num">4.4</span>La funzione di perdita</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u5"><span class="num">4.5</span>Il gradiente e la backpropagation</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>5. Il Transformer</summary>
+      <div class="unita-list">
+        <a href="meccanismo-5-transformer.html#unit-u1"><span class="num">5.1</span>Il problema che l'attenzione risolve</a>
+        <a href="meccanismo-5-transformer.html#unit-u2"><span class="num">5.2</span>L'idea dell'attention</a>
+        <a href="meccanismo-5-transformer.html#unit-u3"><span class="num">5.3</span>Query, Key, Value</a>
+        <a href="meccanismo-5-transformer.html#unit-u4"><span class="num">5.4</span>Embedding contestuale</a>
+        <a href="meccanismo-5-transformer.html#unit-u5"><span class="num">5.5</span>Multi-head e posizione</a>
+        <a href="meccanismo-5-transformer.html#unit-u6"><span class="num">5.6</span>Parallelismo e scala</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>6. Cosa significa "Large"</summary>
+      <div class="unita-list">
+        <a href="meccanismo-6-large.html#unit-u1"><span class="num">6.1</span>Scala</a>
+        <a href="meccanismo-6-large.html#unit-u2"><span class="num">6.2</span>Capacità emergenti</a>
+        <a href="meccanismo-6-large.html#unit-u3"><span class="num">6.3</span>I dati</a>
+        <a href="meccanismo-6-large.html#unit-u4"><span class="num">6.4</span>Fine-tuning</a>
+        <a href="meccanismo-6-large.html#unit-u5"><span class="num">6.5</span>RLHF</a>
+        <a href="meccanismo-6-large.html#unit-u6"><span class="num">6.6</span>Quantizzazione (chiusura dell'arco tecnico)</a>
+      </div>
+    </details>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Appendice</div>
+
+    <details class="modulo">
+      <summary>Dietro i widget</summary>
+      <div class="unita-list">
+        <a href="dietro-i-widget.html#unit-u1"><span class="num">A.1</span>Il tokenizzatore (Meccanismo · 1)</a>
+        <a href="dietro-i-widget.html#unit-u2"><span class="num">A.2</span>Il predittore n-grammi (Meccanismo · 2)</a>
+        <a href="dietro-i-widget.html#unit-u3"><span class="num">A.3</span>La mappa embedding (Meccanismo · 3)</a>
+        <a href="dietro-i-widget.html#unit-u4"><span class="num">A.4</span>Neurone, XOR, superficie di perdita (Meccanismo · 4)</a>
+        <a href="dietro-i-widget.html#unit-u5"><span class="num">A.5</span>L'attention (Meccanismo · 5)</a>
+        <a href="dietro-i-widget.html#unit-u6"><span class="num">A.6</span>Scala e capacità (Meccanismo · 6)</a>
+      </div>
+    </details>
+  </div>
+</nav>
+
+<main>
+
+  <section id="apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Fondamenti · 2</div>
+      <h1>Un messaggio parte verso Claude.<br><em>Che cosa è accaduto, fisicamente?</em></h1>
+      <p class="lede dim">Prima della risposta, due o tre secondi di attesa. Vale la pena osservarli non da utenti, ma da testimoni di un evento fisico.</p>
+
+      <div class="chatmock">
+        <div class="bubble-row">
+          <div class="bubble user">Come funziona una rete neurale?</div>
+        </div>
+        <div class="bubble-row left">
+          <div class="typing"><span></span><span></span><span></span></div>
+        </div>
+        <div class="timer">tempo trascorso: <b id="timerVal">0.0s</b> — un segnale elettrico, in viaggio</div>
+      </div>
+
+      <div class="scrolldown">smontiamo questi secondi, strato per strato</div>
+    </div>
+  </section>
+
+  <section id="strato-1">
+    <div class="wrap reveal">
+      <div class="eyebrow">Strato 01</div>
+      <h2 class="title">Cos'è Claude?</h2>
+      <p>Non un robot, non una mente. Per ora conviene trattarlo come un oggetto già noto: una <strong>funzione</strong>.</p>
+
+      <p class="dim">Claude è l'esempio concreto che useremo per tutta la lezione, ma vale per qualunque sistema analogo — un dettaglio che conta fin da qui: i <strong>modelli di frontiera</strong> (pochi, enormi, gestiti da poche aziende — quello dietro un'interfaccia come questa) e i <strong>modelli locali</strong> (più piccoli, eseguibili sul proprio hardware) condividono lo stesso tipo di hardware di base che stiamo per esplorare, ma non la stessa scala, né lo stesso costo.</p>
+
+      <div class="fnbox">
+        <div class="node">Input: testo</div>
+        <span class="arrow">→</span>
+        <div class="node blackbox">[ ? ]</div>
+        <span class="arrow">→</span>
+        <div class="node">Output: testo</div>
+      </div>
+
+      <p class="dim">Il centro resta una scatola nera — i moduli successivi la riempiranno. Per ora va fissato un solo punto:</p>
+      <div class="question">Claude è software che gira su hardware. Si parte dall'hardware, perché è la base più concreta — quella che, in un certo senso, si può toccare.</div>
+    </div>
+  </section>
+
+  <section id="strato-2">
+    <div class="wrap reveal">
+      <div class="eyebrow">Strato 02</div>
+      <h2 class="title">Dove vive Claude?</h2>
+      <p>Alla pressione di invio, il messaggio viaggia — come segnale elettrico, fisicamente — fino a un <strong>data center</strong>: un capannone pieno di server, raffreddato attivamente.</p>
+
+      <div class="rack-grid" aria-hidden="true">
+        <div class="rack"><span class="led"></span><span class="led"></span><span class="led"></span></div>
+        <div class="rack"><span class="led"></span><span class="led"></span><span class="led"></span></div>
+        <div class="rack"><span class="led"></span><span class="led"></span><span class="led"></span></div>
+        <div class="rack"><span class="led"></span><span class="led"></span><span class="led"></span></div>
+        <div class="rack"><span class="led"></span><span class="led"></span><span class="led"></span></div>
+        <div class="rack"><span class="led"></span><span class="led"></span><span class="led"></span></div>
+      </div>
+
+      <p><em>Questo è il corpo di Claude.</em> Senza posizione soggettiva, senza sensori sul mondo fisico — ma un corpo concreto, localizzato geograficamente, soggetto alle leggi della termodinamica.</p>
+
+      <div class="stat-pair">
+        <div class="stat">
+          <div class="num">~20W</div>
+          <div class="lbl">Cervello umano</div>
+        </div>
+        <div class="stat">
+          <div class="num">∼ una città</div>
+          <div class="lbl">Infrastruttura che fa girare un LLM</div>
+        </div>
+      </div>
+
+      <div class="aside">
+        <span class="label">Domanda che resta aperta</span>
+        <p>L'efficienza biologica è un problema di ricerca attivo: il cervello impara con pochi esempi e poca energia. Perché l'intelligenza artificiale ha bisogno di così tanto di entrambi? Il saggio vi tornerà parlando di reti neurali e neuroscienze.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="strato-3">
+    <div class="wrap reveal">
+      <div class="eyebrow">Strato 03</div>
+      <h2 class="title">Su cosa gira Claude? CPU contro GPU</h2>
+      <p>Un computer da lavoro ordinario usa una <strong>CPU</strong> — un processore generale. Claude gira soprattutto su <strong>GPU</strong>: nate per i videogiochi, non per l'intelligenza artificiale.</p>
+
+      <div class="compare">
+        <div class="compare-card">
+          <span class="role">CPU</span>
+          <h3>Il chirurgo esperto</h3>
+          <div class="cpu-viz">
+            <div class="cpu-block on"></div>
+            <div class="cpu-block on"></div>
+            <div class="cpu-block on"></div>
+            <div class="cpu-block on"></div>
+          </div>
+          <p class="dim">Poche operazioni, molto complesse, una alla volta, in sequenza, con grande precisione.</p>
+        </div>
+        <div class="compare-card">
+          <span class="role">GPU</span>
+          <h3>Migliaia di operai</h3>
+          <div class="gpu-viz" aria-hidden="true">
+            <div class="gpu-cell"></div><div class="gpu-cell"></div><div class="gpu-cell"></div><div class="gpu-cell"></div><div class="gpu-cell"></div><div class="gpu-cell"></div><div class="gpu-cell"></div><div class="gpu-cell"></div><div class="gpu-cell"></div><div class="gpu-cell"></div>
+            <div class="gpu-cell"></div><div class="gpu-cell"></div><div class="gpu-cell"></div><div class="gpu-cell"></div><div class="gpu-cell"></div><div class="gpu-cell"></div><div class="gpu-cell"></div><div class="gpu-cell"></div><div class="gpu-cell"></div><div class="gpu-cell"></div>
+          </div>
+          <p class="dim">Operazioni semplici, tutte insieme, in parallelo.</p>
+        </div>
+      </div>
+
+      <p>Una CPU moderna ha in genere da 4 a 64 core, pensati per fare poche cose complesse molto velocemente; una GPU ne ha migliaia — spesso decine di migliaia — pensati per fare tantissime cose semplici nello stesso istante. Le reti neurali — i moduli successivi lo mostreranno — sono essenzialmente <strong>moltiplicazioni di matrici</strong>: milioni di operazioni semplici e indipendenti tra loro. Esattamente il lavoro per cui la GPU è costruita.</p>
+
+      <div class="aside">
+        <span class="label">Se le prime due metafore non bastano</span>
+        <p><strong>Medica:</strong> la CPU è un medico di base che visita un paziente alla volta, con tutta l'attenzione del caso; la GPU è una campagna di vaccinazione di massa, la stessa iniezione somministrata a migliaia di persone in parallelo. <strong>Editoriale:</strong> la CPU è un redattore che rilegge un manoscritto riga per riga, correggendo con cura; la GPU è una rotativa da stampa, che produce migliaia di copie identiche dello stesso libro nello stesso istante.</p>
+      </div>
+
+      <div class="aside">
+        <span class="label">Una nota storica</span>
+        <p>Le GPU non sono state inventate per l'intelligenza artificiale. Quando i ricercatori si sono accorti che la stessa architettura per disegnare migliaia di pixel in parallelo serviva anche per addestrare reti neurali, si è sbloccato qualcosa che era già lì, in attesa di essere riconosciuto per un uso diverso da quello per cui era nato.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="strato-4">
+    <div class="wrap reveal">
+      <div class="eyebrow">Strato 04</div>
+      <h2 class="title">Cosa fa l'hardware, fisicamente?</h2>
+      <p>Qui si chiude il cerchio con la lezione sulle funzioni booleane. Un <strong>transistor</strong> è, alla base, un interruttore: passa corrente, o non passa. <span class="mono">1</span> o <span class="mono">0</span>.</p>
+
+      <div class="transistor-panel">
+        <button class="switch" id="transistorSwitch" aria-pressed="false" aria-label="Accendi o spegni il transistor">
+          <span class="knob"></span>
+        </button>
+        <div class="switch-state">stato del transistor: <b id="switchVal">0</b> — prema per accendere</div>
+
+        <div class="ladder" id="ladder">
+          <div class="ladder-item">Transistor (interruttore fisico)</div>
+          <div class="ladder-item">Gate logici — AND, OR, NOT</div>
+          <div class="ladder-item">Circuiti — sommatori, moltiplicatori</div>
+          <div class="ladder-item">Unità aritmetica</div>
+          <div class="ladder-item">Istruzioni macchina</div>
+          <div class="ladder-item">CUDA / driver GPU</div>
+          <div class="ladder-item">PyTorch</div>
+          <div class="ladder-item">Il modello neurale di Claude</div>
+        </div>
+      </div>
+
+      <p>Una GPU moderna contiene decine di miliardi di transistor. Combinati in gruppi, implementano i <strong>gate logici</strong> — la realizzazione fisica delle tavole di verità già costruite a mano nella lezione precedente.</p>
+
+      <table class="truth-table">
+        <caption>F = (A E B) O (NON A) — la stessa funzione, cablata in un chip</caption>
+        <tr><th>A</th><th>B</th><th>F</th></tr>
+        <tr><td>1</td><td>1</td><td class="true">1</td></tr>
+        <tr><td>1</td><td>0</td><td class="false">0</td></tr>
+        <tr><td>0</td><td>1</td><td class="true">1</td></tr>
+        <tr><td>0</td><td>0</td><td class="true">1</td></tr>
+      </table>
+
+      <div class="question">Non è una metafora. È la stessa funzione, alla stessa identica logica — solo a una scala fisica diversa, dentro il silicio invece che sulla carta.</div>
+    </div>
+  </section>
+
+  <section id="strato-5">
+    <div class="wrap reveal">
+      <div class="eyebrow">Strato 05</div>
+      <h2 class="title">Hardware contro software: la distinzione finale</h2>
+
+      <div class="hwsw">
+        <div class="hwsw-card">
+          <h3>Hardware</h3>
+          <p>Il fisico: transistor, circuiti, dissipatori di calore. Cambia lentamente, costa produrlo, ha massa e consuma energia.</p>
+        </div>
+        <div class="hwsw-card">
+          <h3>Software</h3>
+          <p>Le istruzioni: sequenze di 0 e 1 che dicono all'hardware che cosa fare. Si copia a costo quasi zero, non ha peso — ma esiste solo perché qualche hardware, da qualche parte, lo esegue.</p>
+        </div>
+      </div>
+
+      <div class="question">Il software non fa nulla di magico. Fa esattamente e soltanto ciò per cui l'hardware è costruito: operazioni aritmetiche e logiche elementari, miliardi di volte al secondo.</div>
+    </div>
+  </section>
+
+  <section id="chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura</div>
+      <h2 class="title">Il paradosso pedagogico</h2>
+
+      <blockquote>
+        Claude è una funzione che trasforma testo in testo. È implementato come moltiplicazioni di matrici. È eseguito da transistor che si accendono e si spengono in un capannone industriale che consuma quanto una città.
+        <br><br>
+        Niente, in questa descrizione, sembra intelligente.
+        <br><br>
+        Eppure il risultato — in certi contesti — lo è, o almeno lo sembra.
+      </blockquote>
+
+      <p style="margin-top:28px;">Questo paradosso va tenuto a portata di mano: il saggio vi torna, da prospettive diverse, in ogni modulo.</p>
+
+      <div class="footer-note">Fondamenti — 2 · Hardware e software</div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  // --- timer nell'hero ---
+  let t = 0;
+  const timerEl = document.getElementById('timerVal');
+  setInterval(() => {
+    t += 0.1;
+    if (t > 2.6) t = 0;
+    if (timerEl) timerEl.textContent = t.toFixed(1) + 's';
+  }, 100);
+
+  // --- transistor toggle + ladder ---
+  const sw = document.getElementById('transistorSwitch');
+  const swVal = document.getElementById('switchVal');
+  const ladderItems = document.querySelectorAll('.ladder-item');
+  let on = false;
+
+  function lightLadder(state){
+    ladderItems.forEach((item, i) => {
+      if(state){
+        setTimeout(() => item.classList.add('lit'), i * 90);
+      } else {
+        item.classList.remove('lit');
+      }
+    });
+  }
+
+  sw.addEventListener('click', () => {
+    on = !on;
+    sw.classList.toggle('on', on);
+    sw.setAttribute('aria-pressed', on);
+    swVal.textContent = on ? '1' : '0';
+    lightLadder(on);
+  });
+
+  // --- reveal on scroll ---
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>

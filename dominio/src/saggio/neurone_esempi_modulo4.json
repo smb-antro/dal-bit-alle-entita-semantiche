@@ -1,0 +1,82 @@
+{
+ "_metadata": {
+  "descrizione": "Esempi di input e valori di riferimento per il neurone singolo di Meccanismo · 4, unita 4.1 - variante continua del calcolatore booleano di fondamenti-1-funzioni-booleane.html.",
+  "funzione_di_attivazione": "sigmoide: sigma(z) = 1/(1+e^-z) - continua, coerente con l'inquadramento di questa unita' come 'variante continua' del calcolatore booleano discreto gia' visto.",
+  "input_riusati": "I primi 4 esempi riusano esattamente le coppie booleane (0,0),(0,1),(1,0),(1,1) gia' presenti in fondamenti-1-funzioni-booleane.html, per continuita' esplicita.",
+  "verifica": "Ogni terna (pesi, input) -> output e' stata calcolata a mano/con Python e puo' essere usata per testare la correttezza dell'implementazione JS del widget (i pesi sono comunque regolabili dall'utente tramite slider nel widget finale, questi sono solo valori di riferimento per la verifica)."
+ },
+ "esempi_verificati": [
+  {
+   "x1": 0.0,
+   "x2": 0.0,
+   "nota": "booleano, riuso da fondamenti-1-funzioni-booleane.html (A=0,B=0)",
+   "pesi_esempio": {
+    "w1": 1.5,
+    "w2": -1.0,
+    "b": 0.2
+   },
+   "z": 0.2,
+   "output": 0.549834
+  },
+  {
+   "x1": 0.0,
+   "x2": 1.0,
+   "nota": "booleano, riuso da fondamenti-1-funzioni-booleane.html (A=0,B=1)",
+   "pesi_esempio": {
+    "w1": 1.5,
+    "w2": -1.0,
+    "b": 0.2
+   },
+   "z": -0.8,
+   "output": 0.310026
+  },
+  {
+   "x1": 1.0,
+   "x2": 0.0,
+   "nota": "booleano, riuso da fondamenti-1-funzioni-booleane.html (A=1,B=0)",
+   "pesi_esempio": {
+    "w1": 1.5,
+    "w2": -1.0,
+    "b": 0.2
+   },
+   "z": 1.7,
+   "output": 0.845535
+  },
+  {
+   "x1": 1.0,
+   "x2": 1.0,
+   "nota": "booleano, riuso da fondamenti-1-funzioni-booleane.html (A=1,B=1)",
+   "pesi_esempio": {
+    "w1": 1.5,
+    "w2": -1.0,
+    "b": 0.2
+   },
+   "z": 0.7,
+   "output": 0.668188
+  },
+  {
+   "x1": 0.3,
+   "x2": 0.8,
+   "nota": "esempio continuo - variante continua del calcolatore booleano",
+   "pesi_esempio": {
+    "w1": 1.5,
+    "w2": -1.0,
+    "b": 0.2
+   },
+   "z": -0.15,
+   "output": 0.46257
+  },
+  {
+   "x1": 0.65,
+   "x2": 0.2,
+   "nota": "esempio continuo",
+   "pesi_esempio": {
+    "w1": 1.5,
+    "w2": -1.0,
+    "b": 0.2
+   },
+   "z": 0.975,
+   "output": 0.726115
+  }
+ ]
+}

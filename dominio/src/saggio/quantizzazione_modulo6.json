@@ -1,0 +1,28 @@
+{
+ "_metadata": {
+  "descrizione": "Livelli di precisione numerica reali per la barra che si 'spacca' in blocchi discreti, Meccanismo · 6 unita 6.6 - chiusura del filo discreto/continuo.",
+  "principio": "Bit-width reali usati in pratica nell'industria, non un numero di blocchi arbitrario."
+ },
+ "livelli": [
+  {
+   "nome": "FP32",
+   "bit": 32,
+   "uso_reale": "Precisione standard storica per l'addestramento (piena precisione in virgola mobile a 32 bit)."
+  },
+  {
+   "nome": "FP16 / BF16",
+   "bit": 16,
+   "uso_reale": "Precisione mista, oggi la più comune in addestramento - dimezza la memoria rispetto a FP32 con perdita di precisione minima per la maggior parte dei task."
+  },
+  {
+   "nome": "INT8",
+   "bit": 8,
+   "uso_reale": "Livello comune di quantizzazione per il deployment (inferenza) - riduce ulteriormente memoria ed energia."
+  },
+  {
+   "nome": "INT4",
+   "bit": 4,
+   "uso_reale": "Quantizzazione aggressiva per deployment su hardware con risorse limitate (es. strumenti come llama.cpp) - il compromesso più estremo tra dimensione e qualità."
+  }
+ ]
+}

@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meccanismo · 4 · Reti neurali</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0F2A22;
+    --surface: #173B30;
+    --surface-2: #1E4A3C;
+    --copper: #C97D3D;
+    --copper-bright: #F0A85E;
+    --text: #F2ECE0;
+    --text-dim: #A9BFB6;
+    --line: rgba(242,236,224,0.12);
+    --rail-w: 300px;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Source Serif 4', Georgia, serif;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,h2,h3, .display{
+    font-family: 'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+  .mono{ font-family: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace; }
+  a{ color: var(--copper-bright); }
+
+  /* ---------- layout shell: sidebar fissa con indice del sito ---------- */
+  .sidebar{
+    background: rgba(15,42,34,0.92);
+    border-bottom: 1px solid var(--line);
+    padding: 28px 24px 32px;
+  }
+  .sidebar-kicker{
+    font-family: 'IBM Plex Mono', monospace; font-size: .74rem; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px;
+  }
+  .sidebar-title{
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.02rem;
+    color: var(--text); margin-bottom: 22px;
+  }
+  .sidebar .parte{ margin-top: 26px; }
+  .sidebar .parte:first-of-type{ margin-top: 0; }
+  .sidebar .parte-heading{
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: .74rem;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--copper-bright);
+    padding-bottom: 10px; margin-bottom: 2px; border-bottom: 1px solid var(--line);
+  }
+  .sidebar .voce-semplice{
+    display: block; padding: 10px 4px; border-bottom: 1px solid var(--line);
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem;
+    color: var(--text); text-decoration: none;
+  }
+  .sidebar .voce-semplice:hover{ color: var(--copper-bright); }
+  .sidebar .voce-semplice.current{ color: var(--copper-bright); }
+  .sidebar details.modulo{ border-bottom: 1px solid var(--line); }
+  .sidebar details.modulo summary{
+    display: flex; align-items: center; gap: 8px; padding: 10px 4px; cursor: pointer;
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem; color: var(--text);
+    list-style: none;
+  }
+  .sidebar details.modulo summary.current{ color: var(--copper-bright); }
+  .sidebar details.modulo summary::-webkit-details-marker{ display: none; }
+  .sidebar details.modulo summary::before{
+    content: "›"; display: inline-block; font-family: 'IBM Plex Mono', monospace;
+    color: var(--text-dim); transition: transform .15s ease; flex-shrink: 0;
+  }
+  .sidebar details.modulo[open] summary::before{ transform: rotate(90deg); color: var(--copper-bright); }
+  .sidebar details.modulo summary:hover{ color: var(--copper-bright); }
+  .sidebar .unita-list{ padding: 2px 0 12px 22px; display: flex; flex-direction: column; gap: 1px; }
+  .sidebar .unita-list a{
+    display: block; padding: 6px 4px; font-size: .82rem; color: var(--text-dim); text-decoration: none;
+  }
+  .sidebar .unita-list a:hover{ color: var(--copper-bright); }
+  .sidebar .unita-list a .num{ color: var(--copper); margin-right: 6px; font-family: 'IBM Plex Mono', monospace; font-size: .74rem; }
+
+  /* pallini luminosi di scroll-spy, sulle voci dell'unità corrente */
+  .sidebar .unita-list.scrollspy a{ position: relative; padding-left: 20px; }
+  .sidebar .unita-list.scrollspy a::before{
+    content: "";
+    position: absolute; left: 2px; top: 50%;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--surface-2); border: 1px solid var(--line);
+    transform: translateY(-50%);
+    transition: background .25s, box-shadow .25s, transform .25s;
+  }
+  .sidebar .unita-list.scrollspy a.active{ color: var(--copper-bright); }
+  .sidebar .unita-list.scrollspy a.active::before{
+    background: var(--copper-bright);
+    box-shadow: 0 0 0 4px rgba(240,168,94,0.18);
+    transform: translateY(-50%) scale(1.2);
+  }
+
+  main{ padding-top: 0; }
+
+  @media (min-width: 900px){
+    .sidebar{
+      position: fixed; z-index: 50; top:0; bottom:0; left:0; width: var(--rail-w);
+      overflow-y: auto; border-bottom:none; border-right: 1px solid var(--line);
+    }
+    main{ padding-left: var(--rail-w); }
+  }
+
+  .wrap{ max-width: 740px; margin: 0 auto; padding: 0 24px; }
+
+  .unit-block section{ padding: 92px 0 84px; border-bottom: 1px solid var(--line); }
+  .unit-block:last-child section:last-of-type{ border-bottom:none; }
+
+  .eyebrow{
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--copper-bright);
+    margin-bottom: 14px; display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{ content:""; width: 22px; height:1px; background: var(--copper-bright); display:inline-block; }
+
+  h2.title{ font-size: clamp(1.6rem, 4vw, 2.3rem); margin-bottom: 20px; }
+
+  p{ margin: 0 0 18px; color: var(--text); font-size: 1.05rem; }
+  p.dim{ color: var(--text-dim); }
+  .lede{ font-size: 1.15rem; color: var(--text); }
+
+  .reveal{ opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.visible{ opacity:1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce){
+    .reveal{ transition: opacity .2s linear; transform:none; }
+    *{ scroll-behavior: auto !important; }
+  }
+
+  .aside{
+    margin: 26px 0; padding: 18px 20px; background: var(--surface);
+    border-left: 3px solid var(--copper); border-radius: 2px;
+  }
+  .aside .label{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--copper-bright); margin-bottom: 8px; display:block;
+  }
+  .aside p{ margin-bottom:0; font-size: 0.96rem; color: var(--text-dim); }
+  .aside p + p{ margin-top: 12px; }
+
+  .question{
+    margin: 28px 0; padding: 20px 22px; border: 1px dashed var(--line); border-radius: 4px;
+    font-family: 'Space Grotesk', sans-serif; font-size: 1.0rem; color: var(--copper-bright);
+  }
+
+  blockquote{
+    margin: 0; padding-left: 22px; border-left: 2px solid var(--copper);
+    font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; color: var(--text);
+  }
+
+  /* ---------- hero ---------- */
+  .hero{ padding-top: 62px; }
+  .hero .kicker{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.8rem; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--text-dim); margin-bottom: 18px;
+  }
+  .hero h1{ font-size: clamp(1.9rem, 5.6vw, 2.9rem); line-height:1.12; margin-bottom: 24px; }
+  .hero h1 em{ font-style: normal; color: var(--copper-bright); }
+  .scrolldown{
+    margin-top: 50px; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem;
+    color: var(--text-dim); letter-spacing: 0.08em; text-transform: uppercase;
+    display:flex; align-items:center; gap:8px;
+  }
+  .scrolldown::after{ content:"↓"; color: var(--copper-bright); animation: nudge 1.8s infinite ease-in-out; }
+  @media (prefers-reduced-motion: reduce){ .scrolldown::after{ animation:none; } }
+  @keyframes nudge{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(5px); } }
+
+  /* ---------- widget: neurone singolo (4.1) ---------- */
+  .neuron-box{
+    margin: 30px 0; background: var(--surface); border: 1px solid var(--line);
+    border-radius: 10px; padding: 24px 26px;
+  }
+  .neuron-box .ptitle{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--copper-bright); margin-bottom: 14px; display:block;
+  }
+  .neuron-inputs{ display:flex; flex-wrap:wrap; gap: 22px 28px; margin-bottom: 18px; }
+  .neuron-slider-group{ flex: 1 1 200px; min-width: 160px; }
+  .glabel{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text-dim); display:block; margin-bottom: 6px;
+  }
+  .neuron-slider{ width:100%; accent-color: var(--copper-bright); }
+  .neuron-slider.weight{ accent-color: var(--copper); }
+  .val{ font-family:'IBM Plex Mono', monospace; font-size: 0.82rem; color: var(--text-dim); margin-top: 4px; }
+  .val b{ color: var(--copper-bright); }
+  .neuron-formula{
+    font-size: 0.95rem; color: var(--text); background: var(--bg); border: 1px solid var(--line);
+    border-radius: 6px; padding: 12px 14px; margin: 18px 0;
+  }
+  .neuron-output{ margin-top: 20px; }
+  .neuron-out-bar{
+    width:100%; height: 14px; background: var(--bg); border: 1px solid var(--line);
+    border-radius: 8px; overflow:hidden; margin: 8px 0;
+  }
+  .neuron-out-fill{
+    height:100%; background: linear-gradient(90deg, var(--copper), var(--copper-bright));
+    width: 50%; transition: width .15s ease;
+  }
+  .neuron-out-val{ font-family:'IBM Plex Mono', monospace; font-size: 0.95rem; color: var(--copper-bright); }
+  .neuron-examples{ margin-top: 18px; display:flex; flex-wrap: wrap; gap: 8px; }
+  .pg-example-btn{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.74rem; color: var(--copper-bright);
+    background: transparent; border: 1px solid var(--copper); border-radius: 20px;
+    padding: 5px 12px; cursor: pointer; transition: background .2s;
+  }
+  .pg-example-btn:hover{ background: var(--surface-2); }
+
+
+  /* ---------- widget: XOR (4.2/4.3) ---------- */
+  .xor-widget{
+    margin: 30px 0; background: var(--surface); border: 1px solid var(--line);
+    border-radius: 10px; padding: 24px 26px;
+  }
+  .xor-widget .ptitle{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--copper-bright); margin-bottom: 14px; display:block;
+  }
+  .xor-plot-frame{ max-width: 320px; margin: 0 auto; }
+  .xor-plot{
+    width:100%; aspect-ratio: 1/1; background: var(--bg); border: 1px solid var(--line);
+    border-radius: 8px; display:block;
+  }
+  .xor-line-fail{ stroke: var(--text-dim); stroke-width: 2; stroke-dasharray: 6 5; }
+  .xor-point{ stroke: var(--bg); stroke-width: 2; }
+  .xor-point.cls-0{ fill: var(--text-dim); }
+  .xor-point.cls-1{ fill: var(--copper-bright); }
+  .xor-legend{ display:flex; gap: 18px; justify-content:center; margin-top: 14px; flex-wrap: wrap; }
+  .xor-legend-item{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.74rem; color: var(--text-dim);
+    display:flex; align-items:center; gap: 7px;
+  }
+  .xor-dot{ width: 11px; height: 11px; border-radius: 50%; display:inline-block; }
+  .xor-dot-0{ background: var(--text-dim); }
+  .xor-dot-1{ background: var(--copper-bright); }
+  .xor-note{ margin-top: 14px; font-size: 0.92rem; color: var(--text-dim); text-align:center; }
+
+
+  /* ---------- widget: paesaggio della perdita (4.4/4.5, shader GLSL/SDF) ---------- */
+  .loss-widget{
+    margin: 30px 0; background: var(--surface); border: 1px solid var(--line);
+    border-radius: 10px; padding: 24px 26px;
+  }
+  .loss-widget .ptitle{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--copper-bright); margin-bottom: 14px; display:block;
+  }
+  .loss-canvas{
+    width:100%; aspect-ratio: 16/10; background: var(--bg); border: 1px solid var(--line);
+    border-radius: 8px; display:block;
+  }
+  .loss-controls{
+    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap;
+    gap: 10px; margin-top: 14px;
+  }
+  .loss-btn{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.78rem; color: var(--bg);
+    background: var(--copper-bright); border: none; border-radius: 6px;
+    padding: 8px 16px; cursor: pointer; font-weight: 600;
+  }
+  .loss-btn:hover{ background: var(--copper); }
+  .loss-readout{ font-size: 0.85rem; color: var(--text-dim); }
+  .loss-minimap-wrap{ margin-top: 18px; display:flex; flex-direction:column; align-items:center; gap: 8px; }
+  .loss-minimap{
+    background: var(--bg); border: 1px solid var(--line); border-radius: 8px; cursor: crosshair;
+    width: 200px; height: 200px;
+  }
+  .loss-minimap-label{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.7rem; letter-spacing: 0.04em;
+    color: var(--text-dim); text-align:center;
+  }
+  .loss-fallback-note{
+    margin-top: 10px; font-size: 0.82rem; color: var(--text-dim); font-style: italic;
+  }
+
+  /* ---------- chiusura ---------- */
+  .chiusura{ background: linear-gradient(180deg, var(--bg), var(--surface)); }
+  .footer-note{
+    margin-top: 46px; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem; color: var(--text-dim);
+  }
+</style>
+</head>
+<body>
+
+<nav class="sidebar" aria-label="Indice del saggio">
+  <div class="sidebar-kicker">Indice</div>
+  <div class="sidebar-title">Dal bit alle entità semantiche</div>
+
+  <div class="parte">
+    <details class="modulo">
+      <summary>Presentazione — Dal bit alle entità semantiche</summary>
+      <div class="unita-list">
+        <a href="presentazione.html#parte-1"><span class="num">1</span>Framework epistemologico: i limiti che condividiamo con le macchine</a>
+        <a href="presentazione.html#parte-2"><span class="num">2</span>Il dominio: struttura e composizione del saggio interattivo</a>
+        <a href="presentazione.html#parte-3"><span class="num">3</span>La lente semantica</a>
+      </div>
+    </details>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Parte I — Fondamenti</div>
+    <a class="voce-semplice" href="fondamenti-1-funzioni-booleane.html">1. Funzioni booleane</a>
+    <a class="voce-semplice" href="fondamenti-2-hardware-software.html">2. Hardware e software</a>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Parte II — Genealogia</div>
+
+    <details class="modulo">
+      <summary>1. Tre ore di disputa senza esito</summary>
+      <div class="unita-list">
+        <a href="genealogia-1-disputa.html#unit-a1"><span class="num">1.1</span>Dalla characteristica universalis alla pura ideografia</a>
+        <a href="genealogia-1-disputa.html#unit-a2"><span class="num">1.2</span>Gödel, Turing, Lucas</a>
+        <a href="genealogia-1-disputa.html#unit-a3"><span class="num">1.3</span>Il perceptron e la disgiunzione esclusiva (XOR)</a>
+        <a href="genealogia-1-disputa.html#unit-a4"><span class="num">1.4</span>Dai sistemi esperti alle macchine statistiche</a>
+        <a href="genealogia-1-disputa.html#unit-a5"><span class="num">1.5</span>Re, donna, regina</a>
+        <a href="genealogia-1-disputa.html#unit-a6"><span class="num">1.6</span>L'attenzione sostituisce la memoria</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>2. Il fenomeno e i suoi limiti</summary>
+      <div class="unita-list">
+        <a href="genealogia-2-limiti.html#unit-b1"><span class="num">2.1</span>Completamento statistico a scala massiva, in-context learning, transfer cross-dominio e altre capacità emergenti</a>
+        <a href="genealogia-2-limiti.html#unit-b2"><span class="num">2.2</span>Interpolazione, pesi statistici, metacognizione</a>
+        <a href="genealogia-2-limiti.html#unit-b3"><span class="num">2.3</span>Grounding, ragionamento causale, generalizzazione composizionale, cortocircuito dell'apprendimento</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>3. Perché ci vuole un villaggio</summary>
+      <div class="unita-list">
+        <a href="genealogia-3-villaggio.html#unit-c1"><span class="num">3.1</span>Il problema del significato</a>
+        <a href="genealogia-3-villaggio.html#unit-c2"><span class="num">3.2</span>Il problema della causalità</a>
+        <a href="genealogia-3-villaggio.html#unit-c3"><span class="num">3.3</span>Il problema biologico</a>
+        <a href="genealogia-3-villaggio.html#unit-c4"><span class="num">3.4</span>Il problema della coscienza</a>
+        <a href="genealogia-3-villaggio.html#unit-c5"><span class="num">3.5</span>Cosa siamo, per contrasto</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>4. Lo spazio, il corpo, la macchina</summary>
+      <div class="unita-list">
+        <a href="genealogia-4-corpo.html#unit-d1"><span class="num">4.1</span>Cos'è lo spazio? Il corpo come strumento di misura</a>
+        <a href="genealogia-4-corpo.html#unit-d2"><span class="num">4.2</span>Il corpo mancante</a>
+      </div>
+    </details>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Parte III — Meccanismo</div>
+
+    <details class="modulo">
+      <summary>1. Il testo come dato</summary>
+      <div class="unita-list">
+        <a href="meccanismo-1-testo-come-dato.html#unit-u1"><span class="num">1.1</span>Encoding</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u2"><span class="num">1.2</span>Tokenizzazione</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u3"><span class="num">1.3</span>Problema del vocabolario</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u4"><span class="num">1.4</span>Dagli ID al punto più discreto</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u5"><span class="num">1.5</span>Gödel</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>2. Probabilità e linguaggio</summary>
+      <div class="unita-list">
+        <a href="meccanismo-2-probabilita.html#unit-u1"><span class="num">2.1</span>Prevedere la parola successiva</a>
+        <a href="meccanismo-2-probabilita.html#unit-u2"><span class="num">2.2</span>Unigrammi/bigrammi, induzione, calibrazione</a>
+        <a href="meccanismo-2-probabilita.html#unit-u3"><span class="num">2.3</span>N-grammi e assunzione di Markov</a>
+        <a href="meccanismo-2-probabilita.html#unit-u4"><span class="num">2.4</span>Sparsità e dipendenze lontane</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>3. Parole come punti nello spazio</summary>
+      <div class="unita-list">
+        <a href="meccanismo-3-embedding.html#unit-u1"><span class="num">3.1</span>Il problema lasciato aperto</a>
+        <a href="meccanismo-3-embedding.html#unit-u2"><span class="num">3.2</span>Le parole come vettori (embedding)</a>
+        <a href="meccanismo-3-embedding.html#unit-u3"><span class="num">3.3</span>L'ipotesi distribuzionale</a>
+        <a href="meccanismo-3-embedding.html#unit-u4"><span class="num">3.4</span>L'aritmetica vettoriale</a>
+        <a href="meccanismo-3-embedding.html#unit-u5"><span class="num">3.5</span>Polisemia ed embedding statico</a>
+      </div>
+    </details>
+
+    <details class="modulo" open>
+      <summary class="current">4. Reti neurali</summary>
+      <div class="unita-list scrollspy" id="local-scrollspy">
+        <a href="#unit-u1" data-spy-target="unit-u1"><span class="num">4.1</span>Dal neurone biologico al neurone artificiale</a>
+        <a href="#unit-u2" data-spy-target="unit-u2"><span class="num">4.2</span>Il perceptron e XOR</a>
+        <a href="#unit-u3" data-spy-target="unit-u3"><span class="num">4.3</span>Strati e profondità</a>
+        <a href="#unit-u4" data-spy-target="unit-u4"><span class="num">4.4</span>La funzione di perdita</a>
+        <a href="#unit-u5" data-spy-target="unit-u5"><span class="num">4.5</span>Il gradiente e la backpropagation</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>5. Il Transformer</summary>
+      <div class="unita-list">
+        <a href="meccanismo-5-transformer.html#unit-u1"><span class="num">5.1</span>Il problema che l'attenzione risolve</a>
+        <a href="meccanismo-5-transformer.html#unit-u2"><span class="num">5.2</span>L'idea dell'attention</a>
+        <a href="meccanismo-5-transformer.html#unit-u3"><span class="num">5.3</span>Query, Key, Value</a>
+        <a href="meccanismo-5-transformer.html#unit-u4"><span class="num">5.4</span>Embedding contestuale</a>
+        <a href="meccanismo-5-transformer.html#unit-u5"><span class="num">5.5</span>Multi-head e posizione</a>
+        <a href="meccanismo-5-transformer.html#unit-u6"><span class="num">5.6</span>Parallelismo e scala</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>6. Cosa significa "Large"</summary>
+      <div class="unita-list">
+        <a href="meccanismo-6-large.html#unit-u1"><span class="num">6.1</span>Scala</a>
+        <a href="meccanismo-6-large.html#unit-u2"><span class="num">6.2</span>Capacità emergenti</a>
+        <a href="meccanismo-6-large.html#unit-u3"><span class="num">6.3</span>I dati</a>
+        <a href="meccanismo-6-large.html#unit-u4"><span class="num">6.4</span>Fine-tuning</a>
+        <a href="meccanismo-6-large.html#unit-u5"><span class="num">6.5</span>RLHF</a>
+        <a href="meccanismo-6-large.html#unit-u6"><span class="num">6.6</span>Quantizzazione (chiusura dell'arco tecnico)</a>
+      </div>
+    </details>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Appendice</div>
+
+    <details class="modulo">
+      <summary>Dietro i widget</summary>
+      <div class="unita-list">
+        <a href="dietro-i-widget.html#unit-u1"><span class="num">A.1</span>Il tokenizzatore (Meccanismo · 1)</a>
+        <a href="dietro-i-widget.html#unit-u2"><span class="num">A.2</span>Il predittore n-grammi (Meccanismo · 2)</a>
+        <a href="dietro-i-widget.html#unit-u3"><span class="num">A.3</span>La mappa embedding (Meccanismo · 3)</a>
+        <a href="dietro-i-widget.html#unit-u4"><span class="num">A.4</span>Neurone, XOR, superficie di perdita (Meccanismo · 4)</a>
+        <a href="dietro-i-widget.html#unit-u5"><span class="num">A.5</span>L'attention (Meccanismo · 5)</a>
+        <a href="dietro-i-widget.html#unit-u6"><span class="num">A.6</span>Scala e capacità (Meccanismo · 6)</a>
+      </div>
+    </details>
+  </div>
+</nav>
+
+<main>
+
+<div class="unit-block" id="unit-u1" data-unit="u1">
+
+  <section id="u1-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Meccanismo · 4 · Reti neurali · Unità 4.1</div>
+      <h1>Dal neurone biologico <em>al neurone artificiale</em></h1>
+      <p class="lede dim">In Genealogia · 3.3 è già stata raccontata, dall'alto, la storia di McCulloch-Pitts e Hebb — un neurone che si accende o non si accende, e sinapsi che si rinforzano quando due neuroni si attivano insieme. Qui si scende nel meccanismo: che cosa fa, esattamente, un singolo neurone artificiale.</p>
+      <div class="scrolldown">quanto poco del biologico è stato davvero preso in prestito</div>
+    </div>
+  </section>
+
+  <section id="u1-sez-mccullochpitts">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il meccanismo minimo</div>
+      <h2 class="title">Somma pesata, poi una soglia morbida</h2>
+      <p>Nel 1943 Warren McCulloch e Walter Pitts propongono il primo modello matematico di un neurone: riceve più segnali di ingresso, li somma con pesi diversi (alcuni ingressi contano di più, altri di meno) e produce un'uscita solo se la somma supera una certa soglia. Nel 1949 Donald Hebb aggiunge la regola con cui queste connessioni si modificano: «neuroni che si attivano insieme, si collegano insieme» — la sinapsi si rinforza con l'uso, non per istruzione esplicita.</p>
+
+      <p>Il neurone artificiale di oggi è quasi identico nella struttura, con una differenza tecnica precisa. Invece di una soglia netta (acceso/spento, 0 o 1 — la stessa logica discreta vista in Fondamenti · 1), usa una <strong>funzione di attivazione continua</strong>: la più semplice e storicamente più usata è la <strong>sigmoide</strong>, che schiaccia qualunque numero reale in un valore tra 0 e 1, con una transizione morbida invece che uno scatto netto.</p>
+
+      <div class="aside">
+        <span class="label">La formula, in una riga</span>
+        <p>Dati due ingressi x1, x2, i pesi w1, w2 e una soglia di base b (il «bias»), il neurone calcola prima <code>z = w1·x1 + w2·x2 + b</code> — una somma pesata, niente di più — e poi applica la sigmoide: <code>output = σ(z) = 1 / (1 + e<sup>−z</sup>)</code>. Nessun passaggio nascosto: un neurone è, meccanicamente, questo.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="u1-sez-widget-neurone">
+    <div class="wrap reveal">
+      <div class="eyebrow">Verifica dal vivo</div>
+      <h2 class="title">Il neurone — variante continua del calcolatore booleano</h2>
+      <p>In Fondamenti · 1 A e B erano impostati con due interruttori, per osservare come cambiavano AND, OR, NOT e XOR — sempre 0 o 1, senza vie di mezzo. Questo è lo stesso tipo di calcolatore, ma con ingressi e pesi continui invece che booleani: muova gli slider e osservi come cambia l'output.</p>
+
+      <div class="neuron-box">
+        <span class="ptitle">Il neurone — pesi e ingressi regolabili</span>
+        <div class="neuron-inputs">
+          <div class="neuron-slider-group">
+            <span class="glabel">x1 — primo ingresso</span>
+            <input type="range" class="neuron-slider" id="neuron-x1" min="0" max="1" step="0.01" value="0.3">
+            <div class="val">x1 = <b id="neuron-x1-val">0.30</b></div>
+          </div>
+          <div class="neuron-slider-group">
+            <span class="glabel">x2 — secondo ingresso</span>
+            <input type="range" class="neuron-slider" id="neuron-x2" min="0" max="1" step="0.01" value="0.8">
+            <div class="val">x2 = <b id="neuron-x2-val">0.80</b></div>
+          </div>
+        </div>
+        <div class="neuron-inputs">
+          <div class="neuron-slider-group">
+            <span class="glabel">w1 — peso su x1</span>
+            <input type="range" class="neuron-slider weight" id="neuron-w1" min="-3" max="3" step="0.01" value="1.5">
+            <div class="val">w1 = <b id="neuron-w1-val">1.50</b></div>
+          </div>
+          <div class="neuron-slider-group">
+            <span class="glabel">w2 — peso su x2</span>
+            <input type="range" class="neuron-slider weight" id="neuron-w2" min="-3" max="3" step="0.01" value="-1.0">
+            <div class="val">w2 = <b id="neuron-w2-val">-1.00</b></div>
+          </div>
+          <div class="neuron-slider-group">
+            <span class="glabel">b — bias</span>
+            <input type="range" class="neuron-slider weight" id="neuron-b" min="-3" max="3" step="0.01" value="0.2">
+            <div class="val">b = <b id="neuron-b-val">0.20</b></div>
+          </div>
+        </div>
+
+        <div class="neuron-formula mono" id="neuron-formula">z = w1·x1 + w2·x2 + b = 0.2000</div>
+
+        <div class="neuron-output">
+          <span class="glabel">σ(z) — l'output del neurone</span>
+          <div class="neuron-out-bar"><div class="neuron-out-fill" id="neuron-out-fill"></div></div>
+          <div class="neuron-out-val mono" id="neuron-out-val">0.5498</div>
+        </div>
+
+        <div class="neuron-examples">
+          <button class="pg-example-btn" data-x1="0" data-x2="0">A=0, B=0</button>
+          <button class="pg-example-btn" data-x1="0" data-x2="1">A=0, B=1</button>
+          <button class="pg-example-btn" data-x1="1" data-x2="0">A=1, B=0</button>
+          <button class="pg-example-btn" data-x1="1" data-x2="1">A=1, B=1</button>
+        </div>
+      </div>
+
+      <p class="dim">I quattro pulsanti impostano x1 e x2 esattamente sui casi booleani di Fondamenti · 1 (0 o 1) lasciando i pesi dove sono: con questi pesi di partenza, l'output resta sempre una via di mezzo continua — mai un netto 0 o 1 — perché la sigmoide non produce mai esattamente 0 o 1 per z finito. È un punto a cui questo modulo tornerà.</p>
+    </div>
+  </section>
+
+  <section id="u1-sez-varela">
+    <div class="wrap reveal">
+      <div class="eyebrow">Un secondo biologo, in contrappunto a Bateson</div>
+      <h2 class="title">Che cosa «rappresentano», davvero, i pesi?</h2>
+      <p>In Genealogia · 2.2 è già stato osservato, a proposito dei pesi di una rete addestrata, che «non esiste un punto nella rete in cui sia scritto... quel fatto è disperso» — nessuna cella di memoria contiene un ricordo isolabile. Francisco Varela, con Humberto Maturana, dà un vocabolario più preciso a questa osservazione con due concetti: <strong>autopoiesi</strong> (un sistema vivente è una rete chiusa di processi che si automantiene, non una macchina che «elabora input in output» in senso rappresentazionale forte) e <strong>chiusura operazionale</strong> (il sistema è perturbato dall'ambiente — reagisce a ciò che accade fuori — ma non è «istruito» dall'esterno in modo trasparente: l'ambiente non scrive direttamente nel sistema, lo perturba soltanto, e il sistema risponde secondo la propria organizzazione interna).</p>
+
+      <div class="aside">
+        <span class="label">Perturbato, non istruito</span>
+        <p>Applicato al neurone appena manipolato: i pesi w1, w2, b non «contengono» in modo trasparente i dati con cui una rete sarebbe stata addestrata — costituiscono una struttura chiusa e auto-coerente, che i dati di addestramento hanno perturbato durante l'apprendimento, senza mai scriverci dentro un fatto leggibile come tale. Non è solo un modo di dire: è la stessa distinzione, applicata a una singola unità invece che all'intera rete.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="u1-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">Un'unità semplice, un comportamento continuo</h2>
+      <p>Un solo neurone è poco più di una somma pesata passata attraverso una curva morbida — meccanicamente banale, eppure già capace di una gamma continua di risposte che nessun interruttore booleano di Fondamenti · 1 poteva produrre. La domanda della prossima unità è se un singolo neurone di questo tipo basti a risolvere qualunque problema, o se — come con XOR in Fondamenti · 1 — ci sia un limite strutturale anche qui.</p>
+    </div>
+  </section>
+
+  <section id="u1-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura — Unità 4.1</div>
+      <blockquote>
+        Un neurone non «capisce» nulla dei suoi pesi. Li porta, perturbato dai dati che li hanno plasmati, senza contenerli in modo leggibile.
+      </blockquote>
+      <p style="margin-top:28px;">Nell'unità successiva: che cosa accade quando si prova a mettere insieme più neuroni così — un «perceptron» — e un problema del 1958 che li mette in crisi.</p>
+
+      <div class="footer-note">Meccanismo · 4 — Reti neurali · Unità 4.1 — Dal neurone biologico al neurone artificiale</div>
+    </div>
+  </section>
+
+</div>
+
+
+<div class="unit-block" id="unit-u2" data-unit="u2">
+
+  <section id="u2-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Meccanismo · 4 · Reti neurali · Unità 4.2</div>
+      <h1>Un certo modello del 1958 <em>incontra un problema che non sa risolvere</em></h1>
+      <p class="lede dim">In Fondamenti · 1 era stato chiesto di tenere da parte l'operatore XOR, con la promessa che sarebbe tornato «con conseguenze non banali». È il momento di onorare quella promessa.</p>
+      <div class="scrolldown">una retta, e quattro punti che nessuna retta separa</div>
+    </div>
+  </section>
+
+  <section id="u2-sez-perceptron">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il primo modello allenabile</div>
+      <h2 class="title">Il perceptron di Rosenblatt</h2>
+      <p>Nel 1958 — lo stesso anno in cui von Neumann pubblica <em>The Computer and the Brain</em>, coincidenza reale, non un errore di questo corso — Frank Rosenblatt propone il <strong>perceptron</strong>: un singolo neurone del tipo visto nell'unità precedente, ma con una regola per aggiustare da solo i propri pesi osservando esempi corretti, invece di riceverli già impostati a mano. È il primo modello della storia che «impara» nel senso moderno del termine: pesi regolati automaticamente a partire da dati.</p>
+
+      <p>Geometricamente, un singolo neurone di questo tipo divide lo spazio degli ingressi in due regioni con un confine che è sempre <strong>una retta</strong> (o, in più dimensioni, un iperpiano) — la somma pesata <code>w1·x1 + w2·x2 + b</code> è un'equazione lineare, e la soglia (o la sigmoide) si limita a marcare da che parte della retta un punto cade. Un solo neurone può quindi risolvere qualunque problema che sia <strong>linearmente separabile</strong>: due gruppi di punti che una retta può davvero dividere.</p>
+    </div>
+  </section>
+
+  <section id="u2-sez-xor-fallimento">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il caso che non funziona</div>
+      <h2 class="title">Quattro punti, nessuna retta</h2>
+      <p>Si riprenda l'operatore XOR (vero solo quando i due ingressi differiscono). Segnati come punti su un piano — asse orizzontale = primo ingresso, asse verticale = secondo ingresso — i quattro casi booleani formano una figura precisa: i due punti con output atteso 1 stanno su un angolo, i due con output atteso 0 sull'angolo opposto. Si provi a immaginare (o disegnare) una singola retta che separi i punti «1» dai punti «0»: non esiste. Qualunque retta lascia due punti dello stesso gruppo su lati opposti.</p>
+
+      <div class="xor-widget">
+        <span class="ptitle">XOR — un tentativo di retta, e il suo fallimento</span>
+        <div class="xor-plot-frame">
+          <svg class="xor-plot" id="xor-plot-42" viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg">
+            <line class="xor-line-fail" id="xor-fail-line" x1="0" y1="0" x2="0" y2="0"></line>
+            <g id="xor-points-42"></g>
+          </svg>
+        </div>
+        <div class="xor-legend">
+          <span class="xor-legend-item"><span class="xor-dot xor-dot-0"></span> atteso 0</span>
+          <span class="xor-legend-item"><span class="xor-dot xor-dot-1"></span> atteso 1</span>
+        </div>
+        <div class="xor-note">La retta tratteggiata è un tentativo qualunque: si sposti, si inclini come vuole — lascerà sempre almeno un punto dalla parte sbagliata.</div>
+      </div>
+
+      <div class="aside">
+        <span class="label">Il debito di Fondamenti · 1</span>
+        <p>«Questo operatore va tenuto da parte. Torna, con conseguenze non banali, quando nella storia dell'intelligenza artificiale un certo modello del 1958 si troverà davanti a un problema che non sa risolvere — e che si chiama esattamente così.» Il modello è il perceptron appena visto. Il problema è proprio questo: XOR non è linearmente separabile, e un solo perceptron, per quanto allenato a lungo, non lo risolverà mai.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="u2-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">Non è un problema di addestramento, è un limite strutturale</h2>
+      <p>Non è che il perceptron di Rosenblatt avesse bisogno di più tempo, più esempi, un algoritmo migliore. È che nessun singolo neurone — qualunque siano i suoi pesi — può disegnare altro che una retta. Il limite non è nella quantità di apprendimento, è nella forma stessa del modello. Questo risultato (formalizzato da Minsky e Papert nel 1969) rallentò per anni l'interesse per le reti neurali.</p>
+    </div>
+  </section>
+
+  <section id="u2-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura — Unità 4.2</div>
+      <blockquote>
+        Una retta è un confine onesto, ma ingenuo: presume che il mondo si divida sempre in due metà pulite. XOR mostra che non è così, nemmeno nel caso più piccolo possibile.
+      </blockquote>
+      <p style="margin-top:28px;">Nell'unità successiva: che cosa accade aggiungendo un secondo strato di neuroni — e perché questo, da solo, basta a risolvere un problema che un singolo strato non potrà mai affrontare.</p>
+
+      <div class="footer-note">Meccanismo · 4 — Reti neurali · Unità 4.2 — Il perceptron e il ritorno di XOR</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="unit-block" id="unit-u3" data-unit="u3">
+
+  <section id="u3-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Meccanismo · 4 · Reti neurali · Unità 4.3</div>
+      <h1>Basta aggiungere uno strato, <em>e lo spazio si piega</em></h1>
+      <p class="lede dim">In Genealogia · 1.3 era stata lasciata aperta una domanda precisa: che cosa ha cambiato, esattamente, la profondità nelle reti neurali? XOR è il caso più piccolo in cui la risposta si vede con chiarezza.</p>
+      <div class="scrolldown">la stessa rete, addestrata per davvero, vista risolvere XOR</div>
+    </div>
+  </section>
+
+  <section id="u3-sez-mlp">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il multi-layer perceptron</div>
+      <h2 class="title">Uno strato nascosto tra l'ingresso e l'uscita</h2>
+      <p>La soluzione non è un trucco diverso nella stessa architettura: è un'architettura diversa. Invece di un solo neurone che guarda direttamente gli ingressi, si inserisce uno <strong>strato nascosto</strong> di neuroni intermedi — ciascuno dei quali riceve gli stessi due ingressi e calcola la propria somma pesata e attivazione, esattamente come nell'unità 4.1 — e un neurone finale che combina le uscite dello strato nascosto. Per XOR bastano due neuroni nascosti: il minimo teorico.</p>
+
+      <p>La rete qui sotto è stata addestrata per davvero (backpropagation, non pesi scelti a mano) su tutti e quattro i casi XOR, fino a classificarli correttamente in tutti e quattro (4/4). Il confine di decisione che ne risulta non è più una retta: è una curva, perché ogni neurone dello strato nascosto contribuisce con la propria retta, e la loro combinazione può piegare lo spazio.</p>
+
+      <div class="xor-widget">
+        <span class="ptitle">XOR — il confine curvo della rete addestrata</span>
+        <div class="xor-plot-frame">
+          <svg class="xor-plot" id="xor-plot-43" viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg">
+            <image id="xor-heatmap-img" x="0" y="0" width="320" height="320" href=""></image>
+            <g id="xor-points-43"></g>
+          </svg>
+        </div>
+        <div class="xor-legend">
+          <span class="xor-legend-item"><span class="xor-dot xor-dot-0"></span> atteso 0</span>
+          <span class="xor-legend-item"><span class="xor-dot xor-dot-1"></span> atteso 1</span>
+        </div>
+        <div class="xor-note" id="xor-accuracy-note">La sfumatura di colore è l'output reale della rete su ogni punto del piano — non un disegno, un calcolo. Rame chiaro = output vicino a 1, verde scuro = output vicino a 0.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="u3-sez-rappresentazioni">
+    <div class="wrap reveal">
+      <div class="eyebrow">Perché la profondità conta</div>
+      <h2 class="title">Ogni strato ridisegna lo spazio per il successivo</h2>
+      <p>L'intuizione centrale: lo strato nascosto non si limita ad «aiutare» il neurone finale, gli offre un problema diverso e più facile. I due neuroni nascosti, ciascuno con la propria retta, trasformano i quattro punti originali in una nuova coppia di coordinate in cui — questo è il punto — diventano linearmente separabili per il neurone di uscita. La profondità non aggiunge solo «più calcolo»: aggiunge la possibilità di ricodificare lo spazio in rappresentazioni via via più utili, uno strato alla volta. È la risposta, nel caso più piccolo possibile, alla domanda lasciata aperta in Genealogia · 1.3.</p>
+    </div>
+  </section>
+
+  <section id="u3-sez-pleroma-creatura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Una domanda che resta aperta</div>
+      <h2 class="title">Pleroma o creatura?</h2>
+      <p>Gregory Bateson, riprendendo una distinzione di Jung, separa due mondi: il <strong>pleroma</strong>, il mondo delle forze fisiche pure — masse, cariche, urti — dove non esiste alcuna informazione, solo causa ed effetto; e la <strong>creatura</strong>, il mondo della comunicazione e della forma, dove esiste «una differenza che fa la differenza» — la definizione di informazione proposta da Bateson stesso.</p>
+
+      <div class="question">
+        Le rappresentazioni sempre più astratte che emergono strato dopo strato in una rete profonda — quelle appena descritte, che ricodificano XOR in qualcosa di separabile — sono pleroma organizzato ad arte che <em>sembra</em> informazione, pura causa-effetto numerica travestita da significato? O sono già, in un senso minimo ma genuino, creatura — una differenza che fa davvero la differenza? Bateson stesso, con cautela e citando Blake, avanza anche l'ipotesi estrema opposta: che non esista affatto un pleroma puro, che ogni differenza sia già in qualche misura informazione. Questo corso non risolve la domanda. La pone, a questo punto preciso, dove il fenomeno è osservabile nel caso più semplice possibile.
+      </div>
+    </div>
+  </section>
+
+  <section id="u3-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">Un limite superato, un altro che si apre</h2>
+      <p>Aggiungere profondità risolve XOR e, in linea di principio, qualunque confine per quanto complesso — una rete abbastanza profonda e larga può approssimare praticamente qualunque funzione. Ma «poterlo fare in linea di principio» non dice come trovare i pesi giusti. Serve un modo per misurare quanto la rete sbaglia, e un modo per correggersi di conseguenza: è l'oggetto delle prossime due unità.</p>
+    </div>
+  </section>
+
+  <section id="u3-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura — Unità 4.3</div>
+      <blockquote>
+        Non serve un neurone più intelligente. Serve un secondo strato che ridisegni il problema per il primo.
+      </blockquote>
+      <p style="margin-top:28px;">Nelle prossime due unità: come si misura l'errore di una rete — e come, esattamente, la rete impara a correggerlo.</p>
+
+      <div class="footer-note">Meccanismo · 4 — Reti neurali · Unità 4.3 — Aggiungere strati: perché la profondità cambia le cose</div>
+    </div>
+  </section>
+
+</div>
+
+
+<div class="unit-block" id="unit-u4" data-unit="u4">
+
+  <section id="u4-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Meccanismo · 4 · Reti neurali · Unità 4.4</div>
+      <h1>Prima di correggere un errore, <em>bisogna saperlo misurare</em></h1>
+      <p class="lede dim">La rete XOR dell'unità precedente non è nata già addestrata: è arrivata a 4/4 corretti passando attraverso migliaia di piccoli aggiustamenti. Ogni aggiustamento presuppone un modo per dire quanto, esattamente, la rete stia sbagliando in questo momento.</p>
+      <div class="scrolldown">un numero solo, che riassume ogni errore</div>
+    </div>
+  </section>
+
+  <section id="u4-sez-loss">
+    <div class="wrap reveal">
+      <div class="eyebrow">Un solo numero per l'errore</div>
+      <h2 class="title">La funzione di perdita</h2>
+      <p>Per ciascun esempio di addestramento, la rete produce un output e lo confronta con il valore atteso. La differenza tra i due — elevata al quadrato, per non lasciare che gli errori positivi e negativi si annullino a vicenda — è l'errore su quell'esempio. La media di questi errori su tutti gli esempi si chiama <strong>funzione di perdita</strong> (loss), spesso nella forma più semplice, l'errore quadratico medio (MSE, mean squared error).</p>
+
+      <p>Il punto centrale non è la formula in sé, ma ciò che essa diventa una volta scritta: una funzione che, dati i pesi correnti della rete, restituisce <em>un singolo numero</em> — quanto la rete sbaglia, oggi, con questi pesi. Cambiare i pesi cambia quel numero. Addestrare una rete significa, meccanicamente, cercare i pesi che rendono quel numero il più piccolo possibile.</p>
+
+      <div class="aside">
+        <span class="label">Da un punto a una superficie</span>
+        <p>Con due soli pesi da regolare, la funzione di perdita si può disegnare: per ogni coppia di valori (peso 1, peso 2), un'altezza — la loss in quel punto. Il risultato è un vero paesaggio, con valli e cime, reso come superficie continua nell'unità successiva.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="u4-sez-continuo">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il filo discreto/continuo, al suo punto più teso</div>
+      <h2 class="title">Perché la loss deve essere continua</h2>
+      <p>Questo modulo tocca qui il punto più esigente, tecnicamente, del filo che attraversa l'intero corso. Una funzione a scalini — che salta bruscamente da un valore all'altro, come un interruttore booleano di Fondamenti · 1 — non si può «scendere» nello stesso modo in cui si scende una collina: non ha una pendenza definita nel punto di salto, solo un vuoto. Serve una superficie continua, senza spigoli, perché esista qualcosa come una <em>direzione di discesa più ripida</em> in ogni punto — il gradiente, protagonista dell'unità successiva.</p>
+
+      <p class="dim">Non è la chiusura di questo filo — quella è riservata a Meccanismo · 6, dove il discorso tornerà, per altre ragioni, sulla discretizzazione. Qui basti notare: l'intero edificio dell'addestramento per gradiente poggia sulla continuità di questa superficie.</p>
+    </div>
+  </section>
+
+  <section id="u4-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">Un numero, una superficie, una direzione da cercare</h2>
+      <p>La funzione di perdita trasforma «quanto sbaglia la rete» in un problema di geometria: trovare il punto più basso di una superficie continua. Resta un'ultima domanda, tutt'altro che ovvia: come si trova, in pratica, quel punto più basso, senza poter vedere l'intera superficie in una volta sola?</p>
+    </div>
+  </section>
+
+  <section id="u4-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura — Unità 4.4</div>
+      <blockquote>
+        Prima di correggere, misurare. Prima di misurare, disporre di una superficie continua su cui la misura possa scendere.
+      </blockquote>
+      <p style="margin-top:28px;">Nell'unità successiva: la discesa vera e propria — il gradiente, la metafora della collina nella nebbia, e come l'errore si propaga indietro attraverso gli strati della rete.</p>
+
+      <div class="footer-note">Meccanismo · 4 — Reti neurali · Unità 4.4 — Misurare l'errore: la funzione di perdita</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="unit-block" id="unit-u5" data-unit="u5">
+
+  <section id="u5-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Meccanismo · 4 · Reti neurali · Unità 4.5</div>
+      <h1>Una collina nella nebbia, <em>e nessun altro modo di vederla</em></h1>
+      <p class="lede dim">Si immagini un pendio, di notte, senza mappa. La valle non è visibile. Sotto i piedi, però, si sente da che parte il terreno scende più ripido. Un passo in quella direzione, poi di nuovo uno sguardo intorno, poi un altro passo. È, quasi letteralmente, il modo in cui una rete neurale trova i propri pesi migliori.</p>
+      <div class="scrolldown">la discesa del gradiente, vista da vicino</div>
+    </div>
+  </section>
+
+  <section id="u5-sez-gradiente">
+    <div class="wrap reveal">
+      <div class="eyebrow">La metafora, resa precisa</div>
+      <h2 class="title">Il gradiente come direzione di massima discesa</h2>
+      <p>Il <strong>gradiente</strong> della funzione di perdita, calcolato nel punto in cui ci si trova, è esattamente questo: la direzione (in uno spazio con tanti assi quanti sono i pesi della rete) verso cui la perdita cresce più velocemente. Andare nella direzione opposta — <em>discesa del gradiente</em> — è quindi il modo più diretto per farla scendere. Non un passo enorme: un piccolo passo, proporzionale a un tasso di apprendimento scelto in anticipo, poi si ricalcola il gradiente da capo nel nuovo punto, e si ripete.</p>
+
+      <p>Il meccanismo che calcola, per ogni peso della rete, quanto quel peso abbia contribuito all'errore finale si chiama <strong>backpropagation</strong> (retropropagazione dell'errore): parte dall'errore in uscita e lo fa scorrere all'indietro, strato per strato, applicando la regola della catena del calcolo differenziale. Non ha nulla di misterioso — è calcolo, applicato in modo sistematico — ma è il pezzo tecnico che rende allenabile una rete profonda come quella che ha risolto XOR.</p>
+    </div>
+  </section>
+
+  <section id="u5-sez-widget-paesaggio">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il paesaggio, reso come superficie vera</div>
+      <h2 class="title">Non un grafico che la simula: una superficie continua vera</h2>
+      <p>Il componente qui sotto non disegna un'illustrazione della perdita: la calcola, punto per punto, come superficie continua — coerente con quanto appena detto sulla continuità. Questa particolare superficie ha due avvallamenti: uno più profondo e ampio (il minimo globale, la soluzione migliore) e uno più superficiale e stretto (un minimo locale — una trappola in cui la discesa del gradiente può restare bloccata, convinta di aver finito perché, localmente, non c'è più una direzione che scenda).</p>
+
+      <div class="loss-widget">
+        <span class="ptitle">Discesa del gradiente sul paesaggio della perdita</span>
+        <canvas class="loss-canvas" id="loss-canvas" width="640" height="400"></canvas>
+        <div class="loss-controls">
+          <button class="loss-btn" id="loss-reset">Ricomincia da (0.9, 0.3)</button>
+          <div class="loss-readout mono" id="loss-readout">loss = —</div>
+        </div>
+        <div class="loss-minimap-wrap">
+          <canvas class="loss-minimap" id="loss-minimap" width="200" height="200"></canvas>
+          <div class="loss-minimap-label">Vista dall'alto — clicchi per scegliere un nuovo punto di partenza</div>
+        </div>
+        <div class="loss-fallback-note" id="loss-fallback-note" style="display:none;"></div>
+      </div>
+
+      <p class="dim">Faccia partire la pallina da punti diversi cliccando sulla minimappa: da alcuni scende fino al minimo globale (il fondo più profondo); da altri resta bloccata nel minimo locale, senza mai raggiungere il punto davvero più basso. Nessuna delle due traiettorie è «sbagliata» dal punto di vista dell'algoritmo — la discesa del gradiente segue sempre la pendenza locale, e la pendenza locale non sa quanto sia profonda la valle successiva.</p>
+    </div>
+  </section>
+
+  <section id="u5-sez-backprop">
+    <div class="wrap reveal">
+      <div class="eyebrow">Un limite dichiarato apertamente</div>
+      <h2 class="title">«Non è biologicamente plausibile»</h2>
+      <p>In Genealogia · 3.3 era già stato anticipato: la backpropagation, per quanto efficace, non è il modo in cui impara un cervello biologico. Il cervello non dispone di un meccanismo noto che faccia scorrere un segnale di errore all'indietro attraverso le stesse connessioni usate in avanti, con la precisione numerica richiesta dalla regola della catena. Questo riapre, in forma tecnica, la domanda già posta a livello narrativo: che cosa distingue, esattamente, l'apprendimento artificiale da quello biologico?</p>
+
+      <div class="aside">
+        <span class="label">Schismogenesi e termostato, in contrappunto al backprop</span>
+        <p>Gregory Bateson, in <em>Naven</em> (1936), descrive la <strong>schismogenesi</strong>: un ciclo di retroazione che si autoalimenta durante l'interazione stessa, in tempo reale — come il feedback negativo di un termostato, che corregge la temperatura mentre l'ambiente cambia, non dopo. Sono entrambi cicli <em>continui</em>, che agiscono <em>durante</em> il comportamento in corso.</p>
+        <p>La backpropagation non funziona così: è una procedura offline, discreta, globale — calcola l'errore su un insieme di esempi, aggiusta tutti i pesi in blocco, e solo dopo la rete «agisce» di nuovo coi pesi aggiornati. Strutturalmente è più vicina a un processo selettivo — molte prove, poi una struttura fissata, come nell'evoluzione — che a un vero feedback omeostatico continuo. La stessa distinzione, in altre parole, già tracciata in Genealogia · 3 tra addestramento «discreto e globale» e plasticità biologica «continua e locale».</p>
+      </div>
+
+      <div class="aside">
+        <span class="label">Un corrispettivo hardware, non solo un'osservazione teorica</span>
+        <p>La plasticità sinaptica continua e locale ha già un corrispettivo tecnologico reale, non speculativo: il <strong>memristor</strong> (teorizzato nel 1971, realizzato fisicamente solo nel 2008), un componente la cui resistenza elettrica cambia in base alla storia di corrente che lo ha attraversato — una forma di memoria fisica, locale, che si aggiorna mentre il segnale scorre. È il fondamento del <strong>neuromorphic computing</strong> (chip come Loihi o TrueNorth), che dà corpo concreto alle «reti neurali a impulsi» (spiking neural networks) già nominate in Genealogia · 3 come programma di ricerca attivo.</p>
+        <p>Da tenere distinto: le tecnologie EEG/BCI (elettroencefalografia, interfacce cervello-computer) non replicano affatto questa plasticità — si limitano a leggere e decodificare segnali neurali già esistenti. Restano comunque un'istanza pratica e attuale del filo discreto/continuo di questo corso: un segnale elettrico continuo che va campionato e discretizzato per essere elaborato digitalmente.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="u5-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro — e la domanda di chiusura del Meccanismo · 4</div>
+      <h2 class="title">Un solo meccanismo, tre facoltà</h2>
+      <p>In Genealogia · 2.2 si era chiuso con un'osservazione («Il quadro»): ragionamento apparente e allucinazione condivisa, in un LLM, «lo stesso meccanismo, lo stesso punto cieco». Ora quel meccanismo ha un nome tecnico preciso, visto da vicino in questo modulo: un'unica funzione di perdita, minimizzata per discesa del gradiente, via backpropagation.</p>
+
+      <div class="question">
+        Se ragionamento, conoscenza e persino la capacità di valutare le proprie risposte (metacognizione) condividono, in un LLM, esattamente lo stesso meccanismo — un'unica superficie di perdita, la stessa discesa, la stessa procedura offline vista in questa unità — è una scoperta su cosa siano davvero queste tre facoltà anche negli esseri umani? O è soltanto un artefatto di come abbiamo scelto di costruire la macchina, che non dice nulla sulla loro natura biologica? Il corso lascia la domanda esplicitamente aperta.
+      </div>
+    </div>
+  </section>
+
+  <section id="u5-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura — Meccanismo · 4</div>
+      <blockquote>
+        Un neurone, una somma pesata. Uno strato in più, un problema che si piega. Una superficie di perdita, una direzione da seguire alla cieca. Niente, in tutto questo, richiede che la macchina capisca ciò che sta facendo.
+      </blockquote>
+      <p style="margin-top:28px;">Il modulo successivo, Meccanismo · 5, riprende due fili lasciati aperti — le dipendenze a lungo raggio di Meccanismo · 2, gli embedding statici di Meccanismo · 3 — e mostra come un solo meccanismo, l'attenzione, li risolva entrambi insieme.</p>
+
+      <div class="footer-note">Meccanismo · 4 — Reti neurali · Unità 4.5 — L'intuizione del gradiente e come l'errore si propaga</div>
+    </div>
+  </section>
+
+</div>
+
+</main>
+
+<script>
+  // ============ dati incorporati (neurone) ============
+  const NEURON_DATA = {"esempi_verificati": [{"x1": 0.0, "x2": 0.0, "nota": "booleano, riuso da fondamenti-1-funzioni-booleane.html (A=0,B=0)", "pesi_esempio": {"w1": 1.5, "w2": -1.0, "b": 0.2}, "z": 0.2, "output": 0.549834}, {"x1": 0.0, "x2": 1.0, "nota": "booleano, riuso da fondamenti-1-funzioni-booleane.html (A=0,B=1)", "pesi_esempio": {"w1": 1.5, "w2": -1.0, "b": 0.2}, "z": -0.8, "output": 0.310026}, {"x1": 1.0, "x2": 0.0, "nota": "booleano, riuso da fondamenti-1-funzioni-booleane.html (A=1,B=0)", "pesi_esempio": {"w1": 1.5, "w2": -1.0, "b": 0.2}, "z": 1.7, "output": 0.845535}, {"x1": 1.0, "x2": 1.0, "nota": "booleano, riuso da fondamenti-1-funzioni-booleane.html (A=1,B=1)", "pesi_esempio": {"w1": 1.5, "w2": -1.0, "b": 0.2}, "z": 0.7, "output": 0.668188}, {"x1": 0.3, "x2": 0.8, "nota": "esempio continuo - variante continua del calcolatore booleano", "pesi_esempio": {"w1": 1.5, "w2": -1.0, "b": 0.2}, "z": -0.15, "output": 0.46257}, {"x1": 0.65, "x2": 0.2, "nota": "esempio continuo", "pesi_esempio": {"w1": 1.5, "w2": -1.0, "b": 0.2}, "z": 0.975, "output": 0.726115}]};
+
+  // ============ reveal on scroll ============
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => io.observe(el));
+
+  // ============ scroll-spy sulla sidebar ============
+  const spyLinks = document.querySelectorAll('#local-scrollspy a[data-spy-target]');
+  const unitBlocksForSpy = document.querySelectorAll('.unit-block');
+  const localSpy2 = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        spyLinks.forEach(a => a.classList.toggle('active', a.dataset.spyTarget === e.target.id));
+      }
+    });
+  }, { threshold: 0, rootMargin: '-45% 0px -45% 0px' });
+  unitBlocksForSpy.forEach(b => localSpy2.observe(b));
+
+  // ============ widget: neurone singolo (4.1) ============
+  function sigma(z){ return 1/(1+Math.exp(-z)); }
+
+  const nx1 = document.getElementById('neuron-x1');
+  const nx2 = document.getElementById('neuron-x2');
+  const nw1 = document.getElementById('neuron-w1');
+  const nw2 = document.getElementById('neuron-w2');
+  const nb  = document.getElementById('neuron-b');
+
+  const nx1Val = document.getElementById('neuron-x1-val');
+  const nx2Val = document.getElementById('neuron-x2-val');
+  const nw1Val = document.getElementById('neuron-w1-val');
+  const nw2Val = document.getElementById('neuron-w2-val');
+  const nbVal  = document.getElementById('neuron-b-val');
+
+  const neuronFormula = document.getElementById('neuron-formula');
+  const neuronOutFill = document.getElementById('neuron-out-fill');
+  const neuronOutVal  = document.getElementById('neuron-out-val');
+
+  function updateNeuron(){
+    const x1 = parseFloat(nx1.value), x2 = parseFloat(nx2.value);
+    const w1 = parseFloat(nw1.value), w2 = parseFloat(nw2.value), b = parseFloat(nb.value);
+    const z = w1*x1 + w2*x2 + b;
+    const out = sigma(z);
+
+    nx1Val.textContent = x1.toFixed(2);
+    nx2Val.textContent = x2.toFixed(2);
+    nw1Val.textContent = w1.toFixed(2);
+    nw2Val.textContent = w2.toFixed(2);
+    nbVal.textContent  = b.toFixed(2);
+
+    neuronFormula.textContent = `z = w1·x1 + w2·x2 + b = ${z.toFixed(4)}`;
+    neuronOutFill.style.width = (out*100).toFixed(1) + '%';
+    neuronOutVal.textContent = out.toFixed(4);
+  }
+
+  [nx1,nx2,nw1,nw2,nb].forEach(el => el.addEventListener('input', updateNeuron));
+  updateNeuron();
+
+  document.querySelectorAll('.neuron-examples .pg-example-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      nx1.value = btn.dataset.x1;
+      nx2.value = btn.dataset.x2;
+      updateNeuron();
+    });
+  });
+
+  // ============ dati incorporati (XOR, 4.2/4.3) ============
+  const XOR_DATA = {"tavola_verita":[{"input":[0,0],"atteso":0},{"input":[0,1],"atteso":1},{"input":[1,0],"atteso":1},{"input":[1,1],"atteso":0}],"pesi":{"W1":[[4.8450358391808015,6.650649806309006],[4.845079951120128,6.650820884466522]],"b1":[[-7.432856204950087,-2.9861842217363552]],"W2":[[-10.98666215857898],[10.303555380294567]],"b2":[[-4.803665963847442]]},"output_sui_4_punti":[0.013190162448784631,0.9887297258469397,0.9887295987487127,0.011585221004606943],"griglia_decisione":{"x_range":[-0.5,1.5],"y_range":[-0.5,1.5],"risoluzione":100,"valori":[[0.0081,0.0081,0.0081,0.0081,0.0081,0.0081,0.0081,0.0081,0.0081,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0083,0.0083,0.0083,0.0083,0.0084,0.0084,0.0084,0.0085,0.0085,0.0086,0.0087,0.0087,0.0088,0.0089,0.009,0.0092,0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0212,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1716,0.2191,0.2779,0.3478,0.4268,0.511,0.5949,0.6733,0.7423,0.7998,0.8457,0.8814,0.9084,0.9287,0.9438,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887],[0.0081,0.0081,0.0081,0.0081,0.0081,0.0081,0.0081,0.0081,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0083,0.0083,0.0083,0.0083,0.0084,0.0084,0.0084,0.0085,0.0085,0.0086,0.0087,0.0087,0.0088,0.0089,0.009,0.0092,0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0212,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1716,0.2191,0.2779,0.3478,0.4268,0.511,0.5949,0.6733,0.7423,0.7998,0.8457,0.8814,0.9084,0.9287,0.9438,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883],[0.0081,0.0081,0.0081,0.0081,0.0081,0.0081,0.0081,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0083,0.0083,0.0083,0.0083,0.0084,0.0084,0.0084,0.0085,0.0085,0.0086,0.0087,0.0087,0.0088,0.0089,0.009,0.0092,0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0212,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1716,0.2191,0.2779,0.3478,0.4268,0.511,0.5949,0.6733,0.7423,0.7998,0.8457,0.8814,0.9084,0.9287,0.9438,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876],[0.0081,0.0081,0.0081,0.0081,0.0081,0.0081,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0083,0.0083,0.0083,0.0083,0.0084,0.0084,0.0084,0.0085,0.0085,0.0086,0.0087,0.0087,0.0088,0.0089,0.009,0.0092,0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0212,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1716,0.2191,0.2779,0.3478,0.4268,0.511,0.5949,0.6734,0.7423,0.7998,0.8457,0.8814,0.9084,0.9287,0.9438,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869],[0.0081,0.0081,0.0081,0.0081,0.0081,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0083,0.0083,0.0083,0.0083,0.0084,0.0084,0.0084,0.0085,0.0085,0.0086,0.0087,0.0087,0.0088,0.0089,0.009,0.0092,0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0212,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1716,0.2191,0.2779,0.3478,0.4268,0.511,0.5949,0.6734,0.7423,0.7998,0.8457,0.8814,0.9084,0.9287,0.9438,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859],[0.0081,0.0081,0.0081,0.0081,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0083,0.0083,0.0083,0.0083,0.0084,0.0084,0.0084,0.0085,0.0085,0.0086,0.0087,0.0087,0.0088,0.0089,0.009,0.0092,0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0212,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2191,0.2779,0.3478,0.4268,0.511,0.5949,0.6734,0.7423,0.7998,0.8457,0.8814,0.9084,0.9287,0.9438,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847],[0.0081,0.0081,0.0081,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0083,0.0083,0.0083,0.0083,0.0084,0.0084,0.0084,0.0085,0.0085,0.0086,0.0087,0.0087,0.0088,0.0089,0.009,0.0092,0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0212,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2191,0.2779,0.3478,0.4268,0.511,0.5949,0.6734,0.7423,0.7998,0.8457,0.8814,0.9084,0.9287,0.9438,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833],[0.0081,0.0081,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0083,0.0083,0.0083,0.0083,0.0084,0.0084,0.0084,0.0085,0.0085,0.0086,0.0087,0.0087,0.0088,0.0089,0.009,0.0092,0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0212,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2191,0.2779,0.3478,0.4268,0.511,0.5949,0.6734,0.7423,0.7998,0.8457,0.8814,0.9084,0.9287,0.9438,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815],[0.0081,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0083,0.0083,0.0083,0.0083,0.0084,0.0084,0.0084,0.0085,0.0085,0.0086,0.0087,0.0087,0.0088,0.0089,0.009,0.0092,0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0212,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2191,0.2779,0.3478,0.4268,0.511,0.5949,0.6734,0.7423,0.7998,0.8457,0.8814,0.9084,0.9287,0.9438,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793],[0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0083,0.0083,0.0083,0.0083,0.0084,0.0084,0.0084,0.0085,0.0085,0.0086,0.0087,0.0087,0.0088,0.0089,0.009,0.0092,0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0212,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2191,0.2779,0.3478,0.4268,0.511,0.5949,0.6734,0.7423,0.7998,0.8457,0.8814,0.9084,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767],[0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0083,0.0083,0.0083,0.0083,0.0084,0.0084,0.0084,0.0085,0.0085,0.0086,0.0087,0.0087,0.0088,0.0089,0.009,0.0092,0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0212,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2191,0.2779,0.3478,0.4268,0.511,0.5949,0.6734,0.7423,0.7998,0.8457,0.8814,0.9084,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734],[0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0083,0.0083,0.0083,0.0083,0.0084,0.0084,0.0084,0.0085,0.0085,0.0086,0.0087,0.0087,0.0088,0.0089,0.009,0.0092,0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0212,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2191,0.2779,0.3478,0.4268,0.511,0.5949,0.6734,0.7423,0.7998,0.8457,0.8814,0.9084,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9694],[0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0083,0.0083,0.0083,0.0083,0.0084,0.0084,0.0084,0.0085,0.0085,0.0086,0.0087,0.0087,0.0088,0.0089,0.009,0.0092,0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2191,0.2779,0.3478,0.4268,0.511,0.5949,0.6734,0.7423,0.7998,0.8457,0.8814,0.9084,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9694,0.9643],[0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0083,0.0083,0.0083,0.0083,0.0084,0.0084,0.0084,0.0085,0.0085,0.0086,0.0087,0.0087,0.0088,0.0089,0.009,0.0092,0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.2779,0.3478,0.4268,0.511,0.5949,0.6734,0.7423,0.7998,0.8457,0.8814,0.9084,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9694,0.9643,0.9581],[0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0083,0.0083,0.0083,0.0083,0.0084,0.0084,0.0084,0.0085,0.0085,0.0086,0.0087,0.0087,0.0088,0.0089,0.009,0.0092,0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.2779,0.3478,0.4268,0.511,0.5949,0.6734,0.7423,0.7998,0.8457,0.8814,0.9084,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503],[0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0083,0.0083,0.0083,0.0083,0.0084,0.0084,0.0084,0.0085,0.0085,0.0086,0.0087,0.0087,0.0088,0.0089,0.009,0.0092,0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.2779,0.3478,0.4268,0.511,0.5949,0.6734,0.7423,0.7998,0.8457,0.8814,0.9084,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405],[0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0083,0.0083,0.0083,0.0083,0.0084,0.0084,0.0084,0.0085,0.0085,0.0086,0.0087,0.0087,0.0088,0.0089,0.009,0.0092,0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.2779,0.3478,0.4269,0.511,0.5949,0.6734,0.7423,0.7998,0.8458,0.8814,0.9084,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283],[0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0083,0.0083,0.0083,0.0083,0.0084,0.0084,0.0084,0.0085,0.0085,0.0086,0.0087,0.0087,0.0088,0.0089,0.009,0.0092,0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.2779,0.3478,0.4269,0.511,0.5949,0.6734,0.7423,0.7998,0.8458,0.8814,0.9084,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913],[0.0082,0.0082,0.0082,0.0082,0.0082,0.0082,0.0083,0.0083,0.0083,0.0083,0.0084,0.0084,0.0084,0.0085,0.0085,0.0086,0.0087,0.0087,0.0088,0.0089,0.009,0.0092,0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.2779,0.3478,0.4269,0.511,0.5949,0.6734,0.7423,0.7998,0.8458,0.8814,0.9084,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939],[0.0082,0.0082,0.0082,0.0082,0.0082,0.0083,0.0083,0.0083,0.0083,0.0084,0.0084,0.0084,0.0085,0.0085,0.0086,0.0087,0.0087,0.0088,0.0089,0.009,0.0092,0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.2779,0.3478,0.4269,0.511,0.595,0.6734,0.7423,0.7998,0.8458,0.8814,0.9084,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701],[0.0082,0.0082,0.0082,0.0082,0.0083,0.0083,0.0083,0.0083,0.0084,0.0084,0.0084,0.0085,0.0085,0.0086,0.0087,0.0087,0.0088,0.0089,0.009,0.0092,0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.2779,0.3478,0.4269,0.511,0.595,0.6734,0.7423,0.7998,0.8458,0.8814,0.9084,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408],[0.0082,0.0082,0.0082,0.0083,0.0083,0.0083,0.0083,0.0084,0.0084,0.0084,0.0085,0.0085,0.0086,0.0087,0.0087,0.0088,0.0089,0.009,0.0092,0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.2779,0.3478,0.4269,0.511,0.595,0.6734,0.7423,0.7998,0.8458,0.8814,0.9084,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8053],[0.0082,0.0082,0.0083,0.0083,0.0083,0.0083,0.0084,0.0084,0.0084,0.0085,0.0085,0.0086,0.0087,0.0087,0.0088,0.0089,0.009,0.0092,0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.2779,0.3478,0.4269,0.511,0.595,0.6734,0.7423,0.7998,0.8458,0.8814,0.9084,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8053,0.7627],[0.0082,0.0083,0.0083,0.0083,0.0083,0.0084,0.0084,0.0084,0.0085,0.0085,0.0086,0.0087,0.0087,0.0088,0.0089,0.009,0.0092,0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.2779,0.3478,0.4269,0.511,0.595,0.6734,0.7423,0.7998,0.8458,0.8814,0.9084,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8053,0.7627,0.7131],[0.0083,0.0083,0.0083,0.0083,0.0084,0.0084,0.0084,0.0085,0.0085,0.0086,0.0087,0.0087,0.0088,0.0089,0.009,0.0092,0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.2779,0.3478,0.4269,0.511,0.595,0.6734,0.7423,0.7998,0.8458,0.8814,0.9084,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8053,0.7627,0.7131,0.6567],[0.0083,0.0083,0.0083,0.0084,0.0084,0.0084,0.0085,0.0085,0.0086,0.0087,0.0087,0.0088,0.0089,0.009,0.0092,0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.2779,0.3478,0.4269,0.511,0.595,0.6734,0.7423,0.7998,0.8458,0.8814,0.9084,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8053,0.7627,0.7131,0.6567,0.5947],[0.0083,0.0083,0.0084,0.0084,0.0084,0.0085,0.0085,0.0086,0.0087,0.0087,0.0088,0.0089,0.009,0.0092,0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.2779,0.3479,0.4269,0.511,0.595,0.6734,0.7423,0.7998,0.8458,0.8814,0.9084,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8053,0.7627,0.7131,0.6567,0.5947,0.5291],[0.0083,0.0084,0.0084,0.0084,0.0085,0.0085,0.0086,0.0087,0.0087,0.0088,0.0089,0.009,0.0092,0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.2779,0.3479,0.4269,0.511,0.595,0.6734,0.7423,0.7998,0.8458,0.8814,0.9084,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8053,0.7627,0.7131,0.6567,0.5947,0.5291,0.4623],[0.0084,0.0084,0.0084,0.0085,0.0085,0.0086,0.0087,0.0087,0.0088,0.0089,0.009,0.0092,0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.278,0.3479,0.4269,0.511,0.595,0.6734,0.7423,0.7998,0.8458,0.8814,0.9084,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8053,0.7627,0.7131,0.6567,0.5947,0.5291,0.4623,0.3969],[0.0084,0.0084,0.0085,0.0085,0.0086,0.0087,0.0087,0.0088,0.0089,0.009,0.0092,0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.278,0.3479,0.4269,0.511,0.595,0.6734,0.7423,0.7998,0.8458,0.8814,0.9084,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8053,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354],[0.0084,0.0085,0.0085,0.0086,0.0087,0.0087,0.0088,0.0089,0.009,0.0092,0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.278,0.3479,0.4269,0.511,0.595,0.6734,0.7423,0.7998,0.8458,0.8814,0.9084,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8053,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797],[0.0085,0.0085,0.0086,0.0087,0.0087,0.0088,0.0089,0.009,0.0092,0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.278,0.3479,0.4269,0.511,0.595,0.6734,0.7423,0.7998,0.8458,0.8814,0.9084,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8053,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308],[0.0085,0.0086,0.0087,0.0087,0.0088,0.0089,0.009,0.0092,0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.278,0.3479,0.4269,0.511,0.595,0.6734,0.7423,0.7998,0.8458,0.8814,0.9084,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8053,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189],[0.0086,0.0087,0.0087,0.0088,0.0089,0.009,0.0092,0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.278,0.3479,0.4269,0.511,0.595,0.6734,0.7423,0.7998,0.8458,0.8814,0.9084,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8053,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542],[0.0087,0.0087,0.0088,0.0089,0.009,0.0092,0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.278,0.3479,0.4269,0.511,0.595,0.6734,0.7423,0.7998,0.8458,0.8814,0.9084,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8053,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255],[0.0087,0.0088,0.0089,0.009,0.0092,0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.278,0.3479,0.4269,0.511,0.595,0.6734,0.7423,0.7998,0.8458,0.8814,0.9084,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8053,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023],[0.0088,0.0089,0.009,0.0092,0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.278,0.3479,0.4269,0.511,0.595,0.6734,0.7423,0.7998,0.8458,0.8814,0.9084,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8053,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837],[0.0089,0.009,0.0092,0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.278,0.3479,0.4269,0.511,0.595,0.6734,0.7423,0.7998,0.8458,0.8814,0.9084,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8053,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687],[0.009,0.0092,0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.278,0.3479,0.4269,0.511,0.595,0.6734,0.7423,0.7998,0.8458,0.8814,0.9084,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8053,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568],[0.0092,0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.278,0.3479,0.4269,0.511,0.595,0.6734,0.7423,0.7998,0.8458,0.8814,0.9084,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8053,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473],[0.0093,0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.278,0.3479,0.4269,0.511,0.595,0.6734,0.7423,0.7998,0.8458,0.8814,0.9084,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8053,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397],[0.0095,0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.278,0.3479,0.4269,0.5111,0.595,0.6734,0.7424,0.7998,0.8458,0.8814,0.9084,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8053,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336],[0.0098,0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.278,0.3479,0.4269,0.5111,0.595,0.6734,0.7424,0.7998,0.8458,0.8814,0.9084,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8053,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287],[0.01,0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.278,0.3479,0.4269,0.5111,0.595,0.6734,0.7424,0.7998,0.8458,0.8814,0.9084,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8053,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247],[0.0103,0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.278,0.3479,0.4269,0.5111,0.595,0.6734,0.7424,0.7998,0.8458,0.8814,0.9085,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8053,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215],[0.0107,0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.278,0.3479,0.4269,0.5111,0.595,0.6734,0.7424,0.7998,0.8458,0.8814,0.9085,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189],[0.0111,0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.278,0.3479,0.4269,0.5111,0.595,0.6734,0.7424,0.7998,0.8458,0.8814,0.9085,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167],[0.0115,0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.278,0.3479,0.4269,0.5111,0.595,0.6734,0.7424,0.7998,0.8458,0.8814,0.9085,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149],[0.0121,0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.278,0.3479,0.4269,0.5111,0.595,0.6734,0.7424,0.7998,0.8458,0.8814,0.9085,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134],[0.0128,0.0136,0.0146,0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.278,0.3479,0.4269,0.5111,0.595,0.6734,0.7424,0.7998,0.8458,0.8814,0.9085,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121],[0.0136,0.0146,0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.278,0.3479,0.4269,0.5111,0.595,0.6734,0.7424,0.7998,0.8458,0.8814,0.9085,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111],[0.0146,0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.278,0.3479,0.4269,0.5111,0.595,0.6734,0.7424,0.7998,0.8458,0.8814,0.9085,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102],[0.0158,0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.278,0.3479,0.4269,0.5111,0.595,0.6734,0.7424,0.7998,0.8458,0.8814,0.9085,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094],[0.0172,0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.278,0.3479,0.4269,0.5111,0.595,0.6734,0.7424,0.7998,0.8458,0.8814,0.9085,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088],[0.019,0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.278,0.3479,0.4269,0.5111,0.595,0.6734,0.7424,0.7998,0.8458,0.8814,0.9085,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082],[0.0213,0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.278,0.3479,0.4269,0.5111,0.595,0.6735,0.7424,0.7998,0.8458,0.8814,0.9085,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077],[0.024,0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.278,0.3479,0.4269,0.5111,0.595,0.6735,0.7424,0.7998,0.8458,0.8814,0.9085,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073],[0.0275,0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.278,0.3479,0.4269,0.5111,0.595,0.6735,0.7424,0.7998,0.8458,0.8814,0.9085,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007],[0.0319,0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.278,0.3479,0.4269,0.5111,0.595,0.6735,0.7424,0.7998,0.8458,0.8814,0.9085,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066],[0.0376,0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.278,0.3479,0.4269,0.5111,0.595,0.6735,0.7424,0.7998,0.8458,0.8814,0.9085,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064],[0.045,0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.278,0.3479,0.4269,0.5111,0.595,0.6735,0.7424,0.7998,0.8458,0.8814,0.9085,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064,0.0061],[0.0546,0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.278,0.3479,0.4269,0.5111,0.595,0.6735,0.7424,0.7999,0.8458,0.8814,0.9085,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064,0.0061,0.0059],[0.0672,0.0838,0.1057,0.1344,0.1717,0.2192,0.278,0.3479,0.427,0.5111,0.595,0.6735,0.7424,0.7999,0.8458,0.8814,0.9085,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064,0.0061,0.0059,0.0057],[0.0838,0.1057,0.1344,0.1717,0.2192,0.278,0.3479,0.427,0.5111,0.595,0.6735,0.7424,0.7999,0.8458,0.8814,0.9085,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064,0.0061,0.0059,0.0057,0.0055],[0.1057,0.1344,0.1717,0.2192,0.278,0.3479,0.427,0.5111,0.595,0.6735,0.7424,0.7999,0.8458,0.8814,0.9085,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064,0.0061,0.0059,0.0057,0.0055,0.0054],[0.1344,0.1717,0.2192,0.278,0.3479,0.427,0.5111,0.595,0.6735,0.7424,0.7999,0.8458,0.8814,0.9085,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064,0.0061,0.0059,0.0057,0.0055,0.0054,0.0053],[0.1717,0.2192,0.278,0.3479,0.427,0.5111,0.5951,0.6735,0.7424,0.7999,0.8458,0.8814,0.9085,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064,0.0061,0.0059,0.0057,0.0055,0.0054,0.0053,0.0052],[0.2192,0.278,0.3479,0.427,0.5111,0.5951,0.6735,0.7424,0.7999,0.8458,0.8814,0.9085,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064,0.0061,0.0059,0.0057,0.0055,0.0054,0.0053,0.0052,0.005],[0.278,0.3479,0.427,0.5111,0.5951,0.6735,0.7424,0.7999,0.8458,0.8814,0.9085,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064,0.0061,0.0059,0.0057,0.0055,0.0054,0.0053,0.0052,0.005,0.005],[0.3479,0.427,0.5111,0.5951,0.6735,0.7424,0.7999,0.8458,0.8814,0.9085,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064,0.0061,0.0059,0.0057,0.0055,0.0054,0.0053,0.0052,0.005,0.005,0.0049],[0.427,0.5111,0.5951,0.6735,0.7424,0.7999,0.8458,0.8814,0.9085,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064,0.0061,0.0059,0.0057,0.0055,0.0054,0.0053,0.0052,0.005,0.005,0.0049,0.0048],[0.5111,0.5951,0.6735,0.7424,0.7999,0.8458,0.8814,0.9085,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064,0.0061,0.0059,0.0057,0.0055,0.0054,0.0053,0.0052,0.005,0.005,0.0049,0.0048,0.0047],[0.5951,0.6735,0.7424,0.7999,0.8458,0.8814,0.9085,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064,0.0061,0.0059,0.0057,0.0055,0.0054,0.0053,0.0052,0.005,0.005,0.0049,0.0048,0.0047,0.0047],[0.6735,0.7424,0.7999,0.8458,0.8814,0.9085,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064,0.0061,0.0059,0.0057,0.0055,0.0054,0.0053,0.0052,0.005,0.005,0.0049,0.0048,0.0047,0.0047,0.0046],[0.7424,0.7999,0.8458,0.8814,0.9085,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064,0.0061,0.0059,0.0057,0.0055,0.0054,0.0053,0.0052,0.005,0.005,0.0049,0.0048,0.0047,0.0047,0.0046,0.0046],[0.7999,0.8458,0.8814,0.9085,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064,0.0061,0.0059,0.0057,0.0055,0.0054,0.0053,0.0052,0.005,0.005,0.0049,0.0048,0.0047,0.0047,0.0046,0.0046,0.0045],[0.8458,0.8814,0.9085,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064,0.0061,0.0059,0.0057,0.0055,0.0054,0.0053,0.0052,0.005,0.005,0.0049,0.0048,0.0047,0.0047,0.0046,0.0046,0.0045,0.0045],[0.8814,0.9085,0.9287,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064,0.0061,0.0059,0.0057,0.0055,0.0054,0.0053,0.0052,0.005,0.005,0.0049,0.0048,0.0047,0.0047,0.0046,0.0046,0.0045,0.0045,0.0045],[0.9085,0.9288,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064,0.0061,0.0059,0.0057,0.0055,0.0054,0.0053,0.0052,0.005,0.005,0.0049,0.0048,0.0047,0.0047,0.0046,0.0046,0.0045,0.0045,0.0045,0.0044],[0.9288,0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064,0.0061,0.0059,0.0057,0.0055,0.0054,0.0053,0.0052,0.005,0.005,0.0049,0.0048,0.0047,0.0047,0.0046,0.0046,0.0045,0.0045,0.0045,0.0044,0.0044],[0.9439,0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064,0.0061,0.0059,0.0057,0.0055,0.0054,0.0053,0.0052,0.005,0.005,0.0049,0.0048,0.0047,0.0047,0.0046,0.0046,0.0045,0.0045,0.0045,0.0044,0.0044,0.0044],[0.9551,0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064,0.0061,0.0059,0.0057,0.0055,0.0054,0.0053,0.0052,0.005,0.005,0.0049,0.0048,0.0047,0.0047,0.0046,0.0046,0.0045,0.0045,0.0045,0.0044,0.0044,0.0044,0.0043],[0.9636,0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064,0.0061,0.0059,0.0057,0.0055,0.0054,0.0053,0.0052,0.005,0.005,0.0049,0.0048,0.0047,0.0047,0.0046,0.0046,0.0045,0.0045,0.0045,0.0044,0.0044,0.0044,0.0043,0.0043],[0.9699,0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064,0.0061,0.0059,0.0057,0.0055,0.0054,0.0053,0.0052,0.005,0.005,0.0049,0.0048,0.0047,0.0047,0.0046,0.0046,0.0045,0.0045,0.0045,0.0044,0.0044,0.0044,0.0043,0.0043,0.0043],[0.9747,0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3969,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064,0.0061,0.0059,0.0057,0.0055,0.0054,0.0053,0.0052,0.005,0.005,0.0049,0.0048,0.0047,0.0047,0.0046,0.0046,0.0045,0.0045,0.0045,0.0044,0.0044,0.0044,0.0043,0.0043,0.0043,0.0043],[0.9784,0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3968,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064,0.0061,0.0059,0.0057,0.0055,0.0054,0.0053,0.0052,0.005,0.005,0.0049,0.0048,0.0047,0.0047,0.0046,0.0046,0.0045,0.0045,0.0045,0.0044,0.0044,0.0044,0.0043,0.0043,0.0043,0.0043,0.0043],[0.9812,0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3968,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064,0.0061,0.0059,0.0057,0.0055,0.0054,0.0053,0.0052,0.005,0.005,0.0049,0.0048,0.0047,0.0047,0.0046,0.0046,0.0045,0.0045,0.0045,0.0044,0.0044,0.0044,0.0043,0.0043,0.0043,0.0043,0.0043,0.0043],[0.9833,0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3968,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064,0.0061,0.0059,0.0057,0.0055,0.0054,0.0053,0.0052,0.005,0.005,0.0049,0.0048,0.0047,0.0047,0.0046,0.0046,0.0045,0.0045,0.0045,0.0044,0.0044,0.0044,0.0043,0.0043,0.0043,0.0043,0.0043,0.0043,0.0042],[0.985,0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3968,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064,0.0061,0.0059,0.0057,0.0055,0.0054,0.0053,0.0052,0.005,0.005,0.0049,0.0048,0.0047,0.0047,0.0046,0.0046,0.0045,0.0045,0.0045,0.0044,0.0044,0.0044,0.0043,0.0043,0.0043,0.0043,0.0043,0.0043,0.0042,0.0042],[0.9863,0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3968,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064,0.0061,0.0059,0.0057,0.0055,0.0054,0.0053,0.0052,0.005,0.005,0.0049,0.0048,0.0047,0.0047,0.0046,0.0046,0.0045,0.0045,0.0045,0.0044,0.0044,0.0044,0.0043,0.0043,0.0043,0.0043,0.0043,0.0043,0.0042,0.0042,0.0042],[0.9873,0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3968,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064,0.0061,0.0059,0.0057,0.0055,0.0054,0.0053,0.0052,0.005,0.005,0.0049,0.0048,0.0047,0.0047,0.0046,0.0046,0.0045,0.0045,0.0045,0.0044,0.0044,0.0044,0.0043,0.0043,0.0043,0.0043,0.0043,0.0043,0.0042,0.0042,0.0042,0.0042],[0.9881,0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3968,0.3354,0.2797,0.2308,0.189,0.1542,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064,0.0061,0.0059,0.0057,0.0055,0.0054,0.0053,0.0052,0.005,0.005,0.0049,0.0048,0.0047,0.0047,0.0046,0.0046,0.0045,0.0045,0.0045,0.0044,0.0044,0.0044,0.0043,0.0043,0.0043,0.0043,0.0043,0.0043,0.0042,0.0042,0.0042,0.0042,0.0042],[0.9886,0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3968,0.3354,0.2797,0.2308,0.189,0.1541,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064,0.0061,0.0059,0.0057,0.0055,0.0054,0.0053,0.0052,0.005,0.005,0.0049,0.0048,0.0047,0.0047,0.0046,0.0046,0.0045,0.0045,0.0045,0.0044,0.0044,0.0044,0.0043,0.0043,0.0043,0.0043,0.0043,0.0043,0.0042,0.0042,0.0042,0.0042,0.0042,0.0042],[0.989,0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3968,0.3354,0.2797,0.2308,0.189,0.1541,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064,0.0061,0.0059,0.0057,0.0055,0.0054,0.0053,0.0052,0.005,0.005,0.0049,0.0048,0.0047,0.0047,0.0046,0.0046,0.0045,0.0045,0.0045,0.0044,0.0044,0.0044,0.0043,0.0043,0.0043,0.0043,0.0043,0.0043,0.0042,0.0042,0.0042,0.0042,0.0042,0.0042,0.0042],[0.9893,0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.5291,0.4622,0.3968,0.3354,0.2797,0.2308,0.189,0.1541,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064,0.0061,0.0059,0.0057,0.0055,0.0054,0.0053,0.0052,0.005,0.005,0.0049,0.0048,0.0047,0.0047,0.0046,0.0046,0.0045,0.0045,0.0045,0.0044,0.0044,0.0044,0.0043,0.0043,0.0043,0.0043,0.0043,0.0043,0.0042,0.0042,0.0042,0.0042,0.0042,0.0042,0.0042,0.0042],[0.9894,0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.529,0.4622,0.3968,0.3354,0.2797,0.2308,0.189,0.1541,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064,0.0061,0.0059,0.0057,0.0055,0.0054,0.0053,0.0052,0.005,0.005,0.0049,0.0048,0.0047,0.0047,0.0046,0.0046,0.0045,0.0045,0.0045,0.0044,0.0044,0.0044,0.0043,0.0043,0.0043,0.0043,0.0043,0.0043,0.0042,0.0042,0.0042,0.0042,0.0042,0.0042,0.0042,0.0042,0.0042],[0.9894,0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.529,0.4622,0.3968,0.3354,0.2797,0.2308,0.189,0.1541,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064,0.0061,0.0059,0.0057,0.0055,0.0054,0.0053,0.0052,0.005,0.005,0.0049,0.0048,0.0047,0.0047,0.0046,0.0046,0.0045,0.0045,0.0045,0.0044,0.0044,0.0044,0.0043,0.0043,0.0043,0.0043,0.0043,0.0043,0.0042,0.0042,0.0042,0.0042,0.0042,0.0042,0.0042,0.0042,0.0042,0.0042],[0.9893,0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.529,0.4622,0.3968,0.3354,0.2797,0.2308,0.189,0.1541,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064,0.0061,0.0059,0.0057,0.0055,0.0054,0.0053,0.0052,0.005,0.005,0.0049,0.0048,0.0047,0.0047,0.0046,0.0046,0.0045,0.0045,0.0045,0.0044,0.0044,0.0044,0.0043,0.0043,0.0043,0.0043,0.0043,0.0043,0.0042,0.0042,0.0042,0.0042,0.0042,0.0042,0.0042,0.0042,0.0042,0.0042,0.0042],[0.9891,0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.529,0.4622,0.3968,0.3354,0.2797,0.2308,0.189,0.1541,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064,0.0061,0.0059,0.0057,0.0055,0.0054,0.0053,0.0052,0.005,0.005,0.0049,0.0048,0.0047,0.0047,0.0046,0.0046,0.0045,0.0045,0.0045,0.0044,0.0044,0.0044,0.0043,0.0043,0.0043,0.0043,0.0043,0.0043,0.0042,0.0042,0.0042,0.0042,0.0042,0.0042,0.0042,0.0042,0.0042,0.0042,0.0042,0.0042],[0.9887,0.9883,0.9876,0.9869,0.9859,0.9847,0.9833,0.9815,0.9793,0.9767,0.9734,0.9693,0.9643,0.9581,0.9503,0.9405,0.9283,0.913,0.8939,0.8701,0.8408,0.8052,0.7627,0.7131,0.6567,0.5947,0.529,0.4622,0.3968,0.3354,0.2797,0.2308,0.189,0.1541,0.1255,0.1023,0.0837,0.0687,0.0568,0.0473,0.0397,0.0336,0.0287,0.0247,0.0215,0.0189,0.0167,0.0149,0.0134,0.0121,0.0111,0.0102,0.0094,0.0088,0.0082,0.0077,0.0073,0.007,0.0066,0.0064,0.0061,0.0059,0.0057,0.0055,0.0054,0.0053,0.0052,0.005,0.005,0.0049,0.0048,0.0047,0.0047,0.0046,0.0046,0.0045,0.0045,0.0045,0.0044,0.0044,0.0044,0.0043,0.0043,0.0043,0.0043,0.0043,0.0043,0.0042,0.0042,0.0042,0.0042,0.0042,0.0042,0.0042,0.0042,0.0042,0.0042,0.0042,0.0042,0.0042]]}};
+
+  // ============ widget XOR: helper coordinate ============
+  const XOR_W = 320, XOR_H = 320;
+  function xorToPixelX(x){
+    const [x0,x1] = XOR_DATA.griglia_decisione.x_range;
+    return (x - x0) / (x1 - x0) * XOR_W;
+  }
+  function xorToPixelY(y){
+    const [y0,y1] = XOR_DATA.griglia_decisione.y_range;
+    return XOR_H - (y - y0) / (y1 - y0) * XOR_H;
+  }
+
+  function renderXorPoints(containerId){
+    const g = document.getElementById(containerId);
+    g.innerHTML = XOR_DATA.tavola_verita.map(row => {
+      const [x, y] = row.input;
+      const cx = xorToPixelX(x), cy = xorToPixelY(y);
+      return `<circle class="xor-point cls-${row.atteso}" cx="${cx}" cy="${cy}" r="9"></circle>`;
+    }).join('');
+  }
+
+  function renderXorFailLine(){
+    const line = document.getElementById('xor-fail-line');
+    // retta scelta a mano per il tentativo illustrativo (attraversa il piano, lascia comunque
+    // punti dello stesso gruppo su lati opposti - nessuna retta puo' fare meglio)
+    const p1x = xorToPixelX(-0.4), p1y = xorToPixelY(1.3);
+    const p2x = xorToPixelX(1.3), p2y = xorToPixelY(-0.4);
+    line.setAttribute('x1', p1x); line.setAttribute('y1', p1y);
+    line.setAttribute('x2', p2x); line.setAttribute('y2', p2y);
+  }
+
+  function lerpColor(c0, c1, t){
+    return [0,1,2].map(i => Math.round(c0[i] + (c1[i]-c0[i])*t));
+  }
+
+  // Colori letti dalle variabili CSS del tema corrente, non piu' incorporati:
+  // gli sfondi canvas 2D (heatmap XOR, minimappa 4.5) sono renderizzati una
+  // sola volta a pixel fissi, non seguono da soli il cambio tema via CSS.
+  function themeVarHex(nome){
+    return getComputedStyle(document.documentElement).getPropertyValue(nome).trim();
+  }
+  function hexToRgbArr(hex){
+    hex = hex.replace('#', '');
+    return [0, 2, 4].map(i => parseInt(hex.substr(i, 2), 16));
+  }
+
+  function renderXorHeatmap(){
+    const { risoluzione, valori } = XOR_DATA.griglia_decisione;
+    const off = document.createElement('canvas');
+    off.width = risoluzione; off.height = risoluzione;
+    const ctx = off.getContext('2d');
+    const img = ctx.createImageData(risoluzione, risoluzione);
+    const bg = hexToRgbArr(themeVarHex('--bg')), bright = hexToRgbArr(themeVarHex('--copper-bright'));
+    for(let pixelRow = 0; pixelRow < risoluzione; pixelRow++){
+      const dataRow = risoluzione - 1 - pixelRow; // riga 0 dati = y_range[0] (basso) -> in cima all'immagine va y alto
+      for(let col = 0; col < risoluzione; col++){
+        const v = valori[dataRow][col];
+        const [r,gr,b] = lerpColor(bg, bright, v);
+        const idx = (pixelRow * risoluzione + col) * 4;
+        img.data[idx] = r; img.data[idx+1] = gr; img.data[idx+2] = b; img.data[idx+3] = 255;
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+    document.getElementById('xor-heatmap-img').setAttribute('href', off.toDataURL());
+  }
+
+  renderXorPoints('xor-points-42');
+  renderXorFailLine();
+  renderXorPoints('xor-points-43');
+  renderXorHeatmap();
+  window.addEventListener('corso:themechange', renderXorHeatmap);
+
+  const xorAccNote = document.getElementById('xor-accuracy-note');
+  if(xorAccNote){
+    const corretti = XOR_DATA.output_sui_4_punti.filter((out, i) => {
+      const atteso = XOR_DATA.tavola_verita[i].atteso;
+      return (out >= 0.5 ? 1 : 0) === atteso;
+    }).length;
+    xorAccNote.textContent += ` (rete: ${corretti}/4 corretto)`;
+  }
+
+
+  // ============ dati incorporati (paesaggio di perdita, 4.4/4.5) ============
+  const LOSS_META = {
+    C: 1.0,
+    globale: {A:1.0, cx:0.7, cy:0.6, s:0.35},
+    locale: {A:0.55, cx:-0.6, cy:-0.5, s:0.25}
+  };
+
+  function lossAt(x,y){
+    const g1 = LOSS_META.globale.A * Math.exp(-((x-LOSS_META.globale.cx)**2 + (y-LOSS_META.globale.cy)**2)/(2*LOSS_META.globale.s**2));
+    const g2 = LOSS_META.locale.A * Math.exp(-((x-LOSS_META.locale.cx)**2 + (y-LOSS_META.locale.cy)**2)/(2*LOSS_META.locale.s**2));
+    return LOSS_META.C - g1 - g2;
+  }
+
+  function gradAt(x,y){
+    const g1 = LOSS_META.globale.A * Math.exp(-((x-LOSS_META.globale.cx)**2 + (y-LOSS_META.globale.cy)**2)/(2*LOSS_META.globale.s**2));
+    const g2 = LOSS_META.locale.A * Math.exp(-((x-LOSS_META.locale.cx)**2 + (y-LOSS_META.locale.cy)**2)/(2*LOSS_META.locale.s**2));
+    const dLdx = g1*(x-LOSS_META.globale.cx)/(LOSS_META.globale.s**2) + g2*(x-LOSS_META.locale.cx)/(LOSS_META.locale.s**2);
+    const dLdy = g1*(y-LOSS_META.globale.cy)/(LOSS_META.globale.s**2) + g2*(y-LOSS_META.locale.cy)/(LOSS_META.locale.s**2);
+    return [dLdx, dLdy];
+  }
+
+  // ============ widget: paesaggio di perdita, WebGL/GLSL/SDF (4.4/4.5) ============
+  const LOSS_LR = 0.05;
+  let lossBallPos = [0.9, 0.3];
+  let lossDescentActive = true;
+  let lossFrameCount = 0;
+
+  function lossStepDescent(){
+    const [gx, gy] = gradAt(lossBallPos[0], lossBallPos[1]);
+    const stepSize = Math.hypot(gx, gy) * LOSS_LR;
+    lossBallPos = [lossBallPos[0] - LOSS_LR*gx, lossBallPos[1] - LOSS_LR*gy];
+    if(stepSize < 0.00005) lossDescentActive = false;
+  }
+
+  const LOSS_VS_SOURCE = "attribute vec2 aPos;\n" +
+    "void main(){\n" +
+    "  gl_Position = vec4(aPos, 0.0, 1.0);\n" +
+    "}\n";
+
+  const LOSS_FS_SOURCE = "precision highp float;\n" +
+    "uniform vec2 uResolution;\n" +
+    "uniform vec2 uBallXY;\n" +
+    "uniform vec3 uSkyTop;\n" +
+    "uniform vec3 uSkyBot;\n" +
+    "uniform vec3 uDeep;\n" +
+    "uniform vec3 uMid;\n" +
+    "uniform vec3 uBright;\n" +
+    "uniform vec3 uBallColor;\n" +
+    "\n" +
+    "float lossFn(vec2 p){\n" +
+    "  float C = 1.0;\n" +
+    "  vec2 c1 = vec2(0.7, 0.6); float s1 = 0.35; float A1 = 1.0;\n" +
+    "  vec2 c2 = vec2(-0.6, -0.5); float s2 = 0.25; float A2 = 0.55;\n" +
+    "  float g1 = A1 * exp(-dot(p-c1,p-c1)/(2.0*s1*s1));\n" +
+    "  float g2 = A2 * exp(-dot(p-c2,p-c2)/(2.0*s2*s2));\n" +
+    "  return C - g1 - g2;\n" +
+    "}\n" +
+    "\n" +
+    "const float HEIGHT_SCALE = 1.7;\n" +
+    "\n" +
+    "float terrainHeight(vec2 xz){\n" +
+    "  return lossFn(xz) * HEIGHT_SCALE;\n" +
+    "}\n" +
+    "\n" +
+    "float raymarchTerrain(vec3 ro, vec3 rd, float tMax){\n" +
+    "  const int STEPS = 80;\n" +
+    "  float dt = tMax / float(STEPS);\n" +
+    "  float t = 0.0;\n" +
+    "  for(int i = 0; i < STEPS; i++){\n" +
+    "    t += dt;\n" +
+    "    vec3 p = ro + rd * t;\n" +
+    "    float diff = p.y - terrainHeight(p.xz);\n" +
+    "    if(diff <= 0.0){\n" +
+    "      float tLo = t - dt, tHi = t;\n" +
+    "      for(int j = 0; j < 10; j++){\n" +
+    "        float tMid = 0.5 * (tLo + tHi);\n" +
+    "        vec3 pm = ro + rd * tMid;\n" +
+    "        float dm = pm.y - terrainHeight(pm.xz);\n" +
+    "        if(dm > 0.0){ tLo = tMid; } else { tHi = tMid; }\n" +
+    "      }\n" +
+    "      return 0.5 * (tLo + tHi);\n" +
+    "    }\n" +
+    "  }\n" +
+    "  return -1.0;\n" +
+    "}\n" +
+    "\n" +
+    "vec3 terrainNormal(vec2 xz){\n" +
+    "  float eps = 0.01;\n" +
+    "  float hL = terrainHeight(xz - vec2(eps,0.0));\n" +
+    "  float hR = terrainHeight(xz + vec2(eps,0.0));\n" +
+    "  float hD = terrainHeight(xz - vec2(0.0,eps));\n" +
+    "  float hU = terrainHeight(xz + vec2(0.0,eps));\n" +
+    "  return normalize(vec3(hL - hR, 2.0*eps, hD - hU));\n" +
+    "}\n" +
+    "\n" +
+    "void main(){\n" +
+    "  vec2 uv = (gl_FragCoord.xy - 0.5*uResolution) / uResolution.y;\n" +
+    "\n" +
+    "  vec3 ro = vec3(0.0, 2.3, -2.9);\n" +
+    "  vec3 target = vec3(0.05, 0.3, 0.0);\n" +
+    "  vec3 forward = normalize(target - ro);\n" +
+    "  vec3 right = normalize(cross(vec3(0.0,1.0,0.0), forward));\n" +
+    "  vec3 up = cross(forward, right);\n" +
+    "  float fovScale = 1.35;\n" +
+    "  vec3 rd = normalize(forward + uv.x*right*fovScale + uv.y*up*fovScale);\n" +
+    "\n" +
+    "  float t = raymarchTerrain(ro, rd, 9.0);\n" +
+    "\n" +
+    "  vec3 col = mix(uSkyBot, uSkyTop, clamp(uv.y+0.3,0.0,1.0));\n" +
+    "\n" +
+    "  if(t > 0.0){\n" +
+    "    vec3 p = ro + rd*t;\n" +
+    "    vec3 n = terrainNormal(p.xz);\n" +
+    "    vec3 lightDir = normalize(vec3(0.45, 1.0, -0.25));\n" +
+    "    float diff = clamp(dot(n, lightDir), 0.0, 1.0);\n" +
+    "    float lossVal = lossFn(p.xz);\n" +
+    "    vec3 base;\n" +
+    "    if(lossVal < 0.5){\n" +
+    "      base = mix(uDeep, uMid, clamp(lossVal/0.5, 0.0, 1.0));\n" +
+    "    } else {\n" +
+    "      base = mix(uMid, uBright, clamp((lossVal-0.5)/0.5, 0.0, 1.0));\n" +
+    "    }\n" +
+    "    col = base * (0.35 + 0.65*diff);\n" +
+    "\n" +
+    "    float distBall = length(p.xz - uBallXY);\n" +
+    "    float ballR = 0.07;\n" +
+    "    float ring = smoothstep(ballR*0.55, ballR, distBall);\n" +
+    "    col = mix(uBallColor, col, ring);\n" +
+    "    float glow = (1.0 - smoothstep(ballR*0.6, ballR*2.4, distBall)) * 0.35;\n" +
+    "    col += glow * vec3(0.9,0.6,0.3);\n" +
+    "  }\n" +
+    "\n" +
+    "  gl_FragColor = vec4(col, 1.0);\n" +
+    "}\n";
+
+  function lossInitGL(){
+    const canvas = document.getElementById('loss-canvas');
+    let gl = null;
+    try {
+      gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    } catch(e){ gl = null; }
+    if(!gl){ return null; }
+
+    function compileShader(type, source){
+      const sh = gl.createShader(type);
+      gl.shaderSource(sh, source);
+      gl.compileShader(sh);
+      if(!gl.getShaderParameter(sh, gl.COMPILE_STATUS)){
+        const log = gl.getShaderInfoLog(sh);
+        console.error('Errore di compilazione shader:', log);
+        gl.deleteShader(sh);
+        return null;
+      }
+      return sh;
+    }
+
+    const vs = compileShader(gl.VERTEX_SHADER, LOSS_VS_SOURCE);
+    const fs = compileShader(gl.FRAGMENT_SHADER, LOSS_FS_SOURCE);
+    if(!vs || !fs){ return null; }
+
+    const prog = gl.createProgram();
+    gl.attachShader(prog, vs);
+    gl.attachShader(prog, fs);
+    gl.linkProgram(prog);
+    if(!gl.getProgramParameter(prog, gl.LINK_STATUS)){
+      console.error('Errore di link del programma:', gl.getProgramInfoLog(prog));
+      return null;
+    }
+    gl.useProgram(prog);
+
+    const quad = new Float32Array([-1,-1, 1,-1, -1,1, 1,1]);
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, quad, gl.STATIC_DRAW);
+    const aPos = gl.getAttribLocation(prog, 'aPos');
+    gl.enableVertexAttribArray(aPos);
+    gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+
+    const uResolution = gl.getUniformLocation(prog, 'uResolution');
+    const uBallXY = gl.getUniformLocation(prog, 'uBallXY');
+    const uSkyTop = gl.getUniformLocation(prog, 'uSkyTop');
+    const uSkyBot = gl.getUniformLocation(prog, 'uSkyBot');
+    const uDeep = gl.getUniformLocation(prog, 'uDeep');
+    const uMid = gl.getUniformLocation(prog, 'uMid');
+    const uBright = gl.getUniformLocation(prog, 'uBright');
+    const uBallColor = gl.getUniformLocation(prog, 'uBallColor');
+
+    return { gl, canvas, uResolution, uBallXY, uSkyTop, uSkyBot, uDeep, uMid, uBright, uBallColor };
+  }
+
+  // Palette del paesaggio 3D per tema: non riusa --bg/--copper-bright del
+  // tema chiaro (scuriti apposta per il contrasto testo-su-sfondo, troppo
+  // spenti per un terreno che deve restare leggibile) - stessa identita'
+  // cromatica (verde/rame) ma pensata per la resa del rilievo 3D. In tema
+  // chiaro il rapporto si inverte: il minimo (deep) resta chiaro/appena
+  // percettibile contro il cielo, il massimo (bright) e il segnalatore
+  // (ballColor) diventano scuri e saturi per risaltare su un terreno chiaro
+  // (nel tema scuro succede l'opposto: il segnalatore e' chiaro per
+  // risaltare sullo scuro).
+  const LOSS_SHADER_PALETTE = {
+    dark: {
+      skyTop: [0.06,0.16,0.13], skyBot: [0.09,0.24,0.19],
+      deep: [0.08,0.20,0.16], mid: [0.60,0.42,0.27], bright: [0.94,0.66,0.37],
+      ballColor: [0.98,0.86,0.55],
+    },
+    light: {
+      skyTop: [0.94,0.96,0.95], skyBot: [0.88,0.92,0.91],
+      deep: [0.80,0.88,0.84], mid: [0.85,0.62,0.35], bright: [0.75,0.38,0.10],
+      ballColor: [0.50,0.22,0.05],
+    },
+  };
+  function currentLossPalette(){
+    return document.documentElement.dataset.theme === 'light'
+      ? LOSS_SHADER_PALETTE.light : LOSS_SHADER_PALETTE.dark;
+  }
+
+  const LOSS_MINI_RANGE = 1.6;
+
+  function lossComputeMinimapBg(){
+    const res = 90;
+    const c = document.createElement('canvas');
+    c.width = res; c.height = res;
+    const ctx = c.getContext('2d');
+    const img = ctx.createImageData(res, res);
+    const bg = hexToRgbArr(themeVarHex('--bg')), bright = hexToRgbArr(themeVarHex('--copper-bright'));
+    for(let pixelRow = 0; pixelRow < res; pixelRow++){
+      const dataY = LOSS_MINI_RANGE - (pixelRow/(res-1)) * 2 * LOSS_MINI_RANGE;
+      for(let col = 0; col < res; col++){
+        const dataX = -LOSS_MINI_RANGE + (col/(res-1)) * 2 * LOSS_MINI_RANGE;
+        const v = Math.min(1, Math.max(0, lossAt(dataX, dataY)));
+        const r = Math.round(bg[0] + (bright[0]-bg[0])*v);
+        const g = Math.round(bg[1] + (bright[1]-bg[1])*v);
+        const b = Math.round(bg[2] + (bright[2]-bg[2])*v);
+        const idx = (pixelRow*res + col) * 4;
+        img.data[idx] = r; img.data[idx+1] = g; img.data[idx+2] = b; img.data[idx+3] = 255;
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+    return c;
+  }
+
+  const lossWidgetEl = document.getElementById('loss-canvas');
+  if(lossWidgetEl){
+    const lossGlCtx = lossInitGL();
+    let lossMinimapBg = lossComputeMinimapBg();
+    window.addEventListener('corso:themechange', () => { lossMinimapBg = lossComputeMinimapBg(); });
+    const lossMinimapCanvas = document.getElementById('loss-minimap');
+    const lossMinimapCtx = lossMinimapCanvas.getContext('2d');
+    const lossReadout = document.getElementById('loss-readout');
+    const lossFallbackNote = document.getElementById('loss-fallback-note');
+    const lossResetBtn = document.getElementById('loss-reset');
+
+    if(!lossGlCtx){
+      lossFallbackNote.style.display = 'block';
+      lossFallbackNote.textContent = 'FALLBACK PROVVISORIO: il browser non supporta (o non compila) lo shader WebGL/SDF concordato per questo widget — vista sostitutiva non disponibile in questa build, solo la minimappa 2D sottostante resta interattiva. Vedi decision-log.';
+      lossWidgetEl.style.display = 'none';
+    }
+
+    function lossDataToMinimapPixel(x, y){
+      const px = (x + LOSS_MINI_RANGE) / (2*LOSS_MINI_RANGE) * lossMinimapCanvas.width;
+      const py = (LOSS_MINI_RANGE - y) / (2*LOSS_MINI_RANGE) * lossMinimapCanvas.height;
+      return [px, py];
+    }
+    function lossMinimapPixelToData(px, py){
+      const x = (px / lossMinimapCanvas.width) * 2*LOSS_MINI_RANGE - LOSS_MINI_RANGE;
+      const y = LOSS_MINI_RANGE - (py / lossMinimapCanvas.height) * 2*LOSS_MINI_RANGE;
+      return [x, y];
+    }
+
+    function lossUpdateMinimap(){
+      lossMinimapCtx.drawImage(lossMinimapBg, 0, 0, lossMinimapCanvas.width, lossMinimapCanvas.height);
+      const [px, py] = lossDataToMinimapPixel(lossBallPos[0], lossBallPos[1]);
+      lossMinimapCtx.beginPath();
+      lossMinimapCtx.arc(px, py, 5, 0, Math.PI*2);
+      lossMinimapCtx.fillStyle = themeVarHex('--bg');
+      lossMinimapCtx.fill();
+      lossMinimapCtx.beginPath();
+      lossMinimapCtx.arc(px, py, 4, 0, Math.PI*2);
+      lossMinimapCtx.fillStyle = themeVarHex('--copper-bright');
+      lossMinimapCtx.fill();
+    }
+
+    function lossUpdateReadout(){
+      lossReadout.textContent = 'loss = ' + lossAt(lossBallPos[0], lossBallPos[1]).toFixed(4) +
+        '  ·  (x=' + lossBallPos[0].toFixed(3) + ', y=' + lossBallPos[1].toFixed(3) + ')';
+    }
+
+    lossMinimapCanvas.addEventListener('click', (ev) => {
+      const rect = lossMinimapCanvas.getBoundingClientRect();
+      const px = (ev.clientX - rect.left) * (lossMinimapCanvas.width / rect.width);
+      const py = (ev.clientY - rect.top) * (lossMinimapCanvas.height / rect.height);
+      const [x, y] = lossMinimapPixelToData(px, py);
+      lossBallPos = [x, y];
+      lossDescentActive = true;
+      lossFrameCount = 0;
+    });
+
+    lossResetBtn.addEventListener('click', () => {
+      lossBallPos = [0.9, 0.3];
+      lossDescentActive = true;
+      lossFrameCount = 0;
+    });
+
+    function lossRenderLoop(){
+      if(lossGlCtx){
+        const { gl, canvas, uResolution, uBallXY, uSkyTop, uSkyBot, uDeep, uMid, uBright, uBallColor } = lossGlCtx;
+        const palette = currentLossPalette();
+        gl.viewport(0, 0, canvas.width, canvas.height);
+        gl.uniform2f(uResolution, canvas.width, canvas.height);
+        gl.uniform2f(uBallXY, lossBallPos[0], lossBallPos[1]);
+        gl.uniform3fv(uSkyTop, palette.skyTop);
+        gl.uniform3fv(uSkyBot, palette.skyBot);
+        gl.uniform3fv(uDeep, palette.deep);
+        gl.uniform3fv(uMid, palette.mid);
+        gl.uniform3fv(uBright, palette.bright);
+        gl.uniform3fv(uBallColor, palette.ballColor);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      }
+      if(lossDescentActive){
+        lossFrameCount++;
+        if(lossFrameCount % 6 === 0) lossStepDescent();
+      }
+      lossUpdateMinimap();
+      lossUpdateReadout();
+      requestAnimationFrame(lossRenderLoop);
+    }
+    lossRenderLoop();
+  }
+
+</script>
+
+</body>
+</html>

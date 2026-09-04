@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Filo trasversale: discreto/continuo — Vocabolario del saggio «Dal bit alle entità semantiche»</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="pagina">
+<nav class="briciole"><a href="../index.html">Home</a><span class="sep">›</span><a href="../fili/index.html">Fili trasversali</a><span class="sep">›</span>Filo trasversale: discreto/continuo</nav>
+<header class="testata">
+<span class="apparato">Vocabolario del saggio «Dal bit alle entità semantiche»</span>
+<h1>Filo trasversale: discreto/continuo</h1>
+<p class="sottotitolo">Percorso di lettura ordinato — 12 tappe</p>
+</header>
+<p class="scope-note">Dal computer come interruttori discreti alla domanda finale su cosa sia «primitivo» fra discreto e continuo — il filo più centrale e meglio strutturato del corso.</p>
+<ol class="percorso-ordinato">
+<li><a class="rimando" href="../concetti/Encoding.html">Encoding</a><br><span class="scope-note">Corrispondenza tabellare fissa carattere→numero: il testo è già numeri prima di ogni LLM.</span></li>
+<li><a class="rimando" href="../concetti/TokenId.html">ID numerico (token ID)</a><br><span class="scope-note">Numero arbitrario assegnato a ogni token; nessuna relazione di vicinanza con token semanticamente affini.</span></li>
+<li><a class="rimando" href="../concetti/Numerabilita.html">Numerabilità</a><br><span class="scope-note">Proprietà di un insieme elencabile con metodo sistematico (vocabolario di token, sistema formale); si contrappone al continuo dei reali.</span></li>
+<li><a class="rimando" href="../concetti/Calibrazione.html">Calibrazione</a><br><span class="scope-note">Proprietà per cui, tra le previsioni fatte con una data confidenza, quella percentuale risulta poi effettivamente corretta.</span></li>
+<li><a class="rimando" href="../concetti/Sparsita.html">Sparsità</a><br><span class="scope-note">Assenza, nei dati, di combinazioni specifiche di contesto: la previsione di un n-gramma si azzera, non si indebolisce.</span></li>
+<li><a class="rimando" href="../concetti/Embedding.html">Embedding</a><br><span class="scope-note">Rappresentazione di una parola come vettore/punto in uno spazio continuo: vicinanza spaziale = somiglianza semantica.</span></li>
+<li><a class="rimando" href="../concetti/AritmeticaVettoriale.html">Aritmetica vettoriale</a><br><span class="scope-note">Operazioni algebriche fra embedding (es. re−uomo+donna=regina) che producono risultati semanticamente coerenti.</span></li>
+<li><a class="rimando" href="../concetti/FunzionePerdita.html">Funzione di perdita (loss)</a><br><span class="scope-note">Numero singolo che misura quanto una rete sbaglia, dati i pesi correnti; l'oggetto da minimizzare.</span></li>
+<li><a class="rimando" href="../concetti/DiscesaDelGradiente.html">Discesa del gradiente</a><br><span class="scope-note">Procedura iterativa che aggiorna i pesi nella direzione opposta al gradiente per minimizzare la perdita.</span></li>
+<li><a class="rimando" href="../concetti/Softmax.html">Softmax</a><br><span class="scope-note">Trasformazione dei punteggi di compatibilità grezzi in pesi che sommano a 1.</span></li>
+<li><a class="rimando" href="../concetti/VeritasFiliaTemporis.html">Veritas filia temporis / error filius temporis</a><br><span class="scope-note">Coppia aforistica (Bacone/Bayle) su verità ed errore come «figli del tempo»; applicata nel corso ai dati di addestramento.</span></li>
+<li><a class="rimando" href="../concetti/Quantizzazione.html">Quantizzazione</a><br><span class="scope-note">Riduzione deliberata della precisione numerica dei pesi (FP32→FP16/BF16→INT8→INT4) per il deployment, dopo un addestramento a precisione continua.</span></li>
+</ol>
+<footer class="piede">
+Generato da <code>scripts/genera_html.py</code> a partire da
+<code>src/vocabolario.ttl</code>, <code>src/ontologia.ttl</code>,
+<code>src/dati.ttl</code>. Istantanea del saggio al 26 agosto 2026, aggiornata alla
+nuova struttura in tre Parti il 4 settembre 2026 — vedi
+<code>docs/decisioni-modellazione.md</code> per il razionale delle scelte di
+modellazione.
+</footer>
+</div>
+</body>
+</html>

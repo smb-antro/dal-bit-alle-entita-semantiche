@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meccanismo · 1 · Il testo come dato</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0F2A22;
+    --surface: #173B30;
+    --surface-2: #1E4A3C;
+    --copper: #C97D3D;
+    --copper-bright: #F0A85E;
+    --text: #F2ECE0;
+    --text-dim: #A9BFB6;
+    --line: rgba(242,236,224,0.12);
+    --rail-w: 300px;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Source Serif 4', Georgia, serif;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,h2,h3, .display{
+    font-family: 'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+  .mono{ font-family: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace; }
+  a{ color: var(--copper-bright); }
+
+  /* ---------- layout shell: sidebar fissa con indice del sito ---------- */
+  .sidebar{
+    background: rgba(15,42,34,0.92);
+    border-bottom: 1px solid var(--line);
+    padding: 28px 24px 32px;
+  }
+  .sidebar-kicker{
+    font-family: 'IBM Plex Mono', monospace; font-size: .74rem; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px;
+  }
+  .sidebar-title{
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.02rem;
+    color: var(--text); margin-bottom: 22px;
+  }
+  .sidebar .parte{ margin-top: 26px; }
+  .sidebar .parte:first-of-type{ margin-top: 0; }
+  .sidebar .parte-heading{
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: .74rem;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--copper-bright);
+    padding-bottom: 10px; margin-bottom: 2px; border-bottom: 1px solid var(--line);
+  }
+  .sidebar .voce-semplice{
+    display: block; padding: 10px 4px; border-bottom: 1px solid var(--line);
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem;
+    color: var(--text); text-decoration: none;
+  }
+  .sidebar .voce-semplice:hover{ color: var(--copper-bright); }
+  .sidebar .voce-semplice.current{ color: var(--copper-bright); }
+  .sidebar details.modulo{ border-bottom: 1px solid var(--line); }
+  .sidebar details.modulo summary{
+    display: flex; align-items: center; gap: 8px; padding: 10px 4px; cursor: pointer;
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem; color: var(--text);
+    list-style: none;
+  }
+  .sidebar details.modulo summary.current{ color: var(--copper-bright); }
+  .sidebar details.modulo summary::-webkit-details-marker{ display: none; }
+  .sidebar details.modulo summary::before{
+    content: "›"; display: inline-block; font-family: 'IBM Plex Mono', monospace;
+    color: var(--text-dim); transition: transform .15s ease; flex-shrink: 0;
+  }
+  .sidebar details.modulo[open] summary::before{ transform: rotate(90deg); color: var(--copper-bright); }
+  .sidebar details.modulo summary:hover{ color: var(--copper-bright); }
+  .sidebar .unita-list{ padding: 2px 0 12px 22px; display: flex; flex-direction: column; gap: 1px; }
+  .sidebar .unita-list a{
+    display: block; padding: 6px 4px; font-size: .82rem; color: var(--text-dim); text-decoration: none;
+  }
+  .sidebar .unita-list a:hover{ color: var(--copper-bright); }
+  .sidebar .unita-list a .num{ color: var(--copper); margin-right: 6px; font-family: 'IBM Plex Mono', monospace; font-size: .74rem; }
+
+  /* pallini luminosi di scroll-spy, sulle voci dell'unità corrente */
+  .sidebar .unita-list.scrollspy a{ position: relative; padding-left: 20px; }
+  .sidebar .unita-list.scrollspy a::before{
+    content: "";
+    position: absolute; left: 2px; top: 50%;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--surface-2); border: 1px solid var(--line);
+    transform: translateY(-50%);
+    transition: background .25s, box-shadow .25s, transform .25s;
+  }
+  .sidebar .unita-list.scrollspy a.active{ color: var(--copper-bright); }
+  .sidebar .unita-list.scrollspy a.active::before{
+    background: var(--copper-bright);
+    box-shadow: 0 0 0 4px rgba(240,168,94,0.18);
+    transform: translateY(-50%) scale(1.2);
+  }
+
+  main{ padding-top: 0; }
+
+  @media (min-width: 900px){
+    .sidebar{
+      position: fixed; z-index: 50; top:0; bottom:0; left:0; width: var(--rail-w);
+      overflow-y: auto; border-bottom:none; border-right: 1px solid var(--line);
+    }
+    main{ padding-left: var(--rail-w); }
+  }
+
+  .wrap{ max-width: 740px; margin: 0 auto; padding: 0 24px; }
+
+  .unit-block section{ padding: 92px 0 84px; border-bottom: 1px solid var(--line); }
+  .unit-block:last-child section:last-of-type{ border-bottom:none; }
+
+  .eyebrow{
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--copper-bright);
+    margin-bottom: 14px; display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{ content:""; width: 22px; height:1px; background: var(--copper-bright); display:inline-block; }
+
+  h2.title{ font-size: clamp(1.6rem, 4vw, 2.3rem); margin-bottom: 20px; }
+
+  p{ margin: 0 0 18px; color: var(--text); font-size: 1.05rem; }
+  p.dim{ color: var(--text-dim); }
+  .lede{ font-size: 1.15rem; color: var(--text); }
+
+  .reveal{ opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.visible{ opacity:1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce){
+    .reveal{ transition: opacity .2s linear; transform:none; }
+    *{ scroll-behavior: auto !important; }
+  }
+
+  .aside{
+    margin: 26px 0; padding: 18px 20px; background: var(--surface);
+    border-left: 3px solid var(--copper); border-radius: 2px;
+  }
+  .aside .label{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--copper-bright); margin-bottom: 8px; display:block;
+  }
+  .aside p{ margin-bottom:0; font-size: 0.96rem; color: var(--text-dim); }
+
+  .question{
+    margin: 28px 0; padding: 20px 22px; border: 1px dashed var(--line); border-radius: 4px;
+    font-family: 'Space Grotesk', sans-serif; font-size: 1.0rem; color: var(--copper-bright);
+  }
+
+  blockquote{
+    margin: 0; padding-left: 22px; border-left: 2px solid var(--copper);
+    font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; color: var(--text);
+  }
+
+  /* ---------- hero ---------- */
+  .hero{ padding-top: 62px; }
+  .hero .kicker{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.8rem; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--text-dim); margin-bottom: 18px;
+  }
+  .hero h1{ font-size: clamp(1.9rem, 5.6vw, 2.9rem); line-height:1.12; margin-bottom: 24px; }
+  .hero h1 em{ font-style: normal; color: var(--copper-bright); }
+  .scrolldown{
+    margin-top: 50px; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem;
+    color: var(--text-dim); letter-spacing: 0.08em; text-transform: uppercase;
+    display:flex; align-items:center; gap:8px;
+  }
+  .scrolldown::after{ content:"↓"; color: var(--copper-bright); animation: nudge 1.8s infinite ease-in-out; }
+  @media (prefers-reduced-motion: reduce){ .scrolldown::after{ animation:none; } }
+  @keyframes nudge{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(5px); } }
+
+  /* ---------- widget: playground del tokenizzatore ---------- */
+  .playground{
+    margin: 30px 0; background: var(--surface); border: 1px solid var(--line);
+    border-radius: 10px; padding: 24px 26px;
+  }
+  .playground .ptitle{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--copper-bright); margin-bottom: 14px; display:block;
+  }
+  .pg-input{
+    width:100%; background: var(--bg); border: 1px solid var(--line); border-radius: 6px;
+    color: var(--text); font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem;
+    padding: 12px 14px; outline: none;
+  }
+  .pg-input:focus{ border-color: var(--copper-bright); }
+  .pg-row-label{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text-dim); margin: 18px 0 8px;
+  }
+  .pg-chars{ display:flex; flex-wrap: wrap; gap: 8px; }
+  .pg-chip{
+    background: var(--bg); border: 1px solid var(--line); border-radius: 6px;
+    padding: 8px 10px; text-align:center; min-width: 44px;
+  }
+  .pg-chip .glyph{
+    font-family: 'Space Grotesk', sans-serif; font-size: 1.05rem; color: var(--text);
+    margin-bottom: 4px; min-height: 1.3em; display:flex; align-items:center; justify-content:center;
+    word-break: break-word;
+  }
+  .pg-chip.space .glyph::before{ content:"␣"; color: var(--text-dim); }
+  .pg-chip.token{ border-color: var(--copper); }
+  .pg-chip.eow .glyph::after{ content:"·"; color: var(--copper-bright); }
+  .pg-chip .code{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.68rem; color: var(--copper-bright);
+  }
+  .pg-chip .code.id{ font-size: 0.78rem; font-weight: 600; }
+  .pg-word-group{
+    display:flex; flex-wrap: wrap; gap: 6px; padding: 6px 8px 6px 0;
+    border-right: 1px dashed var(--line); margin-right: 6px;
+  }
+  .pg-word-group:last-child{ border-right:none; }
+  .pg-empty{ color: var(--text-dim); font-size: 0.92rem; font-style: italic; }
+  .pg-examples{ margin-top: 14px; display:flex; flex-wrap: wrap; gap: 8px; }
+  .pg-example-btn{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.74rem; color: var(--copper-bright);
+    background: transparent; border: 1px solid var(--copper); border-radius: 20px;
+    padding: 5px 12px; cursor: pointer; transition: background .2s;
+  }
+  .pg-example-btn:hover{ background: var(--surface-2); }
+
+  /* ---------- widget: comparazione raster/SVG ---------- */
+  .rs-compare{
+    margin: 30px 0; background: var(--surface); border: 1px solid var(--line);
+    border-radius: 10px; padding: 24px 26px;
+  }
+  .rs-images{ display:flex; gap: 24px; flex-wrap: wrap; margin: 18px 0; }
+  .rs-col{ flex: 1 1 220px; text-align:center; }
+  .rs-frame{
+    background: var(--bg); border: 1px solid var(--line); border-radius: 8px;
+    overflow: hidden; display:flex; align-items:center; justify-content:center;
+    width: 100%; aspect-ratio: 1/1; margin-bottom: 10px;
+  }
+  .rs-frame img, .rs-frame svg{ display:block; }
+  .rs-frame img{ image-rendering: pixelated; }
+  .rs-label{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--copper-bright);
+  }
+  .rs-slider{ width:100%; margin-top: 10px; accent-color: var(--copper-bright); }
+  .rs-zoomval{ font-family:'IBM Plex Mono', monospace; font-size: 0.8rem; color: var(--text-dim); text-align:center; }
+
+  /* ---------- widget: diagonale di Cantor ---------- */
+  .cantor-grid{
+    font-family:'IBM Plex Mono', monospace; font-size: 1.0rem; margin: 20px 0;
+    overflow-x: auto;
+  }
+  .cantor-row{ display:flex; gap: 2px; margin-bottom: 4px; align-items:center; }
+  .cantor-row .prefix{ color: var(--text-dim); margin-right: 8px; width: 28px; text-align:right; flex-shrink:0; }
+  .cantor-digit{
+    width: 26px; height: 32px; display:flex; align-items:center; justify-content:center;
+    background: var(--bg); border: 1px solid var(--line); border-radius: 3px;
+  }
+  .cantor-digit.diag{ background: var(--copper); color: var(--bg); font-weight: 600; border-color: var(--copper-bright); }
+  .cantor-digit.flipped{ background: var(--copper-bright); color: var(--bg); font-weight: 600; }
+  .cantor-btn{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.82rem; color: var(--bg);
+    background: var(--copper-bright); border: none; border-radius: 6px;
+    padding: 10px 18px; cursor: pointer; margin-top: 10px; font-weight: 600;
+  }
+  .cantor-btn:hover{ background: var(--copper); }
+  .cantor-result{ margin-top: 16px; font-size: 0.98rem; color: var(--copper-bright); min-height: 1.6em; }
+
+  /* ---------- chiusura ---------- */
+  .chiusura{ background: linear-gradient(180deg, var(--bg), var(--surface)); }
+  .footer-note{
+    margin-top: 46px; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem; color: var(--text-dim);
+  }
+</style>
+</head>
+<body>
+
+<nav class="sidebar" aria-label="Indice del saggio">
+  <div class="sidebar-kicker">Indice</div>
+  <div class="sidebar-title">Dal bit alle entità semantiche</div>
+
+  <div class="parte">
+    <details class="modulo">
+      <summary>Presentazione — Dal bit alle entità semantiche</summary>
+      <div class="unita-list">
+        <a href="presentazione.html#parte-1"><span class="num">1</span>Framework epistemologico: i limiti che condividiamo con le macchine</a>
+        <a href="presentazione.html#parte-2"><span class="num">2</span>Il dominio: struttura e composizione del saggio interattivo</a>
+        <a href="presentazione.html#parte-3"><span class="num">3</span>La lente semantica</a>
+      </div>
+    </details>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Parte I — Fondamenti</div>
+    <a class="voce-semplice" href="fondamenti-1-funzioni-booleane.html">1. Funzioni booleane</a>
+    <a class="voce-semplice" href="fondamenti-2-hardware-software.html">2. Hardware e software</a>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Parte II — Genealogia</div>
+
+    <details class="modulo">
+      <summary>1. Tre ore di disputa senza esito</summary>
+      <div class="unita-list">
+        <a href="genealogia-1-disputa.html#unit-a1"><span class="num">1.1</span>Dalla characteristica universalis alla pura ideografia</a>
+        <a href="genealogia-1-disputa.html#unit-a2"><span class="num">1.2</span>Gödel, Turing, Lucas</a>
+        <a href="genealogia-1-disputa.html#unit-a3"><span class="num">1.3</span>Il perceptron e la disgiunzione esclusiva (XOR)</a>
+        <a href="genealogia-1-disputa.html#unit-a4"><span class="num">1.4</span>Dai sistemi esperti alle macchine statistiche</a>
+        <a href="genealogia-1-disputa.html#unit-a5"><span class="num">1.5</span>Re, donna, regina</a>
+        <a href="genealogia-1-disputa.html#unit-a6"><span class="num">1.6</span>L'attenzione sostituisce la memoria</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>2. Il fenomeno e i suoi limiti</summary>
+      <div class="unita-list">
+        <a href="genealogia-2-limiti.html#unit-b1"><span class="num">2.1</span>Completamento statistico a scala massiva, in-context learning, transfer cross-dominio e altre capacità emergenti</a>
+        <a href="genealogia-2-limiti.html#unit-b2"><span class="num">2.2</span>Interpolazione, pesi statistici, metacognizione</a>
+        <a href="genealogia-2-limiti.html#unit-b3"><span class="num">2.3</span>Grounding, ragionamento causale, generalizzazione composizionale, cortocircuito dell'apprendimento</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>3. Perché ci vuole un villaggio</summary>
+      <div class="unita-list">
+        <a href="genealogia-3-villaggio.html#unit-c1"><span class="num">3.1</span>Il problema del significato</a>
+        <a href="genealogia-3-villaggio.html#unit-c2"><span class="num">3.2</span>Il problema della causalità</a>
+        <a href="genealogia-3-villaggio.html#unit-c3"><span class="num">3.3</span>Il problema biologico</a>
+        <a href="genealogia-3-villaggio.html#unit-c4"><span class="num">3.4</span>Il problema della coscienza</a>
+        <a href="genealogia-3-villaggio.html#unit-c5"><span class="num">3.5</span>Cosa siamo, per contrasto</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>4. Lo spazio, il corpo, la macchina</summary>
+      <div class="unita-list">
+        <a href="genealogia-4-corpo.html#unit-d1"><span class="num">4.1</span>Cos'è lo spazio? Il corpo come strumento di misura</a>
+        <a href="genealogia-4-corpo.html#unit-d2"><span class="num">4.2</span>Il corpo mancante</a>
+      </div>
+    </details>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Parte III — Meccanismo</div>
+
+    <details class="modulo" open>
+      <summary class="current">1. Il testo come dato</summary>
+      <div class="unita-list scrollspy" id="local-scrollspy">
+        <a href="#unit-u1" data-spy-target="unit-u1"><span class="num">1.1</span>Encoding</a>
+        <a href="#unit-u2" data-spy-target="unit-u2"><span class="num">1.2</span>Tokenizzazione</a>
+        <a href="#unit-u3" data-spy-target="unit-u3"><span class="num">1.3</span>Problema del vocabolario</a>
+        <a href="#unit-u4" data-spy-target="unit-u4"><span class="num">1.4</span>Dagli ID al punto più discreto</a>
+        <a href="#unit-u5" data-spy-target="unit-u5"><span class="num">1.5</span>Gödel</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>2. Probabilità e linguaggio</summary>
+      <div class="unita-list">
+        <a href="meccanismo-2-probabilita.html#unit-u1"><span class="num">2.1</span>Prevedere la parola successiva</a>
+        <a href="meccanismo-2-probabilita.html#unit-u2"><span class="num">2.2</span>Unigrammi/bigrammi, induzione, calibrazione</a>
+        <a href="meccanismo-2-probabilita.html#unit-u3"><span class="num">2.3</span>N-grammi e assunzione di Markov</a>
+        <a href="meccanismo-2-probabilita.html#unit-u4"><span class="num">2.4</span>Sparsità e dipendenze lontane</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>3. Parole come punti nello spazio</summary>
+      <div class="unita-list">
+        <a href="meccanismo-3-embedding.html#unit-u1"><span class="num">3.1</span>Il problema lasciato aperto</a>
+        <a href="meccanismo-3-embedding.html#unit-u2"><span class="num">3.2</span>Le parole come vettori (embedding)</a>
+        <a href="meccanismo-3-embedding.html#unit-u3"><span class="num">3.3</span>L'ipotesi distribuzionale</a>
+        <a href="meccanismo-3-embedding.html#unit-u4"><span class="num">3.4</span>L'aritmetica vettoriale</a>
+        <a href="meccanismo-3-embedding.html#unit-u5"><span class="num">3.5</span>Polisemia ed embedding statico</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>4. Reti neurali</summary>
+      <div class="unita-list">
+        <a href="meccanismo-4-reti-neurali.html#unit-u1"><span class="num">4.1</span>Dal neurone biologico al neurone artificiale</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u2"><span class="num">4.2</span>Il perceptron e XOR</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u3"><span class="num">4.3</span>Strati e profondità</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u4"><span class="num">4.4</span>La funzione di perdita</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u5"><span class="num">4.5</span>Il gradiente e la backpropagation</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>5. Il Transformer</summary>
+      <div class="unita-list">
+        <a href="meccanismo-5-transformer.html#unit-u1"><span class="num">5.1</span>Il problema che l'attenzione risolve</a>
+        <a href="meccanismo-5-transformer.html#unit-u2"><span class="num">5.2</span>L'idea dell'attention</a>
+        <a href="meccanismo-5-transformer.html#unit-u3"><span class="num">5.3</span>Query, Key, Value</a>
+        <a href="meccanismo-5-transformer.html#unit-u4"><span class="num">5.4</span>Embedding contestuale</a>
+        <a href="meccanismo-5-transformer.html#unit-u5"><span class="num">5.5</span>Multi-head e posizione</a>
+        <a href="meccanismo-5-transformer.html#unit-u6"><span class="num">5.6</span>Parallelismo e scala</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>6. Cosa significa "Large"</summary>
+      <div class="unita-list">
+        <a href="meccanismo-6-large.html#unit-u1"><span class="num">6.1</span>Scala</a>
+        <a href="meccanismo-6-large.html#unit-u2"><span class="num">6.2</span>Capacità emergenti</a>
+        <a href="meccanismo-6-large.html#unit-u3"><span class="num">6.3</span>I dati</a>
+        <a href="meccanismo-6-large.html#unit-u4"><span class="num">6.4</span>Fine-tuning</a>
+        <a href="meccanismo-6-large.html#unit-u5"><span class="num">6.5</span>RLHF</a>
+        <a href="meccanismo-6-large.html#unit-u6"><span class="num">6.6</span>Quantizzazione (chiusura dell'arco tecnico)</a>
+      </div>
+    </details>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Appendice</div>
+
+    <details class="modulo">
+      <summary>Dietro i widget</summary>
+      <div class="unita-list">
+        <a href="dietro-i-widget.html#unit-u1"><span class="num">A.1</span>Il tokenizzatore (Meccanismo · 1)</a>
+        <a href="dietro-i-widget.html#unit-u2"><span class="num">A.2</span>Il predittore n-grammi (Meccanismo · 2)</a>
+        <a href="dietro-i-widget.html#unit-u3"><span class="num">A.3</span>La mappa embedding (Meccanismo · 3)</a>
+        <a href="dietro-i-widget.html#unit-u4"><span class="num">A.4</span>Neurone, XOR, superficie di perdita (Meccanismo · 4)</a>
+        <a href="dietro-i-widget.html#unit-u5"><span class="num">A.5</span>L'attention (Meccanismo · 5)</a>
+        <a href="dietro-i-widget.html#unit-u6"><span class="num">A.6</span>Scala e capacità (Meccanismo · 6)</a>
+      </div>
+    </details>
+  </div>
+</nav>
+
+<main>
+
+<div class="unit-block" id="unit-u1" data-unit="u1">
+
+  <section id="u1-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Meccanismo · 1 · Il testo come dato · Unità 1.1</div>
+      <h1>Quando scrivi una lettera, <em>cosa vede davvero la macchina?</em></h1>
+      <p class="lede dim">Prima di ogni parola, frase o significato — prima ancora che un LLM entri in scena — si pone una domanda più elementare, quasi imbarazzante nella sua ovvietà: che cosa arriva, fisicamente, dentro il computer, quando si digita la lettera «a»?</p>
+      <p class="dim">Non una lettera, ma un numero: sempre e comunque un numero. È la stessa domanda già affrontata in Fondamenti · 1, qui applicata al primo materiale grezzo di ogni modello linguistico, il testo.</p>
+      <div class="scrolldown">un'idea più vecchia di qualunque computer</div>
+    </div>
+  </section>
+
+  <section id="u1-sez-tesi">
+    <div class="wrap reveal">
+      <div class="eyebrow">Una tesi da prendere sul serio</div>
+      <h2 class="title">La discretizzazione non nasce col computer</h2>
+      <p>È tentante pensare alla «digitalizzazione» come a un fatto tecnico recente — qualcosa che comincia con i primi calcolatori, o con internet. Ma la scrittura stessa, l'alfabeto, costituisce già il primo grande atto di questo tipo nella storia umana: trasforma il continuo del parlato — suoni che sfumano l'uno nell'altro, senza confini netti tra una vocale e la successiva — in un insieme finito di simboli discreti, ricombinabili, trascrivibili. Molto prima che esistesse una parola per nominare l'operazione, l'umanità la stava già compiendo.</p>
+
+      <p>Il concetto diventa consapevole solo nel Novecento. Nel 1958 John von Neumann pubblica <em>The Computer and the Brain</em> — un titolo non casuale: mette a confronto esplicitamente le stesse due cose che verranno confrontate meccanicamente in Meccanismo · 4, il calcolatore e il cervello. Diventa poi esplicita ed esplicitamente industriale solo con i grandi progetti di digitalizzazione di massa dei primi anni 2000.</p>
+
+      <div class="aside">
+        <span class="label">Da tenere a mente</span>
+        <p>Il computer non inventa la discretizzazione del linguaggio. La eredita da una storia lunga tremila anni, e la porta al suo estremo: non solo le lettere diventano simboli discreti, ma ogni simbolo diventa, senza eccezioni, un numero.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="u1-sez-encoding">
+    <div class="wrap reveal">
+      <div class="eyebrow">L'encoding</div>
+      <h2 class="title">Una tabella, non un mistero</h2>
+      <p>Il meccanismo con cui una lettera diventa un numero non ha nulla di misterioso: è una tabella di corrispondenza, concordata in anticipo. Alla lettera «A» maiuscola corrisponde sempre il numero 65; alla «a» minuscola, 97; a uno spazio, 32. Le prime tabelle di questo tipo (ASCII, anni '60) coprivano solo l'alfabeto inglese e poco altro; oggi lo standard è Unicode, che assegna un numero — un <em>punto di codice</em> — a più di 149.000 simboli: alfabeti di ogni lingua, ideogrammi, persino le emoji.</p>
+
+      <p>Digiti un testo nel campo sottostante: ogni carattere mostra immediatamente il numero cui corrisponde — non come metafora, ma come fatto.</p>
+
+      <div class="playground">
+        <span class="ptitle">Playground — stadio 1: da lettere a numeri</span>
+        <input type="text" class="pg-input" id="pg-input-encoding" placeholder="Scrivi qualcosa, anche il tuo nome…" autocomplete="off" spellcheck="false">
+        <div class="pg-chars" id="pg-chars-encoding">
+          <span class="pg-empty">I caratteri appariranno qui, uno per uno, col loro codice.</span>
+        </div>
+      </div>
+
+      <p class="dim">L'ordine dei numeri non ha alcuna relazione col significato: 97 («a») e 98 («b») sono vicini solo perché tale è la sequenza della tabella, non perché «a» e «b» siano imparentati in alcun modo — un punto a cui il modulo tornerà, più avanti, con conseguenze non banali.</p>
+    </div>
+  </section>
+
+  <section id="u1-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">Il testo è già numeri, prima di qualunque intelligenza</h2>
+      <p>Nessuna delle due cose appena viste — l'alfabeto come discretizzazione antica, la tabella di encoding come meccanismo esplicito — richiede che la macchina «capisca» alcunché. Un numero non porta con sé alcun significato: è solo un'etichetta, scelta per convenzione. È il tratto rilevante per l'unità successiva, dove la domanda si sposta dal singolo carattere alla parola intera — e le cose si complicano subito.</p>
+    </div>
+  </section>
+
+  <section id="u1-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura — Unità 1.1</div>
+      <blockquote>
+        Ogni lettera digitata, in questo preciso momento, è già un numero. Non da quando esistono gli LLM: da quando esiste la scrittura.
+      </blockquote>
+      <p style="margin-top:28px;">Nell'unità successiva: che cosa accade quando, invece di singole lettere, si tenta di assegnare un numero a intere <em>parole</em> — e perché gli spazi bianchi, da soli, non bastano a stabilire dove finisce una parola e comincia la successiva.</p>
+
+      <div class="footer-note">Meccanismo · 1 — Il testo come dato · Unità 1.1 — Da lettere a numeri: l'encoding</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="unit-block" id="unit-u2" data-unit="u2">
+
+  <section id="u2-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Meccanismo · 1 · Il testo come dato · Unità 1.2</div>
+      <h1>Dove finisce una parola, <em>e dove comincia la successiva?</em></h1>
+      <p class="lede dim">Parrebbe la domanda più semplice possibile: basterebbe guardare gli spazi bianchi. Ma «portacenere» è una parola sola o due incollate insieme? In «l'amico», dove finisce l'articolo e comincia il sostantivo? In cinese, che si scrive senza spazi tra una parola e l'altra, la domanda è ancora più radicale.</p>
+      <div class="scrolldown">lo spazio bianco non è la risposta, è un indizio</div>
+    </div>
+  </section>
+
+  <section id="u2-sez-limite-spazi">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il limite degli spazi</div>
+      <h2 class="title">Perché non basta tagliare sugli spazi</h2>
+      <p>Il modo più ovvio di dividere un testo in parole è tagliare a ogni spazio bianco. Funziona spesso, ma non sempre. Le parole composte («portacenere», «asciugamano») sono unità di significato che gli spazi non segnalano. Le lingue a morfologia ricca — l'italiano compreso — attaccano prefissi e suffissi a una radice («in-comprensibil-mente»), e non è ovvio se vadano trattati come un blocco unico o scomposti. In lingue come il cinese o il giapponese, poi, il problema è ancora più a monte: non ci sono spazi tra le parole, per intere frasi.</p>
+
+      <div class="aside">
+        <span class="label">Connessione linguistica</span>
+        <p>Questo non è un problema inventato dall'informatica. È lo stesso problema che la linguistica affronta da sempre sotto il nome di <em>morfologia</em> e <em>tipologia linguistica</em>: cos'è, esattamente, un'unità minima di significato, e come varia da lingua a lingua.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="u2-sez-token">
+    <div class="wrap reveal">
+      <div class="eyebrow">Dalla parola al token</div>
+      <h2 class="title">Un nome nuovo per un'unità diversa</h2>
+      <p>Per questo un LLM non lavora con «parole» nel senso in cui le intende un dizionario. Lavora con <em>token</em>: unità di testo — a volte parole intere, a volte frammenti di parola, a volte un singolo carattere — decise non da regole grammaticali scritte a mano, ma da un algoritmo che ha osservato quali sequenze di caratteri ricorrono più spesso in un grande corpus di testo reale.</p>
+
+      <p>Il componente sottostante impiega esattamente questo tipo di algoritmo (<strong>BPE</strong>, Byte-Pair Encoding — ripreso nell'unità successiva), addestrato realmente sul testo dei quattro blocchi di Genealogia di questo stesso corso. Scriva una frase e confronti la riga superiore — il taglio ingenuo sugli spazi — con quella inferiore, dove ogni parola è scomposta nei suoi token reali.</p>
+
+      <div class="playground">
+        <span class="ptitle">Playground — stadio 2: dalle parole ai token</span>
+        <input type="text" class="pg-input" id="pg-input-tok" placeholder="Scriva una frase, es. il gatto è salito sul tetto" autocomplete="off" spellcheck="false" value="il gatto è salito sul tetto">
+        <div class="pg-row-label">Taglio ingenuo (spazi bianchi)</div>
+        <div class="pg-chars" id="pg-naive-tok"></div>
+        <div class="pg-row-label">Token reali (BPE, addestrato sul testo di Genealogia)</div>
+        <div class="pg-chars" id="pg-bpe-tok"></div>
+      </div>
+
+      <p class="dim">Alcune parole restano intere (le più comuni nel corpus di addestramento), altre si spezzano in più parti — non a caso, ma secondo le regolarità statistiche che l'algoritmo ha individuato.</p>
+    </div>
+  </section>
+
+  <section id="u2-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">Il token è un compromesso, non una legge di natura</h2>
+      <p>Non esiste un unico modo «corretto» di tagliare il testo in unità. Il token è un compromesso ingegneristico tra due estremi scomodi: usare parole intere (un vocabolario enorme, che non basta mai) o usare singoli caratteri (un vocabolario minuscolo, ma sequenze lunghissime da elaborare). L'unità successiva mostra esattamente perché il primo estremo — un dizionario di parole intere — non può funzionare.</p>
+    </div>
+  </section>
+
+  <section id="u2-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura — Unità 1.2</div>
+      <blockquote>
+        Un token non è una parola. È l'unità che resta dopo aver ammesso che «parola» non è mai stata una categoria così netta come sembrava.
+      </blockquote>
+      <p style="margin-top:28px;">Nell'unità successiva: che cosa accade quando compare una parola che il tokenizzatore non ha mai incontrato — un neologismo, un errore di battitura, un nome proprio — e perché nessun dizionario, per quanto grande, può bastare.</p>
+
+      <div class="footer-note">Meccanismo · 1 — Il testo come dato · Unità 1.2 — Cos'è una "parola" per una macchina? La tokenizzazione</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="unit-block" id="unit-u3" data-unit="u3">
+
+  <section id="u3-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Meccanismo · 1 · Il testo come dato · Unità 1.3</div>
+      <h1>Perché non esiste <em>un dizionario abbastanza grande?</em></h1>
+      <p class="lede dim">Si immagini una tabella con tutte le parole del mondo — un numero per ciascuna, come per le lettere. Parrebbe solo un problema di pazienza: basterebbe un dizionario abbastanza grande. Non lo è.</p>
+      <div class="scrolldown">le parole nuove non finiscono mai</div>
+    </div>
+  </section>
+
+  <section id="u3-sez-vocabolario">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il problema del vocabolario</div>
+      <h2 class="title">Un bersaglio che si sposta ogni giorno</h2>
+      <p>Ogni giorno nascono neologismi, abbreviazioni gergali, errori di battitura che si diffondono, nomi propri di persone e prodotti mai esistiti prima. Nessuna tabella fissa, per quanto enorme, può contenere in anticipo tutte le parole che un modello incontrerà. Che cosa accade, allora, se una parola non è in tabella? Con un dizionario di parole intere, la risposta è brutale: quella parola diventa un buco, un simbolo generico di «sconosciuto» — tutta l'informazione che portava è persa.</p>
+
+      <div class="question">Se il dizionario fosse fatto solo di parole intere, ogni parola nuova sarebbe indistinguibile da ogni altra parola nuova. Come si potrebbe evitarlo, senza un dizionario infinito?</div>
+    </div>
+  </section>
+
+  <section id="u3-sez-soluzione">
+    <div class="wrap reveal">
+      <div class="eyebrow">La soluzione ingegneristica</div>
+      <h2 class="title">Sotto-parole, non parole intere</h2>
+      <p>La soluzione — lo stesso algoritmo BPE già visto nell'unità precedente — è scomporre le parole rare in pezzi più piccoli e più comuni, invece di trattarle come un blocco unico. Un vocabolario di poche centinaia o migliaia di sotto-parole, combinate, può ricostruire qualunque parola — vista o mai vista prima — perché quasi ogni parola, anche inventata, condivide dei pezzi con parole reali (prefissi, suffissi, radici comuni).</p>
+
+      <p>Scriva una parola inventata di sana pianta: il tokenizzatore non l'ha mai vista, eppure non si blocca — la scompone in parti che <em>ha</em> visto, e spesso riconosce correttamente i suffissi italiani più comuni anche dentro un'invenzione totale.</p>
+
+      <div class="playground">
+        <span class="ptitle">Playground — stadio 3: parole mai viste</span>
+        <input type="text" class="pg-input" id="pg-input-oov" placeholder="Scriva anche una parola inventata…" autocomplete="off" spellcheck="false" value="blorpificazione">
+        <div class="pg-examples">
+          <button class="pg-example-btn" data-example="blorpificazione">blorpificazione</button>
+          <button class="pg-example-btn" data-example="chatbotaggine">chatbotaggine</button>
+          <button class="pg-example-btn" data-example="supercazzola">supercazzola</button>
+          <button class="pg-example-btn" data-example="tokenizzazione">tokenizzazione</button>
+        </div>
+        <div class="pg-row-label">Scomposizione in token</div>
+        <div class="pg-chars" id="pg-oov-tok"></div>
+      </div>
+
+      <p class="dim">Nessuna di queste parole è comparsa nel corpus di addestramento (tranne, volutamente, l'ultima). Il tokenizzatore non «sa» che cosa significhino — ma sa come scomporle in parti già familiari. È un fallback, non un fallimento.</p>
+    </div>
+  </section>
+
+  <section id="u3-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">Nessuna parola è mai davvero «sconosciuta»</h2>
+      <p>La tokenizzazione a sotto-parole trasforma il problema del vocabolario da «questa parola non esiste nella mia tabella» a «questa parola non esiste, ma le sue parti sì». È un compromesso, non una soluzione perfetta — a volte la scomposizione è goffa — ma elimina il buco nero degli «sconosciuti» che avrebbe reso il modello cieco davanti a ogni neologismo.</p>
+    </div>
+  </section>
+
+  <section id="u3-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura — Unità 1.3</div>
+      <blockquote>
+        Un dizionario di parole intere ha un bordo, oltre il quale è cieco. Un dizionario di sotto-parole non ha davvero un bordo — solo scomposizioni via via più fini.
+      </blockquote>
+      <p style="margin-top:28px;">Nell'unità successiva: che cosa accade subito dopo la tokenizzazione — quando ogni token, anche il più familiare, viene sostituito da un numero arbitrario — e perché quell'arbitrarietà è precisamente il problema che verrà risolto in Meccanismo · 3.</p>
+
+      <div class="footer-note">Meccanismo · 1 — Il testo come dato · Unità 1.3 — Il problema del vocabolario</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="unit-block" id="unit-u4" data-unit="u4">
+
+  <section id="u4-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Meccanismo · 1 · Il testo come dato · Unità 1.4</div>
+      <h1><em>47</em> non è vicino a <em>48</em></h1>
+      <p class="lede dim">Ogni token del vocabolario, alla fine, diventa un numero — un ID. È l'ultimo passo prima che il testo sia pronto per un modello: non più lettere, non più token dall'aspetto riconoscibile, solo interi. E qui si nasconde il punto più discreto dell'intero corso.</p>
+      <div class="scrolldown">un vettore di numeri senza nessuna relazione tra loro</div>
+    </div>
+  </section>
+
+  <section id="u4-sez-id">
+    <div class="wrap reveal">
+      <div class="eyebrow">Dal token all'ID</div>
+      <h2 class="title">Il vocabolario come dizionario numerico</h2>
+      <p>Il vocabolario di 334 simboli costruito nelle unità precedenti (34 caratteri di base più 300 unioni apprese) è, in fondo, solo un elenco numerato: al simbolo 47 del vocabolario corrisponde un token, al 48 un altro, senza che l'ordine dica nulla sul loro rapporto. È esattamente lo stesso principio già visto per i singoli caratteri in 1.1 — solo applicato ora a unità più ricche.</p>
+
+      <div class="playground">
+        <span class="ptitle">Playground — stadio 4: dai token agli ID</span>
+        <input type="text" class="pg-input" id="pg-input-id" placeholder="Scriva una frase…" autocomplete="off" spellcheck="false" value="il gatto è salito sul tetto">
+        <div class="pg-row-label">Token con il loro ID numerico nel vocabolario</div>
+        <div class="pg-chars" id="pg-id-tok"></div>
+      </div>
+
+      <div class="question">Gli ID di due token affini nel significato («gatto» e «cane») sono vicini nella tabella? Lo verifichi qui sopra — la risposta, per costruzione, è no.</div>
+    </div>
+  </section>
+
+  <section id="u4-sez-raster-svg">
+    <div class="wrap reveal">
+      <div class="eyebrow">Un'analogia concreta</div>
+      <h2 class="title">Raster e vettoriale: lo stesso problema, altrove</h2>
+      <p>Un'immagine raster (JPEG, PNG) è una griglia fissa di pixel: ingrandirla costringe il computer a <em>interpolare</em>, cioè a inventare valori plausibili nei «buchi» — da cui la pixelazione. Un'immagine vettoriale (SVG) è invece una descrizione matematica continua, ricalcolata a ogni scala senza perdita. Muova lo slider per osservare la differenza.</p>
+
+      <div class="rs-compare">
+        <span class="ptitle">Confronto — lo stesso cerchio, due rappresentazioni</span>
+        <div class="rs-images">
+          <div class="rs-col">
+            <div class="rs-frame"><img id="rs-raster-img" src="immagini_modulo1/cerchio_raster_24px.png" width="24" height="24" alt="Cerchio raster a bassa risoluzione"></div>
+            <div class="rs-label">Raster — 24×24 px</div>
+          </div>
+          <div class="rs-col">
+            <div class="rs-frame" id="rs-svg-frame"></div>
+            <div class="rs-label">SVG — formula continua</div>
+          </div>
+        </div>
+        <input type="range" class="rs-slider" id="rs-zoom" min="24" max="320" value="24" step="1">
+        <div class="rs-zoomval" id="rs-zoom-val">Zoom: 24×24 px (1×)</div>
+      </div>
+
+      <p class="dim">I token con ID numerico sono «raster» — un insieme fisso, senza nulla nel mezzo. Gli embedding di Meccanismo · 3 saranno «SVG» — uno spazio continuo, ricalcolabile in qualunque punto.</p>
+    </div>
+  </section>
+
+  <section id="u4-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">Questo è il punto più discreto dell'intero corso</h2>
+      <p>Simboli finiti, numerabili, privi di qualunque nozione di «vicinanza» reciproca: è la condizione più lontana possibile dal continuo. Ogni modulo successivo, in un modo o nell'altro, lavorerà per introdurre una qualche forma di gradazione, di prossimità, di continuità in questo quadro rigidamente discreto — a partire dalla probabilità di Meccanismo · 2.</p>
+    </div>
+  </section>
+
+  <section id="u4-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura — Unità 1.4</div>
+      <blockquote>
+        Il testo è ormai una sequenza di numeri arbitrari. Nessuno di questi numeri sa nulla del mondo, né delle parole che rappresenta.
+      </blockquote>
+      <p style="margin-top:28px;">Prima di lasciare il testo come puro dato discreto, un'ultima unità cambia registro: che cosa la matematica può dimostrare sui limiti di qualunque sistema discreto — e perché quella domanda, posta in Genealogia · 1.2, meritava di essere ripresa qui.</p>
+
+      <div class="footer-note">Meccanismo · 1 — Il testo come dato · Unità 1.4 — Dai token agli ID: numeri senza significato</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="unit-block" id="unit-u5" data-unit="u5">
+
+  <section id="u5-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Meccanismo · 1 · Il testo come dato · Unità 1.5</div>
+      <h1>Un LLM è un sistema formale <em>nel senso di Gödel?</em></h1>
+      <p class="lede dim">Questa domanda è stata lasciata esplicitamente aperta in Genealogia · 1.2, senza gli strumenti per affrontarla sul serio. Ora quegli strumenti ci sono: le unità precedenti hanno costruito, senza chiamarlo così, un piccolo sistema formale — un alfabeto finito di simboli, regole finite per combinarli.</p>
+      <div class="scrolldown">i limiti di un sistema che può solo contare fino a un certo punto</div>
+    </div>
+  </section>
+
+  <section id="u5-sez-sistema-formale">
+    <div class="wrap reveal">
+      <div class="eyebrow">Cos'è un sistema formale</div>
+      <h2 class="title">Regole finite, simboli finiti</h2>
+      <p>Un sistema formale è fatto di un alfabeto finito di simboli e di regole finite per combinarli in dimostrazioni — sequenze finite di simboli. È, in un senso preciso, un oggetto <strong>discreto ed enumerabile</strong>: si può, in linea di principio, elencare ogni possibile dimostrazione una dopo l'altra, con un metodo sistematico. Esattamente come il vocabolario di token costruito in questo modulo: finito, numerabile, senza buchi nella numerazione.</p>
+
+      <div class="aside">
+        <span class="label">La mossa di Gödel</span>
+        <p>Nel 1931 Kurt Gödel compie una mossa elegante: assegna un numero a ogni simbolo, a ogni formula, a ogni dimostrazione (aritmetizzazione). Un sistema che parlava di matematica si ritrova, per costruzione, a poter parlare di se stesso. Costruisce poi una frase che afferma, in sostanza: «questa frase non è dimostrabile in questo sistema». Se è falsa, è dimostrabile — il sistema è incoerente. Se è vera, non è dimostrabile — il sistema è incompleto. Uno dei due, sempre.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="u5-sez-cantor">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il fondamento rigoroso</div>
+      <h2 class="title">La diagonale di Cantor</h2>
+      <p>Esiste un argomento, più vecchio di Gödel di quarant'anni, che mostra qualcosa di strutturalmente analogo: un insieme numerabile (che si può elencare per intero, come i sistemi formali sopra) è sempre più «piccolo» dell'insieme dei numeri reali, che nessuna lista può mai contenere. Si supponga una lista di numeri decimali, elencati uno sotto l'altro. Cantor costruisce un nuovo numero prendendo la cifra diagonale di ciascuna riga e cambiandola sistematicamente — il risultato differisce da <em>ogni</em> numero della lista in almeno una cifra. Non può essere in lista. Nessuna lista può contenerli tutti.</p>
+
+      <div class="cantor-grid" id="cantor-grid"></div>
+      <button class="cantor-btn" id="cantor-btn">Costruisci il numero che sfugge alla lista</button>
+      <div class="cantor-result" id="cantor-result"></div>
+
+      <p class="dim" style="margin-top:18px;">Applicato al nostro caso: un vocabolario discreto di token è numerabile per costruzione — proprio come questa lista di otto numeri. Uno spazio di embedding a valori reali (Meccanismo · 3) non lo è. Non è solo un'analogia di stile: è la stessa distinzione matematica.</p>
+    </div>
+  </section>
+
+  <section id="u5-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">Una domanda affrontata, non richiusa</h2>
+      <p>Un LLM ha un vocabolario finito e pesi finiti — per quanto enormi. È, in un senso preciso, un sistema discreto ed enumerabile. Se l'analogia con un sistema formale gödeliano tenesse fino in fondo, ne seguirebbero limiti strutturali interni, dello stesso tipo di quelli di Gödel. Ma se quell'analogia sia precisa o solo suggestiva — se un modello linguistico sia davvero «un sistema formale» nel senso rilevante, o solo qualcosa che gli somiglia da fuori — resta una domanda aperta. Non viene chiusa qui: resta sul tavolo, con più strumenti di quelli disponibili in Genealogia · 1.2.</p>
+    </div>
+  </section>
+
+  <section id="u5-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura — Meccanismo · 1</div>
+      <blockquote>
+        Il testo è numero, il numero è discreto, il discreto ha limiti che la matematica sa nominare con precisione. Il prossimo modulo introduce la prima crepa: una gradazione, non più solo zero e uno.
+      </blockquote>
+      <p style="margin-top:28px;">Il modulo successivo, Meccanismo · 2, riprende esattamente da qui: che cosa accade quando, invece di limitarsi a numerare i token, si comincia a chiedere <em>quale token è più probabile del successivo</em> — e una probabilità, per la prima volta in questo corso, è un numero reale tra 0 e 1.</p>
+
+      <div class="footer-note">Meccanismo · 1 — Il testo come dato · Unità 1.5 — Gödel: i limiti di un sistema discreto</div>
+    </div>
+  </section>
+
+</div>
+
+</main>
+
+<script>
+  // ============ dati incorporati (BPE + Cantor) ============
+  const BPE_DATA = {"eow": "·", "merges": [["a", "·"], ["e", "·"], ["o", "·"], ["i", "·"], ["o", "n"], ["e", "r"], ["e", "n"], ["u", "n"], ["s", "t"], ["i", "n"], ["a", "t"], ["a", "l"], ["c", "o"], ["c", "h"], ["e", "l"], ["a", "n"], ["a", "r"], ["p", "r"], ["i", "c"], ["i", "l"], ["e", "s"], ["d", "i·"], ["en", "t"], ["l", "a·"], ["o", "r"], ["un", "·"], ["q", "u"], ["on", "·"], ["i", "t"], ["ch", "e·"], ["e", "t"], ["l", "o·"], ["i", "on"], ["il", "·"], ["i", "m"], ["p", "er"], ["e", "m"], ["e", "st"], ["d", "el"], ["i", "s"], ["t", "o·"], ["t", "r"], ["es", "s"], ["a", "m"], ["o", "l"], ["n", "on·"], ["z", "ion"], ["i", "v"], ["à", "·"], ["c", "on"], ["pr", "o"], ["un", "a·"], ["è", "·"], ["in", "·"], ["i", "st"], ["l", "'"], ["ent", "e·"], ["z", "a·"], ["u", "r"], ["d", "a·"], ["co", "m"], ["zion", "e·"], ["p", "i"], ["m", "o"], ["al", "e·"], ["at", "o·"], ["e", "g"], ["a", "s"], ["o", "g"], ["c", "c"], ["ar", "e·"], ["a", "g"], ["a", "p"], ["o", "s"], ["it", "à·"], ["c", "i"], ["et", "t"], ["s", "u"], ["st", "r"], ["b", "l"], ["d", "o·"], ["p", "ar"], ["ic", "a·"], ["en", "za·"], ["u", "t"], ["i", "o·"], ["co", "r"], ["m", "an"], ["d", "i"], ["per", "·"], ["s", "i·"], ["i", "a·"], ["qu", "est"], ["ent", "o·"], ["n", "el"], ["del", "·"], ["er", "e·"], ["u", "s"], ["l", "e·"], ["at", "t"], ["s", "o"], ["s", "a·"], ["p", "o"], ["r", "i"], ["a", "c"], ["in", "g"], ["in", "t"], ["em", "a·"], ["a", "d"], ["v", "er"], ["a", "b"], ["e", "d"], ["c", "on·"], ["am", "ente·"], ["ic", "o·"], ["e", "c"], ["a", "zione·"], ["pi", "ù"], ["più", "·"], ["p", "o·"], ["ch", "i"], ["s", "o·"], ["d", "o"], ["f", "or"], ["d", "u"], ["m", "a·"], ["g", "i"], ["t", "a·"], ["o", "cc"], ["ur", "a·"], ["bl", "occ"], ["blocc", "o·"], ["a", "v"], ["n", "i·"], ["p", "l"], ["f", "f"], ["c", "r"], ["r", "is"], ["s", "e·"], ["h", "a·"], ["t", "e·"], ["il", "e·"], ["st", "ess"], ["at", "a·"], ["s", "p"], ["un", "ità·"], ["l", "i·"], ["s", "e"], ["nel", "·"], ["on", "o·"], ["i", "g"], ["co", "sa·"], ["an", "o·"], ["r", "e·"], ["qu", "el"], ["o", "t"], ["n", "ess"], ["pr", "im"], ["n", "o·"], ["so", "lo·"], ["g", "r"], ["s", "ist"], ["com", "e·"], ["tr", "e·"], ["un", "'"], ["c", "e·"], ["quest", "o·"], ["al", "·"], ["e", "v"], ["t", "i"], ["ò", "·"], ["u", "i·"], ["p", "u"], ["st", "a·"], ["et", "to·"], ["un", "o·"], ["c", "al"], ["l", "l"], ["d", "e"], ["int", "er"], ["en", "d"], ["ol", "e·"], ["am", "ento·"], ["r", "eg"], ["o", "m"], ["c", "ui·"], ["r", "e"], ["i", "b"], ["é", "·"], ["i", "z"], ["qu", "al"], ["r", "ic"], ["sist", "ema·"], ["f", "ic"], ["a", "z"], ["pro", "bl"], ["ap", "p"], ["for", "m"], ["iv", "a·"], ["com", "p"], ["d", "iv"], ["t", "est"], ["at", "i·"], ["mo", "du"], ["m", "·"], ["n", "e"], ["del", "la·"], ["in", "a·"], ["do", "man"], ["qu", "an"], ["s", "im"], ["in", "e·"], ["s", "enza·"], ["r", "o·"], ["a", "i·"], ["s", "en"], ["mo", "del"], ["modu", "lo·"], ["ing", "u"], ["quest", "a·"], ["pu", "ò·"], ["s", "em"], ["ll", "m·"], ["est", "r"], ["t", "ut"], ["iv", "o·"], ["b", "i"], ["probl", "ema·"], ["c", "a"], ["co", "l"], ["o", "v"], ["man", "o·"], ["m", "ente·"], ["r", "et"], ["ent", "i·"], ["al", "i·"], ["tr", "a·"], ["sp", "az"], ["or", "i·"], ["doman", "da·"], ["t", "i·"], ["r", "ag"], ["t", "e"], ["l", "ingu"], ["og", "ni·"], ["ch", "é·"], ["str", "u"], ["s", "i"], ["prim", "a·"], ["p", "or"], ["del", "l'"], ["pl", "ic"], ["er", "v"], ["ing", "·"], ["model", "lo·"], ["spaz", "io·"], ["cor", "po·"], ["or", "e·"], ["su", "·"], ["per", "ché·"], ["d", "estr"], ["d", "is"], ["ion", "e·"], ["c", "ap"], ["stess", "o·"], ["n", "u"], ["m", "ac"], ["al", "la·"], ["os", "s"], ["o", "f"], ["im", "ento·"], ["r", "est"], ["po", "sta·"], ["an", "za·"], ["ad", "destr"], ["er", "·"], ["s", "eg"], ["b", "b"], ["g", "en"], ["b", "r"], ["zion", "i·"], ["mac", "ch"], ["ab", "ile·"], ["on", "do·"], ["d", "im"], ["e", "p"], ["pro", "pr"], ["s", "cr"], ["ca", "us"], ["f", "il"], ["stess", "a·"], ["p", "en"], ["m", "at"], ["iz", "z"], ["con", "tr"], ["v", "ol"], ["ut", "t"], ["b", "·"], ["r", "ett"], ["test", "o·"]], "vocab": [[0, "'"], [1, "a"], [2, "b"], [3, "c"], [4, "d"], [5, "e"], [6, "f"], [7, "g"], [8, "h"], [9, "i"], [10, "j"], [11, "k"], [12, "l"], [13, "m"], [14, "n"], [15, "o"], [16, "p"], [17, "q"], [18, "r"], [19, "s"], [20, "t"], [21, "u"], [22, "v"], [23, "w"], [24, "x"], [25, "y"], [26, "z"], [27, "à"], [28, "è"], [29, "é"], [30, "ì"], [31, "ò"], [32, "ù"], [33, "·"], [34, "a·"], [35, "e·"], [36, "o·"], [37, "i·"], [38, "on"], [39, "er"], [40, "en"], [41, "un"], [42, "st"], [43, "in"], [44, "at"], [45, "al"], [46, "co"], [47, "ch"], [48, "el"], [49, "an"], [50, "ar"], [51, "pr"], [52, "ic"], [53, "il"], [54, "es"], [55, "di·"], [56, "ent"], [57, "la·"], [58, "or"], [59, "un·"], [60, "qu"], [61, "on·"], [62, "it"], [63, "che·"], [64, "et"], [65, "lo·"], [66, "ion"], [67, "il·"], [68, "im"], [69, "per"], [70, "em"], [71, "est"], [72, "del"], [73, "is"], [74, "to·"], [75, "tr"], [76, "ess"], [77, "am"], [78, "ol"], [79, "non·"], [80, "zion"], [81, "iv"], [82, "à·"], [83, "con"], [84, "pro"], [85, "una·"], [86, "è·"], [87, "in·"], [88, "ist"], [89, "l'"], [90, "ente·"], [91, "za·"], [92, "ur"], [93, "da·"], [94, "com"], [95, "zione·"], [96, "pi"], [97, "mo"], [98, "ale·"], [99, "ato·"], [100, "eg"], [101, "as"], [102, "og"], [103, "cc"], [104, "are·"], [105, "ag"], [106, "ap"], [107, "os"], [108, "ità·"], [109, "ci"], [110, "ett"], [111, "su"], [112, "str"], [113, "bl"], [114, "do·"], [115, "par"], [116, "ica·"], [117, "enza·"], [118, "ut"], [119, "io·"], [120, "cor"], [121, "man"], [122, "di"], [123, "per·"], [124, "si·"], [125, "ia·"], [126, "quest"], [127, "ento·"], [128, "nel"], [129, "del·"], [130, "ere·"], [131, "us"], [132, "le·"], [133, "att"], [134, "so"], [135, "sa·"], [136, "po"], [137, "ri"], [138, "ac"], [139, "ing"], [140, "int"], [141, "ema·"], [142, "ad"], [143, "ver"], [144, "ab"], [145, "ed"], [146, "con·"], [147, "amente·"], [148, "ico·"], [149, "ec"], [150, "azione·"], [151, "più"], [152, "più·"], [153, "po·"], [154, "chi"], [155, "so·"], [156, "do"], [157, "for"], [158, "du"], [159, "ma·"], [160, "gi"], [161, "ta·"], [162, "occ"], [163, "ura·"], [164, "blocc"], [165, "blocco·"], [166, "av"], [167, "ni·"], [168, "pl"], [169, "ff"], [170, "cr"], [171, "ris"], [172, "se·"], [173, "ha·"], [174, "te·"], [175, "ile·"], [176, "stess"], [177, "ata·"], [178, "sp"], [179, "unità·"], [180, "li·"], [181, "se"], [182, "nel·"], [183, "ono·"], [184, "ig"], [185, "cosa·"], [186, "ano·"], [187, "re·"], [188, "quel"], [189, "ot"], [190, "ness"], [191, "prim"], [192, "no·"], [193, "solo·"], [194, "gr"], [195, "sist"], [196, "come·"], [197, "tre·"], [198, "un'"], [199, "ce·"], [200, "questo·"], [201, "al·"], [202, "ev"], [203, "ti"], [204, "ò·"], [205, "ui·"], [206, "pu"], [207, "sta·"], [208, "etto·"], [209, "uno·"], [210, "cal"], [211, "ll"], [212, "de"], [213, "inter"], [214, "end"], [215, "ole·"], [216, "amento·"], [217, "reg"], [218, "om"], [219, "cui·"], [220, "re"], [221, "ib"], [222, "é·"], [223, "iz"], [224, "qual"], [225, "ric"], [226, "sistema·"], [227, "fic"], [228, "az"], [229, "probl"], [230, "app"], [231, "form"], [232, "iva·"], [233, "comp"], [234, "div"], [235, "test"], [236, "ati·"], [237, "modu"], [238, "m·"], [239, "ne"], [240, "della·"], [241, "ina·"], [242, "doman"], [243, "quan"], [244, "sim"], [245, "ine·"], [246, "senza·"], [247, "ro·"], [248, "ai·"], [249, "sen"], [250, "model"], [251, "modulo·"], [252, "ingu"], [253, "questa·"], [254, "può·"], [255, "sem"], [256, "llm·"], [257, "estr"], [258, "tut"], [259, "ivo·"], [260, "bi"], [261, "problema·"], [262, "ca"], [263, "col"], [264, "ov"], [265, "mano·"], [266, "mente·"], [267, "ret"], [268, "enti·"], [269, "ali·"], [270, "tra·"], [271, "spaz"], [272, "ori·"], [273, "domanda·"], [274, "ti·"], [275, "rag"], [276, "te"], [277, "lingu"], [278, "ogni·"], [279, "ché·"], [280, "stru"], [281, "si"], [282, "prima·"], [283, "por"], [284, "dell'"], [285, "plic"], [286, "erv"], [287, "ing·"], [288, "modello·"], [289, "spazio·"], [290, "corpo·"], [291, "ore·"], [292, "su·"], [293, "perché·"], [294, "destr"], [295, "dis"], [296, "ione·"], [297, "cap"], [298, "stesso·"], [299, "nu"], [300, "mac"], [301, "alla·"], [302, "oss"], [303, "of"], [304, "imento·"], [305, "rest"], [306, "posta·"], [307, "anza·"], [308, "addestr"], [309, "er·"], [310, "seg"], [311, "bb"], [312, "gen"], [313, "br"], [314, "zioni·"], [315, "macch"], [316, "abile·"], [317, "ondo·"], [318, "dim"], [319, "ep"], [320, "propr"], [321, "scr"], [322, "caus"], [323, "fil"], [324, "stessa·"], [325, "pen"], [326, "mat"], [327, "izz"], [328, "contr"], [329, "vol"], [330, "utt"], [331, "b·"], [332, "rett"], [333, "testo·"]]};
+  const CANTOR_DATA = {"numeri": ["51367942", "38205917", "72941638", "61472059", "90815273", "24659381", "13579246", "80246913"], "diagonale": [5, 8, 9, 7, 5, 3, 4, 3], "numero_costruito": "69086454"};
+
+  const bpeRank = new Map();
+  BPE_DATA.merges.forEach(([a,b], i) => bpeRank.set(a + '' + b, i));
+  const bpeVocabId = new Map();
+  BPE_DATA.vocab.forEach(([id, sym]) => bpeVocabId.set(sym, id));
+  const EOW = BPE_DATA.eow;
+
+  function bpeTokenizeWord(word){
+    let symbols = Array.from(word.toLowerCase()).concat([EOW]);
+    while(true){
+      let bestRank = Infinity, bestIdx = -1;
+      for(let i=0;i<symbols.length-1;i++){
+        const key = symbols[i] + '' + symbols[i+1];
+        if(bpeRank.has(key) && bpeRank.get(key) < bestRank){
+          bestRank = bpeRank.get(key); bestIdx = i;
+        }
+      }
+      if(bestIdx === -1) break;
+      symbols = symbols.slice(0,bestIdx).concat([symbols[bestIdx]+symbols[bestIdx+1]], symbols.slice(bestIdx+2));
+    }
+    return symbols;
+  }
+
+  function splitWords(text){
+    return text.trim().split(/\s+/).filter(Boolean);
+  }
+
+  // ============ reveal on scroll ============
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => io.observe(el));
+
+  // ============ scroll-spy sulla sidebar ============
+  const spyLinks = document.querySelectorAll('#local-scrollspy a[data-spy-target]');
+  const unitBlocksForSpy = document.querySelectorAll('.unit-block');
+  const localSpy2 = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        spyLinks.forEach(a => a.classList.toggle('active', a.dataset.spyTarget === e.target.id));
+      }
+    });
+  }, { threshold: 0, rootMargin: '-45% 0px -45% 0px' });
+  unitBlocksForSpy.forEach(b => localSpy2.observe(b));
+
+  // ============ widget stadio 1: encoding (1.1) ============
+  const input1 = document.getElementById('pg-input-encoding');
+  const charsBox1 = document.getElementById('pg-chars-encoding');
+
+  function renderChars(text){
+    if(!text){
+      charsBox1.innerHTML = '<span class="pg-empty">I caratteri appariranno qui, uno per uno, col loro codice.</span>';
+      return;
+    }
+    const chars = Array.from(text);
+    charsBox1.innerHTML = chars.map(ch => {
+      const cp = ch.codePointAt(0);
+      const isSpace = ch === ' ';
+      const glyph = isSpace ? '' : ch.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      return `<div class="pg-chip${isSpace ? ' space' : ''}">
+        <div class="glyph">${glyph}</div>
+        <div class="code">U+${cp.toString(16).toUpperCase().padStart(4,'0')} · ${cp}</div>
+      </div>`;
+    }).join('');
+  }
+  input1.addEventListener('input', () => renderChars(input1.value));
+
+  // ============ widget stadio 2: tokenizzazione (1.2) ============
+  const input2 = document.getElementById('pg-input-tok');
+  const naiveBox = document.getElementById('pg-naive-tok');
+  const bpeBox = document.getElementById('pg-bpe-tok');
+
+  function renderNaive(text){
+    const words = splitWords(text);
+    if(!words.length){ naiveBox.innerHTML = '<span class="pg-empty">—</span>'; return; }
+    naiveBox.innerHTML = words.map(w => `<div class="pg-chip"><div class="glyph">${w}</div></div>`).join('');
+  }
+
+  function renderBpe(text, targetBox, {showId=false} = {}){
+    const words = splitWords(text);
+    if(!words.length){ targetBox.innerHTML = '<span class="pg-empty">—</span>'; return; }
+    targetBox.innerHTML = words.map(w => {
+      const toks = bpeTokenizeWord(w);
+      const chips = toks.map(t => {
+        const isEow = t.endsWith(EOW);
+        const display = t.replace(EOW, '');
+        const id = bpeVocabId.has(t) ? bpeVocabId.get(t) : null;
+        const codeLine = showId
+          ? (id !== null ? `<div class="code id">#${id}</div>` : `<div class="code id">?</div>`)
+          : '';
+        return `<div class="pg-chip token${isEow ? ' eow' : ''}"><div class="glyph">${display || '&nbsp;'}</div>${codeLine}</div>`;
+      }).join('');
+      return `<div class="pg-word-group">${chips}</div>`;
+    }).join('');
+  }
+
+  function updateTokWidget(){
+    renderNaive(input2.value);
+    renderBpe(input2.value, bpeBox);
+  }
+  input2.addEventListener('input', updateTokWidget);
+  updateTokWidget();
+
+  // ============ widget stadio 3: parole mai viste (1.3) ============
+  const input3 = document.getElementById('pg-input-oov');
+  const oovBox = document.getElementById('pg-oov-tok');
+  function updateOovWidget(){ renderBpe(input3.value, oovBox); }
+  input3.addEventListener('input', updateOovWidget);
+  document.querySelectorAll('.pg-example-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      input3.value = btn.dataset.example;
+      updateOovWidget();
+    });
+  });
+  updateOovWidget();
+
+  // ============ widget stadio 4: token -> ID (1.4) ============
+  const input4 = document.getElementById('pg-input-id');
+  const idBox = document.getElementById('pg-id-tok');
+  function updateIdWidget(){ renderBpe(input4.value, idBox, {showId:true}); }
+  input4.addEventListener('input', updateIdWidget);
+  updateIdWidget();
+
+  // ============ widget raster/SVG (1.4) ============
+  const svgFrame = document.getElementById('rs-svg-frame');
+  svgFrame.innerHTML = `<svg viewBox="0 0 24 24" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+    <rect width="24" height="24" style="fill:var(--bg)"/>
+    <circle cx="12" cy="12" r="7.68" fill="#F0A85E"/>
+  </svg>`;
+  const rasterImg = document.getElementById('rs-raster-img');
+  const zoomSlider = document.getElementById('rs-zoom');
+  const zoomVal = document.getElementById('rs-zoom-val');
+  function updateZoom(){
+    const size = zoomSlider.value + 'px';
+    rasterImg.style.width = size; rasterImg.style.height = size;
+    const factor = (zoomSlider.value / 24).toFixed(1);
+    zoomVal.textContent = `Zoom: ${zoomSlider.value}×${zoomSlider.value} px (${factor}×)`;
+  }
+  zoomSlider.addEventListener('input', updateZoom);
+  updateZoom();
+
+  // ============ widget diagonale di Cantor (1.5) ============
+  const cantorGrid = document.getElementById('cantor-grid');
+  const cantorBtn = document.getElementById('cantor-btn');
+  const cantorResult = document.getElementById('cantor-result');
+
+  function renderCantorGrid(flipped){
+    cantorGrid.innerHTML = CANTOR_DATA.numeri.map((num, row) => {
+      const digits = num.split('').map((d, col) => {
+        const isDiag = col === row;
+        const cls = isDiag ? (flipped ? 'diag flipped' : 'diag') : '';
+        const shown = (isDiag && flipped) ? CANTOR_DATA.numero_costruito[row] : d;
+        return `<div class="cantor-digit ${cls}">${shown}</div>`;
+      }).join('');
+      return `<div class="cantor-row"><span class="prefix">r${row+1} =</span>0.${digits}</div>`;
+    }).join('');
+  }
+  renderCantorGrid(false);
+
+  cantorBtn.addEventListener('click', () => {
+    renderCantorGrid(true);
+    cantorResult.innerHTML = `Numero costruito: <strong>0.${CANTOR_DATA.numero_costruito}</strong> — differisce da ognuno degli otto numeri della lista in almeno una cifra (quella evidenziata). Non può comparire nella lista: nessuna lista può contenere tutti i numeri reali.`;
+  });
+</script>
+
+</body>
+</html>

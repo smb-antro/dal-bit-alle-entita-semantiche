@@ -1,0 +1,28 @@
+{
+ "_metadata": {
+  "descrizione": "Dati per il widget della diagonale di Cantor (Meccanismo · 1, unita 1.5).",
+  "nota": "Le prime 4 sequenze coincidono con l'esempio gia usato nel Dialogo Flora/Tolomeo (fonte letta in fase 1 di revisione), per continuita con quel materiale; le altre 4 sono state aggiunte per una griglia piu piena.",
+  "verifica": "Il numero costruito modificando la cifra diagonale di ciascuna riga differisce da OGNI numero della lista in almeno una cifra (quella diagonale) - verificato algoritmicamente, nessun numero coincide."
+ },
+ "numeri": [
+  "51367942",
+  "38205917",
+  "72941638",
+  "61472059",
+  "90815273",
+  "24659381",
+  "13579246",
+  "80246913"
+ ],
+ "diagonale": [
+  5,
+  8,
+  9,
+  7,
+  5,
+  3,
+  4,
+  3
+ ],
+ "numero_costruito": "69086454"
+}

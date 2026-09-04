@@ -1,0 +1,54 @@
+{
+ "_metadata": {
+  "descrizione": "Numeri reali per lo slider esplorabile su scala logaritmica di Meccanismo · 6, unita 6.1.",
+  "principio": "Privilegiate cifre storiche stabili e ufficialmente pubblicate (non stime non confermate su modelli piu' recenti/chiusi), per restare citabili nel tempo - la scala di grandezza e' il punto pedagogico, non l'attualita' del modello specifico.",
+  "fonti": {
+   "neuroni_cervello_umano": "Herculano-Houzel, 'The human brain in numbers: a linearly scaled-up primate brain', Frontiers in Human Neuroscience, 2009 - cifra moderna standard (86 miliardi di neuroni), sostituisce il vecchio '100 miliardi' popolare ma basato su una stima grezza mai verificata rigorosamente.",
+   "gpt3": "Brown et al., 'Language Models are Few-Shot Learners', 2020 (arxiv 2005.14165) - modello con 8 varianti di dimensione, da 125 milioni a 175 miliardi di parametri, addestrato su 570GB di testo.",
+   "palm": "Chowdhery et al., 'PaLM: Scaling Language Modeling with Pathways', Google, aprile 2022 - 540 miliardi di parametri, addestrato su 780 miliardi di token, varianti piu' piccole anche a 8 e 62 miliardi."
+  },
+  "nota_di_cautela": "Neuroni e parametri non sono unita' identiche (un neurone biologico ha migliaia di sinapsi, un parametro artificiale e' un singolo numero) - il confronto e' un ordine di grandezza indicativo, non un'equivalenza diretta. Da esplicitare nel testo del widget."
+ },
+ "punti_di_ancoraggio": [
+  {
+   "nome": "Cervello umano",
+   "tipo": "neuroni biologici",
+   "valore": 86000000000,
+   "valore_leggibile": "86 miliardi",
+   "fonte": "Herculano-Houzel 2009"
+  },
+  {
+   "nome": "GPT-3 (variante piu' piccola)",
+   "tipo": "parametri",
+   "valore": 125000000,
+   "valore_leggibile": "125 milioni",
+   "fonte": "Brown et al. 2020"
+  },
+  {
+   "nome": "GPT-3 (variante completa)",
+   "tipo": "parametri",
+   "valore": 175000000000,
+   "valore_leggibile": "175 miliardi",
+   "fonte": "Brown et al. 2020"
+  },
+  {
+   "nome": "PaLM",
+   "tipo": "parametri",
+   "valore": 540000000000,
+   "fonte": "Chowdhery et al. 2022 (Google)",
+   "valore_leggibile": "540 miliardi"
+  }
+ ],
+ "arricchimento_secondario": {
+  "token_di_addestramento": [
+   {
+    "modello": "GPT-3",
+    "dato": "570 GB di testo (Brown et al. 2020)"
+   },
+   {
+    "modello": "PaLM",
+    "dato": "780 miliardi di token (Chowdhery et al. 2022)"
+   }
+  ]
+ }
+}

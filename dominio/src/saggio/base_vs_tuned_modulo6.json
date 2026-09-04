@@ -1,0 +1,16 @@
+{
+ "_metadata": {
+  "descrizione": "Coppie prompt/risposta per il confronto base vs fine-tuned/RLHF, Meccanismo · 6 unita 6.4/6.5.",
+  "principio": "Contenuto scritto per il corso (non estratto da un modello reale in esecuzione), ma costruito per rappresentare fedelmente un fenomeno reale e ben documentato - non una caricatura di nessuno dei due lati.",
+  "fonte_del_fenomeno_reale": "Ouyang et al., 'Training language models to follow instructions with human feedback' (InstructGPT), 2022 - documenta esattamente il fenomeno qui illustrato: un modello di base pre-addestrato tende a continuare il PATTERN superficiale del testo (es. continuare una lista di domande simili, invece di rispondere), mentre il fine-tuning + RLHF lo orienta a seguire l'istruzione direttamente."
+ },
+ "coppie": [
+  {
+   "prompt": "Spiegami come funziona la fotosintesi.",
+   "risposta_base": "Spiegami come funziona la respirazione cellulare. Spiegami come funziona il ciclo dell'acqua. Spiegami come funziona la gravità.",
+   "nota_base": "Il modello di base continua il pattern superficiale della frase (una lista di richieste 'Spiegami come funziona X') invece di riconoscerla come un'istruzione da eseguire - comportamento reale e documentato, non un modello che 'funziona male' in senso generico.",
+   "risposta_tuned": "La fotosintesi è il processo con cui le piante usano la luce solare per trasformare acqua e anidride carbonica in zucchero (energia chimica) e ossigeno. Avviene principalmente nelle foglie, grazie alla clorofilla che cattura la luce.",
+   "nota_tuned": "Dopo fine-tuning e RLHF, il modello riconosce l'istruzione e risponde direttamente - questo comportamento è il risultato di una fase di addestramento ulteriore, non del semplice pre-addestramento predici-il-token-successivo."
+  }
+ ]
+}

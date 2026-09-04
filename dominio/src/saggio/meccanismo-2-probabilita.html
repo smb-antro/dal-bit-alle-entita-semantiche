@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meccanismo · 2 · Probabilità e linguaggio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0F2A22;
+    --surface: #173B30;
+    --surface-2: #1E4A3C;
+    --copper: #C97D3D;
+    --copper-bright: #F0A85E;
+    --text: #F2ECE0;
+    --text-dim: #A9BFB6;
+    --line: rgba(242,236,224,0.12);
+    --rail-w: 300px;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Source Serif 4', Georgia, serif;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,h2,h3, .display{
+    font-family: 'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+  .mono{ font-family: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace; }
+  a{ color: var(--copper-bright); }
+
+  /* ---------- layout shell: sidebar fissa con indice del sito ---------- */
+  .sidebar{
+    background: rgba(15,42,34,0.92);
+    border-bottom: 1px solid var(--line);
+    padding: 28px 24px 32px;
+  }
+  .sidebar-kicker{
+    font-family: 'IBM Plex Mono', monospace; font-size: .74rem; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px;
+  }
+  .sidebar-title{
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.02rem;
+    color: var(--text); margin-bottom: 22px;
+  }
+  .sidebar .parte{ margin-top: 26px; }
+  .sidebar .parte:first-of-type{ margin-top: 0; }
+  .sidebar .parte-heading{
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: .74rem;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--copper-bright);
+    padding-bottom: 10px; margin-bottom: 2px; border-bottom: 1px solid var(--line);
+  }
+  .sidebar .voce-semplice{
+    display: block; padding: 10px 4px; border-bottom: 1px solid var(--line);
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem;
+    color: var(--text); text-decoration: none;
+  }
+  .sidebar .voce-semplice:hover{ color: var(--copper-bright); }
+  .sidebar .voce-semplice.current{ color: var(--copper-bright); }
+  .sidebar details.modulo{ border-bottom: 1px solid var(--line); }
+  .sidebar details.modulo summary{
+    display: flex; align-items: center; gap: 8px; padding: 10px 4px; cursor: pointer;
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem; color: var(--text);
+    list-style: none;
+  }
+  .sidebar details.modulo summary.current{ color: var(--copper-bright); }
+  .sidebar details.modulo summary::-webkit-details-marker{ display: none; }
+  .sidebar details.modulo summary::before{
+    content: "›"; display: inline-block; font-family: 'IBM Plex Mono', monospace;
+    color: var(--text-dim); transition: transform .15s ease; flex-shrink: 0;
+  }
+  .sidebar details.modulo[open] summary::before{ transform: rotate(90deg); color: var(--copper-bright); }
+  .sidebar details.modulo summary:hover{ color: var(--copper-bright); }
+  .sidebar .unita-list{ padding: 2px 0 12px 22px; display: flex; flex-direction: column; gap: 1px; }
+  .sidebar .unita-list a{
+    display: block; padding: 6px 4px; font-size: .82rem; color: var(--text-dim); text-decoration: none;
+  }
+  .sidebar .unita-list a:hover{ color: var(--copper-bright); }
+  .sidebar .unita-list a .num{ color: var(--copper); margin-right: 6px; font-family: 'IBM Plex Mono', monospace; font-size: .74rem; }
+
+  /* pallini luminosi di scroll-spy, sulle voci dell'unità corrente */
+  .sidebar .unita-list.scrollspy a{ position: relative; padding-left: 20px; }
+  .sidebar .unita-list.scrollspy a::before{
+    content: "";
+    position: absolute; left: 2px; top: 50%;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--surface-2); border: 1px solid var(--line);
+    transform: translateY(-50%);
+    transition: background .25s, box-shadow .25s, transform .25s;
+  }
+  .sidebar .unita-list.scrollspy a.active{ color: var(--copper-bright); }
+  .sidebar .unita-list.scrollspy a.active::before{
+    background: var(--copper-bright);
+    box-shadow: 0 0 0 4px rgba(240,168,94,0.18);
+    transform: translateY(-50%) scale(1.2);
+  }
+
+  main{ padding-top: 0; }
+
+  @media (min-width: 900px){
+    .sidebar{
+      position: fixed; z-index: 50; top:0; bottom:0; left:0; width: var(--rail-w);
+      overflow-y: auto; border-bottom:none; border-right: 1px solid var(--line);
+    }
+    main{ padding-left: var(--rail-w); }
+  }
+
+  .wrap{ max-width: 740px; margin: 0 auto; padding: 0 24px; }
+
+  .unit-block section{ padding: 92px 0 84px; border-bottom: 1px solid var(--line); }
+  .unit-block:last-child section:last-of-type{ border-bottom:none; }
+
+  .eyebrow{
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--copper-bright);
+    margin-bottom: 14px; display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{ content:""; width: 22px; height:1px; background: var(--copper-bright); display:inline-block; }
+
+  h2.title{ font-size: clamp(1.6rem, 4vw, 2.3rem); margin-bottom: 20px; }
+
+  p{ margin: 0 0 18px; color: var(--text); font-size: 1.05rem; }
+  p.dim{ color: var(--text-dim); }
+  .lede{ font-size: 1.15rem; color: var(--text); }
+
+  .reveal{ opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.visible{ opacity:1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce){
+    .reveal{ transition: opacity .2s linear; transform:none; }
+    *{ scroll-behavior: auto !important; }
+  }
+
+  .aside{
+    margin: 26px 0; padding: 18px 20px; background: var(--surface);
+    border-left: 3px solid var(--copper); border-radius: 2px;
+  }
+  .aside .label{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--copper-bright); margin-bottom: 8px; display:block;
+  }
+  .aside p{ margin-bottom:0; font-size: 0.96rem; color: var(--text-dim); }
+
+  .question{
+    margin: 28px 0; padding: 20px 22px; border: 1px dashed var(--line); border-radius: 4px;
+    font-family: 'Space Grotesk', sans-serif; font-size: 1.0rem; color: var(--copper-bright);
+  }
+
+  blockquote{
+    margin: 0; padding-left: 22px; border-left: 2px solid var(--copper);
+    font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; color: var(--text);
+  }
+
+  /* ---------- hero ---------- */
+  .hero{ padding-top: 62px; }
+  .hero .kicker{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.8rem; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--text-dim); margin-bottom: 18px;
+  }
+  .hero h1{ font-size: clamp(1.9rem, 5.6vw, 2.9rem); line-height:1.12; margin-bottom: 24px; }
+  .hero h1 em{ font-style: normal; color: var(--copper-bright); }
+  .scrolldown{
+    margin-top: 50px; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem;
+    color: var(--text-dim); letter-spacing: 0.08em; text-transform: uppercase;
+    display:flex; align-items:center; gap:8px;
+  }
+  .scrolldown::after{ content:"↓"; color: var(--copper-bright); animation: nudge 1.8s infinite ease-in-out; }
+  @media (prefers-reduced-motion: reduce){ .scrolldown::after{ animation:none; } }
+  @keyframes nudge{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(5px); } }
+
+  /* ---------- widget: playground condiviso ---------- */
+  .playground{
+    margin: 30px 0; background: var(--surface); border: 1px solid var(--line);
+    border-radius: 10px; padding: 24px 26px;
+  }
+  .playground .ptitle{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--copper-bright); margin-bottom: 14px; display:block;
+  }
+  .pg-input{
+    width:100%; background: var(--bg); border: 1px solid var(--line); border-radius: 6px;
+    color: var(--text); font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem;
+    padding: 12px 14px; outline: none;
+  }
+  .pg-input:focus{ border-color: var(--copper-bright); }
+  .pg-row-label{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text-dim); margin: 18px 0 8px;
+  }
+  .pg-examples{ margin-top: 14px; display:flex; flex-wrap: wrap; gap: 8px; }
+  .pg-example-btn{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.74rem; color: var(--copper-bright);
+    background: transparent; border: 1px solid var(--copper); border-radius: 20px;
+    padding: 5px 12px; cursor: pointer; transition: background .2s;
+  }
+  .pg-example-btn:hover{ background: var(--surface-2); }
+  .pg-empty{ color: var(--text-dim); font-size: 0.92rem; font-style: italic; }
+
+  /* ---------- widget: predittore n-grammi ---------- */
+  .ngram-bars{ display:flex; flex-direction:column; gap:8px; margin-top:14px; }
+  .ngram-bar-row{ display:flex; align-items:center; gap:10px; }
+  .ngram-label{
+    width: 112px; flex-shrink:0; font-family:'Space Grotesk', sans-serif; font-size: 0.95rem;
+    color: var(--text); text-align:right; word-break: break-word;
+  }
+  .ngram-bar-track{
+    flex:1; height:20px; background: var(--bg); border:1px solid var(--line);
+    border-radius:4px; overflow:hidden;
+  }
+  .ngram-bar-fill{
+    height:100%; background: var(--copper-bright); border-radius: 4px 0 0 4px;
+    transition: width .3s ease;
+  }
+  .ngram-pct{
+    width: 132px; flex-shrink:0; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem;
+    color: var(--text-dim);
+  }
+  .ngram-count{ color: var(--text-dim); }
+  .ngram-empty{ color: var(--text-dim); font-size: 0.92rem; font-style: italic; margin-top: 14px; }
+
+  .ngram-compare{ display:flex; gap: 24px; flex-wrap: wrap; margin-top: 18px; }
+  .ngram-compare-col{ flex: 1 1 260px; }
+  .ngram-compare-col .pg-row-label{ margin-top: 0; }
+  .ngram-ctx{ color: var(--copper-bright); }
+
+  .ngram-slider-row{ margin: 20px 0 10px; }
+  .ngram-slider{ width:100%; accent-color: var(--copper-bright); }
+  .ngram-slider-val{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.78rem; color: var(--text-dim); margin-top: 6px;
+  }
+
+  /* ---------- widget: diagramma di calibrazione ---------- */
+  .calib-svg-wrap svg{ width:100%; max-width: 320px; display:block; margin: 14px auto; }
+  .calib-axis{ stroke: var(--text-dim); stroke-width: 1.5; }
+  .calib-diag{ stroke: var(--line); stroke-width: 1.5; stroke-dasharray: 4 4; }
+  .calib-tick{ font-family:'IBM Plex Mono', monospace; font-size: 9px; fill: var(--text-dim); }
+  .calib-axis-label{ font-family:'IBM Plex Mono', monospace; font-size: 9px; fill: var(--text-dim); letter-spacing: 0.04em; }
+  .calib-point{
+    fill: var(--copper-bright); fill-opacity: 0.85; cursor: pointer;
+    stroke: var(--bg); stroke-width: 1.5; transition: fill-opacity .2s;
+  }
+  .calib-point:hover{ fill-opacity: 1; }
+  .calib-detail{ margin-top: 14px; font-size: 0.92rem; color: var(--copper-bright); min-height: 1.6em; }
+
+  /* ---------- diagramma statico: dipendenze lontane ---------- */
+  .dep-diagram{
+    margin: 30px 0; background: var(--surface); border: 1px solid var(--line);
+    border-radius: 10px; padding: 24px 26px;
+  }
+  .dep-sentence{ font-family:'Space Grotesk', sans-serif; font-size: 1.05rem; color: var(--text); margin-bottom: 20px; }
+  .dep-highlight{ color: var(--copper-bright); font-weight: 600; border-bottom: 2px solid var(--copper); }
+  .dep-window-box{ background: var(--bg); border: 1px dashed var(--line); border-radius: 6px; padding: 16px 18px; }
+  .dep-window-label{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.7rem; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text-dim); display:block; margin-bottom: 10px;
+  }
+  .dep-window-words{ display:flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+  .dep-word{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.85rem; background: var(--surface-2);
+    border: 1px solid var(--line); border-radius: 4px; padding: 5px 9px; color: var(--text-dim);
+  }
+  .dep-word-arrow{ color: var(--copper-bright); background: transparent; border-color: var(--copper); }
+  .dep-window-note{ margin:0; font-size: 0.92rem; color: var(--text-dim); }
+
+  /* ---------- chiusura ---------- */
+  .chiusura{ background: linear-gradient(180deg, var(--bg), var(--surface)); }
+  .footer-note{
+    margin-top: 46px; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem; color: var(--text-dim);
+  }
+</style>
+</head>
+<body>
+
+<nav class="sidebar" aria-label="Indice del saggio">
+  <div class="sidebar-kicker">Indice</div>
+  <div class="sidebar-title">Dal bit alle entità semantiche</div>
+
+  <div class="parte">
+    <details class="modulo">
+      <summary>Presentazione — Dal bit alle entità semantiche</summary>
+      <div class="unita-list">
+        <a href="presentazione.html#parte-1"><span class="num">1</span>Framework epistemologico: i limiti che condividiamo con le macchine</a>
+        <a href="presentazione.html#parte-2"><span class="num">2</span>Il dominio: struttura e composizione del saggio interattivo</a>
+        <a href="presentazione.html#parte-3"><span class="num">3</span>La lente semantica</a>
+      </div>
+    </details>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Parte I — Fondamenti</div>
+    <a class="voce-semplice" href="fondamenti-1-funzioni-booleane.html">1. Funzioni booleane</a>
+    <a class="voce-semplice" href="fondamenti-2-hardware-software.html">2. Hardware e software</a>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Parte II — Genealogia</div>
+
+    <details class="modulo">
+      <summary>1. Tre ore di disputa senza esito</summary>
+      <div class="unita-list">
+        <a href="genealogia-1-disputa.html#unit-a1"><span class="num">1.1</span>Dalla characteristica universalis alla pura ideografia</a>
+        <a href="genealogia-1-disputa.html#unit-a2"><span class="num">1.2</span>Gödel, Turing, Lucas</a>
+        <a href="genealogia-1-disputa.html#unit-a3"><span class="num">1.3</span>Il perceptron e la disgiunzione esclusiva (XOR)</a>
+        <a href="genealogia-1-disputa.html#unit-a4"><span class="num">1.4</span>Dai sistemi esperti alle macchine statistiche</a>
+        <a href="genealogia-1-disputa.html#unit-a5"><span class="num">1.5</span>Re, donna, regina</a>
+        <a href="genealogia-1-disputa.html#unit-a6"><span class="num">1.6</span>L'attenzione sostituisce la memoria</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>2. Il fenomeno e i suoi limiti</summary>
+      <div class="unita-list">
+        <a href="genealogia-2-limiti.html#unit-b1"><span class="num">2.1</span>Completamento statistico a scala massiva, in-context learning, transfer cross-dominio e altre capacità emergenti</a>
+        <a href="genealogia-2-limiti.html#unit-b2"><span class="num">2.2</span>Interpolazione, pesi statistici, metacognizione</a>
+        <a href="genealogia-2-limiti.html#unit-b3"><span class="num">2.3</span>Grounding, ragionamento causale, generalizzazione composizionale, cortocircuito dell'apprendimento</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>3. Perché ci vuole un villaggio</summary>
+      <div class="unita-list">
+        <a href="genealogia-3-villaggio.html#unit-c1"><span class="num">3.1</span>Il problema del significato</a>
+        <a href="genealogia-3-villaggio.html#unit-c2"><span class="num">3.2</span>Il problema della causalità</a>
+        <a href="genealogia-3-villaggio.html#unit-c3"><span class="num">3.3</span>Il problema biologico</a>
+        <a href="genealogia-3-villaggio.html#unit-c4"><span class="num">3.4</span>Il problema della coscienza</a>
+        <a href="genealogia-3-villaggio.html#unit-c5"><span class="num">3.5</span>Cosa siamo, per contrasto</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>4. Lo spazio, il corpo, la macchina</summary>
+      <div class="unita-list">
+        <a href="genealogia-4-corpo.html#unit-d1"><span class="num">4.1</span>Cos'è lo spazio? Il corpo come strumento di misura</a>
+        <a href="genealogia-4-corpo.html#unit-d2"><span class="num">4.2</span>Il corpo mancante</a>
+      </div>
+    </details>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Parte III — Meccanismo</div>
+
+    <details class="modulo">
+      <summary>1. Il testo come dato</summary>
+      <div class="unita-list">
+        <a href="meccanismo-1-testo-come-dato.html#unit-u1"><span class="num">1.1</span>Encoding</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u2"><span class="num">1.2</span>Tokenizzazione</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u3"><span class="num">1.3</span>Problema del vocabolario</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u4"><span class="num">1.4</span>Dagli ID al punto più discreto</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u5"><span class="num">1.5</span>Gödel</a>
+      </div>
+    </details>
+
+    <details class="modulo" open>
+      <summary class="current">2. Probabilità e linguaggio</summary>
+      <div class="unita-list scrollspy" id="local-scrollspy">
+        <a href="#unit-u1" data-spy-target="unit-u1"><span class="num">2.1</span>Prevedere la parola successiva</a>
+        <a href="#unit-u2" data-spy-target="unit-u2"><span class="num">2.2</span>Unigrammi/bigrammi, induzione, calibrazione</a>
+        <a href="#unit-u3" data-spy-target="unit-u3"><span class="num">2.3</span>N-grammi e assunzione di Markov</a>
+        <a href="#unit-u4" data-spy-target="unit-u4"><span class="num">2.4</span>Sparsità e dipendenze lontane</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>3. Parole come punti nello spazio</summary>
+      <div class="unita-list">
+        <a href="meccanismo-3-embedding.html#unit-u1"><span class="num">3.1</span>Il problema lasciato aperto</a>
+        <a href="meccanismo-3-embedding.html#unit-u2"><span class="num">3.2</span>Le parole come vettori (embedding)</a>
+        <a href="meccanismo-3-embedding.html#unit-u3"><span class="num">3.3</span>L'ipotesi distribuzionale</a>
+        <a href="meccanismo-3-embedding.html#unit-u4"><span class="num">3.4</span>L'aritmetica vettoriale</a>
+        <a href="meccanismo-3-embedding.html#unit-u5"><span class="num">3.5</span>Polisemia ed embedding statico</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>4. Reti neurali</summary>
+      <div class="unita-list">
+        <a href="meccanismo-4-reti-neurali.html#unit-u1"><span class="num">4.1</span>Dal neurone biologico al neurone artificiale</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u2"><span class="num">4.2</span>Il perceptron e XOR</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u3"><span class="num">4.3</span>Strati e profondità</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u4"><span class="num">4.4</span>La funzione di perdita</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u5"><span class="num">4.5</span>Il gradiente e la backpropagation</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>5. Il Transformer</summary>
+      <div class="unita-list">
+        <a href="meccanismo-5-transformer.html#unit-u1"><span class="num">5.1</span>Il problema che l'attenzione risolve</a>
+        <a href="meccanismo-5-transformer.html#unit-u2"><span class="num">5.2</span>L'idea dell'attention</a>
+        <a href="meccanismo-5-transformer.html#unit-u3"><span class="num">5.3</span>Query, Key, Value</a>
+        <a href="meccanismo-5-transformer.html#unit-u4"><span class="num">5.4</span>Embedding contestuale</a>
+        <a href="meccanismo-5-transformer.html#unit-u5"><span class="num">5.5</span>Multi-head e posizione</a>
+        <a href="meccanismo-5-transformer.html#unit-u6"><span class="num">5.6</span>Parallelismo e scala</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>6. Cosa significa "Large"</summary>
+      <div class="unita-list">
+        <a href="meccanismo-6-large.html#unit-u1"><span class="num">6.1</span>Scala</a>
+        <a href="meccanismo-6-large.html#unit-u2"><span class="num">6.2</span>Capacità emergenti</a>
+        <a href="meccanismo-6-large.html#unit-u3"><span class="num">6.3</span>I dati</a>
+        <a href="meccanismo-6-large.html#unit-u4"><span class="num">6.4</span>Fine-tuning</a>
+        <a href="meccanismo-6-large.html#unit-u5"><span class="num">6.5</span>RLHF</a>
+        <a href="meccanismo-6-large.html#unit-u6"><span class="num">6.6</span>Quantizzazione (chiusura dell'arco tecnico)</a>
+      </div>
+    </details>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Appendice</div>
+
+    <details class="modulo">
+      <summary>Dietro i widget</summary>
+      <div class="unita-list">
+        <a href="dietro-i-widget.html#unit-u1"><span class="num">A.1</span>Il tokenizzatore (Meccanismo · 1)</a>
+        <a href="dietro-i-widget.html#unit-u2"><span class="num">A.2</span>Il predittore n-grammi (Meccanismo · 2)</a>
+        <a href="dietro-i-widget.html#unit-u3"><span class="num">A.3</span>La mappa embedding (Meccanismo · 3)</a>
+        <a href="dietro-i-widget.html#unit-u4"><span class="num">A.4</span>Neurone, XOR, superficie di perdita (Meccanismo · 4)</a>
+        <a href="dietro-i-widget.html#unit-u5"><span class="num">A.5</span>L'attention (Meccanismo · 5)</a>
+        <a href="dietro-i-widget.html#unit-u6"><span class="num">A.6</span>Scala e capacità (Meccanismo · 6)</a>
+      </div>
+    </details>
+  </div>
+</nav>
+
+<main>
+
+<div class="unit-block" id="unit-u1" data-unit="u1">
+
+  <section id="u1-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Meccanismo · 2 · Probabilità e linguaggio · Unità 2.1</div>
+      <h1>Quando il telefono suggerisce la parola successiva, <em>che cosa sta facendo davvero?</em></h1>
+      <p class="lede dim">È un'esperienza quotidiana, quasi banale: si comincia a scrivere una frase e il telefono, o il motore di ricerca, propone già la parola più probabile. «Il gatto è salito sul ___» — quasi chiunque, senza pensarci, completa con «tetto» o «divano», non con «vulcano» o «frigorifero». Questo modulo prende sul serio proprio tale compito, apparentemente ovvio: prevedere la parola successiva.</p>
+      <p class="dim">È lo stesso compito, reso esplicito, già chiamato «completamento statistico» in Genealogia · 2.1 di questo corso: non comprensione, non ragionamento — un calcolo su ciò che è probabile, dato ciò che è già scritto.</p>
+      <div class="scrolldown">un compito che sembra ovvio, e non lo è</div>
+    </div>
+  </section>
+
+  <section id="u1-sez-intuizione">
+    <div class="wrap reveal">
+      <div class="eyebrow">Un'intuizione già posseduta</div>
+      <h2 class="title">Una competenza già posseduta, senza saperlo</h2>
+      <p>Non serve alcuna competenza tecnica per completare «il gatto è salito sul ___» con una scelta plausibile. Chiunque abbia letto o ascoltato abbastanza italiano possiede già, senza poterla formulare esplicitamente, una stima di quali parole sono probabili in quel punto della frase e quali no. Non è magia: è il risultato di aver visto, nel corso di una vita, migliaia di frasi simili — gatti che salgono su tetti, divani, letti; raramente su vulcani.</p>
+
+      <div class="aside">
+        <span class="label">Da Genealogia · 2.1</span>
+        <p>In Genealogia · 2.1 di questo corso è già stato definito con precisione che cosa un modello linguistico sa fare per davvero: completamento statistico plausibile, non comprensione. Questo modulo mostra, passo per passo, il meccanismo esatto dietro quella definizione — a partire dal compito più elementare che lo rende possibile.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="u1-sez-widget">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il compito, reso concreto</div>
+      <h2 class="title">Un piccolo corpus, conteggi veri</h2>
+      <p>Per rendere questo compito osservabile invece che solo intuitivo, l'intero modulo si appoggia a un piccolo corpus scritto apposta per la demo: 46 frasi italiane semplici, con soggetti e azioni che si ripetono (un gatto o un cane che sale, dorme, salta, mangia...). Non è testo «trovato» — è scritto apposta per rendere leggibili statistiche vere, calcolate dal vivo su questo stesso corpus, non precotte altrove.</p>
+
+      <p>Scriva l'inizio di una frase nel campo sottostante. Il componente conta, in questo esatto corpus, quante volte ciascuna parola segue l'ultima parola scritta, e mostra il risultato come barre di probabilità.</p>
+
+      <div class="playground">
+        <span class="ptitle">Playground — il compito: prevedere la parola successiva</span>
+        <input type="text" class="pg-input" id="pg-input-ngram1" placeholder="Scriva l'inizio di una frase…" autocomplete="off" spellcheck="false" value="il gatto è salito sul">
+        <div class="pg-row-label">Parole candidate, contate sul corpus di 46 frasi (contesto: solo l'ultima parola scritta)</div>
+        <div class="ngram-bars" id="ngram-bars-1"></div>
+      </div>
+
+      <p class="dim">Il componente non «capisce» la frase: guarda solo l'ultima parola scritta e conta, in tutto il corpus, che cosa l'ha seguita più spesso. È rozzo — l'unità successiva mostra esattamente come si formalizza questo conteggio — ma è già, in miniatura, il compito centrale di ogni modello linguistico.</p>
+    </div>
+  </section>
+
+  <section id="u1-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">Un compito, non ancora un meccanismo</h2>
+      <p>Fin qui solo il compito, non ancora il meccanismo che lo risolve. L'unità successiva mostra esattamente come un conteggio di frequenze diventi una probabilità — un numero preciso, non solo un'intuizione — e introduce un concetto che tornerà fino alla fine di questo modulo: cosa significa che una di queste previsioni sia <em>calibrata</em>.</p>
+    </div>
+  </section>
+
+  <section id="u1-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura — Unità 2.1</div>
+      <blockquote>
+        Il telefono che completa la frase non capisce nulla di gatti o di tetti. Conta, e sceglie ciò che è già accaduto più spesso.
+      </blockquote>
+      <p style="margin-top:28px;">Nell'unità successiva: come si trasforma esattamente un conteggio in una probabilità — e perché quel numero, per la prima volta in questo corso, non è più solo zero o uno.</p>
+
+      <div class="footer-note">Meccanismo · 2 — Probabilità e linguaggio · Unità 2.1 — Prevedere la parola successiva: il compito centrale</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="unit-block" id="unit-u2" data-unit="u2">
+
+  <section id="u2-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Meccanismo · 2 · Probabilità e linguaggio · Unità 2.2</div>
+      <h1>Da un conteggio, <em>un numero fra zero e uno</em></h1>
+      <p class="lede dim">L'unità precedente ha mostrato il compito: prevedere la parola successiva contando, in un corpus, quante volte una parola ne ha seguita un'altra. Questa unità rende esplicito il passaggio successivo — come esattamente un conteggio diventa una probabilità — e introduce due concetti che accompagneranno il resto del modulo: che cosa significhi «indovinare per induzione», e che cosa significhi che una previsione è calibrata.</p>
+      <div class="scrolldown">il primo numero che non è né zero né uno</div>
+    </div>
+  </section>
+
+  <section id="u2-sez-conteggio">
+    <div class="wrap reveal">
+      <div class="eyebrow">Dal conteggio alla probabilità</div>
+      <h2 class="title">Lo stesso prefisso, due finestre diverse</h2>
+      <p>La formula è più semplice di quanto suoni: la probabilità di una parola, dato un contesto, è il numero di volte in cui quella parola ha seguito quel contesto, diviso per il numero totale di volte in cui quel contesto è comparso. Un <strong>unigramma</strong> guarda solo l'ultima parola scritta come contesto; un <strong>bigramma</strong> guarda le ultime due. Lo stesso identico prefisso può dare distribuzioni diverse a seconda di quale finestra si usa — la prossima unità formalizzerà questo concetto con il nome di «n-gramma».</p>
+
+      <div class="playground">
+        <span class="ptitle">Playground — lo stesso prefisso, unigramma contro bigramma</span>
+        <input type="text" class="pg-input" id="pg-input-ngram2" placeholder="Scriva l'inizio di una frase…" autocomplete="off" spellcheck="false" value="il gatto è salito sul">
+        <div class="ngram-compare">
+          <div class="ngram-compare-col">
+            <div class="pg-row-label">Unigramma — contesto: <span class="ngram-ctx" id="ngram2-ctx-w1"></span></div>
+            <div class="ngram-bars" id="ngram-bars-2-w1"></div>
+          </div>
+          <div class="ngram-compare-col">
+            <div class="pg-row-label">Bigramma — contesto: <span class="ngram-ctx" id="ngram2-ctx-w2"></span></div>
+            <div class="ngram-bars" id="ngram-bars-2-w2"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="aside">
+        <span class="label">Filo discreto/continuo</span>
+        <p>È la prima vera crepa nel discreto di questo corso. I simboli — le parole — restano discreti: «tetto» non sfuma in «divano». Ma il numero che li accompagna, la probabilità, è per la prima volta un valore reale fra 0 e 1, non più solo zero o uno. Il modulo precedente, Meccanismo · 1, si era chiuso proprio anticipando questo momento.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="u2-sez-induzione">
+    <div class="wrap reveal">
+      <div class="eyebrow">Un nome tecnico per quello che sta succedendo</div>
+      <h2 class="title">Contare per prevedere è induzione, non deduzione</h2>
+      <p>Una deduzione applica una regola certa a premesse certe, e arriva a una conclusione altrettanto certa. Ciò che il componente qui sopra fa è diverso per natura: osserva casi passati (le frasi del corpus) e ne generalizza una regola probabile, non certa — «sul» è seguito da «divano» più spesso che da «tavolo», ma nulla lo garantisce per la prossima frase. Questo procedimento ha un nome preciso in logica: <strong>induzione</strong>.</p>
+
+      <div class="aside">
+        <span class="label">Da Genealogia · 2.2</span>
+        <p>In Genealogia · 2.2 di questo corso era già stato descritto esattamente questo comportamento, chiamandolo «interpolazione, non deduzione», senza nominare il termine tecnico. Ora il termine c'è: contare frequenze per prevedere è un caso di manuale di ragionamento induttivo.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="u2-sez-calibrazione">
+    <div class="wrap reveal">
+      <div class="eyebrow">Un debito che si paga qui</div>
+      <h2 class="title">Cosa significa che una previsione è calibrata</h2>
+      <p>In Genealogia · 2.2 era stato lasciato un debito esplicito, mai onorato in forma tecnica: «un tema che tornerà, quando si parlerà di calibrazione». È qui, nel punto esatto in cui nasce per la prima volta una probabilità in uscita da un modello, che va saldato. Un modello è <strong>calibrato</strong> se, fra tutte le previsioni fatte con una data confidenza — diciamo il 70% — circa il 70% di quelle previsioni risulta poi effettivamente corretta. Non è una proprietà automatica: va misurata.</p>
+
+      <p>Il diagramma qui sotto (un <em>reliability diagram</em>) mostra una misura reale, non illustrativa: la tabella di bigrammi di questo stesso corpus è stata costruita solo su 34 frasi di addestramento; le restanti 12 frasi, mai viste da quella tabella, sono servite a verificare 65 previsioni. Ogni previsione è stata raggruppata per la confidenza dichiarata, e per ciascun gruppo è stata misurata l'accuratezza reale.</p>
+
+      <div class="playground">
+        <span class="ptitle">Diagramma di calibrazione — confidenza dichiarata vs accuratezza reale</span>
+        <div class="calib-svg-wrap" id="calib-svg-wrap"></div>
+        <div class="calib-detail" id="calib-detail">Clicchi su un punto per i dettagli del rispettivo gruppo (bucket).</div>
+      </div>
+
+      <p class="dim">I tre punti restano sempre sotto la diagonale di riferimento: la confidenza dichiarata è sempre più alta dell'accuratezza reale, in tutti e tre i gruppi. È <strong>overconfidence</strong> sistematica, misurata su questo stesso corpus — non un'ipotesi.</p>
+    </div>
+  </section>
+
+  <section id="u2-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">Contare, generalizzare, e sapere di sbagliare</h2>
+      <p>Tre pezzi sono ora al loro posto: il conteggio che diventa probabilità, il nome tecnico (induzione) per ciò che quel conteggio sta facendo, e uno strumento (la calibrazione) per verificare quanto ci si può fidare del numero che ne esce. Manca ancora una generalizzazione: finora si è visto solo il caso di 1 o 2 parole di contesto. L'unità successiva estende l'idea a un numero qualunque di parole, con un nome preciso.</p>
+    </div>
+  </section>
+
+  <section id="u2-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura — Unità 2.2</div>
+      <blockquote>
+        Un modello che dichiara «70% sicuro» e ha ragione solo la metà delle volte non sta mentendo — sta solo rivelando che il suo numero, per quanto reale, non era mai stato controllato.
+      </blockquote>
+      <p style="margin-top:28px;">Nell'unità successiva: cosa cambia, esattamente, quando si allarga la finestra di contesto a 3, 4 o più parole — e perché questa idea, chiamata assunzione di Markov, non è mai stata solo un trucco linguistico.</p>
+
+      <div class="footer-note">Meccanismo · 2 — Probabilità e linguaggio · Unità 2.2 — Contare per prevedere: unigrammi e bigrammi</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="unit-block" id="unit-u3" data-unit="u3">
+
+  <section id="u3-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Meccanismo · 2 · Probabilità e linguaggio · Unità 2.3</div>
+      <h1>Quanto passato serve, <em>per prevedere il futuro?</em></h1>
+      <p class="lede dim">L'unità precedente ha confrontato solo due casi: una parola di contesto, o due. Ma non c'è nulla di speciale nel numero due. Si può generalizzare a una finestra di qualunque ampiezza — tre parole, quattro, dieci — con un nome preciso per l'unità e un'ipotesi esplicita su ciò che si sta assumendo nel farlo.</p>
+      <div class="scrolldown">una domanda più vecchia della linguistica</div>
+    </div>
+  </section>
+
+  <section id="u3-sez-ngrammi">
+    <div class="wrap reveal">
+      <div class="eyebrow">Generalizzare il conteggio</div>
+      <h2 class="title">Un n-gramma è solo una finestra di N parole</h2>
+      <p>Un unigramma è un n-gramma con N=1, un bigramma con N=2. Un <strong>trigramma</strong> (N=3) guarda le ultime tre parole; e così via. Il principio non cambia mai: contare quante volte una parola ha seguito una data finestra di contesto, nel corpus a disposizione. Cambia solo l'ampiezza della finestra — e, come si vedrà, cambiano le conseguenze di quella scelta.</p>
+
+      <p>Il componente qui sotto è la versione completa del predittore visto nelle unità precedenti: uno slider regola l'ampiezza della finestra da 1 a 3 parole. Lo sposti osservando lo stesso prefisso.</p>
+    </div>
+  </section>
+
+  <section id="u3-sez-markov">
+    <div class="wrap reveal">
+      <div class="eyebrow">L'assunzione di Markov</div>
+      <h2 class="title">Solo il passato recente conta — per ipotesi, non per certezza</h2>
+      <p>Limitarsi a una finestra piccola invece di guardare l'intera frase fin dall'inizio è una scelta esplicita, con un nome: <strong>assunzione di Markov</strong> — l'idea che il futuro dipenda solo da un pezzo finito e recente del passato, non dalla sua storia intera. Non è un'idea nata per il linguaggio: una previsione del tempo di domani si basa soprattutto sulle condizioni di oggi, non sul dettaglio di ogni giorno dell'ultimo decennio; in molti giochi da tavolo (dama, backgammon) ciò che conta per la mossa successiva è la posizione attuale sul tabellone, non l'intera sequenza di mosse che ci ha portato lì.</p>
+
+      <div class="playground">
+        <span class="ptitle">Playground — predittore n-grammi, finestra regolabile</span>
+        <input type="text" class="pg-input" id="pg-input-ngram3" placeholder="Scriva l'inizio di una frase…" autocomplete="off" spellcheck="false" value="il gatto è salito sul">
+        <div class="pg-examples">
+          <button class="pg-example-btn" data-example="il gatto è salito sul" data-window="1">previsione netta</button>
+          <button class="pg-example-btn" data-example="il gatto salta sul" data-window="1">distribuzione ambigua</button>
+        </div>
+        <div class="ngram-slider-row">
+          <input type="range" class="ngram-slider" id="ngram-slider-3" min="1" max="3" value="1" step="1">
+          <div class="ngram-slider-val" id="ngram-slider-3-val">Finestra di contesto: 1 parola</div>
+        </div>
+        <div class="pg-row-label">Parole candidate</div>
+        <div class="ngram-bars" id="ngram-bars-3"></div>
+      </div>
+
+      <p class="dim">Con «previsione netta» la distribuzione si affina nettamente passando da 1 a 2 parole di contesto. Con «distribuzione ambigua» accade l'opposto: restano tre candidati quasi alla pari anche a 3 parole — più contesto non garantisce sempre una previsione più nitida.</p>
+    </div>
+  </section>
+
+  <section id="u3-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">Un primo modello linguistico, funzionante e limitato</h2>
+      <p>Conteggio, probabilità, n-grammi, assunzione di Markov: questi quattro pezzi insieme costituiscono un vero modello linguistico, per quanto rudimentale. Funziona — ma l'unità successiva mostra dove, esattamente, comincia a rompersi.</p>
+    </div>
+  </section>
+
+  <section id="u3-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura — Unità 2.3</div>
+      <blockquote>
+        Assumere che solo il passato recente conti non è un compromesso linguistico. È la stessa scommessa che si fa ogni volta che si previene il tempo di domani guardando il cielo di oggi.
+      </blockquote>
+      <p style="margin-top:28px;">Nell'unità successiva: cosa succede quando la finestra scelta è più ampia di quanto il corpus possa sostenere — e perché esiste un limite che nessuna finestra, piccola o grande, riesce a superare.</p>
+
+      <div class="footer-note">Meccanismo · 2 — Probabilità e linguaggio · Unità 2.3 — N-grammi, finestra di contesto e assunzione di Markov</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="unit-block" id="unit-u4" data-unit="u4">
+
+  <section id="u4-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Meccanismo · 2 · Probabilità e linguaggio · Unità 2.4</div>
+      <h1>Cosa succede <em>quando il contesto non è mai stato visto?</em></h1>
+      <p class="lede dim">Le unità precedenti hanno mostrato un modello che funziona, entro i limiti del corpus su cui è stato costruito. Questa unità mostra dove quei limiti diventano strutturali — non un difetto da correggere con più dati, ma una conseguenza diretta del funzionamento stesso di un n-gramma.</p>
+      <div class="scrolldown">i limiti che nessuna finestra piccola risolve</div>
+    </div>
+  </section>
+
+  <section id="u4-sez-sparsita">
+    <div class="wrap reveal">
+      <div class="eyebrow">Quando il conteggio è zero</div>
+      <h2 class="title">Un contesto mai visto è un buco, non un errore</h2>
+      <p>Più la finestra di contesto si allarga, più diventa specifica — e più diventa probabile che quella combinazione esatta di parole non compaia mai nel corpus di addestramento. Quando questo succede, il conteggio è zero, il totale è zero, e la probabilità non è un numero basso: è semplicemente <strong>indefinita</strong>. La previsione non si indebolisce gradualmente — si rompe di colpo.</p>
+
+      <div class="playground">
+        <span class="ptitle">Playground — dove la previsione si rompe</span>
+        <input type="text" class="pg-input" id="pg-input-ngram4" placeholder="Scriva l'inizio di una frase…" autocomplete="off" spellcheck="false" value="ieri il gatto">
+        <div class="pg-examples">
+          <button class="pg-example-btn" data-example="ieri il gatto" data-window="2">sparsità</button>
+          <button class="pg-example-btn" data-example="il gatto è salito sul" data-window="1">previsione netta</button>
+          <button class="pg-example-btn" data-example="il gatto salta sul" data-window="1">distribuzione ambigua</button>
+        </div>
+        <div class="ngram-slider-row">
+          <input type="range" class="ngram-slider" id="ngram-slider-4" min="1" max="3" value="2" step="1">
+          <div class="ngram-slider-val" id="ngram-slider-4-val">Finestra di contesto: 2 parole</div>
+        </div>
+        <div class="pg-row-label">Parole candidate</div>
+        <div class="ngram-bars" id="ngram-bars-4"></div>
+      </div>
+
+      <p class="dim">Con l'esempio «sparsità» preimpostato, la finestra a 1 e 2 parole ha dati pieni (30 occorrenze: «gatto» compare spesso). Sposti lo slider a 3: il contesto diventa «ieri, il, gatto» — e la previsione si azzera. «Ieri» semplicemente non compare mai, in questo corpus, in quella posizione esatta. Non è un errore di conteggio: è un fatto sul corpus.</p>
+    </div>
+  </section>
+
+  <section id="u4-sez-dipendenze">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il problema più profondo: dipendenze lontane</div>
+      <h2 class="title">Alcuni accordi grammaticali non stanno in nessuna finestra piccola</h2>
+      <p>La sparsità è un problema di dati: si attenua (non scompare mai del tutto) con un corpus più grande. Le <strong>dipendenze lontane</strong> sono un problema diverso, strutturale: in una frase con un inciso o una subordinata annidata, due parole grammaticalmente legate — un soggetto e il suo verbo, per esempio — possono trovarsi separate da molte parole. Nessuna finestra fissa di ampiezza piccola può contenerle entrambe insieme, per costruzione, indipendentemente da quanti dati si aggiungano.</p>
+
+      <div class="dep-diagram">
+        <p class="dep-sentence"><span class="dep-highlight">Il gatto</span>, che ieri sera aveva dormito tutto il pomeriggio sul divano del salotto, <span class="dep-highlight">salta</span> sul tavolo.</p>
+        <div class="dep-window-box">
+          <span class="dep-window-label">Finestra di 3 parole, vista dal punto di «salta»</span>
+          <div class="dep-window-words">
+            <span class="dep-word">sul</span>
+            <span class="dep-word">divano</span>
+            <span class="dep-word">del</span>
+            <span class="dep-word dep-word-arrow">salotto, → salta</span>
+          </div>
+          <p class="dep-window-note">«Gatto» resta fuori da qualunque finestra di 3 parole quando si arriva a «salta»: l'accordo fra soggetto e verbo è invisibile per costruzione a un n-gramma, qualunque sia la finestra scelta, finché resta piccola.</p>
+        </div>
+      </div>
+
+      <p class="dim">Il linguista Noam Chomsky ha usato un argomento imparentato con questo per criticare, già negli anni '50, i modelli «a stati finiti» del linguaggio — sistemi che, come un n-gramma, guardano solo una memoria corta e fissa: alcune strutture grammaticali del linguaggio naturale, ha mostrato, richiedono in linea di principio una memoria che nessun automa a stati finiti possiede.</p>
+    </div>
+  </section>
+
+  <section id="u4-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">Due limiti diversi, nessuno risolvibile allargando la finestra</h2>
+      <p>Allargare la finestra aiuta con la sparsità in alcuni casi (previsioni più nitide, quando i dati ci sono) ma la peggiora in altri (contesti più specifici, meno probabili da aver visto). E nessuna finestra, per quanto ampia, risolve le dipendenze lontane in linea di principio: si può sempre costruire una frase con un inciso più lungo della finestra scelta. Il problema non è la quantità di dati o l'ampiezza della finestra — è l'idea stessa di finestra fissa.</p>
+    </div>
+  </section>
+
+  <section id="u4-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura — Meccanismo · 2</div>
+      <blockquote>
+        Un n-gramma non è ingenuo per trascuratezza. È ingenuo per costruzione: ha una memoria corta e fissa, e nessuna quantità di dati gliene può dare una più lunga.
+      </blockquote>
+      <p style="margin-top:28px;">Nel modulo successivo, Meccanismo · 3, si lascia da parte il problema delle dipendenze lontane per affrontarne un altro, altrettanto radicale: che cosa accade se le parole, invece di restare ID discreti senza alcuna nozione di vicinanza, diventano punti in uno spazio continuo? Il problema delle dipendenze lontane resta esplicitamente aperto fino a Meccanismo · 5, dove l'attention del Transformer lo risolverà con un meccanismo del tutto diverso da una finestra fissa.</p>
+
+      <div class="footer-note">Meccanismo · 2 — Probabilità e linguaggio · Unità 2.4 — I limiti strutturali: dati mai visti e dipendenze lontane</div>
+    </div>
+  </section>
+
+</div>
+
+</main>
+
+<script>
+  // ============ dati incorporati (n-grammi, Meccanismo · 2) ============
+  const NGRAM_DATA = {"_metadata": {"descrizione": "Corpus e tabelle di conteggio n-grammi per Meccanismo · 2 (predittore di parola successiva, unita 2.1-2.4).", "fonte_corpus": "Corpus scritto appositamente per la demo (non estratto da un'altra fonte): 46 frasi italiane semplici con pattern ripetuti e variazioni controllate (gatto/cane che sale, dorme, salta, mangia...). Dichiarato esplicitamente come corpus autoriale - non e' testo 'trovato', e' scritto per rendere leggibili statistiche vere.", "corpus_frasi": 46, "corpus_parole": 255, "metodo": "Conteggio di frequenze per finestre di contesto 1, 2 e 3 parole. Marcatori di inizio/fine frase (<inizio>,<fine>) inclusi nel conteggio.", "verifica": "Le probabilita' esatte (conteggio/totale, prima dell'arrotondamento mostrato) sommano sempre a 1 per ogni contesto non vuoto - verificato programmaticamente. Verificato esplicitamente che il contesto a finestra 3 ('ieri','il','gatto') ha zero occorrenze mentre le finestre 1 e 2 sullo stesso prefisso hanno dati pieni (30 occorrenze) - la sparsita' e' un fatto misurato sul corpus, non simulato.", "esempi_dimostrativi": "Tre prefissi scelti DOPO aver calcolato le distribuzioni reali sul corpus (non decisi a priori): uno con previsione netta, uno con distribuzione ambigua, uno che mostra la rottura da sparsita' a finestra 3."}, "corpus": [["il", "gatto", "è", "salito", "sul", "tetto"], ["il", "gatto", "è", "salito", "sul", "divano"], ["il", "gatto", "è", "salito", "sull", "albero"], ["il", "gatto", "è", "salito", "sul", "tetto"], ["il", "gatto", "è", "sceso", "dal", "tetto"], ["il", "cane", "è", "salito", "sul", "divano"], ["il", "cane", "è", "sceso", "dal", "divano"], ["il", "gatto", "dorme", "sul", "divano"], ["il", "gatto", "dorme", "sul", "letto"], ["il", "cane", "dorme", "sul", "tappeto"], ["il", "gatto", "dorme", "sul", "divano"], ["il", "gatto", "mangia", "il", "pesce"], ["il", "cane", "mangia", "la", "carne"], ["il", "gatto", "beve", "il", "latte"], ["il", "bambino", "gioca", "con", "il", "gatto"], ["il", "bambino", "gioca", "con", "il", "cane"], ["la", "mamma", "chiama", "il", "gatto"], ["la", "mamma", "chiama", "il", "cane"], ["il", "gatto", "corre", "veloce"], ["il", "cane", "corre", "veloce"], ["il", "gatto", "salta", "sul", "tavolo"], ["il", "gatto", "salta", "sul", "divano"], ["il", "gatto", "salta", "sul", "letto"], ["il", "cane", "salta", "sul", "divano"], ["il", "gatto", "è", "salito", "sul", "tetto", "ancora"], ["di", "notte", "il", "gatto", "dorme", "sul", "divano"], ["di", "giorno", "il", "gatto", "dorme", "sul", "letto"], ["il", "gatto", "guarda", "il", "cane"], ["il", "cane", "guarda", "il", "gatto"], ["il", "gatto", "è", "salito", "sul", "tavolo"], ["il", "bambino", "accarezza", "il", "gatto"], ["il", "bambino", "accarezza", "il", "cane"], ["il", "gatto", "miagola", "forte"], ["il", "cane", "abbaia", "forte"], ["il", "gatto", "insegue", "il", "topo"], ["il", "cane", "insegue", "la", "palla"], ["il", "gatto", "si", "nasconde", "sotto", "il", "letto"], ["il", "cane", "si", "nasconde", "sotto", "il", "tavolo"], ["il", "gatto", "beve", "il", "latte", "ogni", "mattina"], ["il", "cane", "mangia", "la", "carne", "ogni", "sera"], ["il", "gatto", "dorme", "tutto", "il", "giorno"], ["il", "cane", "corre", "tutto", "il", "giorno"], ["il", "gatto", "è", "salito", "sul", "tetto", "di", "nuovo"], ["il", "bambino", "corre", "nel", "giardino"], ["il", "gatto", "cammina", "nel", "giardino"], ["il", "cane", "cammina", "nel", "giardino"]], "esempi_dimostrativi": {"previsione_netta": {"prefisso_esempio": "il gatto è salito sul", "finestra_1": {"contesto": ["sul"], "conteggi": {"tetto": 4, "divano": 7, "letto": 3, "tappeto": 1, "tavolo": 2}, "totale": 17, "probabilita": {"tetto": 0.2353, "divano": 0.4118, "letto": 0.1765, "tappeto": 0.0588, "tavolo": 0.1176}}, "finestra_2": {"contesto": ["salito", "sul"], "conteggi": {"tetto": 4, "divano": 2, "tavolo": 1}, "totale": 7, "probabilita": {"tetto": 0.5714, "divano": 0.2857, "tavolo": 0.1429}}, "finestra_3": {"contesto": ["è", "salito", "sul"], "conteggi": {"tetto": 4, "divano": 2, "tavolo": 1}, "totale": 7, "probabilita": {"tetto": 0.5714, "divano": 0.2857, "tavolo": 0.1429}}, "nota": "la distribuzione si affina passando da finestra 1 a finestra 2 (tetto diventa nettamente dominante); finestra 3 coincide con finestra 2 in questo corpus."}, "distribuzione_ambigua": {"prefisso_esempio": "il gatto salta sul", "finestra_1": {"contesto": ["sul"], "conteggi": {"tetto": 4, "divano": 7, "letto": 3, "tappeto": 1, "tavolo": 2}, "totale": 17, "probabilita": {"tetto": 0.2353, "divano": 0.4118, "letto": 0.1765, "tappeto": 0.0588, "tavolo": 0.1176}}, "finestra_2": {"contesto": ["salta", "sul"], "conteggi": {"tavolo": 1, "divano": 2, "letto": 1}, "totale": 4, "probabilita": {"tavolo": 0.25, "divano": 0.5, "letto": 0.25}}, "finestra_3": {"contesto": ["gatto", "salta", "sul"], "conteggi": {"tavolo": 1, "divano": 1, "letto": 1}, "totale": 3, "probabilita": {"tavolo": 0.3333, "divano": 0.3333, "letto": 0.3333}}, "nota": "la distribuzione resta ambigua (3 candidati quasi alla pari) anche a finestra 3 - non tutte le previsioni si affinano con più contesto."}, "sparsita": {"prefisso_esempio": "ieri il gatto", "finestra_1": {"contesto": ["gatto"], "conteggi": {"è": 8, "dorme": 6, "mangia": 1, "beve": 2, "<fine>": 4, "corre": 1, "salta": 3, "guarda": 1, "miagola": 1, "insegue": 1, "si": 1, "cammina": 1}, "totale": 30, "probabilita": {"è": 0.2667, "dorme": 0.2, "mangia": 0.0333, "beve": 0.0667, "<fine>": 0.1333, "corre": 0.0333, "salta": 0.1, "guarda": 0.0333, "miagola": 0.0333, "insegue": 0.0333, "si": 0.0333, "cammina": 0.0333}}, "finestra_2": {"contesto": ["il", "gatto"], "conteggi": {"è": 8, "dorme": 6, "mangia": 1, "beve": 2, "<fine>": 4, "corre": 1, "salta": 3, "guarda": 1, "miagola": 1, "insegue": 1, "si": 1, "cammina": 1}, "totale": 30, "probabilita": {"è": 0.2667, "dorme": 0.2, "mangia": 0.0333, "beve": 0.0667, "<fine>": 0.1333, "corre": 0.0333, "salta": 0.1, "guarda": 0.0333, "miagola": 0.0333, "insegue": 0.0333, "si": 0.0333, "cammina": 0.0333}}, "finestra_3": {"contesto": ["ieri", "il", "gatto"], "conteggi": {}, "totale": 0, "probabilita": {}}, "nota": "'ieri' non compare mai nel corpus: a finestra 3 il contesto ('ieri','il','gatto') ha zero occorrenze, mentre le finestre 1 e 2 hanno dati pieni (30 occorrenze) - la rottura da sparsita' avviene esattamente aggiungendo un solo elemento di contesto in piu'."}}};
+
+  const CALIBRAZIONE_DATA = {"_metadata": {"descrizione": "Diagramma di calibrazione (reliability diagram) per Meccanismo · 2, unita 2.2 - paga il debito esplicito lasciato in Genealogia 2.2 ('un tema che tornera', in forma tecnica, quando si parlera' di calibrazione').", "metodo": "Misura REALE, non illustrativa: split del corpus di ngram_dati_modulo2.json in 34 frasi di addestramento e 12 frasi di held-out (seed 42). Tabella bigramma (finestra 2) costruita solo sul train. Per ogni transizione nel held-out il cui contesto bigramma esiste nella tabella di train, si registra la confidenza dichiarata (probabilita' della parola piu' probabile) e se la previsione e' risultata corretta. Bucket per range di confidenza, accuratezza reale calcolata per bucket.", "tentativo_riuscito_al_primo_colpo": "Nessun fallback a dati illustrativi necessario: con 65 predizioni valutabili distribuite su 3 bucket (n=14, 18, 33) il risultato e' gia' leggibile e mostra un pattern reale e coerente con la letteratura su modelli piccoli - overconfidence sistematica (l'accuratezza reale resta sempre sotto la confidenza dichiarata in ogni bucket).", "verifica": "65 predizioni totali valutate. Tutti e tre i bucket hanno campione non vuoto (14, 18, 33). Il pattern e' monotono: confidenza dichiarata piu' alta -> accuratezza reale piu' alta, ma sempre inferiore alla confidenza stessa in tutti i bucket - overconfidence reale, misurata, non simulata."}, "split": {"frasi_train": 34, "frasi_held_out": 12, "seed": 42, "finestra_contesto_usata": 2}, "predizioni_valutate": [{"confidenza": 0.8824, "corretto": true}, {"confidenza": 0.6, "corretto": true}, {"confidenza": 0.2174, "corretto": false}, {"confidenza": 1.0, "corretto": true}, {"confidenza": 0.8824, "corretto": true}, {"confidenza": 0.6, "corretto": true}, {"confidenza": 0.2174, "corretto": false}, {"confidenza": 1.0, "corretto": true}, {"confidenza": 0.5, "corretto": false}, {"confidenza": 1.0, "corretto": true}, {"confidenza": 0.8824, "corretto": true}, {"confidenza": 0.6, "corretto": false}, {"confidenza": 0.3636, "corretto": false}, {"confidenza": 1.0, "corretto": false}, {"confidenza": 0.2174, "corretto": false}, {"confidenza": 0.8824, "corretto": true}, {"confidenza": 0.6, "corretto": true}, {"confidenza": 0.2174, "corretto": true}, {"confidenza": 0.8, "corretto": true}, {"confidenza": 0.5, "corretto": true}, {"confidenza": 1.0, "corretto": true}, {"confidenza": 0.8824, "corretto": true}, {"confidenza": 0.6, "corretto": false}, {"confidenza": 0.3636, "corretto": false}, {"confidenza": 0.5, "corretto": false}, {"confidenza": 1.0, "corretto": true}, {"confidenza": 0.8824, "corretto": true}, {"confidenza": 0.6, "corretto": false}, {"confidenza": 0.3636, "corretto": false}, {"confidenza": 0.5, "corretto": false}, {"confidenza": 0.8824, "corretto": true}, {"confidenza": 0.6, "corretto": true}, {"confidenza": 0.2174, "corretto": false}, {"confidenza": 1.0, "corretto": true}, {"confidenza": 0.8333, "corretto": true}, {"confidenza": 0.6, "corretto": false}, {"confidenza": 1.0, "corretto": true}, {"confidenza": 0.8824, "corretto": true}, {"confidenza": 0.6, "corretto": false}, {"confidenza": 0.3636, "corretto": false}, {"confidenza": 0.8824, "corretto": true}, {"confidenza": 0.6, "corretto": false}, {"confidenza": 0.3636, "corretto": false}, {"confidenza": 1.0, "corretto": true}, {"confidenza": 1.0, "corretto": true}, {"confidenza": 1.0, "corretto": false}, {"confidenza": 0.8824, "corretto": true}, {"confidenza": 0.6, "corretto": true}, {"confidenza": 0.2174, "corretto": false}, {"confidenza": 1.0, "corretto": true}, {"confidenza": 0.8333, "corretto": true}, {"confidenza": 0.6, "corretto": true}, {"confidenza": 0.3333, "corretto": false}, {"confidenza": 0.8824, "corretto": true}, {"confidenza": 0.6, "corretto": false}, {"confidenza": 0.3636, "corretto": false}, {"confidenza": 1.0, "corretto": true}, {"confidenza": 1.0, "corretto": true}, {"confidenza": 1.0, "corretto": false}, {"confidenza": 0.8824, "corretto": true}, {"confidenza": 0.6, "corretto": true}, {"confidenza": 0.2174, "corretto": false}, {"confidenza": 1.0, "corretto": false}, {"confidenza": 1.0, "corretto": true}, {"confidenza": 1.0, "corretto": false}], "bucket_calibrazione": [{"range": [0.0, 0.5], "n": 14, "confidenza_media_bucket": 0.2883, "accuratezza_reale": 0.0714}, {"range": [0.5, 0.75], "n": 18, "confidenza_media_bucket": 0.5778, "accuratezza_reale": 0.4444}, {"range": [0.75, 1.0], "n": 33, "confidenza_media_bucket": 0.9411, "accuratezza_reale": 0.8485}]};
+
+  function splitWords(text){
+    return text.trim().toLowerCase().split(/\s+/).filter(Boolean);
+  }
+
+  function contestoDaTesto(testo, finestra){
+    const parole = splitWords(testo).slice(-finestra);
+    const daAggiungere = finestra - parole.length;
+    return Array(daAggiungere).fill('<inizio>').concat(parole);
+  }
+
+  function contaParolaSuccessiva(corpus, contesto, finestra){
+    const conteggi = {};
+    let totale = 0;
+    corpus.forEach(frase => {
+      const padded = Array(finestra - 1).fill('<inizio>').concat(frase, ['<fine>']);
+      for(let i = 0; i + finestra < padded.length; i++){
+        let match = true;
+        for(let k = 0; k < finestra; k++){
+          if(padded[i + k] !== contesto[k]){ match = false; break; }
+        }
+        if(match){
+          const successiva = padded[i + finestra];
+          conteggi[successiva] = (conteggi[successiva] || 0) + 1;
+          totale++;
+        }
+      }
+    });
+    return { conteggi, totale };
+  }
+
+  function renderNgramBars(container, conteggi, totale){
+    if(totale === 0){
+      container.innerHTML = '<div class="ngram-empty">Nessuna frase del corpus comincia così: zero occorrenze per questo contesto. La previsione si rompe qui.</div>';
+      return;
+    }
+    const voci = Object.entries(conteggi).sort((a,b) => b[1] - a[1]);
+    container.innerHTML = voci.map(([parola, conteggio]) => {
+      const pct = conteggio / totale * 100;
+      const label = parola === '<fine>' ? '(fine frase)' : parola;
+      return `<div class="ngram-bar-row">
+        <div class="ngram-label">${label}</div>
+        <div class="ngram-bar-track"><div class="ngram-bar-fill" style="width:${pct.toFixed(1)}%"></div></div>
+        <div class="ngram-pct">${pct.toFixed(1)}% <span class="ngram-count">(${conteggio}/${totale})</span></div>
+      </div>`;
+    }).join('');
+  }
+
+  // ============ reveal on scroll ============
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => io.observe(el));
+
+  // ============ scroll-spy sulla sidebar ============
+  const spyLinks = document.querySelectorAll('#local-scrollspy a[data-spy-target]');
+  const unitBlocksForSpy = document.querySelectorAll('.unit-block');
+  const localSpy2 = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        spyLinks.forEach(a => a.classList.toggle('active', a.dataset.spyTarget === e.target.id));
+      }
+    });
+  }, { threshold: 0, rootMargin: '-45% 0px -45% 0px' });
+  unitBlocksForSpy.forEach(b => localSpy2.observe(b));
+
+  // ============ widget generico: predittore n-grammi ============
+  function creaWidgetNgram({ inputId, barsId, sliderId, sliderValId, defaultWindow, exampleBtnSelector }){
+    const input = document.getElementById(inputId);
+    const bars = document.getElementById(barsId);
+    const slider = sliderId ? document.getElementById(sliderId) : null;
+    const sliderVal = sliderValId ? document.getElementById(sliderValId) : null;
+
+    function update(){
+      const finestra = slider ? parseInt(slider.value, 10) : defaultWindow;
+      if(sliderVal){
+        sliderVal.textContent = `Finestra di contesto: ${finestra} ${finestra > 1 ? 'parole' : 'parola'}`;
+      }
+      const contesto = contestoDaTesto(input.value, finestra);
+      const { conteggi, totale } = contaParolaSuccessiva(NGRAM_DATA.corpus, contesto, finestra);
+      renderNgramBars(bars, conteggi, totale);
+    }
+
+    input.addEventListener('input', update);
+    if(slider) slider.addEventListener('input', update);
+    if(exampleBtnSelector){
+      document.querySelectorAll(exampleBtnSelector).forEach(btn => {
+        btn.addEventListener('click', () => {
+          input.value = btn.dataset.example;
+          if(slider && btn.dataset.window) slider.value = btn.dataset.window;
+          update();
+        });
+      });
+    }
+    update();
+    return update;
+  }
+
+  // ---- 2.1: finestra fissa a 1 parola ----
+  creaWidgetNgram({ inputId: 'pg-input-ngram1', barsId: 'ngram-bars-1', defaultWindow: 1 });
+
+  // ---- 2.2: confronto affiancato unigramma / bigramma ----
+  const input2 = document.getElementById('pg-input-ngram2');
+  const ctx2w1 = document.getElementById('ngram2-ctx-w1');
+  const ctx2w2 = document.getElementById('ngram2-ctx-w2');
+  const bars2w1 = document.getElementById('ngram-bars-2-w1');
+  const bars2w2 = document.getElementById('ngram-bars-2-w2');
+
+  function updateNgram2(){
+    const c1 = contestoDaTesto(input2.value, 1);
+    const c2 = contestoDaTesto(input2.value, 2);
+    ctx2w1.textContent = '"' + c1.join(' ') + '"';
+    ctx2w2.textContent = '"' + c2.join(' ') + '"';
+    renderNgramBars(bars2w1, contaParolaSuccessiva(NGRAM_DATA.corpus, c1, 1).conteggi, contaParolaSuccessiva(NGRAM_DATA.corpus, c1, 1).totale);
+    const r2 = contaParolaSuccessiva(NGRAM_DATA.corpus, c2, 2);
+    renderNgramBars(bars2w2, r2.conteggi, r2.totale);
+  }
+  input2.addEventListener('input', updateNgram2);
+  updateNgram2();
+
+  // ---- 2.3: predittore completo con slider (1-3) e preimpostazioni ----
+  creaWidgetNgram({
+    inputId: 'pg-input-ngram3', barsId: 'ngram-bars-3',
+    sliderId: 'ngram-slider-3', sliderValId: 'ngram-slider-3-val',
+    exampleBtnSelector: '#u3-sez-markov .pg-example-btn'
+  });
+
+  // ---- 2.4: stesso predittore, di default sulla sparsità ----
+  creaWidgetNgram({
+    inputId: 'pg-input-ngram4', barsId: 'ngram-bars-4',
+    sliderId: 'ngram-slider-4', sliderValId: 'ngram-slider-4-val',
+    exampleBtnSelector: '#u4-sez-sparsita .pg-example-btn'
+  });
+
+  // ============ diagramma di calibrazione (2.2) ============
+  function renderDiagrammaCalibrazione(){
+    const wrap = document.getElementById('calib-svg-wrap');
+    const buckets = CALIBRAZIONE_DATA.bucket_calibrazione;
+    const M = 44, S = 220;
+    const x0 = M, y0 = M + S;
+    function xp(v){ return x0 + v * S; }
+    function yp(v){ return y0 - v * S; }
+    const punti = buckets.map((b, i) => {
+      const r = 6 + Math.sqrt(b.n) * 1.6;
+      return `<circle class="calib-point" data-i="${i}" cx="${xp(b.confidenza_media_bucket).toFixed(1)}" cy="${yp(b.accuratezza_reale).toFixed(1)}" r="${r.toFixed(1)}"/>`;
+    }).join('');
+    wrap.innerHTML = `<svg viewBox="0 0 ${M + S + 24} ${M + S + 24}" xmlns="http://www.w3.org/2000/svg">
+      <line class="calib-axis" x1="${x0}" y1="${M}" x2="${x0}" y2="${y0}"/>
+      <line class="calib-axis" x1="${x0}" y1="${y0}" x2="${x0 + S}" y2="${y0}"/>
+      <line class="calib-diag" x1="${xp(0)}" y1="${yp(0)}" x2="${xp(1)}" y2="${yp(1)}"/>
+      <text class="calib-tick" x="${x0 - 8}" y="${y0 + 4}" text-anchor="end">0</text>
+      <text class="calib-tick" x="${x0 - 8}" y="${M + 4}" text-anchor="end">1</text>
+      <text class="calib-tick" x="${x0}" y="${y0 + 18}" text-anchor="start">0</text>
+      <text class="calib-tick" x="${x0 + S}" y="${y0 + 18}" text-anchor="end">1</text>
+      <text class="calib-axis-label" x="${x0 + S / 2}" y="${y0 + 30}" text-anchor="middle">confidenza dichiarata</text>
+      <text class="calib-axis-label" x="${x0 - 30}" y="${M + S / 2}" text-anchor="middle" transform="rotate(-90 ${x0 - 30} ${M + S / 2})">accuratezza reale</text>
+      ${punti}
+    </svg>`;
+    wrap.querySelectorAll('.calib-point').forEach(c => {
+      c.addEventListener('click', () => {
+        const b = buckets[+c.dataset.i];
+        document.getElementById('calib-detail').innerHTML =
+          `Bucket confidenza ${b.range[0]}–${b.range[1]}: <strong>${b.n}</strong> predizioni valutate, confidenza media dichiarata <strong>${(b.confidenza_media_bucket * 100).toFixed(1)}%</strong>, accuratezza reale misurata <strong>${(b.accuratezza_reale * 100).toFixed(1)}%</strong> — un divario di ${((b.confidenza_media_bucket - b.accuratezza_reale) * 100).toFixed(1)} punti.`;
+      });
+    });
+  }
+  renderDiagrammaCalibrazione();
+</script>
+
+</body>
+</html>

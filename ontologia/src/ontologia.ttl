@@ -1,0 +1,235 @@
+@prefix : <http://example.org/corso-llm-vocabolario#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+
+# Micro-ontologia OWL — corso "Come funzionano i LLM"
+#
+# Fase 3. Condivide il namespace `:` con src/vocabolario.ttl (stesso URI base
+# provvisorio, vedi decisioni-modellazione.md #1): i due file sono pensati per essere
+# caricati insieme nello stesso grafo, non uno dentro l'altro. Niente owl:imports:
+# richiederebbe un IRI dereferenziabile che non esiste ancora (stessa ragione della
+# scelta provvisoria del namespace).
+#
+# Qui si dichiara solo lo schema (classi, proprietà, assiomi) più un aggancio minimo
+# per renderlo autoverificabile: retyping :Tecnica sui nodi già esistenti in
+# vocabolario.ttl che lo meritano. Il grosso del popolamento (individui Teorico,
+# Modulo, Unità, Dataset, e tutte le triple di relazione) resta alla Fase 4.
+#
+# Aggiornamento del 4 settembre 2026: il corso è stato estratto in un repository
+# indipendente e trasformato in saggio in tre Parti (Fondamenti/Genealogia/Meccanismo).
+# :Modulo è stata rinominata :Capitolo e affiancata da una nuova classe :Parte — vedi
+# docs/decisioni-modellazione.md, sezione "Aggiornamento post-estrazione", per il
+# razionale. I commenti che seguono, dove descrivono lo stato originale di Fase 3,
+# non sono stati riscritti (solo le parti divenute inesatte sono state aggiornate).
+
+<http://example.org/corso-llm-vocabolario> a owl:Ontology ;
+    dct:title "Micro-ontologia del saggio «Dal bit alle entità semantiche»"@it ;
+    dct:description "Classi e proprietà che completano il vocabolario SKOS di vocabolario.ttl con la struttura che SKOS non può esprimere: tipi di entità diversi dal Concetto (Tecnica, Teorico, Parte, Capitolo, Unità, Dataset, FiloTrasversale) e relazioni tipizzate fra concetti."@it ;
+    dct:creator "Stefano Bongiovanni" ;
+    dct:created "2026-08-26"^^xsd:date .
+
+
+########################################################################
+# Classi
+########################################################################
+
+:Concetto a owl:Class ;
+    rdfs:label "Concetto"@it ;
+    rdfs:comment "Un termine del vocabolario controllato. Coincide con skos:Concept: ogni skos:Concept di vocabolario.ttl è, per definizione, un Concetto — non è una classe parallela, è la stessa cosa vista dal lato OWL."@it ;
+    owl:equivalentClass skos:Concept .
+
+:Tecnica a owl:Class ;
+    rdfs:label "Tecnica"@it ;
+    rdfs:comment "Un Concetto che denota specificamente un algoritmo o una procedura implementabile (es. BPE, backpropagation), non un'idea teorica. Sottoclasse di Concetto, non categoria alternativa: in Fase 2 questi stessi nodi sono già skos:Concept — qui ricevono un tipo aggiuntivo, non un nodo duplicato (vedi decisioni-modellazione.md, Fase 2 #4, e Fase 3 #1 per la continuità della scelta)."@it ;
+    rdfs:subClassOf :Concetto .
+
+:Teorico a owl:Class ;
+    rdfs:label "Teorico"@it ;
+    rdfs:comment "Una persona citata nel corso come autrice di un concetto, una tecnica o un'obiezione (es. Gödel, Bateson, Wei et al.). Mai un Concetto: una persona non è un termine del vocabolario (vedi decisioni-modellazione.md, Fase 2 #2)."@it .
+
+:Parte a owl:Class ;
+    rdfs:label "Parte"@it ;
+    rdfs:comment "Sezione di primo livello del saggio (Fondamenti, Genealogia, Meccanismo). Aggiunta nell'aggiornamento del 4 settembre 2026: prima della trasformazione in saggio a tre Parti, il corso aveva un solo livello sopra Capitolo/Unità."@it .
+
+:ParteFondamenti a :Parte ; rdfs:label "Fondamenti"@it .
+:ParteGenealogia a :Parte ; rdfs:label "Genealogia"@it .
+:ParteMeccanismo a :Parte ; rdfs:label "Meccanismo"@it .
+
+:Capitolo a owl:Class ;
+    rdfs:label "Capitolo"@it ;
+    rdfs:comment "Unità organizzativa di secondo livello (es. «Meccanismo · 3», «Genealogia · 2», «Fondamenti · 1»), appartenente a esattamente una Parte. Struttura del corpus sorgente, non un termine del dominio. Rinominata da :Modulo il 4 settembre 2026 — stessa semantica, nome aggiornato perché ora Genealogia e Meccanismo condividono davvero la stessa struttura (prima 'Modulo' andava bene solo per l'area tecnica)."@it .
+
+:Unita a owl:Class ;
+    rdfs:label "Unità"@it ;
+    rdfs:comment "Unità didattica di terzo livello dentro un Capitolo (es. «Meccanismo · 3.4», «Genealogia · 2.2»). Introdotta oltre a Capitolo — non prevista esplicitamente nel piano approvato — perché il corso ha davvero più livelli di struttura, non uno solo: comprimerli in una sola classe avrebbe perso l'informazione di contenimento (vedi decisioni-modellazione.md, Fase 3 #2). I 2 Capitoli di Fondamenti non hanno Unità proprie — restano l'unità citabile più fine (vedi :discussoInUnita)."@it .
+
+:Dataset a owl:Class ;
+    rdfs:label "Dataset"@it ;
+    rdfs:comment "Un dato o asset concreto costruito per il corso a supporto di un Concetto (es. il vocabolario BPE addestrato, gli embedding fastText). Evidenza a favore di un concetto, non il concetto stesso."@it .
+
+:FiloTrasversale a owl:Class ;
+    rdfs:label "Filo trasversale"@it ;
+    rdfs:comment "Un percorso di lettura ordinato attraverso più Concetti già definiti (es. discreto/continuo). Le tre istanze esistono già in vocabolario.ttl come skos:OrderedCollection; qui ricevono un tipo aggiuntivo per renderle interrogabili come categoria a sé."@it .
+
+:StatoEpistemico a owl:Class ;
+    rdfs:label "Stato epistemico"@it ;
+    rdfs:comment "Classe chiusa a due soli individui: distingue un Dataset costruito da dati reali e verificati da uno dichiaratamente illustrativo. Modellata come classe enumerata (owl:oneOf), non come stringa libera, perché il corso stesso tratta questa distinzione come un'alternativa chiusa e ricorrente (dichiarata esplicitamente nei metadata di più file .json), non come testo descrittivo — vedi decisioni-modellazione.md, Fase 3 #4."@it ;
+    owl:oneOf ( :Reale :Illustrativo ) .
+
+:Reale a :StatoEpistemico ;
+    rdfs:label "Reale"@it ;
+    rdfs:comment "Dato costruito da un processo reale e verificato algoritmicamente (es. BPE addestrato per davvero, embedding fastText autentici)."@it .
+
+:Illustrativo a :StatoEpistemico ;
+    rdfs:label "Illustrativo"@it ;
+    rdfs:comment "Dato dichiarato esplicitamente come illustrativo/pedagogico, non output di un processo reale (es. i pesi di attention di Meccanismo · 5, scritti a mano)."@it .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( :Concetto :Teorico :Parte :Capitolo :Unita :Dataset :FiloTrasversale ) .
+# Nota: da verificare in Fase 4 che owlrl (il motore usato per la validazione) applichi
+# davvero l'inferenza su owl:AllDisjointClasses, non solo su owl:disjointWith a coppie —
+# se il reasoner non la rispetta, va sostituita con coppie esplicite (vedi rischi tecnici
+# del piano, #3: curva zero-a-RDF/OWL/SPARQL/SHACL).
+
+
+########################################################################
+# Proprietà — object properties fra Concetti
+########################################################################
+#
+# Il piano approvato elencava sei proprietà provvisorie (prerequisitoDi,
+# esemplificaTecnica, partOfModulo, discussoIn, contrappostoA, citaOpera), decise
+# prima di guardare le relazioni reali estratte in Fase 1. Viste le ~38 relazioni
+# osservate — più varie e più precise di sei etichette generiche (risolve, è
+# analogo a, rende operativo un'idea più vaga, ecc.) — ho preferito adattare lo
+# schema di proprietà a quanto il corso dice davvero, invece di forzare le
+# relazioni reali dentro le sei etichette decise in anticipo (vedi
+# decisioni-modellazione.md, Fase 3 #3).
+
+:prerequisitoDi a owl:ObjectProperty, owl:TransitiveProperty ;
+    rdfs:label "è prerequisito di"@it ;
+    rdfs:comment "Un concetto è necessario per comprendere un altro (es. Tokenizzazione prerequisito di Embedding). Transitiva: se A è prerequisito di B e B di C, A è prerequisito di C — coerente con come il corso incatena i propri argomenti."@it ;
+    rdfs:domain :Concetto ; rdfs:range :Concetto .
+
+:risolve a owl:ObjectProperty ;
+    rdfs:label "risolve"@it ;
+    rdfs:comment "Un concetto/tecnica supera un limite esplicitamente enunciato di un altro concetto (es. Attention risolve Dipendenze a lungo raggio). Il caso negativo (Perceptron NON risolve XOR) non è modellato come assioma formale — vedi decisioni-modellazione.md, Fase 3 #5."@it ;
+    rdfs:domain :Concetto ; rdfs:range :Concetto .
+
+:analogoA a owl:ObjectProperty, owl:SymmetricProperty ;
+    rdfs:label "è analogo a"@it ;
+    rdfs:comment "Somiglianza strutturale dichiarata dal corso fra due concetti di ambiti diversi (es. Embedding contestuale analogo a misura quantistica). Simmetrica: l'analogia vale in entrambe le direzioni."@it ;
+    rdfs:domain :Concetto ; rdfs:range :Concetto .
+
+:contrappostoA a owl:ObjectProperty, owl:SymmetricProperty ;
+    rdfs:label "si contrappone a"@it ;
+    rdfs:comment "Due concetti messi in tensione esplicita dal corso (es. Embedding contestuale contrapposto a Embedding statico). Simmetrica."@it ;
+    rdfs:domain :Concetto ; rdfs:range :Concetto .
+
+:esemplifica a owl:ObjectProperty ;
+    rdfs:label "esemplifica"@it ;
+    rdfs:comment "Un caso concreto o più specifico illustra un concetto più generale (es. Word2Vec esemplifica Capacità emergenti)."@it ;
+    rdfs:domain :Concetto ; rdfs:range :Concetto .
+
+:spiegataDa a owl:ObjectProperty ;
+    rdfs:label "è spiegata da"@it ;
+    rdfs:comment "Un fenomeno trova la propria causa/spiegazione in un altro concetto (es. Sparsità è spiegata da l'assenza di vicinanza nella rappresentazione discreta)."@it ;
+    rdfs:domain :Concetto ; rdfs:range :Concetto .
+
+:rendeOperativo a owl:ObjectProperty ;
+    rdfs:label "rende operativo"@it ;
+    rdfs:comment "Un concetto traduce in forma calcolabile o tecnicamente precisa un'idea più generale o filosofica (es. Ipotesi distribuzionale rende operativo Significato come uso; Autopoiesi dà vocabolario preciso a un'osservazione del Blocco B). Le due formulazioni distinte in Fase 1 («rende operativa», «dà vocabolario preciso a») condividono la stessa struttura — una formalizzazione successiva di un'idea preesistente — e sono state unificate in questa unica proprietà."@it ;
+    rdfs:domain :Concetto ; rdfs:range :Concetto .
+
+:collegatoA a owl:ObjectProperty, owl:SymmetricProperty ;
+    rdfs:label "è collegato a"@it ;
+    rdfs:comment "Associazione debole, non altrimenti tipizzabile con le proprietà sopra (es. Ragionamento causale di Pearl collegato all'inferenza causale di Hume). Da usare con parsimonia: è il fallback generico esplicitamente evitato come skos:related in Fase 2 — qui è ammesso perché a livello OWL resta comunque distinto e tipizzato (una relazione fra due Concetti nominata esplicitamente), non un'etichetta indifferenziata su tutto."@it ;
+    rdfs:domain :Concetto ; rdfs:range :Concetto .
+
+
+########################################################################
+# Proprietà — Concetto/Tecnica verso Teorico
+########################################################################
+
+:teorizzatoDa a owl:ObjectProperty ;
+    rdfs:label "teorizzato da"@it ;
+    rdfs:comment "Il concetto è l'elaborazione teorica principale di un Teorico (es. Autopoiesi teorizzato da Varela e Maturana)."@it ;
+    rdfs:domain :Concetto ; rdfs:range :Teorico .
+
+:messoInDiscussioneDa a owl:ObjectProperty ;
+    rdfs:label "messo in discussione da"@it ;
+    rdfs:comment "Un Teorico contesta o problematizza il concetto dopo la sua prima formulazione (es. Capacità emergenti messo in discussione da Schaeffer et al. 2023)."@it ;
+    rdfs:domain :Concetto ; rdfs:range :Teorico .
+
+:riprendeArgomentazioneDi a owl:ObjectProperty ;
+    rdfs:label "riprende l'argomentazione di"@it ;
+    rdfs:comment "Un Teorico risponde, riformula o prosegue esplicitamente l'argomentazione di un altro Teorico (es. Lucas riprende contro Turing; Penrose riprende Lucas). Tenuta deliberatamente Teorico→Teorico, non estesa a Teorico→Concetto, per restare distinta da teorizzatoDa/messoInDiscussioneDa — una perdita minima di espressività su 2-3 relazioni di Fase 1, accettata per non moltiplicare le proprietà."@it ;
+    rdfs:domain :Teorico ; rdfs:range :Teorico .
+
+
+########################################################################
+# Proprietà — struttura Parte/Capitolo/Unità e collegamento al vocabolario
+########################################################################
+
+:partOfParte a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:label "fa parte della parte"@it ;
+    rdfs:comment "Un Capitolo appartiene a esattamente una Parte (funzionale). Aggiunta il 4 settembre 2026 col nuovo livello :Parte."@it ;
+    rdfs:domain :Capitolo ; rdfs:range :Parte .
+
+:partOfCapitolo a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:label "fa parte del capitolo"@it ;
+    rdfs:comment "Un'Unità appartiene a esattamente un Capitolo (funzionale: non si assegnano due capitoli alla stessa unità). Rinominata da :partOfModulo il 4 settembre 2026, stessa semantica."@it ;
+    rdfs:domain :Unita ; rdfs:range :Capitolo .
+
+:rimandaA a owl:ObjectProperty ;
+    rdfs:label "rimanda a"@it ;
+    rdfs:comment "Riferimento narrativo esplicito da un'Unità a un'altra, spesso a distanza (es. Genealogia · 1.2 pianta una domanda ripresa in Meccanismo · 1.5). Non transitiva: un rimando non compone automaticamente una catena di prerequisiti."@it ;
+    rdfs:domain :Unita ; rdfs:range :Unita .
+
+:discussoInUnita a owl:ObjectProperty ;
+    rdfs:label "discusso in unità"@it ;
+    rdfs:comment "Versione OWL, verso individui Unità o Capitolo reali, della property-ponte informale :fonte introdotta in Fase 2 (stringa). Le due proprietà coesistono deliberatamente: :fonte resta nel file SKOS così com'è (non viene riscritto meccanicamente, solo aggiornato ai nuovi codici), :discussoInUnita viene popolata in Fase 4 con gli stessi riferimenti, ora come relazione OWL vera e propria. Range allargato a owl:unionOf(:Unita :Capitolo) il 4 settembre 2026: i 2 Capitoli di Fondamenti non hanno Unità proprie (nessuna sotto-unità nel saggio), e sono comunque un bersaglio valido — l'alternativa scartata era dual-tipizzare quei 2 Capitoli anche come :Unita, il che avrebbe richiesto un :partOfCapitolo auto-referenziale (vedi decisioni-modellazione.md, Aggiornamento post-estrazione)."@it ;
+    rdfs:domain :Concetto ; rdfs:range [ a owl:Class ; owl:unionOf ( :Unita :Capitolo ) ] .
+
+
+########################################################################
+# Proprietà — Dataset
+########################################################################
+
+:haStatoEpistemico a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:label "ha stato epistemico"@it ;
+    rdfs:comment "Ogni Dataset ha esattamente uno stato epistemico (Reale o Illustrativo)."@it ;
+    rdfs:domain :Dataset ; rdfs:range :StatoEpistemico .
+
+:citaOpera a owl:DatatypeProperty ;
+    rdfs:label "cita opera"@it ;
+    rdfs:comment "Riferimento bibliografico in forma di stringa (es. \"The Computer and the Brain, 1958\"), attaccato al Teorico citato. Stringa e non una classe Opera a sé: modellare una vera ontologia bibliografica (autori, edizioni, venue) sarebbe sproporzionato rispetto allo scopo — qui basta poter leggere la citazione, non interrogarla come entità propria."@it ;
+    rdfs:domain :Teorico ; rdfs:range xsd:string .
+
+:dataVerifica a owl:DatatypeProperty, owl:FunctionalProperty ;
+    rdfs:label "data di verifica"@it ;
+    rdfs:comment "Data in cui il contenuto di un Dataset è stato verificato algoritmicamente (es. round-trip del tokenizzatore BPE, calcolo dell'aritmetica vettoriale)."@it ;
+    rdfs:domain :Dataset ; rdfs:range xsd:date .
+
+
+########################################################################
+# Retyping — aggancio minimo per rendere lo schema autoverificabile
+#
+# Solo i nodi già skos:Concept in vocabolario.ttl che denotano specificamente un
+# algoritmo/procedura implementabile ricevono qui il tipo aggiuntivo :Tecnica.
+# Nessun nodo nuovo creato, nessuna tripla di vocabolario.ttl toccata. Sono
+# esattamente le 18 voci della tabella "Tecnica/Algoritmo" di Fase 1 — la
+# corrispondenza 1:1 col conteggio originale non è ricercata, è una conferma che la
+# categoria non era arbitraria.
+########################################################################
+
+:Bpe a :Tecnica . :AsciiUnicode a :Tecnica . :DiagonaleDiCantor a :Tecnica .
+:Word2Vec a :Tecnica . :FastText a :Tecnica . :Backpropagation a :Tecnica .
+:HiddenMarkovModel a :Tecnica . :SupportVectorMachine a :Tecnica .
+:RetiRicorrentiLstm a :Tecnica . :ReliabilityDiagram a :Tecnica .
+:Attention a :Tecnica . :Softmax a :Tecnica . :MultiHeadAttention a :Tecnica .
+:CodificaPosizione a :Tecnica . :DiscesaDelGradiente a :Tecnica .
+:Rlhf a :Tecnica . :FineTuning a :Tecnica . :Quantizzazione a :Tecnica .

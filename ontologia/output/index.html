@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vocabolario del saggio «Dal bit alle entità semantiche» — Vocabolario del saggio «Dal bit alle entità semantiche»</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="pagina">
+
+<header class="testata">
+<span class="apparato">Vocabolario del saggio «Dal bit alle entità semantiche»</span>
+<h1>Vocabolario del saggio «Dal bit alle entità semantiche»</h1>
+<p class="sottotitolo">Un vocabolario controllato, una micro-ontologia, tre modi di leggerli</p>
+</header>
+
+<p>Tre modi di consultare lo stesso modello — un vocabolario controllato (SKOS) e una
+micro-ontologia (OWL) costruiti sul saggio «Dal bit alle entità semantiche» — a seconda
+di cosa si sta cercando.</p>
+<div class="griglia-indice">
+<a class="card-nav" href="concetti/index.html"><span class="titolo-card">Glossario</span><span class="desc-card">111 concetti per area tematica — parti da un termine</span></a>
+<a class="card-nav" href="moduli/index.html"><span class="titolo-card">Moduli</span><span class="desc-card">12 capitoli in 3 Parti — parti dalla struttura del saggio</span></a>
+<a class="card-nav" href="fili/index.html"><span class="titolo-card">Fili trasversali</span><span class="desc-card">3 percorsi di lettura ordinati attraverso le Parti</span></a>
+<a class="card-nav" href="teorici/index.html"><span class="titolo-card">Teorici</span><span class="desc-card">64 nomi citati — parti da un autore</span></a>
+</div>
+<h2>Sul progetto</h2>
+<p>Vocabolario, ontologia, dati e questa struttura di consultazione sono generati/scritti
+a partire da un unico grafo RDF (<code>src/*.ttl</code>), validato con un reasoner OWL-RL
+e con SHACL. Il documento delle decisioni di modellazione —
+<code>docs/decisioni-modellazione.md</code> — è il deliverable primario del progetto: qui
+solo la sua superficie navigabile.</p>
+
+<footer class="piede">
+Generato da <code>scripts/genera_html.py</code> a partire da
+<code>src/vocabolario.ttl</code>, <code>src/ontologia.ttl</code>,
+<code>src/dati.ttl</code>. Istantanea del saggio al 26 agosto 2026, aggiornata alla
+nuova struttura in tre Parti il 4 settembre 2026 — vedi
+<code>docs/decisioni-modellazione.md</code> per il razionale delle scelte di
+modellazione.
+</footer>
+</div>
+</body>
+</html>

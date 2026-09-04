@@ -1,0 +1,120 @@
+@prefix : <http://example.org/corso-llm-vocabolario#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+# Shape SHACL — Fase 4. Vincoli di forma sui dati popolati in dati.ttl, non
+# ridondanti con quanto un reasoner OWL-RL già inferisce (l'inconsistenza
+# logica — es. disjointness violata — è già verificata via owlrl in
+# scripts/valida.py; qui si verifica la FORMA dei dati: campi obbligatori,
+# cardinalità, lingua delle etichette, assenza di cicli).
+#
+# Aggiornato il 4 settembre 2026: :ModuloShape -> :CapitoloShape (segue la rinomina
+# :Modulo -> :Capitolo in ontologia.ttl), nuova :ParteShape per il livello aggiunto.
+
+:ConcettoShape a sh:NodeShape ;
+    sh:targetClass skos:Concept ;
+    sh:property [
+        sh:path skos:prefLabel ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:languageIn ( "it" ) ;
+        sh:message "Ogni Concetto deve avere esattamente un skos:prefLabel in italiano."@it ;
+    ] ;
+    sh:property [
+        sh:path skos:scopeNote ;
+        sh:languageIn ( "it" ) ;
+        sh:message "Se presente, skos:scopeNote deve essere in italiano."@it ;
+    ] .
+
+:UnitaShape a sh:NodeShape ;
+    sh:targetClass :Unita ;
+    sh:property [
+        sh:path :partOfCapitolo ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:class :Capitolo ;
+        sh:message "Ogni Unità deve appartenere a esattamente un Capitolo."@it ;
+    ] ;
+    sh:property [
+        sh:path rdfs:label ;
+        sh:minCount 1 ;
+        sh:message "Ogni Unità deve avere un'etichetta."@it ;
+    ] .
+
+# Rinominata da :ModuloShape il 4 settembre 2026 insieme alla classe :Modulo -> :Capitolo.
+:CapitoloShape a sh:NodeShape ;
+    sh:targetClass :Capitolo ;
+    sh:property [
+        sh:path :partOfParte ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:class :Parte ;
+        sh:message "Ogni Capitolo deve appartenere a esattamente una Parte."@it ;
+    ] ;
+    sh:property [
+        sh:path rdfs:label ;
+        sh:minCount 1 ;
+        sh:message "Ogni Capitolo deve avere un'etichetta."@it ;
+    ] .
+
+# Nuova il 4 settembre 2026, col livello :Parte.
+:ParteShape a sh:NodeShape ;
+    sh:targetClass :Parte ;
+    sh:property [
+        sh:path rdfs:label ;
+        sh:minCount 1 ;
+        sh:message "Ogni Parte deve avere un'etichetta."@it ;
+    ] .
+
+:TeoricoShape a sh:NodeShape ;
+    sh:targetClass :Teorico ;
+    sh:property [
+        sh:path rdfs:label ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:message "Ogni Teorico deve avere esattamente un'etichetta (il nome)."@it ;
+    ] .
+
+:DatasetShape a sh:NodeShape ;
+    sh:targetClass :Dataset ;
+    sh:property [
+        sh:path :haStatoEpistemico ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:class :StatoEpistemico ;
+        sh:message "Ogni Dataset deve avere esattamente uno stato epistemico (Reale o Illustrativo)."@it ;
+    ] ;
+    sh:property [
+        sh:path rdfs:label ;
+        sh:minCount 1 ;
+        sh:message "Ogni Dataset deve avere un'etichetta."@it ;
+    ] .
+
+# Nessun concetto è prerequisito di sé stesso, direttamente o transitivamente.
+# prerequisitoDi è dichiarata owl:TransitiveProperty in ontologia.ttl: un ciclo
+# nei dati creerebbe un concetto che (dopo l'inferenza transitiva) risulta
+# prerequisito di sé stesso — la property path prerequisitoDi+ intercetta la
+# chiusura transitiva senza bisogno di materializzarla a mano.
+:NoCicloPrerequisito a sh:NodeShape ;
+    sh:targetClass skos:Concept ;
+    sh:sparql [
+        sh:message "Un concetto non può essere prerequisito (anche transitivamente) di sé stesso — ciclo rilevato."@it ;
+        sh:select """
+            PREFIX : <http://example.org/corso-llm-vocabolario#>
+            SELECT $this
+            WHERE { $this :prerequisitoDi+ $this . }
+        """ ;
+    ] .
+
+# Nessun concetto è dichiarato analogo/contrapposto/collegato a sé stesso —
+# errore di trascrizione più probabile di una vera auto-relazione.
+:NoAutoRelazione a sh:NodeShape ;
+    sh:targetClass skos:Concept ;
+    sh:sparql [
+        sh:message "Un concetto non dovrebbe essere analogoA/contrappostoA/collegatoA sé stesso."@it ;
+        sh:select """
+            PREFIX : <http://example.org/corso-llm-vocabolario#>
+            SELECT $this
+            WHERE {
+                { $this :analogoA $this . }
+                UNION { $this :contrappostoA $this . }
+                UNION { $this :collegatoA $this . }
+            }
+        """ ;
+    ] .

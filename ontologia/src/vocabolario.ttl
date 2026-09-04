@@ -1,0 +1,833 @@
+@prefix : <http://example.org/corso-llm-vocabolario#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Vocabolario controllato SKOS — corso "Come funzionano i LLM"
+#
+# Fase 2 del progetto (vedi docs/decisioni-modellazione.md per il razionale completo
+# delle scelte qui applicate). Namespace `:` provvisorio (http://example.org/...):
+# la scelta dell'URI base definitivo è rimandata alla pubblicazione, vedi decision-log.
+#
+# Convenzioni valide per l'intero file:
+# - skos:broader è asserito solo sui figli, mai skos:narrower sui genitori (le due
+#   proprietà sono l'una l'inversa dell'altra: un reasoner o una query SPARQL le
+#   deriva, non serve mantenerne due copie a mano).
+# - skos:broader/narrower è riservato a relazioni is-a o parte-tutto genuine.
+#   Relazioni procedurali, causali o di prerequisito (es. "backpropagation rende
+#   possibile la discesa del gradiente su reti profonde") NON sono forzate qui:
+#   restano riservate alle object property OWL tipizzate della Fase 3, anche quando
+#   l'ordine pedagogico del corso le renderebbe tentanti da annidare.
+# - `:fonte` è una property-ponte leggera (stringa, non risorsa): i codici di
+#   unità/lezione di corso-llm in cui il concetto compare in modo sostanziale. In
+#   Fase 3/4 sarà affiancata da una relazione OWL reale verso individui Modulo/Unità.
+# - Le persone/teorici citati NON sono skos:Concept in questo schema: diventano
+#   individui OWL di classe Teorico in Fase 3 (vedi decisioni-modellazione.md).
+# - I "fili trasversali" sono modellati come skos:OrderedCollection in fondo al file,
+#   non come skos:Concept: sono raggruppamenti tematici ordinati di concetti già
+#   definiti sopra, non termini a sé.
+#
+# Aggiornamento del 4 settembre 2026: il corso è stato estratto in un repository
+# indipendente (~/projects/cartografia-semantica/) e trasformato in saggio in tre
+# Parti (Fondamenti/Genealogia/Meccanismo, titolo "Dal bit alle entità semantiche").
+# Tutti i 111 valori :fonte sono stati riscritti per riflettere la nuova numerazione
+# (vecchi codici Blocco A-D/Modulo 00 → Genealogia/Fondamenti) — vedi
+# docs/decisioni-modellazione.md, sezione "Aggiornamento post-estrazione", per la
+# tabella di mappatura completa e il razionale. I commenti sopra, dove descrivono lo
+# stato originale di Fase 2, non sono stati riscritti.
+
+:fonte a rdf:Property ;
+    rdfs:label "fonte"@it ;
+    rdfs:comment "Riferimento leggero, in forma di stringa, alle unità didattiche di corso-llm in cui il concetto è introdotto o usato in modo sostanziale. Placeholder informale, non una risorsa dereferenziabile: in Fase 3/4 sarà affiancato da una relazione OWL tipizzata verso individui Modulo/Unità reali."@it ;
+    rdfs:range xsd:string .
+
+:CorsoLLM a skos:ConceptScheme ;
+    dct:title "Vocabolario controllato del saggio «Dal bit alle entità semantiche»"@it ;
+    dct:description "Vocabolario SKOS estratto dal saggio interattivo «Dal bit alle entità semantiche» (~/projects/cartografia-semantica/src/saggio/, sola lettura — ex corso «Come funzionano i LLM», estratto da qa-tool il 2 settembre 2026). Istantanea datata al 26 agosto 2026, aggiornata alla nuova struttura in tre Parti (Fondamenti/Genealogia/Meccanismo) il 4 settembre 2026 — stato dichiarato definitivo dall'autore in quella data, il vocabolario comunque non si aggiorna da solo se il saggio cambia ancora."@it ;
+    dct:creator "Stefano Bongiovanni" ;
+    dct:created "2026-08-26"^^xsd:date ;
+    dct:modified "2026-09-04"^^xsd:date ;
+    skos:hasTopConcept
+        :Discretizzazione, :FondamentiLogicoMatematici, :StoriaIntelligenzaArtificiale,
+        :ProbabilitaEPrevisioneLinguistica, :SpazioSemanticoEEmbedding,
+        :ReteNeuraleEApprendimento, :BiologiaCognizioneETeoriaSistemi,
+        :TransformerEAttenzione, :CapacitaELimitiDeiLlm, :FilosofiaLinguaggioEMente,
+        :FilosofiaSpazioECorpo, :HardwareEFondamentaComputazionali,
+        :AddestramentoEScala, :RiflessioniEpistemologicheTrasversali .
+
+
+########################################################################
+# 1. Discretizzazione
+########################################################################
+
+:Discretizzazione a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:topConceptOf :CorsoLLM ;
+    skos:prefLabel "Discretizzazione"@it ;
+    skos:scopeNote "Trasformazione di un continuo in simboli finiti ricombinabili; tesi d'apertura del corso: nasce con la scrittura/l'alfabeto, non con il computer."@it ;
+    :fonte "Meccanismo · 1.1; Meccanismo · 6.3; Fondamenti · 2" .
+
+:Encoding a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :Discretizzazione ;
+    skos:prefLabel "Encoding"@it ;
+    skos:scopeNote "Corrispondenza tabellare fissa carattere→numero: il testo è già numeri prima di ogni LLM."@it ;
+    :fonte "Meccanismo · 1.1" .
+
+:AsciiUnicode a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :Encoding ;
+    skos:prefLabel "ASCII / Unicode"@it ;
+    skos:scopeNote "Tabelle di corrispondenza carattere→numero: ASCII limitata all'inglese, Unicode oltre 149.000 simboli."@it ;
+    :fonte "Meccanismo · 1.1" .
+
+:Tokenizzazione a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :Discretizzazione ;
+    skos:prefLabel "Tokenizzazione"@it ;
+    skos:scopeNote "Segmentazione del testo in token, unità decise statisticamente e non coincidenti con le parole del dizionario."@it ;
+    :fonte "Meccanismo · 1.2, 1.3" .
+
+:Bpe a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :Tokenizzazione ;
+    skos:prefLabel "BPE — Byte-Pair Encoding"@it ;
+    skos:altLabel "Byte-Pair Encoding"@it ;
+    skos:scopeNote "Algoritmo di tokenizzazione a sotto-parole; nel corso addestrato realmente sul testo di Genealogia (Sennrich et al. 2016)."@it ;
+    :fonte "Meccanismo · 1.2, 1.3" .
+
+:Token a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :Discretizzazione ;
+    skos:prefLabel "Token"@it ;
+    skos:scopeNote "Unità minima su cui opera un LLM: parola intera, frammento di parola o carattere."@it ;
+    :fonte "Meccanismo · 1.2–1.5" .
+
+:TokenId a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :Discretizzazione ;
+    skos:prefLabel "ID numerico (token ID)"@it ;
+    skos:scopeNote "Numero arbitrario assegnato a ogni token; nessuna relazione di vicinanza con token semanticamente affini."@it ;
+    :fonte "Meccanismo · 1.4" .
+
+:ProblemaDelVocabolario a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :Discretizzazione ;
+    skos:prefLabel "Problema del vocabolario"@it ;
+    skos:scopeNote "Impossibilità strutturale di un dizionario fisso di «tutte le parole» (neologismi, errori, nomi propri)."@it ;
+    :fonte "Meccanismo · 1.3" .
+
+
+########################################################################
+# 2. Fondamenti logico-matematici
+########################################################################
+
+:FondamentiLogicoMatematici a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:topConceptOf :CorsoLLM ;
+    skos:prefLabel "Fondamenti logico-matematici"@it ;
+    skos:scopeNote "L'arco A.1–A.2/1.5 del corso: dal sogno del pensiero come calcolo ai limiti dimostrati dei sistemi formali."@it ;
+    :fonte "Genealogia · 1.1–1.2; Meccanismo · 1.5" .
+
+:SistemaFormale a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :FondamentiLogicoMatematici ;
+    skos:prefLabel "Sistema formale"@it ;
+    skos:scopeNote "Alfabeto finito di simboli e regole finite per combinarli in dimostrazioni; oggetto discreto ed enumerabile."@it ;
+    :fonte "Meccanismo · 1.5; Genealogia · 1.2, 1.6" .
+
+:Numerabilita a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :FondamentiLogicoMatematici ;
+    skos:prefLabel "Numerabilità"@it ;
+    skos:altLabel "Insieme numerabile"@it ;
+    skos:scopeNote "Proprietà di un insieme elencabile con metodo sistematico (vocabolario di token, sistema formale); si contrappone al continuo dei reali."@it ;
+    :fonte "Meccanismo · 1.5; Meccanismo · 3.1" .
+
+:TeoremaIncompletezzaGodel a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :FondamentiLogicoMatematici ;
+    skos:prefLabel "Teorema di incompletezza di Gödel"@it ;
+    skos:scopeNote "Nessun sistema formale coerente abbastanza potente può dimostrare tutte le proprie verità aritmetiche (1931)."@it ;
+    :fonte "Genealogia · 1.2; Meccanismo · 1.5" .
+
+:Aritmetizzazione a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :TeoremaIncompletezzaGodel ;
+    skos:prefLabel "Aritmetizzazione"@it ;
+    skos:scopeNote "La mossa tecnica di Gödel: codificare simboli, formule e dimostrazioni come numeri, per rendere un sistema autoreferenziale."@it ;
+    :fonte "Genealogia · 1.2; Meccanismo · 1.5" .
+
+:TestDiTuring a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :FondamentiLogicoMatematici ;
+    skos:prefLabel "Test di Turing"@it ;
+    skos:altLabel "Imitation Game"@it ;
+    skos:scopeNote "Sostituzione della domanda «può pensare?» con «può ingannare un osservatore abbastanza a lungo?»."@it ;
+    :fonte "Genealogia · 1.2" .
+
+:DiagonaleDiCantor a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :FondamentiLogicoMatematici ;
+    skos:prefLabel "Diagonale di Cantor"@it ;
+    skos:altLabel "Argomento diagonale"@it ;
+    skos:scopeNote "Tecnica dimostrativa: genera, cifra per cifra, un numero assente da qualsiasi lista numerabile data — fondamento della non numerabilità del continuo."@it ;
+    :fonte "Meccanismo · 1.5; Meccanismo · 3.1" .
+
+
+########################################################################
+# 3. Storia dell'intelligenza artificiale (simbolica → statistica)
+########################################################################
+
+:StoriaIntelligenzaArtificiale a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:topConceptOf :CorsoLLM ;
+    skos:prefLabel "Storia dell'intelligenza artificiale"@it ;
+    skos:scopeNote "L'arco narrativo di Genealogia · 1: dai sistemi simbolici ai loro limiti, alla «rivincita statistica»."@it ;
+    :fonte "Genealogia · 1.1–1.6" .
+
+:SistemaEsperto a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :StoriaIntelligenzaArtificiale ;
+    skos:prefLabel "Sistema esperto"@it ;
+    skos:scopeNote "Motore di regole se-allora scritte a mano da un esperto umano; funziona in domini chiusi, fragile fuori (MYCIN, XCON)."@it ;
+    :fonte "Genealogia · 1.4" .
+
+:Brittleness a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :StoriaIntelligenzaArtificiale ;
+    skos:prefLabel "Brittleness (fragilità)"@it ;
+    skos:scopeNote "Collasso improvviso, non graduale, di un sistema esperto fuori dal proprio dominio ristretto."@it ;
+    :fonte "Genealogia · 1.4" .
+
+:DeepLearning a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :StoriaIntelligenzaArtificiale ;
+    skos:prefLabel "Deep learning"@it ;
+    skos:scopeNote "Addestramento praticabile di reti profonde, reso possibile da dati e hardware sufficienti — non da un'idea nuova (2006)."@it ;
+    :fonte "Genealogia · 1.5" .
+
+:HiddenMarkovModel a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :StoriaIntelligenzaArtificiale ;
+    skos:prefLabel "Hidden Markov Model"@it ;
+    skos:scopeNote "Modello statistico che porta progressi nel riconoscimento vocale, esempio della «rivincita statistica»."@it ;
+    :fonte "Genealogia · 1.4" .
+
+:SupportVectorMachine a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :StoriaIntelligenzaArtificiale ;
+    skos:prefLabel "Support Vector Machine"@it ;
+    skos:scopeNote "Metodo di classificazione formalizzato da Vladimir Vapnik, altro esempio della fase statistica."@it ;
+    :fonte "Genealogia · 1.4" .
+
+:RetiRicorrentiLstm a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :StoriaIntelligenzaArtificiale ;
+    skos:prefLabel "Reti ricorrenti / LSTM"@it ;
+    skos:scopeNote "Elaborazione sequenziale con stato che riassume il passato; tentativo pre-Transformer, limitato su distanze lunghe."@it ;
+    :fonte "Genealogia · 1.6" .
+
+
+########################################################################
+# 4. Probabilità e previsione linguistica
+########################################################################
+
+:ProbabilitaEPrevisioneLinguistica a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:topConceptOf :CorsoLLM ;
+    skos:prefLabel "Probabilità e previsione linguistica"@it ;
+    skos:scopeNote "Il Modulo 2: la prima crepa nel discreto, dal conteggio di frequenze alla previsione probabilistica."@it ;
+    :fonte "Meccanismo · 2.1–2.4" .
+
+:ProbabilitaComeNumeroReale a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :ProbabilitaEPrevisioneLinguistica ;
+    skos:prefLabel "Probabilità (come numero reale)"@it ;
+    skos:scopeNote "Prima «crepa nel discreto»: gradazione continua fra 0 e 1, non più solo vero/falso."@it ;
+    :fonte "Meccanismo · 2.2" .
+
+:Induzione a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :ProbabilitaEPrevisioneLinguistica ;
+    skos:prefLabel "Induzione"@it ;
+    skos:scopeNote "Generalizzare da casi osservati (conteggio di frequenze) a una regola probabile, non certa."@it ;
+    :fonte "Meccanismo · 2.2" .
+
+:Calibrazione a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :ProbabilitaEPrevisioneLinguistica ;
+    skos:prefLabel "Calibrazione"@it ;
+    skos:scopeNote "Proprietà per cui, tra le previsioni fatte con una data confidenza, quella percentuale risulta poi effettivamente corretta."@it ;
+    :fonte "Genealogia · 2.2; Meccanismo · 2.2" .
+
+:ReliabilityDiagram a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :ProbabilitaEPrevisioneLinguistica ;
+    skos:prefLabel "Reliability diagram"@it ;
+    skos:altLabel "Diagramma di calibrazione"@it ;
+    skos:scopeNote "Grafico confidenza dichiarata vs. accuratezza reale, usato per misurare la calibrazione."@it ;
+    :fonte "Meccanismo · 2.2" .
+
+:Ngramma a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :ProbabilitaEPrevisioneLinguistica ;
+    skos:prefLabel "N-gramma"@it ;
+    skos:scopeNote "Finestra di N parole di contesto usata per contare e prevedere la parola successiva."@it ;
+    :fonte "Meccanismo · 2.3" .
+
+:AssunzioneDiMarkov a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :ProbabilitaEPrevisioneLinguistica ;
+    skos:prefLabel "Assunzione di Markov"@it ;
+    skos:scopeNote "Ipotesi che il futuro dipenda solo da una finestra recente e finita del passato, non dall'intera storia."@it ;
+    :fonte "Meccanismo · 2.3" .
+
+:Sparsita a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :ProbabilitaEPrevisioneLinguistica ;
+    skos:prefLabel "Sparsità"@it ;
+    skos:scopeNote "Assenza, nei dati, di combinazioni specifiche di contesto: la previsione di un n-gramma si azzera, non si indebolisce."@it ;
+    :fonte "Meccanismo · 2.4; Meccanismo · 3.1" .
+
+:DipendenzeLungoRaggio a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :ProbabilitaEPrevisioneLinguistica ;
+    skos:prefLabel "Dipendenze a lungo raggio"@it ;
+    skos:scopeNote "Legami grammaticali fra parole lontane nella frase, invisibili per costruzione a una finestra fissa piccola."@it ;
+    :fonte "Meccanismo · 2.4; Meccanismo · 5.1" .
+
+:CompletamentoStatistico a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :ProbabilitaEPrevisioneLinguistica ;
+    skos:prefLabel "Completamento statistico"@it ;
+    skos:scopeNote "Stima del token più probabile dato il testo precedente; l'unica cosa che un LLM fa, alla radice."@it ;
+    :fonte "Genealogia · 2.1; Meccanismo · 2.1" .
+
+
+########################################################################
+# 5. Spazio semantico ed embedding
+########################################################################
+
+:SpazioSemanticoEEmbedding a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:topConceptOf :CorsoLLM ;
+    skos:prefLabel "Spazio semantico ed embedding"@it ;
+    skos:scopeNote "Il Modulo 3: dalle parole come punti discreti alle parole come punti in uno spazio continuo."@it ;
+    :fonte "Meccanismo · 3.1–3.5" .
+
+:Embedding a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :SpazioSemanticoEEmbedding ;
+    skos:prefLabel "Embedding"@it ;
+    skos:scopeNote "Rappresentazione di una parola come vettore/punto in uno spazio continuo: vicinanza spaziale = somiglianza semantica."@it ;
+    :fonte "Meccanismo · 3.2" .
+
+:EmbeddingStatico a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :Embedding ;
+    skos:prefLabel "Embedding statico"@it ;
+    skos:scopeNote "Rappresentazione vettoriale fissa di una parola, identica in ogni frase in cui compare; non risolve la polisemia."@it ;
+    :fonte "Meccanismo · 3.5" .
+
+:EmbeddingContestuale a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :Embedding ;
+    skos:prefLabel "Embedding contestuale"@it ;
+    skos:scopeNote "Rappresentazione ricalcolata a ogni frase tramite attention; risolve la polisemia."@it ;
+    :fonte "Meccanismo · 5.4" .
+
+:CollassoContestuale a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :EmbeddingContestuale ;
+    skos:prefLabel "Collasso contestuale"@it ;
+    skos:scopeNote "Lo spostamento/ricalcolo del vettore di una parola verso il baricentro del significato specifico attivato dal contesto."@it ;
+    :fonte "Meccanismo · 5.4" .
+
+:IpotesiDistribuzionale a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :SpazioSemanticoEEmbedding ;
+    skos:prefLabel "Ipotesi distribuzionale"@it ;
+    skos:scopeNote "«Si conosce una parola dalla compagnia che tiene» (Firth): il significato si ricava dai contesti d'uso, non da un dizionario."@it ;
+    :fonte "Meccanismo · 3.3" .
+
+:AritmeticaVettoriale a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :SpazioSemanticoEEmbedding ;
+    skos:prefLabel "Aritmetica vettoriale"@it ;
+    skos:scopeNote "Operazioni algebriche fra embedding (es. re−uomo+donna=regina) che producono risultati semanticamente coerenti."@it ;
+    :fonte "Meccanismo · 3.4" .
+
+:SillogismoDellErba a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :SpazioSemanticoEEmbedding ;
+    skos:prefLabel "Sillogismo dell'erba"@it ;
+    skos:scopeNote "Ragionare per predicato/direzione condivisa invece che per appartenenza di classe (Bateson); modello filosofico dell'aritmetica vettoriale."@it ;
+    :fonte "Meccanismo · 3.4" .
+
+:Abduzione a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :SpazioSemanticoEEmbedding ;
+    skos:prefLabel "Abduzione"@it ;
+    skos:scopeNote "Inferenza alla spiegazione/analogia più plausibile; il tipo di ragionamento dell'aritmetica vettoriale, distinto da induzione e deduzione."@it ;
+    :fonte "Meccanismo · 3.4" .
+
+:QualitaPrimarieSecondarie a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :SpazioSemanticoEEmbedding ;
+    skos:prefLabel "Qualità primarie e secondarie"@it ;
+    skos:scopeNote "Distinzione di Galileo fra ciò che è quantificabile (forma, numero) e ciò che sembra soggettivo/relazionale (colore, significato)."@it ;
+    :fonte "Meccanismo · 3.2; Meccanismo · 5.4" .
+
+:Polisemia a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :SpazioSemanticoEEmbedding ;
+    skos:prefLabel "Polisemia"@it ;
+    skos:scopeNote "Una parola, più significati; limite dell'embedding statico che le assegna un solo vettore fisso."@it ;
+    :fonte "Meccanismo · 3.5" .
+
+:IrragionevoleEfficaciaMatematica a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :SpazioSemanticoEEmbedding ;
+    skos:prefLabel "Irragionevole efficacia della matematica"@it ;
+    skos:scopeNote "Formula di Wigner sull'inspiegata efficacia della matematica; applicata nel corso all'aritmetica vettoriale."@it ;
+    :fonte "Meccanismo · 3.4" .
+
+:Word2Vec a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :SpazioSemanticoEEmbedding ;
+    skos:prefLabel "Word2Vec"@it ;
+    skos:scopeNote "Algoritmo (Mikolov et al., 2013) che apprende embedding prevedendo il contesto di una parola."@it ;
+    :fonte "Genealogia · 1.5; Meccanismo · 3.3" .
+
+:FastText a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :SpazioSemanticoEEmbedding ;
+    skos:prefLabel "fastText"@it ;
+    skos:scopeNote "Modello di embedding reale (addestrato su italiano) usato per i dataset del corso."@it ;
+    :fonte "Meccanismo · 3.2" .
+
+
+########################################################################
+# 6. Reti neurali e apprendimento
+########################################################################
+
+:ReteNeuraleEApprendimento a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:topConceptOf :CorsoLLM ;
+    skos:prefLabel "Reti neurali e apprendimento"@it ;
+    skos:scopeNote "Il Modulo 4: dal neurone singolo alla discesa del gradiente su una rete profonda."@it ;
+    :fonte "Meccanismo · 4.1–4.5" .
+
+:NeuroneArtificiale a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :ReteNeuraleEApprendimento ;
+    skos:prefLabel "Neurone artificiale"@it ;
+    skos:scopeNote "Unità che somma ingressi pesati (più bias) e applica una funzione di attivazione continua."@it ;
+    :fonte "Meccanismo · 4.1" .
+
+:FunzioneAttivazione a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :NeuroneArtificiale ;
+    skos:prefLabel "Funzione di attivazione (sigmoide)"@it ;
+    skos:scopeNote "Funzione continua che schiaccia un numero reale in [0,1], sostituendo la soglia netta booleana."@it ;
+    :fonte "Meccanismo · 4.1" .
+
+:Bias a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :NeuroneArtificiale ;
+    skos:prefLabel "Bias (del neurone)"@it ;
+    skos:scopeNote "Soglia di base sommata nella combinazione lineare pesata del neurone."@it ;
+    :fonte "Meccanismo · 4.1" .
+
+:SeparabilitaLineare a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :ReteNeuraleEApprendimento ;
+    skos:prefLabel "Separabilità lineare"@it ;
+    skos:scopeNote "Proprietà di due insiemi di punti divisibili da una retta/iperpiano; XOR non la possiede."@it ;
+    :fonte "Genealogia · 1.3; Meccanismo · 4.2" .
+
+:MultiLayerPerceptron a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :ReteNeuraleEApprendimento ;
+    skos:prefLabel "Multi-layer perceptron / strato nascosto"@it ;
+    skos:scopeNote "Rete con uno o più strati intermedi che ricodifica lo spazio degli ingressi rendendolo separabile."@it ;
+    :fonte "Meccanismo · 4.3" .
+
+:Backpropagation a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :ReteNeuraleEApprendimento ;
+    skos:prefLabel "Backpropagation"@it ;
+    skos:scopeNote "Algoritmo che calcola il contributo di ogni peso all'errore finale, propagandolo all'indietro strato per strato (Rumelhart, Hinton, Williams 1986)."@it ;
+    :fonte "Genealogia · 1.5; Meccanismo · 4.5" .
+
+:FunzionePerdita a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :ReteNeuraleEApprendimento ;
+    skos:prefLabel "Funzione di perdita (loss)"@it ;
+    skos:scopeNote "Numero singolo che misura quanto una rete sbaglia, dati i pesi correnti; l'oggetto da minimizzare."@it ;
+    :fonte "Meccanismo · 4.4" .
+
+:Gradiente a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :FunzionePerdita ;
+    skos:prefLabel "Gradiente"@it ;
+    skos:scopeNote "Direzione di massima crescita della perdita in un punto dello spazio dei pesi — una proprietà matematica intrinseca della funzione di perdita."@it ;
+    :fonte "Meccanismo · 4.5" .
+
+:MinimoLocaleGlobale a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :FunzionePerdita ;
+    skos:prefLabel "Minimo locale / minimo globale"@it ;
+    skos:scopeNote "Punti di una superficie di perdita in cui la discesa può bloccarsi (locale) o la soluzione migliore (globale) — una proprietà geometrica della superficie stessa."@it ;
+    :fonte "Meccanismo · 4.5" .
+
+:DiscesaDelGradiente a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :ReteNeuraleEApprendimento ;
+    skos:prefLabel "Discesa del gradiente"@it ;
+    skos:scopeNote "Procedura iterativa che aggiorna i pesi nella direzione opposta al gradiente per minimizzare la perdita."@it ;
+    :fonte "Meccanismo · 4.5" .
+
+
+########################################################################
+# 7. Biologia della cognizione e teoria dei sistemi
+########################################################################
+
+:BiologiaCognizioneETeoriaSistemi a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:topConceptOf :CorsoLLM ;
+    skos:prefLabel "Biologia della cognizione e teoria dei sistemi"@it ;
+    skos:scopeNote "Il «terzo filo» del corso: sistemi viventi, comunicazione e apprendimento biologico messi a confronto con le reti artificiali."@it ;
+    :fonte "Meccanismo · 4.1; Meccanismo · 4.3; Meccanismo · 4.5" .
+
+:Autopoiesi a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :BiologiaCognizioneETeoriaSistemi ;
+    skos:prefLabel "Autopoiesi"@it ;
+    skos:scopeNote "Un sistema vivente come rete chiusa di processi che si automantiene, non un «elaboratore» di input in output (Varela/Maturana)."@it ;
+    :fonte "Meccanismo · 4.1" .
+
+:ChiusuraOperazionale a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :Autopoiesi ;
+    skos:prefLabel "Chiusura operazionale"@it ;
+    skos:scopeNote "Un sistema è perturbato dall'ambiente ma non «istruito» in modo trasparente da esso — proprietà costitutiva dell'autopoiesi."@it ;
+    :fonte "Meccanismo · 4.1" .
+
+:PleromaCreatura a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :BiologiaCognizioneETeoriaSistemi ;
+    skos:prefLabel "Pleroma e creatura"@it ;
+    skos:scopeNote "Distinzione di Bateson (via Jung) fra mondo fisico senza informazione e mondo della comunicazione/forma."@it ;
+    :fonte "Meccanismo · 4.3" .
+
+:Schismogenesi a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :BiologiaCognizioneETeoriaSistemi ;
+    skos:prefLabel "Schismogenesi"@it ;
+    skos:scopeNote "Ciclo di retroazione continuo che si autoalimenta durante l'interazione stessa (Bateson, Naven, 1936); contrapposto al backpropagation offline."@it ;
+    :fonte "Meccanismo · 4.5" .
+
+:PlasticitaSinaptica a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :BiologiaCognizioneETeoriaSistemi ;
+    skos:prefLabel "Plasticità sinaptica"@it ;
+    skos:scopeNote "Modifica continua e locale delle sinapsi biologiche, contrapposta all'addestramento discreto e globale artificiale."@it ;
+    :fonte "Meccanismo · 4.5; Genealogia · 3.3" .
+
+
+########################################################################
+# 8. Il Transformer e l'attenzione
+########################################################################
+
+:TransformerEAttenzione a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:topConceptOf :CorsoLLM ;
+    skos:prefLabel "Il Transformer e l'attenzione"@it ;
+    skos:scopeNote "Il Modulo 5: il meccanismo che risolve insieme dipendenze lunghe e staticità degli embedding."@it ;
+    :fonte "Meccanismo · 5.1–5.6" .
+
+:Attention a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :TransformerEAttenzione ;
+    skos:prefLabel "Attention"@it ;
+    skos:scopeNote "Meccanismo per cui ogni parola pesa direttamente ogni altra parola della frase; risolve dipendenze lunghe e staticità insieme (Bahdanau 2014-2015)."@it ;
+    :fonte "Meccanismo · 5.1–5.6" .
+
+:QueryKeyValue a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :Attention ;
+    skos:prefLabel "Query, Key, Value"@it ;
+    skos:scopeNote "I tre ruoli con cui l'attention confronta (query↔key) e combina (value) le parole di una frase — componenti costitutive del meccanismo."@it ;
+    :fonte "Meccanismo · 5.3" .
+
+:Softmax a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :Attention ;
+    skos:prefLabel "Softmax"@it ;
+    skos:scopeNote "Trasformazione dei punteggi di compatibilità grezzi in pesi che sommano a 1."@it ;
+    :fonte "Meccanismo · 5.3" .
+
+:MultiHeadAttention a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :Attention ;
+    skos:prefLabel "Multi-head attention"@it ;
+    skos:scopeNote "Più «teste» di attention in parallelo, ciascuna specializzata su un tipo diverso di relazione."@it ;
+    :fonte "Meccanismo · 5.5" .
+
+:CodificaPosizione a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :Attention ;
+    skos:prefLabel "Codifica di posizione"@it ;
+    skos:altLabel "Positional encoding"@it ;
+    skos:scopeNote "Codice sommato all'embedding che rappresenta la posizione della parola nella frase."@it ;
+    :fonte "Meccanismo · 5.5" .
+
+:Parallelismo a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :Attention ;
+    skos:prefLabel "Parallelismo"@it ;
+    skos:scopeNote "Possibilità di calcolare simultaneamente tutti i confronti dell'attention, a differenza dell'elaborazione sequenziale."@it ;
+    :fonte "Meccanismo · 5.6" .
+
+
+########################################################################
+# 9. Capacità e limiti dei LLM
+########################################################################
+
+:CapacitaELimitiDeiLlm a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:topConceptOf :CorsoLLM ;
+    skos:prefLabel "Capacità e limiti dei LLM"@it ;
+    skos:scopeNote "Genealogia · 2: mappa esplicita del territorio — cosa un LLM sa fare, cosa simula, cosa non sa fare affatto."@it ;
+    :fonte "Genealogia · 2.1–2.3" .
+
+:InContextLearning a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :CapacitaELimitiDeiLlm ;
+    skos:prefLabel "In-context learning"@it ;
+    skos:scopeNote "Apprendere un compito nuovo dentro la stessa conversazione, senza aggiornare alcun peso della rete."@it ;
+    :fonte "Genealogia · 2.1" .
+
+:TransferCrossDominio a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :CapacitaELimitiDeiLlm ;
+    skos:prefLabel "Transfer cross-dominio"@it ;
+    skos:scopeNote "Un modello addestrato su testo generico risolve compiti di domini specialistici mai visti in addestramento dedicato."@it ;
+    :fonte "Genealogia · 2.1" .
+
+:CapacitaEmergenti a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :CapacitaELimitiDeiLlm ;
+    skos:prefLabel "Capacità emergenti"@it ;
+    skos:scopeNote "Capacità che appaiono in modo discontinuo sopra una soglia di scala, non gradualmente (Wei et al. 2022; discusso da Schaeffer et al. 2023)."@it ;
+    :fonte "Genealogia · 2.1; Meccanismo · 6.2" .
+
+:Allucinazione a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :CapacitaELimitiDeiLlm ;
+    skos:prefLabel "Allucinazione"@it ;
+    skos:scopeNote "Invenzione fluente di fatti/citazioni inesistenti; comportamento atteso di un sistema senza fonte di verità esterna."@it ;
+    :fonte "Genealogia · 2.2" .
+
+:MetacognizioneSimulata a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :CapacitaELimitiDeiLlm ;
+    skos:prefLabel "Metacognizione (simulata)"@it ;
+    skos:scopeNote "L'espressione di incertezza («non lo so») è una stringa di testo probabile in certi contesti, non una stima calibrata interna."@it ;
+    :fonte "Genealogia · 2.2" .
+
+:Grounding a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :CapacitaELimitiDeiLlm ;
+    skos:prefLabel "Grounding (symbol grounding problem)"@it ;
+    skos:scopeNote "Assenza di riferimento dei simboli al mondo extralinguistico; i simboli si agganciano solo ad altri simboli (Harnad 1990)."@it ;
+    :fonte "Genealogia · 2.3; Genealogia · 3.1" .
+
+:RagionamentoCausale a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :CapacitaELimitiDeiLlm ;
+    skos:prefLabel "Ragionamento causale (scala di Pearl)"@it ;
+    skos:scopeNote "Tre livelli — associazione, intervento, controfattuale; un LLM opera quasi solo al primo."@it ;
+    :fonte "Genealogia · 2.3; Genealogia · 3.2" .
+
+:GeneralizzazioneComposizionale a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :CapacitaELimitiDeiLlm ;
+    skos:prefLabel "Generalizzazione composizionale"@it ;
+    skos:scopeNote "Capacità di combinare pezzi noti in configurazioni nuove in modo sistematico; robusta dentro, fragile fuori distribuzione."@it ;
+    :fonte "Genealogia · 2.3" .
+
+:ApprendimentoContinuoAssente a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :CapacitaELimitiDeiLlm ;
+    skos:prefLabel "Apprendimento continuo (assente)"@it ;
+    skos:scopeNote "Impossibilità per un LLM di aggiornare i propri pesi dall'esperienza conversazionale una volta terminato l'addestramento."@it ;
+    :fonte "Genealogia · 2.3" .
+
+
+########################################################################
+# 10. Filosofia del linguaggio e della mente
+########################################################################
+
+:FilosofiaLinguaggioEMente a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:topConceptOf :CorsoLLM ;
+    skos:prefLabel "Filosofia del linguaggio e della mente"@it ;
+    skos:scopeNote "Genealogia · 3, nodi 1 e 4: significato e coscienza come territori che un LLM non risolve, solo attraversa."@it ;
+    :fonte "Genealogia · 3.1; Genealogia · 3.4" .
+
+:SensoRiferimento a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :FilosofiaLinguaggioEMente ;
+    skos:prefLabel "Senso e riferimento"@it ;
+    skos:scopeNote "Distinzione di Frege fra l'oggetto reale a cui un'espressione punta e il modo in cui è presentato."@it ;
+    :fonte "Genealogia · 3.1" .
+
+:SignificatoComeUso a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :FilosofiaLinguaggioEMente ;
+    skos:prefLabel "Significato come uso"@it ;
+    skos:scopeNote "Tesi del secondo Wittgenstein: il significato di una parola è il suo uso in pratiche sociali condivise («giochi linguistici»)."@it ;
+    :fonte "Genealogia · 3.1; Meccanismo · 3.3" .
+
+:StanzaCinese a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :FilosofiaLinguaggioEMente ;
+    skos:prefLabel "Stanza cinese"@it ;
+    skos:scopeNote "Esperimento mentale di Searle (1980): manipolazione sintattica perfetta senza alcun contenuto semantico."@it ;
+    :fonte "Genealogia · 3.1" .
+
+:ProblemaDifficileCoscienza a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :FilosofiaLinguaggioEMente ;
+    skos:prefLabel "Problema difficile della coscienza"@it ;
+    skos:scopeNote "Perché l'elaborazione dell'informazione sia accompagnata da esperienza soggettiva, non solo da funzione (Chalmers 1995)."@it ;
+    :fonte "Genealogia · 3.4" .
+
+:IntegratedInformationTheory a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :FilosofiaLinguaggioEMente ;
+    skos:prefLabel "Integrated Information Theory (Φ)"@it ;
+    skos:scopeNote "Misura quantitativa dell'informazione integrata, proposta come correlato della coscienza (Tononi); intrattabile a scala realistica."@it ;
+    :fonte "Genealogia · 3.4" .
+
+:GlobalWorkspaceTheory a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :FilosofiaLinguaggioEMente ;
+    skos:prefLabel "Global Workspace Theory"@it ;
+    skos:scopeNote "La coscienza come trasmissione «globale» di un'informazione a più sistemi cognitivi specializzati (Baars/Dehaene)."@it ;
+    :fonte "Genealogia · 3.4" .
+
+:HigherOrderTheories a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :FilosofiaLinguaggioEMente ;
+    skos:prefLabel "Higher-Order Theories"@it ;
+    skos:scopeNote "Uno stato mentale è cosciente solo se esiste, nello stesso sistema, una rappresentazione di secondo ordine su di esso."@it ;
+    :fonte "Genealogia · 3.4" .
+
+
+########################################################################
+# 11. Filosofia dello spazio e del corpo
+########################################################################
+
+:FilosofiaSpazioECorpo a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:topConceptOf :CorsoLLM ;
+    skos:prefLabel "Filosofia dello spazio e del corpo"@it ;
+    skos:scopeNote "Genealogia · 4: tre concezioni rivali dello spazio messe a confronto con l'assenza di corpo di un LLM."@it ;
+    :fonte "Genealogia · 4.1–4.2" .
+
+:SpazioContenitoreAssoluto a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :FilosofiaSpazioECorpo ;
+    skos:prefLabel "Spazio come contenitore assoluto"@it ;
+    skos:scopeNote "Concezione newtoniana: palcoscenico fisico indipendente da ciò che lo occupa, misurabile in coordinate."@it ;
+    :fonte "Genealogia · 4.1" .
+
+:SpazioFormaIntuizione a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :FilosofiaSpazioECorpo ;
+    skos:prefLabel "Spazio come forma dell'intuizione"@it ;
+    skos:scopeNote "Lo spazio come struttura imposta dalla mente all'esperienza possibile, non scoperta nel mondo (Kant)."@it ;
+    :fonte "Genealogia · 4.1" .
+
+:SpazioVissuto a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :FilosofiaSpazioECorpo ;
+    skos:prefLabel "Spazio vissuto (attraverso il corpo)"@it ;
+    skos:scopeNote "Lo spazio come relativo a un corpo situato, orientato, che afferra e si muove (Merleau-Ponty)."@it ;
+    :fonte "Genealogia · 4.1" .
+
+:BayesianBrain a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :FilosofiaSpazioECorpo ;
+    skos:prefLabel "Bayesian brain hypothesis"@it ;
+    skos:scopeNote "Il cervello come motore inferenziale che costruisce ipotesi percettive più probabili, non riceve immagini passive."@it ;
+    :fonte "Genealogia · 4.1" .
+
+:GapSensorimotor a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :FilosofiaSpazioECorpo ;
+    skos:prefLabel "Gap sensorimotor"@it ;
+    skos:scopeNote "Assenza, in un LLM (e in parte in un robot), di un corpo che agisce e percepisce nel mondo fisico."@it ;
+    :fonte "Genealogia · 4.2" .
+
+:RoboticaEmbodied a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :FilosofiaSpazioECorpo ;
+    skos:prefLabel "Robotica embodied"@it ;
+    skos:scopeNote "Tesi che l'intelligenza richieda corpi situati capaci di agire, non (solo) rappresentazioni simboliche interne (Brooks)."@it ;
+    :fonte "Genealogia · 4.2" .
+
+:MetaforeConcettuali a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :FilosofiaSpazioECorpo ;
+    skos:prefLabel "Metafore concettuali"@it ;
+    skos:scopeNote "Strutture del pensiero astratto con origine sensomotoria esplicita («capire» = «afferrare») (Lakoff/Johnson)."@it ;
+    :fonte "Genealogia · 4.2" .
+
+
+########################################################################
+# 12. Hardware e fondamenta computazionali
+########################################################################
+
+:HardwareEFondamentaComputazionali a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:topConceptOf :CorsoLLM ;
+    skos:prefLabel "Hardware e fondamenta computazionali"@it ;
+    skos:scopeNote "Il livello più basso del corso: dalla logica booleana ai transistor, fino alla distinzione hardware/software."@it ;
+    :fonte "Fondamenti · 1; Fondamenti · 2" .
+
+:FunzioneBooleana a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :HardwareEFondamentaComputazionali ;
+    skos:prefLabel "Funzione booleana"@it ;
+    skos:scopeNote "Funzione che lavora su valori vero/falso, costruita da E, O, NON."@it ;
+    :fonte "Fondamenti · 1" .
+
+:TavolaVerita a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :HardwareEFondamentaComputazionali ;
+    skos:prefLabel "Tavola di verità"@it ;
+    skos:scopeNote "Elenco esaustivo di tutte le combinazioni possibili di ingresso/uscita di una funzione booleana."@it ;
+    :fonte "Fondamenti · 1" .
+
+:Transistor a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :HardwareEFondamentaComputazionali ;
+    skos:prefLabel "Transistor"@it ;
+    skos:scopeNote "Interruttore fisico (passa/non passa corrente) alla base di ogni circuito digitale."@it ;
+    :fonte "Fondamenti · 1; Fondamenti · 2" .
+
+:GateLogico a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :HardwareEFondamentaComputazionali ;
+    skos:prefLabel "Gate logico"@it ;
+    skos:scopeNote "Realizzazione fisica degli operatori booleani (AND/OR/NOT) tramite gruppi di transistor."@it ;
+    :fonte "Fondamenti · 2" .
+
+:HardwareSoftware a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :HardwareEFondamentaComputazionali ;
+    skos:prefLabel "Hardware / software"@it ;
+    skos:scopeNote "Distinzione fra il fisico che esegue (lento, massa, energia) e le istruzioni eseguite (copiabili a costo zero)."@it ;
+    :fonte "Fondamenti · 2" .
+
+
+########################################################################
+# 13. Addestramento e scala
+########################################################################
+
+:AddestramentoEScala a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:topConceptOf :CorsoLLM ;
+    skos:prefLabel "Addestramento e scala"@it ;
+    skos:scopeNote "Il Modulo 6: cosa rende un modello «Large» e come lo si porta dal pre-training al comportamento istruito."@it ;
+    :fonte "Meccanismo · 6.1; Meccanismo · 6.4–6.6" .
+
+:ModelloDiBase a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :AddestramentoEScala ;
+    skos:prefLabel "Modello di base"@it ;
+    skos:scopeNote "Modello pre-addestrato: puro predittore statistico, senza comportamento conversazionale intrinseco."@it ;
+    :fonte "Meccanismo · 6.4" .
+
+:FineTuning a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :AddestramentoEScala ;
+    skos:prefLabel "Fine-tuning"@it ;
+    skos:scopeNote "Adattamento del comportamento di un modello di base con dati più piccoli e curati (Ouyang et al. 2022)."@it ;
+    :fonte "Meccanismo · 6.4" .
+
+:Rlhf a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :AddestramentoEScala ;
+    skos:prefLabel "RLHF"@it ;
+    skos:altLabel "Reinforcement Learning from Human Feedback"@it ;
+    skos:scopeNote "Trasformazione di preferenze/valutazioni umane in segnale di addestramento ulteriore, tramite un modello di ricompensa."@it ;
+    :fonte "Meccanismo · 6.5" .
+
+:ModelloDiRicompensa a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :Rlhf ;
+    skos:prefLabel "Modello di ricompensa"@it ;
+    skos:scopeNote "Modello secondario addestrato a stimare quanto una risposta piacerebbe a un valutatore umano — componente costitutiva dell'RLHF."@it ;
+    :fonte "Meccanismo · 6.5" .
+
+:Quantizzazione a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :AddestramentoEScala ;
+    skos:prefLabel "Quantizzazione"@it ;
+    skos:scopeNote "Riduzione deliberata della precisione numerica dei pesi (FP32→FP16/BF16→INT8→INT4) per il deployment, dopo un addestramento a precisione continua."@it ;
+    :fonte "Meccanismo · 4.4 (annuncio); Meccanismo · 6.6" .
+
+:ParametriScala a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :AddestramentoEScala ;
+    skos:prefLabel "Parametri / scala"@it ;
+    skos:scopeNote "I pesi regolabili di un modello; i tre assi (parametri, dati, calcolo) lungo cui si misura la sua grandezza."@it ;
+    :fonte "Meccanismo · 6.1" .
+
+
+########################################################################
+# 14. Riflessioni epistemologiche trasversali
+########################################################################
+
+:RiflessioniEpistemologicheTrasversali a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:topConceptOf :CorsoLLM ;
+    skos:prefLabel "Riflessioni epistemologiche trasversali"@it ;
+    skos:scopeNote "Aforismi e cornici epistemologiche usate nel corso per inquadrare i dati di addestramento e la loro storia."@it ;
+    :fonte "Meccanismo · 6.3" .
+
+:VeritasFiliaTemporis a skos:Concept ;
+    skos:inScheme :CorsoLLM ; skos:broader :RiflessioniEpistemologicheTrasversali ;
+    skos:prefLabel "Veritas filia temporis / error filius temporis"@it ;
+    skos:scopeNote "Coppia aforistica (Bacone/Bayle) su verità ed errore come «figli del tempo»; applicata nel corso ai dati di addestramento."@it ;
+    :fonte "Meccanismo · 6.3" .
+
+
+########################################################################
+# Fili trasversali — skos:OrderedCollection
+#
+# Raggruppamenti tematici ORDINATI di concetti già definiti sopra: non sono
+# skos:Concept a sé (non sono "termini" del vocabolario, sono percorsi di lettura
+# trasversali ai moduli). Ordinati perché il corso li presenta come una sequenza
+# narrativa con un prima e un dopo, non un insieme non ordinato.
+########################################################################
+
+:FiloDiscretoContinuo a skos:OrderedCollection ;
+    skos:prefLabel "Filo trasversale: discreto/continuo"@it ;
+    skos:scopeNote "Dal computer come interruttori discreti alla domanda finale su cosa sia «primitivo» fra discreto e continuo — il filo più centrale e meglio strutturato del corso."@it ;
+    skos:memberList (
+        :Encoding :TokenId :Numerabilita :Calibrazione :Sparsita :Embedding
+        :AritmeticaVettoriale :FunzionePerdita :DiscesaDelGradiente :Softmax
+        :VeritasFiliaTemporis :Quantizzazione
+    ) .
+
+:FiloGalileoCrolloQuantistico a skos:OrderedCollection ;
+    skos:prefLabel "Filo trasversale: Galileo e il crollo quantistico"@it ;
+    skos:scopeNote "Da «quantificare il significato» (estensione del programma galileiano) al crollo di quella distinzione con l'embedding contestuale, analogo alla misura quantistica."@it ;
+    skos:memberList ( :QualitaPrimarieSecondarie :EmbeddingContestuale ) .
+
+:FiloLogicaInformazioneBiologia a skos:OrderedCollection ;
+    skos:prefLabel "Filo trasversale: logica, informazione e biologia della cognizione"@it ;
+    skos:scopeNote "Da induzione/abduzione ad autopoiesi, pleroma/creatura e schismogenesi — il filo più debolmente coeso dei tre (vedi decisioni-modellazione.md)."@it ;
+    skos:memberList (
+        :Induzione :SillogismoDellErba :Abduzione :Autopoiesi
+        :PleromaCreatura :Schismogenesi
+    ) .

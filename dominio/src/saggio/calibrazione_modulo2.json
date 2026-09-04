@@ -1,0 +1,305 @@
+{
+ "_metadata": {
+  "descrizione": "Diagramma di calibrazione (reliability diagram) per Meccanismo · 2, unita 2.2 - paga il debito esplicito lasciato in Genealogia 2.2 ('un tema che tornera', in forma tecnica, quando si parlera' di calibrazione').",
+  "metodo": "Misura REALE, non illustrativa: split del corpus di ngram_dati_modulo2.json in 34 frasi di addestramento e 12 frasi di held-out (seed 42). Tabella bigramma (finestra 2) costruita solo sul train. Per ogni transizione nel held-out il cui contesto bigramma esiste nella tabella di train, si registra la confidenza dichiarata (probabilita' della parola piu' probabile) e se la previsione e' risultata corretta. Bucket per range di confidenza, accuratezza reale calcolata per bucket.",
+  "tentativo_riuscito_al_primo_colpo": "Nessun fallback a dati illustrativi necessario: con 65 predizioni valutabili distribuite su 3 bucket (n=14, 18, 33) il risultato e' gia' leggibile e mostra un pattern reale e coerente con la letteratura su modelli piccoli - overconfidence sistematica (l'accuratezza reale resta sempre sotto la confidenza dichiarata in ogni bucket).",
+  "verifica": "65 predizioni totali valutate. Tutti e tre i bucket hanno campione non vuoto (14, 18, 33). Il pattern e' monotono: confidenza dichiarata piu' alta -> accuratezza reale piu' alta, ma sempre inferiore alla confidenza stessa in tutti i bucket - overconfidence reale, misurata, non simulata."
+ },
+ "split": {
+  "frasi_train": 34,
+  "frasi_held_out": 12,
+  "seed": 42,
+  "finestra_contesto_usata": 2
+ },
+ "predizioni_valutate": [
+  {
+   "confidenza": 0.8824,
+   "corretto": true
+  },
+  {
+   "confidenza": 0.6,
+   "corretto": true
+  },
+  {
+   "confidenza": 0.2174,
+   "corretto": false
+  },
+  {
+   "confidenza": 1.0,
+   "corretto": true
+  },
+  {
+   "confidenza": 0.8824,
+   "corretto": true
+  },
+  {
+   "confidenza": 0.6,
+   "corretto": true
+  },
+  {
+   "confidenza": 0.2174,
+   "corretto": false
+  },
+  {
+   "confidenza": 1.0,
+   "corretto": true
+  },
+  {
+   "confidenza": 0.5,
+   "corretto": false
+  },
+  {
+   "confidenza": 1.0,
+   "corretto": true
+  },
+  {
+   "confidenza": 0.8824,
+   "corretto": true
+  },
+  {
+   "confidenza": 0.6,
+   "corretto": false
+  },
+  {
+   "confidenza": 0.3636,
+   "corretto": false
+  },
+  {
+   "confidenza": 1.0,
+   "corretto": false
+  },
+  {
+   "confidenza": 0.2174,
+   "corretto": false
+  },
+  {
+   "confidenza": 0.8824,
+   "corretto": true
+  },
+  {
+   "confidenza": 0.6,
+   "corretto": true
+  },
+  {
+   "confidenza": 0.2174,
+   "corretto": true
+  },
+  {
+   "confidenza": 0.8,
+   "corretto": true
+  },
+  {
+   "confidenza": 0.5,
+   "corretto": true
+  },
+  {
+   "confidenza": 1.0,
+   "corretto": true
+  },
+  {
+   "confidenza": 0.8824,
+   "corretto": true
+  },
+  {
+   "confidenza": 0.6,
+   "corretto": false
+  },
+  {
+   "confidenza": 0.3636,
+   "corretto": false
+  },
+  {
+   "confidenza": 0.5,
+   "corretto": false
+  },
+  {
+   "confidenza": 1.0,
+   "corretto": true
+  },
+  {
+   "confidenza": 0.8824,
+   "corretto": true
+  },
+  {
+   "confidenza": 0.6,
+   "corretto": false
+  },
+  {
+   "confidenza": 0.3636,
+   "corretto": false
+  },
+  {
+   "confidenza": 0.5,
+   "corretto": false
+  },
+  {
+   "confidenza": 0.8824,
+   "corretto": true
+  },
+  {
+   "confidenza": 0.6,
+   "corretto": true
+  },
+  {
+   "confidenza": 0.2174,
+   "corretto": false
+  },
+  {
+   "confidenza": 1.0,
+   "corretto": true
+  },
+  {
+   "confidenza": 0.8333,
+   "corretto": true
+  },
+  {
+   "confidenza": 0.6,
+   "corretto": false
+  },
+  {
+   "confidenza": 1.0,
+   "corretto": true
+  },
+  {
+   "confidenza": 0.8824,
+   "corretto": true
+  },
+  {
+   "confidenza": 0.6,
+   "corretto": false
+  },
+  {
+   "confidenza": 0.3636,
+   "corretto": false
+  },
+  {
+   "confidenza": 0.8824,
+   "corretto": true
+  },
+  {
+   "confidenza": 0.6,
+   "corretto": false
+  },
+  {
+   "confidenza": 0.3636,
+   "corretto": false
+  },
+  {
+   "confidenza": 1.0,
+   "corretto": true
+  },
+  {
+   "confidenza": 1.0,
+   "corretto": true
+  },
+  {
+   "confidenza": 1.0,
+   "corretto": false
+  },
+  {
+   "confidenza": 0.8824,
+   "corretto": true
+  },
+  {
+   "confidenza": 0.6,
+   "corretto": true
+  },
+  {
+   "confidenza": 0.2174,
+   "corretto": false
+  },
+  {
+   "confidenza": 1.0,
+   "corretto": true
+  },
+  {
+   "confidenza": 0.8333,
+   "corretto": true
+  },
+  {
+   "confidenza": 0.6,
+   "corretto": true
+  },
+  {
+   "confidenza": 0.3333,
+   "corretto": false
+  },
+  {
+   "confidenza": 0.8824,
+   "corretto": true
+  },
+  {
+   "confidenza": 0.6,
+   "corretto": false
+  },
+  {
+   "confidenza": 0.3636,
+   "corretto": false
+  },
+  {
+   "confidenza": 1.0,
+   "corretto": true
+  },
+  {
+   "confidenza": 1.0,
+   "corretto": true
+  },
+  {
+   "confidenza": 1.0,
+   "corretto": false
+  },
+  {
+   "confidenza": 0.8824,
+   "corretto": true
+  },
+  {
+   "confidenza": 0.6,
+   "corretto": true
+  },
+  {
+   "confidenza": 0.2174,
+   "corretto": false
+  },
+  {
+   "confidenza": 1.0,
+   "corretto": false
+  },
+  {
+   "confidenza": 1.0,
+   "corretto": true
+  },
+  {
+   "confidenza": 1.0,
+   "corretto": false
+  }
+ ],
+ "bucket_calibrazione": [
+  {
+   "range": [
+    0.0,
+    0.5
+   ],
+   "n": 14,
+   "confidenza_media_bucket": 0.2883,
+   "accuratezza_reale": 0.0714
+  },
+  {
+   "range": [
+    0.5,
+    0.75
+   ],
+   "n": 18,
+   "confidenza_media_bucket": 0.5778,
+   "accuratezza_reale": 0.4444
+  },
+  {
+   "range": [
+    0.75,
+    1.0
+   ],
+   "n": 33,
+   "confidenza_media_bucket": 0.9411,
+   "accuratezza_reale": 0.8485
+  }
+ ]
+}

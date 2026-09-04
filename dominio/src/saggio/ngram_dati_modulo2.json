@@ -1,0 +1,563 @@
+{
+ "_metadata": {
+  "descrizione": "Corpus e tabelle di conteggio n-grammi per Meccanismo · 2 (predittore di parola successiva, unita 2.1-2.4).",
+  "fonte_corpus": "Corpus scritto appositamente per la demo (non estratto da un'altra fonte): 46 frasi italiane semplici con pattern ripetuti e variazioni controllate (gatto/cane che sale, dorme, salta, mangia...). Dichiarato esplicitamente come corpus autoriale - non e' testo 'trovato', e' scritto per rendere leggibili statistiche vere.",
+  "corpus_frasi": 46,
+  "corpus_parole": 255,
+  "metodo": "Conteggio di frequenze per finestre di contesto 1, 2 e 3 parole. Marcatori di inizio/fine frase (<inizio>,<fine>) inclusi nel conteggio.",
+  "verifica": "Le probabilita' esatte (conteggio/totale, prima dell'arrotondamento mostrato) sommano sempre a 1 per ogni contesto non vuoto - verificato programmaticamente. Verificato esplicitamente che il contesto a finestra 3 ('ieri','il','gatto') ha zero occorrenze mentre le finestre 1 e 2 sullo stesso prefisso hanno dati pieni (30 occorrenze) - la sparsita' e' un fatto misurato sul corpus, non simulato.",
+  "esempi_dimostrativi": "Tre prefissi scelti DOPO aver calcolato le distribuzioni reali sul corpus (non decisi a priori): uno con previsione netta, uno con distribuzione ambigua, uno che mostra la rottura da sparsita' a finestra 3."
+ },
+ "corpus": [
+  [
+   "il",
+   "gatto",
+   "è",
+   "salito",
+   "sul",
+   "tetto"
+  ],
+  [
+   "il",
+   "gatto",
+   "è",
+   "salito",
+   "sul",
+   "divano"
+  ],
+  [
+   "il",
+   "gatto",
+   "è",
+   "salito",
+   "sull",
+   "albero"
+  ],
+  [
+   "il",
+   "gatto",
+   "è",
+   "salito",
+   "sul",
+   "tetto"
+  ],
+  [
+   "il",
+   "gatto",
+   "è",
+   "sceso",
+   "dal",
+   "tetto"
+  ],
+  [
+   "il",
+   "cane",
+   "è",
+   "salito",
+   "sul",
+   "divano"
+  ],
+  [
+   "il",
+   "cane",
+   "è",
+   "sceso",
+   "dal",
+   "divano"
+  ],
+  [
+   "il",
+   "gatto",
+   "dorme",
+   "sul",
+   "divano"
+  ],
+  [
+   "il",
+   "gatto",
+   "dorme",
+   "sul",
+   "letto"
+  ],
+  [
+   "il",
+   "cane",
+   "dorme",
+   "sul",
+   "tappeto"
+  ],
+  [
+   "il",
+   "gatto",
+   "dorme",
+   "sul",
+   "divano"
+  ],
+  [
+   "il",
+   "gatto",
+   "mangia",
+   "il",
+   "pesce"
+  ],
+  [
+   "il",
+   "cane",
+   "mangia",
+   "la",
+   "carne"
+  ],
+  [
+   "il",
+   "gatto",
+   "beve",
+   "il",
+   "latte"
+  ],
+  [
+   "il",
+   "bambino",
+   "gioca",
+   "con",
+   "il",
+   "gatto"
+  ],
+  [
+   "il",
+   "bambino",
+   "gioca",
+   "con",
+   "il",
+   "cane"
+  ],
+  [
+   "la",
+   "mamma",
+   "chiama",
+   "il",
+   "gatto"
+  ],
+  [
+   "la",
+   "mamma",
+   "chiama",
+   "il",
+   "cane"
+  ],
+  [
+   "il",
+   "gatto",
+   "corre",
+   "veloce"
+  ],
+  [
+   "il",
+   "cane",
+   "corre",
+   "veloce"
+  ],
+  [
+   "il",
+   "gatto",
+   "salta",
+   "sul",
+   "tavolo"
+  ],
+  [
+   "il",
+   "gatto",
+   "salta",
+   "sul",
+   "divano"
+  ],
+  [
+   "il",
+   "gatto",
+   "salta",
+   "sul",
+   "letto"
+  ],
+  [
+   "il",
+   "cane",
+   "salta",
+   "sul",
+   "divano"
+  ],
+  [
+   "il",
+   "gatto",
+   "è",
+   "salito",
+   "sul",
+   "tetto",
+   "ancora"
+  ],
+  [
+   "di",
+   "notte",
+   "il",
+   "gatto",
+   "dorme",
+   "sul",
+   "divano"
+  ],
+  [
+   "di",
+   "giorno",
+   "il",
+   "gatto",
+   "dorme",
+   "sul",
+   "letto"
+  ],
+  [
+   "il",
+   "gatto",
+   "guarda",
+   "il",
+   "cane"
+  ],
+  [
+   "il",
+   "cane",
+   "guarda",
+   "il",
+   "gatto"
+  ],
+  [
+   "il",
+   "gatto",
+   "è",
+   "salito",
+   "sul",
+   "tavolo"
+  ],
+  [
+   "il",
+   "bambino",
+   "accarezza",
+   "il",
+   "gatto"
+  ],
+  [
+   "il",
+   "bambino",
+   "accarezza",
+   "il",
+   "cane"
+  ],
+  [
+   "il",
+   "gatto",
+   "miagola",
+   "forte"
+  ],
+  [
+   "il",
+   "cane",
+   "abbaia",
+   "forte"
+  ],
+  [
+   "il",
+   "gatto",
+   "insegue",
+   "il",
+   "topo"
+  ],
+  [
+   "il",
+   "cane",
+   "insegue",
+   "la",
+   "palla"
+  ],
+  [
+   "il",
+   "gatto",
+   "si",
+   "nasconde",
+   "sotto",
+   "il",
+   "letto"
+  ],
+  [
+   "il",
+   "cane",
+   "si",
+   "nasconde",
+   "sotto",
+   "il",
+   "tavolo"
+  ],
+  [
+   "il",
+   "gatto",
+   "beve",
+   "il",
+   "latte",
+   "ogni",
+   "mattina"
+  ],
+  [
+   "il",
+   "cane",
+   "mangia",
+   "la",
+   "carne",
+   "ogni",
+   "sera"
+  ],
+  [
+   "il",
+   "gatto",
+   "dorme",
+   "tutto",
+   "il",
+   "giorno"
+  ],
+  [
+   "il",
+   "cane",
+   "corre",
+   "tutto",
+   "il",
+   "giorno"
+  ],
+  [
+   "il",
+   "gatto",
+   "è",
+   "salito",
+   "sul",
+   "tetto",
+   "di",
+   "nuovo"
+  ],
+  [
+   "il",
+   "bambino",
+   "corre",
+   "nel",
+   "giardino"
+  ],
+  [
+   "il",
+   "gatto",
+   "cammina",
+   "nel",
+   "giardino"
+  ],
+  [
+   "il",
+   "cane",
+   "cammina",
+   "nel",
+   "giardino"
+  ]
+ ],
+ "esempi_dimostrativi": {
+  "previsione_netta": {
+   "prefisso_esempio": "il gatto è salito sul",
+   "finestra_1": {
+    "contesto": [
+     "sul"
+    ],
+    "conteggi": {
+     "tetto": 4,
+     "divano": 7,
+     "letto": 3,
+     "tappeto": 1,
+     "tavolo": 2
+    },
+    "totale": 17,
+    "probabilita": {
+     "tetto": 0.2353,
+     "divano": 0.4118,
+     "letto": 0.1765,
+     "tappeto": 0.0588,
+     "tavolo": 0.1176
+    }
+   },
+   "finestra_2": {
+    "contesto": [
+     "salito",
+     "sul"
+    ],
+    "conteggi": {
+     "tetto": 4,
+     "divano": 2,
+     "tavolo": 1
+    },
+    "totale": 7,
+    "probabilita": {
+     "tetto": 0.5714,
+     "divano": 0.2857,
+     "tavolo": 0.1429
+    }
+   },
+   "finestra_3": {
+    "contesto": [
+     "è",
+     "salito",
+     "sul"
+    ],
+    "conteggi": {
+     "tetto": 4,
+     "divano": 2,
+     "tavolo": 1
+    },
+    "totale": 7,
+    "probabilita": {
+     "tetto": 0.5714,
+     "divano": 0.2857,
+     "tavolo": 0.1429
+    }
+   },
+   "nota": "la distribuzione si affina passando da finestra 1 a finestra 2 (tetto diventa nettamente dominante); finestra 3 coincide con finestra 2 in questo corpus."
+  },
+  "distribuzione_ambigua": {
+   "prefisso_esempio": "il gatto salta sul",
+   "finestra_1": {
+    "contesto": [
+     "sul"
+    ],
+    "conteggi": {
+     "tetto": 4,
+     "divano": 7,
+     "letto": 3,
+     "tappeto": 1,
+     "tavolo": 2
+    },
+    "totale": 17,
+    "probabilita": {
+     "tetto": 0.2353,
+     "divano": 0.4118,
+     "letto": 0.1765,
+     "tappeto": 0.0588,
+     "tavolo": 0.1176
+    }
+   },
+   "finestra_2": {
+    "contesto": [
+     "salta",
+     "sul"
+    ],
+    "conteggi": {
+     "tavolo": 1,
+     "divano": 2,
+     "letto": 1
+    },
+    "totale": 4,
+    "probabilita": {
+     "tavolo": 0.25,
+     "divano": 0.5,
+     "letto": 0.25
+    }
+   },
+   "finestra_3": {
+    "contesto": [
+     "gatto",
+     "salta",
+     "sul"
+    ],
+    "conteggi": {
+     "tavolo": 1,
+     "divano": 1,
+     "letto": 1
+    },
+    "totale": 3,
+    "probabilita": {
+     "tavolo": 0.3333,
+     "divano": 0.3333,
+     "letto": 0.3333
+    }
+   },
+   "nota": "la distribuzione resta ambigua (3 candidati quasi alla pari) anche a finestra 3 - non tutte le previsioni si affinano con più contesto."
+  },
+  "sparsita": {
+   "prefisso_esempio": "ieri il gatto",
+   "finestra_1": {
+    "contesto": [
+     "gatto"
+    ],
+    "conteggi": {
+     "è": 8,
+     "dorme": 6,
+     "mangia": 1,
+     "beve": 2,
+     "<fine>": 4,
+     "corre": 1,
+     "salta": 3,
+     "guarda": 1,
+     "miagola": 1,
+     "insegue": 1,
+     "si": 1,
+     "cammina": 1
+    },
+    "totale": 30,
+    "probabilita": {
+     "è": 0.2667,
+     "dorme": 0.2,
+     "mangia": 0.0333,
+     "beve": 0.0667,
+     "<fine>": 0.1333,
+     "corre": 0.0333,
+     "salta": 0.1,
+     "guarda": 0.0333,
+     "miagola": 0.0333,
+     "insegue": 0.0333,
+     "si": 0.0333,
+     "cammina": 0.0333
+    }
+   },
+   "finestra_2": {
+    "contesto": [
+     "il",
+     "gatto"
+    ],
+    "conteggi": {
+     "è": 8,
+     "dorme": 6,
+     "mangia": 1,
+     "beve": 2,
+     "<fine>": 4,
+     "corre": 1,
+     "salta": 3,
+     "guarda": 1,
+     "miagola": 1,
+     "insegue": 1,
+     "si": 1,
+     "cammina": 1
+    },
+    "totale": 30,
+    "probabilita": {
+     "è": 0.2667,
+     "dorme": 0.2,
+     "mangia": 0.0333,
+     "beve": 0.0667,
+     "<fine>": 0.1333,
+     "corre": 0.0333,
+     "salta": 0.1,
+     "guarda": 0.0333,
+     "miagola": 0.0333,
+     "insegue": 0.0333,
+     "si": 0.0333,
+     "cammina": 0.0333
+    }
+   },
+   "finestra_3": {
+    "contesto": [
+     "ieri",
+     "il",
+     "gatto"
+    ],
+    "conteggi": {},
+    "totale": 0,
+    "probabilita": {}
+   },
+   "nota": "'ieri' non compare mai nel corpus: a finestra 3 il contesto ('ieri','il','gatto') ha zero occorrenze, mentre le finestre 1 e 2 hanno dati pieni (30 occorrenze) - la rottura da sparsita' avviene esattamente aggiungendo un solo elemento di contesto in piu'."
+  }
+ }
+}

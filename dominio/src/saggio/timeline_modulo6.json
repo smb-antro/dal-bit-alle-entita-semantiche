@@ -1,0 +1,38 @@
+{
+ "_metadata": {
+  "descrizione": "Timeline storica per Meccanismo · 6, unita 6.3 (da dove viene tutto questo testo) - riusa verbatim le classi CSS .timeline/.tl-node/.tl-tag/.tl-date/.tl-title/.tl-desc gia' presenti in lezione_00_blocco_a.html, nessun nuovo stile da introdurre.",
+  "fonti": {
+   "alfabeto": "Datazione convenzionale ca. XI secolo a.C. (epitaffio di Ahiram, Biblo) - nota di cautela: le iscrizioni fenicie sopravvissute e datate con sicurezza sono in realta' del X secolo a.C.; la data dell'XI secolo e' una convenzione storiografica per colmare una lacuna nella documentazione epigrafica, non una certezza. Framing a intervallo, non falsa precisione.",
+   "von_neumann": "Gia' verificato/deciso nella fase 1 di revisione (struttura_moduli_1-6.md) - John von Neumann, 'The Computer and the Brain', 1958.",
+   "google_books": "Annuncio ufficiale del 14 dicembre 2004: accordi con 5 biblioteche di ricerca (Michigan, Harvard, Stanford, Oxford, New York Public Library) per il Google Books Library Project - data precisa verificata, sostituisce il generico 'primi anni 2000' di struttura_moduli_1-6.md.",
+   "corpora_llm": "Framing a intervallo (2018-oggi), ancorato approssimativamente all'era di scaling dei modelli BERT/GPT su corpora di addestramento raccolti dal web su larga scala - non una falsa data singola."
+  },
+  "nota_coincidenza_1958": "Von Neumann (1958, 'The Computer and the Brain') condivide l'anno con Rosenblatt e il Perceptron, gia' presente come voce timeline in lezione_00_blocco_a.html (righe 552-553), in un contesto diverso (storia del Perceptron, pagata in Meccanismo · 4.2). E' una coincidenza reale, non un errore - va mantenuta come tale, non nascosta o alterata."
+ },
+ "voci": [
+  {
+   "tag": "SCRITTURA",
+   "data": "ca. XI–X secolo a.C.",
+   "titolo": "L'alfabeto fenicio",
+   "descrizione": "Il primo grande atto di discretizzazione della storia umana: il continuo del parlato trasformato in un insieme finito di simboli discreti e ricombinabili - senza che esistesse ancora una parola per nominare l'operazione."
+  },
+  {
+   "tag": "CONSAPEVOLEZZA",
+   "data": "1958",
+   "titolo": "Von Neumann — The Computer and the Brain",
+   "descrizione": "Il concetto di 'digitalizzazione' diventa consapevole: un libro che mette a confronto esplicitamente il computer e il cervello, la stessa domanda che Meccanismo · 4 affronta meccanicamente."
+  },
+  {
+   "tag": "ESPLICITAZIONE",
+   "data": "14 dicembre 2004",
+   "titolo": "Google annuncia il Google Books Library Project",
+   "descrizione": "Accordi con cinque biblioteche di ricerca (Michigan, Harvard, Stanford, Oxford, New York Public Library) per digitalizzare milioni di libri - la digitalizzazione diventa esplicita e industriale su scala."
+  },
+  {
+   "tag": "OGGI",
+   "data": "2018–oggi",
+   "titolo": "I corpora di addestramento degli LLM",
+   "descrizione": "L'ultimo, più grande, anello dello stesso arco: testo raccolto su scala ancora maggiore per addestrare i modelli linguistici di questo corso."
+  }
+ ]
+}

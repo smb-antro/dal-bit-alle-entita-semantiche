@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fondamenti · 1 — Funzioni booleane</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0F2A22;
+    --surface: #173B30;
+    --surface-2: #1E4A3C;
+    --copper: #C97D3D;
+    --copper-bright: #F0A85E;
+    --text: #F2ECE0;
+    --text-dim: #A9BFB6;
+    --line: rgba(242,236,224,0.12);
+    --rail-w: 300px;
+    --true: #F0A85E;
+    --false: #5C7268;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Source Serif 4', Georgia, serif;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,h2,h3, .display{
+    font-family: 'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+  .mono{ font-family: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace; }
+  a{ color: var(--copper-bright); }
+
+  /* ---------- layout shell: sidebar fissa con indice del sito ---------- */
+  .sidebar{
+    background: rgba(15,42,34,0.92);
+    border-bottom: 1px solid var(--line);
+    padding: 28px 24px 32px;
+  }
+  .sidebar-kicker{
+    font-family: 'IBM Plex Mono', monospace; font-size: .74rem; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px;
+  }
+  .sidebar-title{
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.02rem;
+    color: var(--text); margin-bottom: 22px;
+  }
+  .sidebar .parte{ margin-top: 26px; }
+  .sidebar .parte:first-of-type{ margin-top: 0; }
+  .sidebar .parte-heading{
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: .74rem;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--copper-bright);
+    padding-bottom: 10px; margin-bottom: 2px; border-bottom: 1px solid var(--line);
+  }
+  .sidebar .voce-semplice{
+    display: block; padding: 10px 4px; border-bottom: 1px solid var(--line);
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem;
+    color: var(--text); text-decoration: none;
+  }
+  .sidebar .voce-semplice:hover{ color: var(--copper-bright); }
+  .sidebar .voce-semplice.current{ color: var(--copper-bright); }
+  .sidebar details.modulo{ border-bottom: 1px solid var(--line); }
+  .sidebar details.modulo summary{
+    display: flex; align-items: center; gap: 8px; padding: 10px 4px; cursor: pointer;
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem; color: var(--text);
+    list-style: none;
+  }
+  .sidebar details.modulo summary.current{ color: var(--copper-bright); }
+  .sidebar details.modulo summary::-webkit-details-marker{ display: none; }
+  .sidebar details.modulo summary::before{
+    content: "›"; display: inline-block; font-family: 'IBM Plex Mono', monospace;
+    color: var(--text-dim); transition: transform .15s ease; flex-shrink: 0;
+  }
+  .sidebar details.modulo[open] summary::before{ transform: rotate(90deg); color: var(--copper-bright); }
+  .sidebar details.modulo summary:hover{ color: var(--copper-bright); }
+  .sidebar .unita-list{ padding: 2px 0 12px 22px; display: flex; flex-direction: column; gap: 1px; }
+  .sidebar .unita-list a{
+    display: block; padding: 6px 4px; font-size: .82rem; color: var(--text-dim); text-decoration: none;
+  }
+  .sidebar .unita-list a:hover{ color: var(--copper-bright); }
+  .sidebar .unita-list a .num{ color: var(--copper); margin-right: 6px; font-family: 'IBM Plex Mono', monospace; font-size: .74rem; }
+
+  /* pallini luminosi di scroll-spy, sulle voci dell'unità corrente */
+  .sidebar .unita-list.scrollspy a{ position: relative; padding-left: 20px; }
+  .sidebar .unita-list.scrollspy a::before{
+    content: "";
+    position: absolute; left: 2px; top: 50%;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--surface-2); border: 1px solid var(--line);
+    transform: translateY(-50%);
+    transition: background .25s, box-shadow .25s, transform .25s;
+  }
+  .sidebar .unita-list.scrollspy a.active{ color: var(--copper-bright); }
+  .sidebar .unita-list.scrollspy a.active::before{
+    background: var(--copper-bright);
+    box-shadow: 0 0 0 4px rgba(240,168,94,0.18);
+    transform: translateY(-50%) scale(1.2);
+  }
+
+  main{ padding-top: 0; }
+
+  @media (min-width: 900px){
+    .sidebar{
+      position: fixed; z-index: 50; top:0; bottom:0; left:0; width: var(--rail-w);
+      overflow-y: auto; border-bottom:none; border-right: 1px solid var(--line);
+    }
+    main{ padding-left: var(--rail-w); }
+  }
+
+  .wrap{ max-width: 740px; margin: 0 auto; padding: 0 24px; }
+
+  section{ padding: 92px 0 84px; border-bottom: 1px solid var(--line); }
+  section:last-of-type{ border-bottom:none; }
+
+  .eyebrow{
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--copper-bright);
+    margin-bottom: 14px; display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{ content:""; width: 22px; height:1px; background: var(--copper-bright); display:inline-block; }
+
+  h2.title{ font-size: clamp(1.6rem, 4vw, 2.3rem); margin-bottom: 20px; }
+
+  p{ margin: 0 0 18px; color: var(--text); font-size: 1.05rem; }
+  p.dim{ color: var(--text-dim); }
+  .lede{ font-size: 1.15rem; color: var(--text); }
+
+  .reveal{ opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.visible{ opacity:1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce){
+    .reveal{ transition: opacity .2s linear; transform:none; }
+    *{ scroll-behavior: auto !important; }
+  }
+
+  .aside{
+    margin: 26px 0; padding: 18px 20px; background: var(--surface);
+    border-left: 3px solid var(--copper); border-radius: 2px;
+  }
+  .aside .label{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--copper-bright); margin-bottom: 8px; display:block;
+  }
+  .aside p{ margin-bottom:0; font-size: 0.96rem; color: var(--text-dim); }
+
+  .question{
+    margin: 28px 0; padding: 20px 22px; border: 1px dashed var(--line); border-radius: 4px;
+    font-family: 'Space Grotesk', sans-serif; font-size: 1.0rem; color: var(--copper-bright);
+  }
+
+  blockquote{
+    margin: 0; padding-left: 22px; border-left: 2px solid var(--copper);
+    font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; color: var(--text);
+  }
+
+  /* ---------- hero ---------- */
+  .hero{ padding-top: 62px; }
+  .hero .kicker{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.8rem; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--text-dim); margin-bottom: 18px;
+  }
+  .hero h1{ font-size: clamp(1.9rem, 5.6vw, 2.9rem); line-height:1.1; margin-bottom: 24px; }
+  .hero h1 em{ font-style: normal; color: var(--copper-bright); }
+
+  .binarychoice{
+    display:flex; gap: 14px; margin-top: 40px; flex-wrap: wrap;
+  }
+  .bchip{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.9rem;
+    padding: 14px 20px; background: var(--surface); border: 1px solid var(--line);
+    border-radius: 6px; color: var(--text-dim);
+  }
+  .bchip b{ color: var(--copper-bright); display:block; font-size: 1.4rem; margin-bottom: 4px; font-family: 'Space Grotesk', sans-serif; }
+
+  .scrolldown{
+    margin-top: 54px; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem;
+    color: var(--text-dim); letter-spacing: 0.08em; text-transform: uppercase;
+    display:flex; align-items:center; gap:8px;
+  }
+  .scrolldown::after{ content:"↓"; color: var(--copper-bright); animation: nudge 1.8s infinite ease-in-out; }
+  @media (prefers-reduced-motion: reduce){ .scrolldown::after{ animation:none; } }
+  @keyframes nudge{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(5px); } }
+
+  /* ---------- truth tables ---------- */
+  .truth-table{
+    margin: 26px 0; border-collapse: collapse; font-family:'IBM Plex Mono', monospace; font-size: 0.92rem;
+    width: 100%; max-width: 380px;
+  }
+  .truth-table caption{
+    text-align:left; color: var(--text-dim); font-size: 0.8rem; margin-bottom: 10px; caption-side: top;
+  }
+  .truth-table th, .truth-table td{ border: 1px solid var(--line); padding: 9px 16px; text-align:center; }
+  .truth-table th{ color: var(--copper-bright); background: var(--surface); font-weight: 500; }
+  .truth-table td.true{ color: var(--copper-bright); font-weight:600; }
+  .truth-table td.false{ color: var(--text-dim); }
+  .truth-table tr.hi td{ background: rgba(201,125,61,0.1); }
+
+  /* ---------- operator card ---------- */
+  .opcard{
+    background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+    padding: 26px; margin: 30px 0;
+  }
+  .opcard .symbol{
+    font-family:'Space Grotesk', sans-serif; font-size: 2.2rem; color: var(--copper-bright);
+    margin-bottom: 6px; line-height: 1;
+  }
+  .opcard .exempio{
+    font-family:'Space Grotesk', sans-serif; font-size: 1.05rem; color: var(--text);
+    margin-bottom: 20px;
+  }
+
+  /* ---------- il quadro: scaling table ---------- */
+  .scale-table{
+    margin: 26px 0; border-collapse: collapse; font-family:'IBM Plex Mono', monospace; font-size: 0.9rem;
+    width: 100%; max-width: 420px;
+  }
+  .scale-table th, .scale-table td{ border: 1px solid var(--line); padding: 8px 14px; text-align:center; }
+  .scale-table th{ color: var(--copper-bright); background: var(--surface); font-weight:500; }
+  .scale-table td{ color: var(--text-dim); }
+  .scale-table td.emph{ color: var(--copper-bright); font-weight:600; }
+
+  /* ---------- calcolatore (signature) ---------- */
+  .calc{
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+    padding: 32px 28px; margin: 34px 0;
+  }
+  .calc-inputs{ display:flex; gap: 34px; margin-bottom: 30px; flex-wrap: wrap; }
+  .calc-input{ text-align:center; }
+  .calc-input .glabel{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.78rem; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text-dim); margin-bottom: 12px; display:block;
+  }
+  .switch{
+    width: 84px; height: 42px; background: var(--surface-2); border: 1px solid var(--line);
+    border-radius: 22px; position: relative; cursor: pointer; padding:0; display:block;
+  }
+  .switch .knob{
+    position:absolute; top:3px; left:3px; width: 34px; height:34px; border-radius:50%;
+    background: var(--text-dim); transition: transform .25s ease, background .25s ease;
+  }
+  .switch.on .knob{ transform: translateX(42px); background: var(--copper-bright); }
+  .switch:focus-visible{ outline: 2px solid var(--copper-bright); outline-offset:4px; }
+  .calc-input .val{
+    margin-top: 10px; font-family:'IBM Plex Mono', monospace; font-size: 0.85rem; color: var(--text-dim);
+  }
+  .calc-input .val b{ color: var(--copper-bright); }
+
+  .calc-outputs{
+    display:grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
+  }
+  @media (min-width: 560px){ .calc-outputs{ grid-template-columns: repeat(4, 1fr); } }
+
+  .out-light{
+    background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px;
+    padding: 14px 10px; text-align:center; transition: background .25s, border-color .25s;
+  }
+  .out-light.lit{ background: rgba(240,168,94,0.14); border-color: var(--copper); }
+  .out-light .op-name{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.7rem; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--text-dim); margin-bottom: 8px;
+  }
+  .out-light .op-val{
+    font-family:'Space Grotesk', sans-serif; font-size: 1.6rem; color: var(--false);
+    transition: color .25s;
+  }
+  .out-light.lit .op-val{ color: var(--copper-bright); }
+
+  .calc-final{
+    margin-top: 26px; padding-top: 26px; border-top: 1px dashed var(--line);
+  }
+  .calc-final .flabel{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.85rem; color: var(--text-dim); margin-bottom: 10px;
+  }
+  .calc-final .fexpr{ font-family:'Space Grotesk', sans-serif; font-size: 1.1rem; color: var(--text); }
+  .calc-final .fval{
+    font-family:'Space Grotesk', sans-serif; font-size: 2.4rem; color: var(--false); margin-top: 8px; transition: color .25s;
+  }
+  .calc-final .fval.lit{ color: var(--copper-bright); }
+
+  /* ---------- chiusura ---------- */
+  .chiusura{ background: linear-gradient(180deg, var(--bg), var(--surface)); }
+  .footer-note{
+    margin-top: 46px; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem; color: var(--text-dim);
+  }
+</style>
+</head>
+<body>
+
+<nav class="sidebar" aria-label="Indice del saggio">
+  <div class="sidebar-kicker">Indice</div>
+  <div class="sidebar-title">Dal bit alle entità semantiche</div>
+
+  <div class="parte">
+    <details class="modulo">
+      <summary>Presentazione — Dal bit alle entità semantiche</summary>
+      <div class="unita-list">
+        <a href="presentazione.html#parte-1"><span class="num">1</span>Framework epistemologico: i limiti che condividiamo con le macchine</a>
+        <a href="presentazione.html#parte-2"><span class="num">2</span>Il dominio: struttura e composizione del saggio interattivo</a>
+        <a href="presentazione.html#parte-3"><span class="num">3</span>La lente semantica</a>
+      </div>
+    </details>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Parte I — Fondamenti</div>
+    <a class="voce-semplice current" href="fondamenti-1-funzioni-booleane.html">1. Funzioni booleane</a>
+    <a class="voce-semplice" href="fondamenti-2-hardware-software.html">2. Hardware e software</a>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Parte II — Genealogia</div>
+
+    <details class="modulo">
+      <summary>1. Tre ore di disputa senza esito</summary>
+      <div class="unita-list">
+        <a href="genealogia-1-disputa.html#unit-a1"><span class="num">1.1</span>Dalla characteristica universalis alla pura ideografia</a>
+        <a href="genealogia-1-disputa.html#unit-a2"><span class="num">1.2</span>Gödel, Turing, Lucas</a>
+        <a href="genealogia-1-disputa.html#unit-a3"><span class="num">1.3</span>Il perceptron e la disgiunzione esclusiva (XOR)</a>
+        <a href="genealogia-1-disputa.html#unit-a4"><span class="num">1.4</span>Dai sistemi esperti alle macchine statistiche</a>
+        <a href="genealogia-1-disputa.html#unit-a5"><span class="num">1.5</span>Re, donna, regina</a>
+        <a href="genealogia-1-disputa.html#unit-a6"><span class="num">1.6</span>L'attenzione sostituisce la memoria</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>2. Il fenomeno e i suoi limiti</summary>
+      <div class="unita-list">
+        <a href="genealogia-2-limiti.html#unit-b1"><span class="num">2.1</span>Completamento statistico a scala massiva, in-context learning, transfer cross-dominio e altre capacità emergenti</a>
+        <a href="genealogia-2-limiti.html#unit-b2"><span class="num">2.2</span>Interpolazione, pesi statistici, metacognizione</a>
+        <a href="genealogia-2-limiti.html#unit-b3"><span class="num">2.3</span>Grounding, ragionamento causale, generalizzazione composizionale, cortocircuito dell'apprendimento</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>3. Perché ci vuole un villaggio</summary>
+      <div class="unita-list">
+        <a href="genealogia-3-villaggio.html#unit-c1"><span class="num">3.1</span>Il problema del significato</a>
+        <a href="genealogia-3-villaggio.html#unit-c2"><span class="num">3.2</span>Il problema della causalità</a>
+        <a href="genealogia-3-villaggio.html#unit-c3"><span class="num">3.3</span>Il problema biologico</a>
+        <a href="genealogia-3-villaggio.html#unit-c4"><span class="num">3.4</span>Il problema della coscienza</a>
+        <a href="genealogia-3-villaggio.html#unit-c5"><span class="num">3.5</span>Cosa siamo, per contrasto</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>4. Lo spazio, il corpo, la macchina</summary>
+      <div class="unita-list">
+        <a href="genealogia-4-corpo.html#unit-d1"><span class="num">4.1</span>Cos'è lo spazio? Il corpo come strumento di misura</a>
+        <a href="genealogia-4-corpo.html#unit-d2"><span class="num">4.2</span>Il corpo mancante</a>
+      </div>
+    </details>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Parte III — Meccanismo</div>
+
+    <details class="modulo">
+      <summary>1. Il testo come dato</summary>
+      <div class="unita-list">
+        <a href="meccanismo-1-testo-come-dato.html#unit-u1"><span class="num">1.1</span>Encoding</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u2"><span class="num">1.2</span>Tokenizzazione</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u3"><span class="num">1.3</span>Problema del vocabolario</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u4"><span class="num">1.4</span>Dagli ID al punto più discreto</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u5"><span class="num">1.5</span>Gödel</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>2. Probabilità e linguaggio</summary>
+      <div class="unita-list">
+        <a href="meccanismo-2-probabilita.html#unit-u1"><span class="num">2.1</span>Prevedere la parola successiva</a>
+        <a href="meccanismo-2-probabilita.html#unit-u2"><span class="num">2.2</span>Unigrammi/bigrammi, induzione, calibrazione</a>
+        <a href="meccanismo-2-probabilita.html#unit-u3"><span class="num">2.3</span>N-grammi e assunzione di Markov</a>
+        <a href="meccanismo-2-probabilita.html#unit-u4"><span class="num">2.4</span>Sparsità e dipendenze lontane</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>3. Parole come punti nello spazio</summary>
+      <div class="unita-list">
+        <a href="meccanismo-3-embedding.html#unit-u1"><span class="num">3.1</span>Il problema lasciato aperto</a>
+        <a href="meccanismo-3-embedding.html#unit-u2"><span class="num">3.2</span>Le parole come vettori (embedding)</a>
+        <a href="meccanismo-3-embedding.html#unit-u3"><span class="num">3.3</span>L'ipotesi distribuzionale</a>
+        <a href="meccanismo-3-embedding.html#unit-u4"><span class="num">3.4</span>L'aritmetica vettoriale</a>
+        <a href="meccanismo-3-embedding.html#unit-u5"><span class="num">3.5</span>Polisemia ed embedding statico</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>4. Reti neurali</summary>
+      <div class="unita-list">
+        <a href="meccanismo-4-reti-neurali.html#unit-u1"><span class="num">4.1</span>Dal neurone biologico al neurone artificiale</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u2"><span class="num">4.2</span>Il perceptron e XOR</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u3"><span class="num">4.3</span>Strati e profondità</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u4"><span class="num">4.4</span>La funzione di perdita</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u5"><span class="num">4.5</span>Il gradiente e la backpropagation</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>5. Il Transformer</summary>
+      <div class="unita-list">
+        <a href="meccanismo-5-transformer.html#unit-u1"><span class="num">5.1</span>Il problema che l'attenzione risolve</a>
+        <a href="meccanismo-5-transformer.html#unit-u2"><span class="num">5.2</span>L'idea dell'attention</a>
+        <a href="meccanismo-5-transformer.html#unit-u3"><span class="num">5.3</span>Query, Key, Value</a>
+        <a href="meccanismo-5-transformer.html#unit-u4"><span class="num">5.4</span>Embedding contestuale</a>
+        <a href="meccanismo-5-transformer.html#unit-u5"><span class="num">5.5</span>Multi-head e posizione</a>
+        <a href="meccanismo-5-transformer.html#unit-u6"><span class="num">5.6</span>Parallelismo e scala</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>6. Cosa significa "Large"</summary>
+      <div class="unita-list">
+        <a href="meccanismo-6-large.html#unit-u1"><span class="num">6.1</span>Scala</a>
+        <a href="meccanismo-6-large.html#unit-u2"><span class="num">6.2</span>Capacità emergenti</a>
+        <a href="meccanismo-6-large.html#unit-u3"><span class="num">6.3</span>I dati</a>
+        <a href="meccanismo-6-large.html#unit-u4"><span class="num">6.4</span>Fine-tuning</a>
+        <a href="meccanismo-6-large.html#unit-u5"><span class="num">6.5</span>RLHF</a>
+        <a href="meccanismo-6-large.html#unit-u6"><span class="num">6.6</span>Quantizzazione (chiusura dell'arco tecnico)</a>
+      </div>
+    </details>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Appendice</div>
+
+    <details class="modulo">
+      <summary>Dietro i widget</summary>
+      <div class="unita-list">
+        <a href="dietro-i-widget.html#unit-u1"><span class="num">A.1</span>Il tokenizzatore (Meccanismo · 1)</a>
+        <a href="dietro-i-widget.html#unit-u2"><span class="num">A.2</span>Il predittore n-grammi (Meccanismo · 2)</a>
+        <a href="dietro-i-widget.html#unit-u3"><span class="num">A.3</span>La mappa embedding (Meccanismo · 3)</a>
+        <a href="dietro-i-widget.html#unit-u4"><span class="num">A.4</span>Neurone, XOR, superficie di perdita (Meccanismo · 4)</a>
+        <a href="dietro-i-widget.html#unit-u5"><span class="num">A.5</span>L'attention (Meccanismo · 5)</a>
+        <a href="dietro-i-widget.html#unit-u6"><span class="num">A.6</span>Scala e capacità (Meccanismo · 6)</a>
+      </div>
+    </details>
+  </div>
+</nav>
+
+<main>
+
+  <section id="apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Fondamenti · 1</div>
+      <h1>Prima di tutto: <em>sì o no.</em></h1>
+      <p class="lede dim">Alla domanda «stai bene?» esistono, in pratica, due risposte oneste. Le altre sono diplomazia — un'informazione diversa, non l'assenza di informazione.</p>
+
+      <div class="binarychoice">
+        <div class="bchip"><b>1</b>vero, sì, acceso</div>
+        <div class="bchip"><b>0</b>falso, no, spento</div>
+      </div>
+
+      <p style="margin-top:34px;" class="dim">Questi due stati si chiamano <strong>valori booleani</strong>, da George Boole — matematico dell'Ottocento che non poteva immaginare dove sarebbe approdato il suo lavoro. Da qui si costruisce tutto il resto: nessuna nozione è data per scontata.</p>
+
+      <div class="scrolldown">costruiamo gli operatori, uno alla volta</div>
+    </div>
+  </section>
+
+  <section id="sez-e">
+    <div class="wrap reveal">
+      <div class="eyebrow">Operatore 01</div>
+      <h2 class="title">E — la congiunzione di chi non si accontenta</h2>
+      <p>«Piove <strong>E</strong> fa freddo». Quando è vera questa frase? Solo se piove e contemporaneamente fa freddo — non basta una delle due condizioni.</p>
+
+      <div class="opcard">
+        <div class="symbol mono">A ∧ B</div>
+        <div class="exempio">piove E fa freddo</div>
+        <table class="truth-table">
+          <caption>Vera in un solo caso su quattro</caption>
+          <tr><th>piove</th><th>fa freddo</th><th>E</th></tr>
+          <tr class="hi"><td>Sì</td><td>Sì</td><td class="true">Sì</td></tr>
+          <tr><td>Sì</td><td>No</td><td class="false">No</td></tr>
+          <tr><td>No</td><td>Sì</td><td class="false">No</td></tr>
+          <tr><td>No</td><td>No</td><td class="false">No</td></tr>
+        </table>
+      </div>
+
+      <p class="dim">La struttura è significativa: due colonne di ingresso, una di uscita, quattro righe che coprono <em>ogni</em> combinazione possibile. È la <strong>tavola di verità</strong> — l'elenco esaustivo dei casi, senza eccezioni lasciate fuori per comodità.</p>
+    </div>
+  </section>
+
+  <section id="sez-o">
+    <div class="wrap reveal">
+      <div class="eyebrow">Operatore 02</div>
+      <h2 class="title">O — l'operatore meno esigente</h2>
+      <p>Stessa frase, un solo cambiamento: «piove <strong>O</strong> fa freddo». Basta che <em>almeno una</em> delle due condizioni sia vera.</p>
+
+      <div class="opcard">
+        <div class="symbol mono">A ∨ B</div>
+        <div class="exempio">piove O fa freddo</div>
+        <table class="truth-table">
+          <caption>Falsa in un solo caso su quattro — l'esatto opposto di E</caption>
+          <tr><th>piove</th><th>fa freddo</th><th>O</th></tr>
+          <tr><td>Sì</td><td>Sì</td><td class="true">Sì</td></tr>
+          <tr><td>Sì</td><td>No</td><td class="true">Sì</td></tr>
+          <tr><td>No</td><td>Sì</td><td class="true">Sì</td></tr>
+          <tr class="hi"><td>No</td><td>No</td><td class="false">No</td></tr>
+        </table>
+      </div>
+
+      <div class="aside">
+        <span class="label">Da notare</span>
+        <p>E ed O sono simmetrici come severità: E è vera in una riga su quattro, O è falsa in una riga su quattro. Non è un caso — è la stessa asimmetria vista da due lati.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="sez-non">
+    <div class="wrap reveal">
+      <div class="eyebrow">Operatore 03</div>
+      <h2 class="title">NON — l'unico che lavora da solo</h2>
+      <p>A differenza di E e O, il NON prende <strong>un solo valore</strong> e lo ribalta. Non c'è niente da negoziare tra due condizioni: c'è solo un valore, e il suo contrario.</p>
+
+      <div class="opcard">
+        <div class="symbol mono">¬A</div>
+        <div class="exempio">NON piove</div>
+        <table class="truth-table">
+          <caption>Due righe, non quattro — un solo ingresso</caption>
+          <tr><th>piove</th><th>NON piove</th></tr>
+          <tr><td>Sì</td><td class="false">No</td></tr>
+          <tr><td>No</td><td class="true">Sì</td></tr>
+        </table>
+      </div>
+
+      <p class="dim">Semplice fino alla banalità. Eppure è uno dei tre mattoni con cui, in teoria, si costruisce qualsiasi funzione booleana esistente. Boole non ha avuto bisogno di altro.</p>
+    </div>
+  </section>
+
+  <section id="quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro generale</div>
+      <h2 class="title">Cos'è, esattamente, una funzione booleana</h2>
+      <p>La stessa idea di funzione già nota dalla matematica — ma invece di lavorare con numeri, lavora con vero/falso.</p>
+
+      <div class="fnbox" style="display:flex; align-items:center; gap:16px; flex-wrap:wrap; margin: 28px 0; font-family:'IBM Plex Mono', monospace;">
+        <div style="padding:14px 18px; background:var(--surface); border:1px solid var(--line); border-radius:6px; font-size:0.9rem;">Ingressi: 0/1, 0/1, ...</div>
+        <span style="color:var(--text-dim);">→</span>
+        <div style="padding:14px 18px; background:var(--surface); border:1px dashed var(--copper); border-radius:6px; font-size:0.9rem; color:var(--copper-bright);">E, O, NON</div>
+        <span style="color:var(--text-dim);">→</span>
+        <div style="padding:14px 18px; background:var(--surface); border:1px solid var(--line); border-radius:6px; font-size:0.9rem;">Uscita: 0/1</div>
+      </div>
+
+      <p>Con soli tre operatori si costruisce <em>qualsiasi</em> funzione booleana immaginabile. Combinandoli in catena — «NON (piove E fa freddo)», «(piove O fa freddo) E NON vento» — si arriva a esprimere condizioni arbitrariamente complesse.</p>
+
+      <div class="question">Ogni circuito digitale esistente — telefono, laptop, la GPU su cui gira un modello linguistico — non fa altro che eseguire funzioni booleane, miliardi di volte al secondo. Non è una metafora didattica: è letteralmente ciò che accade dentro il silicio.</div>
+
+      <p style="margin-top:32px;">Un dettaglio da registrare subito: con <span class="mono">n</span> variabili in ingresso, la tavola di verità ha sempre esattamente <span class="mono">2ⁿ</span> righe — perché ogni variabile raddoppia le combinazioni possibili.</p>
+
+      <table class="scale-table">
+        <tr><th>n variabili</th><th>2ⁿ righe</th></tr>
+        <tr><td>2</td><td class="emph">4</td></tr>
+        <tr><td>3</td><td class="emph">8</td></tr>
+        <tr><td>10</td><td class="emph">1.024</td></tr>
+        <tr><td>64</td><td class="emph">un numero che non conviene scrivere per intero</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section id="sez-xor">
+    <div class="wrap reveal">
+      <div class="eyebrow">Operatore 04 — il meno intuitivo</div>
+      <h2 class="title">XOR — o l'uno o l'altro, non entrambi</h2>
+      <p>«O la pizza O il sushi» — inteso nel senso stretto: non entrambe. Altri esempi della stessa forma: «o prendi l'ascensore o fai le scale» (non a metà), «paga in contanti o con la carta» (non con tutti e due per lo stesso acquisto). Nella conversazione quotidiana è raro parlare con questa precisione; in informatica è indispensabile.</p>
+
+      <div class="opcard">
+        <div class="symbol mono">A ⊕ B</div>
+        <div class="exempio">pizza XOR sushi</div>
+        <table class="truth-table">
+          <caption>Vera solo quando i due valori differiscono</caption>
+          <tr><th>A</th><th>B</th><th>XOR</th></tr>
+          <tr><td>Sì</td><td>Sì</td><td class="false">No</td></tr>
+          <tr><td>Sì</td><td>No</td><td class="true">Sì</td></tr>
+          <tr><td>No</td><td>Sì</td><td class="true">Sì</td></tr>
+          <tr><td>No</td><td>No</td><td class="false">No</td></tr>
+        </table>
+      </div>
+
+      <div class="aside">
+        <span class="label">Per dopo</span>
+        <p>Questo operatore va tenuto da parte. Torna, con conseguenze non banali, quando nella storia dell'intelligenza artificiale un certo modello del 1958 si troverà davanti a un problema che non sa risolvere — e che si chiama esattamente così. La soluzione vera, con una rete addestrata per davvero a risolverlo, è in <a href="meccanismo-4-reti-neurali.html#u3-sez-mlp">Reti neurali — «Uno strato nascosto tra l'ingresso e l'uscita»</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="calcolatore">
+    <div class="wrap reveal">
+      <div class="eyebrow">Verifica</div>
+      <h2 class="title">Il calcolatore</h2>
+      <p>Imposti A e B e osservi come cambiano tutti gli operatori insieme — il modo più rapido per verificare che il meccanismo sia chiaro, non solo letto.</p>
+
+      <div class="calc">
+        <div class="calc-inputs">
+          <div class="calc-input">
+            <span class="glabel">A</span>
+            <button class="switch" id="swA" aria-pressed="false" aria-label="Imposta A"><span class="knob"></span></button>
+            <div class="val">A = <b id="valA">0</b></div>
+          </div>
+          <div class="calc-input">
+            <span class="glabel">B</span>
+            <button class="switch" id="swB" aria-pressed="false" aria-label="Imposta B"><span class="knob"></span></button>
+            <div class="val">B = <b id="valB">0</b></div>
+          </div>
+        </div>
+
+        <div class="calc-outputs">
+          <div class="out-light" id="outAND">
+            <div class="op-name">A E B</div>
+            <div class="op-val" id="valAND">0</div>
+          </div>
+          <div class="out-light" id="outOR">
+            <div class="op-name">A O B</div>
+            <div class="op-val" id="valOR">0</div>
+          </div>
+          <div class="out-light" id="outNOTA">
+            <div class="op-name">NON A</div>
+            <div class="op-val" id="valNOTA">1</div>
+          </div>
+          <div class="out-light" id="outXOR">
+            <div class="op-name">A XOR B</div>
+            <div class="op-val" id="valXOR">0</div>
+          </div>
+        </div>
+
+        <div class="calc-final">
+          <div class="flabel">La funzione che chiude il cerchio:</div>
+          <div class="fexpr mono">F = (A E B) O (NON A)</div>
+          <div class="fval" id="valF">1</div>
+        </div>
+      </div>
+
+      <p class="dim">Spenga A: F resta vera indipendentemente da B — la clausola «NON A» da sola basta a garantirlo. Questo genere di osservazione, condotta muovendo gli interruttori invece di leggerla, è esattamente il tipo di comprensione richiesta dal passo successivo.</p>
+    </div>
+  </section>
+
+  <section id="approfondimenti">
+    <div class="wrap reveal">
+      <div class="eyebrow">Prima di chiudere</div>
+      <h2 class="title">Due precisazioni, per chi vuole andare oltre</h2>
+
+      <div class="aside">
+        <span class="label">Storia — da dove viene la tavola di verità</span>
+        <p>Il formato a righe e colonne che abbiamo appena usato non è antico quanto la logica stessa. Charles Sanders Peirce ne abbozza una versione già tra il 1883 e il 1902, in manoscritti che restano inediti per decenni. La forma che riconosciamo oggi nasce indipendentemente due volte nello stesso anno, il 1921: Ludwig Wittgenstein la pubblica nel <em>Tractatus Logico-Philosophicus</em>, Emil Post la usa nel suo lavoro sulla teoria delle proposizioni elementari per dimostrare — tra l'altro — che E, O e NON bastano a costruire qualsiasi funzione booleana: esattamente il risultato richiamato più sopra. Un'idea semplice quanto un elenco esaustivo di casi ha aspettato quasi mezzo secolo, e due scopritori indipendenti, prima di diventare lo strumento standard che è oggi.</p>
+      </div>
+
+      <div class="aside">
+        <span class="label">Non tutte le negazioni sono uguali</span>
+        <p>Il NON che abbiamo appena costruito — ribalta un valore, punto — è la versione più semplice possibile della negazione: quella della logica classica, dove ogni proposizione è vera o falsa e negarla significa spostarsi sull'altro valore. Non è l'unica concezione possibile. Nella logica intuizionista, sviluppata da Brouwer e formalizzata da Heyting, negare una proposizione non vuol dire «prendere l'altro valore» ma «mostrare che assumerla porta a una contraddizione» — e da qui segue una differenza concreta: NON(NON A) non torna sempre uguale ad A, perché la verità non è più solo bivalente ma legata a una dimostrazione costruita. Nelle logiche paraconsistenti, ancora più radicali, si ammette — in casi controllati — che A e NON A siano vere insieme, senza che l'intero sistema collassi nell'assurdo. Il NON di questa lezione, quello che useremo per il resto del saggio, resta quello classico: bivalente, binario, coerente con l'hardware che eseguirà davvero queste operazioni nella prossima lezione. Ma è una scelta, non l'unica possibile — e vale la pena saperlo.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura</div>
+      <h2 class="title">Tre operatori, una macchina intera</h2>
+
+      <blockquote>
+        E, O, NON. Tre regole abbastanza semplici da spiegare a chiunque in cinque minuti.
+        <br><br>
+        Eppure con questi tre operatori — combinati, annidati, ripetuti su scala smisurata — si costruisce ogni singola operazione che un computer esegue. Nessun passaggio magico si nasconde nel mezzo.
+      </blockquote>
+
+      <p style="margin-top:26px;">La prossima lezione mostra dove, fisicamente, questi interruttori smettono di essere un'astrazione su uno schermo e diventano silicio: il transistor, il corpo di Claude, e che cosa accade davvero nei due secondi di attesa di una risposta.</p>
+
+      <div class="footer-note">Fondamenti — 1 · Funzioni booleane</div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  // --- calcolatore ---
+  const swA = document.getElementById('swA');
+  const swB = document.getElementById('swB');
+  let a = false, b = false;
+
+  function render(){
+    swA.classList.toggle('on', a);
+    swA.setAttribute('aria-pressed', a);
+    swB.classList.toggle('on', b);
+    swB.setAttribute('aria-pressed', b);
+
+    document.getElementById('valA').textContent = a ? '1' : '0';
+    document.getElementById('valB').textContent = b ? '1' : '0';
+
+    const and = a && b;
+    const or  = a || b;
+    const notA = !a;
+    const xor = a !== b;
+    const f = and || notA;
+
+    setLight('outAND', 'valAND', and);
+    setLight('outOR', 'valOR', or);
+    setLight('outNOTA', 'valNOTA', notA);
+    setLight('outXOR', 'valXOR', xor);
+
+    const fval = document.getElementById('valF');
+    fval.textContent = f ? '1' : '0';
+    fval.classList.toggle('lit', f);
+  }
+
+  function setLight(boxId, valId, state){
+    document.getElementById(boxId).classList.toggle('lit', state);
+    document.getElementById(valId).textContent = state ? '1' : '0';
+  }
+
+  swA.addEventListener('click', () => { a = !a; render(); });
+  swB.addEventListener('click', () => { b = !b; render(); });
+  render();
+
+  // --- reveal on scroll ---
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>

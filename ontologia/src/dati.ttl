@@ -1,0 +1,914 @@
+@prefix : <http://example.org/corso-llm-vocabolario#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Popolamento (ABox) — Fase 4, aggiornato il 4 settembre 2026. Generato da
+# scripts/genera_dati.py da dati strutturati scritti a mano nello script stesso;
+# non modificare a mano questo file, rigenerarlo dallo script. Vedi
+# docs/decisioni-modellazione.md per il razionale delle scelte di mappatura.
+
+########################################################################
+# Parti
+########################################################################
+
+:ParteFondamenti a :Parte ;
+    rdfs:label "Fondamenti"@it .
+
+:ParteGenealogia a :Parte ;
+    rdfs:label "Genealogia"@it .
+
+:ParteMeccanismo a :Parte ;
+    rdfs:label "Meccanismo"@it .
+
+########################################################################
+# Capitoli e Unità
+########################################################################
+
+:Fondamenti1 a :Capitolo ;
+    rdfs:label "Fondamenti · 1 — Funzioni booleane"@it ;
+    :partOfParte :ParteFondamenti .
+
+:Fondamenti2 a :Capitolo ;
+    rdfs:label "Fondamenti · 2 — Hardware e software"@it ;
+    :partOfParte :ParteFondamenti .
+
+:Genealogia1 a :Capitolo ;
+    rdfs:label "Genealogia · 1 — Tre ore di disputa senza esito"@it ;
+    :partOfParte :ParteGenealogia .
+
+:Gen11 a :Unita ;
+    rdfs:label "Genealogia · 1.1 — Dalla characteristica universalis alla pura ideografia"@it ;
+    :partOfCapitolo :Genealogia1 .
+
+:Gen12 a :Unita ;
+    rdfs:label "Genealogia · 1.2 — Gödel, Turing, Lucas"@it ;
+    :partOfCapitolo :Genealogia1 .
+
+:Gen13 a :Unita ;
+    rdfs:label "Genealogia · 1.3 — Il perceptron e la disgiunzione esclusiva (XOR)"@it ;
+    :partOfCapitolo :Genealogia1 .
+
+:Gen14 a :Unita ;
+    rdfs:label "Genealogia · 1.4 — Dai sistemi esperti alle macchine statistiche"@it ;
+    :partOfCapitolo :Genealogia1 .
+
+:Gen15 a :Unita ;
+    rdfs:label "Genealogia · 1.5 — Re, donna, regina"@it ;
+    :partOfCapitolo :Genealogia1 .
+
+:Gen16 a :Unita ;
+    rdfs:label "Genealogia · 1.6 — L'attenzione sostituisce la memoria"@it ;
+    :partOfCapitolo :Genealogia1 .
+
+:Genealogia2 a :Capitolo ;
+    rdfs:label "Genealogia · 2 — Il fenomeno e i suoi limiti"@it ;
+    :partOfParte :ParteGenealogia .
+
+:Gen21 a :Unita ;
+    rdfs:label "Genealogia · 2.1 — Completamento statistico a scala massiva, in-context learning, transfer cross-dominio e altre capacità emergenti"@it ;
+    :partOfCapitolo :Genealogia2 .
+
+:Gen22 a :Unita ;
+    rdfs:label "Genealogia · 2.2 — Interpolazione, pesi statistici, metacognizione"@it ;
+    :partOfCapitolo :Genealogia2 .
+
+:Gen23 a :Unita ;
+    rdfs:label "Genealogia · 2.3 — Grounding, ragionamento causale, generalizzazione composizionale, cortocircuito dell'apprendimento"@it ;
+    :partOfCapitolo :Genealogia2 .
+
+:Genealogia3 a :Capitolo ;
+    rdfs:label "Genealogia · 3 — Perché ci vuole un villaggio"@it ;
+    :partOfParte :ParteGenealogia .
+
+:Gen31 a :Unita ;
+    rdfs:label "Genealogia · 3.1 — Il problema del significato"@it ;
+    :partOfCapitolo :Genealogia3 .
+
+:Gen32 a :Unita ;
+    rdfs:label "Genealogia · 3.2 — Il problema della causalità"@it ;
+    :partOfCapitolo :Genealogia3 .
+
+:Gen33 a :Unita ;
+    rdfs:label "Genealogia · 3.3 — Il problema biologico"@it ;
+    :partOfCapitolo :Genealogia3 .
+
+:Gen34 a :Unita ;
+    rdfs:label "Genealogia · 3.4 — Il problema della coscienza"@it ;
+    :partOfCapitolo :Genealogia3 .
+
+:Gen35 a :Unita ;
+    rdfs:label "Genealogia · 3.5 — Cosa siamo, per contrasto"@it ;
+    :partOfCapitolo :Genealogia3 .
+
+:Genealogia4 a :Capitolo ;
+    rdfs:label "Genealogia · 4 — Lo spazio, il corpo, la macchina"@it ;
+    :partOfParte :ParteGenealogia .
+
+:Gen41 a :Unita ;
+    rdfs:label "Genealogia · 4.1 — Cos'è lo spazio? Il corpo come strumento di misura"@it ;
+    :partOfCapitolo :Genealogia4 .
+
+:Gen42 a :Unita ;
+    rdfs:label "Genealogia · 4.2 — Il corpo mancante"@it ;
+    :partOfCapitolo :Genealogia4 .
+
+:Meccanismo1 a :Capitolo ;
+    rdfs:label "Meccanismo · 1 — Il testo come dato"@it ;
+    :partOfParte :ParteMeccanismo .
+
+:U11 a :Unita ;
+    rdfs:label "Meccanismo · 1.1 — Encoding"@it ;
+    :partOfCapitolo :Meccanismo1 .
+
+:U12 a :Unita ;
+    rdfs:label "Meccanismo · 1.2 — Tokenizzazione"@it ;
+    :partOfCapitolo :Meccanismo1 .
+
+:U13 a :Unita ;
+    rdfs:label "Meccanismo · 1.3 — Problema del vocabolario"@it ;
+    :partOfCapitolo :Meccanismo1 .
+
+:U14 a :Unita ;
+    rdfs:label "Meccanismo · 1.4 — Dagli ID al punto più discreto"@it ;
+    :partOfCapitolo :Meccanismo1 .
+
+:U15 a :Unita ;
+    rdfs:label "Meccanismo · 1.5 — Gödel"@it ;
+    :partOfCapitolo :Meccanismo1 .
+
+:Meccanismo2 a :Capitolo ;
+    rdfs:label "Meccanismo · 2 — Probabilità e linguaggio"@it ;
+    :partOfParte :ParteMeccanismo .
+
+:U21 a :Unita ;
+    rdfs:label "Meccanismo · 2.1 — Prevedere la parola successiva"@it ;
+    :partOfCapitolo :Meccanismo2 .
+
+:U22 a :Unita ;
+    rdfs:label "Meccanismo · 2.2 — Unigrammi/bigrammi, induzione, calibrazione"@it ;
+    :partOfCapitolo :Meccanismo2 .
+
+:U23 a :Unita ;
+    rdfs:label "Meccanismo · 2.3 — N-grammi e assunzione di Markov"@it ;
+    :partOfCapitolo :Meccanismo2 .
+
+:U24 a :Unita ;
+    rdfs:label "Meccanismo · 2.4 — Sparsità e dipendenze lontane"@it ;
+    :partOfCapitolo :Meccanismo2 .
+
+:Meccanismo3 a :Capitolo ;
+    rdfs:label "Meccanismo · 3 — Parole come punti nello spazio"@it ;
+    :partOfParte :ParteMeccanismo .
+
+:U31 a :Unita ;
+    rdfs:label "Meccanismo · 3.1 — Il problema lasciato aperto"@it ;
+    :partOfCapitolo :Meccanismo3 .
+
+:U32 a :Unita ;
+    rdfs:label "Meccanismo · 3.2 — Le parole come vettori (embedding)"@it ;
+    :partOfCapitolo :Meccanismo3 .
+
+:U33 a :Unita ;
+    rdfs:label "Meccanismo · 3.3 — L'ipotesi distribuzionale"@it ;
+    :partOfCapitolo :Meccanismo3 .
+
+:U34 a :Unita ;
+    rdfs:label "Meccanismo · 3.4 — L'aritmetica vettoriale"@it ;
+    :partOfCapitolo :Meccanismo3 .
+
+:U35 a :Unita ;
+    rdfs:label "Meccanismo · 3.5 — Polisemia ed embedding statico"@it ;
+    :partOfCapitolo :Meccanismo3 .
+
+:Meccanismo4 a :Capitolo ;
+    rdfs:label "Meccanismo · 4 — Reti neurali"@it ;
+    :partOfParte :ParteMeccanismo .
+
+:U41 a :Unita ;
+    rdfs:label "Meccanismo · 4.1 — Dal neurone biologico al neurone artificiale"@it ;
+    :partOfCapitolo :Meccanismo4 .
+
+:U42 a :Unita ;
+    rdfs:label "Meccanismo · 4.2 — Il perceptron e XOR"@it ;
+    :partOfCapitolo :Meccanismo4 .
+
+:U43 a :Unita ;
+    rdfs:label "Meccanismo · 4.3 — Strati e profondità"@it ;
+    :partOfCapitolo :Meccanismo4 .
+
+:U44 a :Unita ;
+    rdfs:label "Meccanismo · 4.4 — La funzione di perdita"@it ;
+    :partOfCapitolo :Meccanismo4 .
+
+:U45 a :Unita ;
+    rdfs:label "Meccanismo · 4.5 — Il gradiente e la backpropagation"@it ;
+    :partOfCapitolo :Meccanismo4 .
+
+:Meccanismo5 a :Capitolo ;
+    rdfs:label "Meccanismo · 5 — Il Transformer"@it ;
+    :partOfParte :ParteMeccanismo .
+
+:U51 a :Unita ;
+    rdfs:label "Meccanismo · 5.1 — Il problema che l'attenzione risolve"@it ;
+    :partOfCapitolo :Meccanismo5 .
+
+:U52 a :Unita ;
+    rdfs:label "Meccanismo · 5.2 — L'idea dell'attention"@it ;
+    :partOfCapitolo :Meccanismo5 .
+
+:U53 a :Unita ;
+    rdfs:label "Meccanismo · 5.3 — Query, Key, Value"@it ;
+    :partOfCapitolo :Meccanismo5 .
+
+:U54 a :Unita ;
+    rdfs:label "Meccanismo · 5.4 — Embedding contestuale"@it ;
+    :partOfCapitolo :Meccanismo5 .
+
+:U55 a :Unita ;
+    rdfs:label "Meccanismo · 5.5 — Multi-head e posizione"@it ;
+    :partOfCapitolo :Meccanismo5 .
+
+:U56 a :Unita ;
+    rdfs:label "Meccanismo · 5.6 — Parallelismo e scala"@it ;
+    :partOfCapitolo :Meccanismo5 .
+
+:Meccanismo6 a :Capitolo ;
+    rdfs:label "Meccanismo · 6 — Cosa significa \"Large\""@it ;
+    :partOfParte :ParteMeccanismo .
+
+:U61 a :Unita ;
+    rdfs:label "Meccanismo · 6.1 — Scala"@it ;
+    :partOfCapitolo :Meccanismo6 .
+
+:U62 a :Unita ;
+    rdfs:label "Meccanismo · 6.2 — Capacità emergenti"@it ;
+    :partOfCapitolo :Meccanismo6 .
+
+:U63 a :Unita ;
+    rdfs:label "Meccanismo · 6.3 — I dati"@it ;
+    :partOfCapitolo :Meccanismo6 .
+
+:U64 a :Unita ;
+    rdfs:label "Meccanismo · 6.4 — Fine-tuning"@it ;
+    :partOfCapitolo :Meccanismo6 .
+
+:U65 a :Unita ;
+    rdfs:label "Meccanismo · 6.5 — RLHF"@it ;
+    :partOfCapitolo :Meccanismo6 .
+
+:U66 a :Unita ;
+    rdfs:label "Meccanismo · 6.6 — Quantizzazione (chiusura dell'arco tecnico)"@it ;
+    :partOfCapitolo :Meccanismo6 .
+
+########################################################################
+# discussoInUnita — Concetto -> Unita/Capitolo, da :fonte già scritto in Fase 2
+########################################################################
+
+:Discretizzazione :discussoInUnita :U11, :U63, :Fondamenti2 .
+:Encoding :discussoInUnita :U11 .
+:AsciiUnicode :discussoInUnita :U11 .
+:Tokenizzazione :discussoInUnita :U12, :U13 .
+:Bpe :discussoInUnita :U12, :U13 .
+:Token :discussoInUnita :U12, :U13, :U14, :U15 .
+:TokenId :discussoInUnita :U14 .
+:ProblemaDelVocabolario :discussoInUnita :U13 .
+:FondamentiLogicoMatematici :discussoInUnita :Gen11, :Gen12, :U15 .
+:SistemaFormale :discussoInUnita :U15, :Gen12, :Gen16 .
+:Numerabilita :discussoInUnita :U15, :U31 .
+:TeoremaIncompletezzaGodel :discussoInUnita :Gen12, :U15 .
+:Aritmetizzazione :discussoInUnita :Gen12, :U15 .
+:TestDiTuring :discussoInUnita :Gen12 .
+:DiagonaleDiCantor :discussoInUnita :U15, :U31 .
+:StoriaIntelligenzaArtificiale :discussoInUnita :Gen11, :Gen12, :Gen13, :Gen14, :Gen15, :Gen16 .
+:SistemaEsperto :discussoInUnita :Gen14 .
+:Brittleness :discussoInUnita :Gen14 .
+:DeepLearning :discussoInUnita :Gen15 .
+:HiddenMarkovModel :discussoInUnita :Gen14 .
+:SupportVectorMachine :discussoInUnita :Gen14 .
+:RetiRicorrentiLstm :discussoInUnita :Gen16 .
+:ProbabilitaEPrevisioneLinguistica :discussoInUnita :U21, :U22, :U23, :U24 .
+:ProbabilitaComeNumeroReale :discussoInUnita :U22 .
+:Induzione :discussoInUnita :U22 .
+:Calibrazione :discussoInUnita :Gen22, :U22 .
+:ReliabilityDiagram :discussoInUnita :U22 .
+:Ngramma :discussoInUnita :U23 .
+:AssunzioneDiMarkov :discussoInUnita :U23 .
+:Sparsita :discussoInUnita :U24, :U31 .
+:DipendenzeLungoRaggio :discussoInUnita :U24, :U51 .
+:CompletamentoStatistico :discussoInUnita :Gen21, :U21 .
+:SpazioSemanticoEEmbedding :discussoInUnita :U31, :U32, :U33, :U34, :U35 .
+:Embedding :discussoInUnita :U32 .
+:EmbeddingStatico :discussoInUnita :U35 .
+:EmbeddingContestuale :discussoInUnita :U54 .
+:CollassoContestuale :discussoInUnita :U54 .
+:IpotesiDistribuzionale :discussoInUnita :U33 .
+:AritmeticaVettoriale :discussoInUnita :U34 .
+:SillogismoDellErba :discussoInUnita :U34 .
+:Abduzione :discussoInUnita :U34 .
+:QualitaPrimarieSecondarie :discussoInUnita :U32, :U54 .
+:Polisemia :discussoInUnita :U35 .
+:IrragionevoleEfficaciaMatematica :discussoInUnita :U34 .
+:Word2Vec :discussoInUnita :Gen15, :U33 .
+:FastText :discussoInUnita :U32 .
+:ReteNeuraleEApprendimento :discussoInUnita :U41, :U42, :U43, :U44, :U45 .
+:NeuroneArtificiale :discussoInUnita :U41 .
+:FunzioneAttivazione :discussoInUnita :U41 .
+:Bias :discussoInUnita :U41 .
+:SeparabilitaLineare :discussoInUnita :Gen13, :U42 .
+:MultiLayerPerceptron :discussoInUnita :U43 .
+:Backpropagation :discussoInUnita :Gen15, :U45 .
+:FunzionePerdita :discussoInUnita :U44 .
+:Gradiente :discussoInUnita :U45 .
+:MinimoLocaleGlobale :discussoInUnita :U45 .
+:DiscesaDelGradiente :discussoInUnita :U45 .
+:BiologiaCognizioneETeoriaSistemi :discussoInUnita :U41, :U43, :U45 .
+:Autopoiesi :discussoInUnita :U41 .
+:ChiusuraOperazionale :discussoInUnita :U41 .
+:PleromaCreatura :discussoInUnita :U43 .
+:Schismogenesi :discussoInUnita :U45 .
+:PlasticitaSinaptica :discussoInUnita :U45, :Gen33 .
+:TransformerEAttenzione :discussoInUnita :U51, :U52, :U53, :U54, :U55, :U56 .
+:Attention :discussoInUnita :U51, :U52, :U53, :U54, :U55, :U56 .
+:QueryKeyValue :discussoInUnita :U53 .
+:Softmax :discussoInUnita :U53 .
+:MultiHeadAttention :discussoInUnita :U55 .
+:CodificaPosizione :discussoInUnita :U55 .
+:Parallelismo :discussoInUnita :U56 .
+:CapacitaELimitiDeiLlm :discussoInUnita :Gen21, :Gen22, :Gen23 .
+:InContextLearning :discussoInUnita :Gen21 .
+:TransferCrossDominio :discussoInUnita :Gen21 .
+:CapacitaEmergenti :discussoInUnita :Gen21, :U62 .
+:Allucinazione :discussoInUnita :Gen22 .
+:MetacognizioneSimulata :discussoInUnita :Gen22 .
+:Grounding :discussoInUnita :Gen23, :Gen31 .
+:RagionamentoCausale :discussoInUnita :Gen23, :Gen32 .
+:GeneralizzazioneComposizionale :discussoInUnita :Gen23 .
+:ApprendimentoContinuoAssente :discussoInUnita :Gen23 .
+:FilosofiaLinguaggioEMente :discussoInUnita :Gen31, :Gen34 .
+:SensoRiferimento :discussoInUnita :Gen31 .
+:SignificatoComeUso :discussoInUnita :Gen31, :U33 .
+:StanzaCinese :discussoInUnita :Gen31 .
+:ProblemaDifficileCoscienza :discussoInUnita :Gen34 .
+:IntegratedInformationTheory :discussoInUnita :Gen34 .
+:GlobalWorkspaceTheory :discussoInUnita :Gen34 .
+:HigherOrderTheories :discussoInUnita :Gen34 .
+:FilosofiaSpazioECorpo :discussoInUnita :Gen41, :Gen42 .
+:SpazioContenitoreAssoluto :discussoInUnita :Gen41 .
+:SpazioFormaIntuizione :discussoInUnita :Gen41 .
+:SpazioVissuto :discussoInUnita :Gen41 .
+:BayesianBrain :discussoInUnita :Gen41 .
+:GapSensorimotor :discussoInUnita :Gen42 .
+:RoboticaEmbodied :discussoInUnita :Gen42 .
+:MetaforeConcettuali :discussoInUnita :Gen42 .
+:HardwareEFondamentaComputazionali :discussoInUnita :Fondamenti1, :Fondamenti2 .
+:FunzioneBooleana :discussoInUnita :Fondamenti1 .
+:TavolaVerita :discussoInUnita :Fondamenti1 .
+:Transistor :discussoInUnita :Fondamenti1, :Fondamenti2 .
+:GateLogico :discussoInUnita :Fondamenti2 .
+:HardwareSoftware :discussoInUnita :Fondamenti2 .
+:AddestramentoEScala :discussoInUnita :U61, :U64, :U65, :U66 .
+:ModelloDiBase :discussoInUnita :U64 .
+:FineTuning :discussoInUnita :U64 .
+:Rlhf :discussoInUnita :U65 .
+:ModelloDiRicompensa :discussoInUnita :U65 .
+:Quantizzazione :discussoInUnita :U44, :U66 .
+:ParametriScala :discussoInUnita :U61 .
+:RiflessioniEpistemologicheTrasversali :discussoInUnita :U63 .
+:VeritasFiliaTemporis :discussoInUnita :U63 .
+
+########################################################################
+# Teorici
+########################################################################
+
+:Leibniz a :Teorico ;
+    rdfs:label "Gottfried Leibniz"@it ;
+    rdfs:comment "Characteristica Universalis, il sogno del pensiero come calcolo; anche calcolo infinitesimale (con Newton)."@it ;
+    :discussoInUnita :Gen11, :U32 .
+
+:Newton a :Teorico ;
+    rdfs:label "Isaac Newton"@it ;
+    rdfs:comment "Calcolo infinitesimale (con Leibniz); spazio come contenitore assoluto."@it ;
+    :discussoInUnita :U32, :Gen41 .
+
+:Boole a :Teorico ;
+    rdfs:label "George Boole"@it ;
+    rdfs:comment "Algebra della logica; origine degli operatori E/O/NON."@it ;
+    :discussoInUnita :Gen11, :Fondamenti1 ;
+    :citaOpera "The Laws of Thought, 1854" .
+
+:Frege a :Teorico ;
+    rdfs:label "Gottlob Frege"@it ;
+    rdfs:comment "Riduzione dell'aritmetica alla logica; distinzione senso/riferimento."@it ;
+    :discussoInUnita :Gen11, :Gen31 .
+
+:Russell a :Teorico ;
+    rdfs:label "Bertrand Russell"@it ;
+    rdfs:comment "Paradosso che incrina i Grundgesetze di Frege; Principia Mathematica con Whitehead."@it ;
+    :discussoInUnita :Gen11 ;
+    :citaOpera "Principia Mathematica (con Alfred North Whitehead)" .
+
+:Whitehead a :Teorico ;
+    rdfs:label "Alfred North Whitehead"@it ;
+    rdfs:comment "Co-autore di Principia Mathematica."@it ;
+    :discussoInUnita :Gen11 ;
+    :citaOpera "Principia Mathematica (con Bertrand Russell)" .
+
+:Godel a :Teorico ;
+    rdfs:label "Kurt Gödel"@it ;
+    rdfs:comment "Teoremi di incompletezza (1931); aritmetizzazione."@it ;
+    :discussoInUnita :Gen12, :U15 .
+
+:Turing a :Teorico ;
+    rdfs:label "Alan Turing"@it ;
+    rdfs:comment "Macchina universale; Test di Turing; risponde all'obiezione gödeliana."@it ;
+    :discussoInUnita :Gen12 .
+
+:Lucas a :Teorico ;
+    rdfs:label "J.R. Lucas"@it ;
+    rdfs:comment "Riformula l'obiezione gödeliana contro il meccanicismo (1961)."@it ;
+    :discussoInUnita :Gen12 .
+
+:Penrose a :Teorico ;
+    rdfs:label "Roger Penrose"@it ;
+    rdfs:comment "Riprende l'argomento di Lucas, collegandolo alla coscienza."@it ;
+    :discussoInUnita :Gen12 .
+
+:McCarthy a :Teorico ;
+    rdfs:label "John McCarthy"@it ;
+    rdfs:comment "Conia \"intelligenza artificiale\"; proposta di Dartmouth (1956)."@it ;
+    :discussoInUnita :Gen13 .
+
+:Minsky a :Teorico ;
+    rdfs:label "Marvin Minsky"@it ;
+    rdfs:comment "Dartmouth; Perceptrons (con Papert, 1969) — dimostra il limite di XOR."@it ;
+    :discussoInUnita :Gen13 ;
+    :citaOpera "Perceptrons, 1969 (con Seymour Papert)" .
+
+:Shannon a :Teorico ;
+    rdfs:label "Claude Shannon"@it ;
+    rdfs:comment "Co-firmatario della proposta di Dartmouth."@it ;
+    :discussoInUnita :Gen13 .
+
+:Rochester a :Teorico ;
+    rdfs:label "Nathaniel Rochester"@it ;
+    rdfs:comment "Co-firmatario della proposta di Dartmouth."@it ;
+    :discussoInUnita :Gen13 .
+
+:Rosenblatt a :Teorico ;
+    rdfs:label "Frank Rosenblatt"@it ;
+    rdfs:comment "Costruisce il Perceptron (1958)."@it ;
+    :discussoInUnita :Gen13, :U42 .
+
+:Papert a :Teorico ;
+    rdfs:label "Seymour Papert"@it ;
+    rdfs:comment "Perceptrons con Minsky (1969)."@it ;
+    :discussoInUnita :Gen13 ;
+    :citaOpera "Perceptrons, 1969 (con Marvin Minsky)" .
+
+:Rumelhart a :Teorico ;
+    rdfs:label "David Rumelhart"@it ;
+    rdfs:comment "Articolo del 1986 sul backpropagation (con Hinton e Williams)."@it ;
+    :discussoInUnita :Gen15 .
+
+:Hinton a :Teorico ;
+    rdfs:label "Geoffrey Hinton"@it ;
+    rdfs:comment "Backpropagation (1986); deep learning (2006, con Osindero e Teh)."@it ;
+    :discussoInUnita :Gen15 .
+
+:Williams a :Teorico ;
+    rdfs:label "Ronald Williams"@it ;
+    rdfs:comment "Articolo del 1986 sul backpropagation."@it ;
+    :discussoInUnita :Gen15 .
+
+:Osindero a :Teorico ;
+    rdfs:label "Simon Osindero"@it ;
+    rdfs:comment "Co-autore con Hinton del metodo 2006 per reti profonde."@it ;
+    :discussoInUnita :Gen15 .
+
+:Teh a :Teorico ;
+    rdfs:label "Yee-Whye Teh"@it ;
+    rdfs:comment "Co-autore con Hinton del metodo 2006 per reti profonde."@it ;
+    :discussoInUnita :Gen15 .
+
+:Mikolov a :Teorico ;
+    rdfs:label "Tomas Mikolov"@it ;
+    rdfs:comment "Guida il gruppo che pubblica Word2Vec (2013)."@it ;
+    :discussoInUnita :Gen15, :U33 .
+
+:Bahdanau a :Teorico ;
+    rdfs:label "Dzmitry Bahdanau"@it ;
+    rdfs:comment "Introduce il meccanismo di attention nella traduzione automatica (2014-2015)."@it ;
+    :discussoInUnita :Gen16 .
+
+:VonNeumann a :Teorico ;
+    rdfs:label "John von Neumann"@it ;
+    rdfs:comment "The Computer and the Brain (1958); momento di consapevolezza della discretizzazione."@it ;
+    :discussoInUnita :U11, :U63, :U42 ;
+    :citaOpera "The Computer and the Brain, 1958" .
+
+:Cantor a :Teorico ;
+    rdfs:label "Georg Cantor"@it ;
+    rdfs:comment "Argomento diagonale: i numeri reali non sono numerabili."@it ;
+    :discussoInUnita :U15, :U31 .
+
+:Vapnik a :Teorico ;
+    rdfs:label "Vladimir Vapnik"@it ;
+    rdfs:comment "Formalizza le Support Vector Machines."@it ;
+    :discussoInUnita :Gen14 .
+
+:Chomsky a :Teorico ;
+    rdfs:label "Noam Chomsky"@it ;
+    rdfs:comment "Critica ai modelli \"a stati finiti\" del linguaggio (anni '50)."@it ;
+    :discussoInUnita :U24 .
+
+:Firth a :Teorico ;
+    rdfs:label "John Rupert Firth"@it ;
+    rdfs:comment "Ipotesi distribuzionale: \"si conosce una parola dalla compagnia che tiene\" (1957)."@it ;
+    :discussoInUnita :U33 .
+
+:Wittgenstein a :Teorico ;
+    rdfs:label "Ludwig Wittgenstein (tardo)"@it ;
+    rdfs:comment "Significato come uso, giochi linguistici."@it ;
+    :discussoInUnita :Gen31, :U33 .
+
+:Bateson a :Teorico ;
+    rdfs:label "Gregory Bateson"@it ;
+    rdfs:comment "Sillogismo dell'erba; pleroma/creatura; schismogenesi."@it ;
+    :discussoInUnita :U34, :U43, :U45 ;
+    :citaOpera "Naven, 1936" .
+
+:Varela a :Teorico ;
+    rdfs:label "Francisco Varela"@it ;
+    rdfs:comment "Autopoiesi e chiusura operazionale (con Maturana)."@it ;
+    :discussoInUnita :U41 .
+
+:Maturana a :Teorico ;
+    rdfs:label "Humberto Maturana"@it ;
+    rdfs:comment "Autopoiesi (con Varela)."@it ;
+    :discussoInUnita :U41 .
+
+:McCulloch a :Teorico ;
+    rdfs:label "Warren McCulloch"@it ;
+    rdfs:comment "Primo modello matematico del neurone (1943, con Pitts); neurofisiologo."@it ;
+    :discussoInUnita :Gen33, :U41 .
+
+:Pitts a :Teorico ;
+    rdfs:label "Walter Pitts"@it ;
+    rdfs:comment "Primo modello matematico del neurone (1943, con McCulloch); logico."@it ;
+    :discussoInUnita :Gen33, :U41 .
+
+:Hebb a :Teorico ;
+    rdfs:label "Donald Hebb"@it ;
+    rdfs:comment "Regola di rinforzo delle connessioni (1949), nella sua forma originale tecnica — non lo slogan con cui è oggi ricordato (vedi Shatz)."@it ;
+    :discussoInUnita :Gen33, :U41 .
+
+:Hubel a :Teorico ;
+    rdfs:label "David Hubel"@it ;
+    rdfs:comment "Organizzazione gerarchica della corteccia visiva (con Wiesel)."@it ;
+    :discussoInUnita :Gen33 .
+
+:Wiesel a :Teorico ;
+    rdfs:label "Torsten Wiesel"@it ;
+    rdfs:comment "Organizzazione gerarchica della corteccia visiva (con Hubel)."@it ;
+    :discussoInUnita :Gen33 .
+
+:Harnad a :Teorico ;
+    rdfs:label "Stevan Harnad"@it ;
+    rdfs:comment "Symbol grounding problem (1990)."@it ;
+    :discussoInUnita :Gen23, :Gen31 .
+
+:Pearl a :Teorico ;
+    rdfs:label "Judea Pearl"@it ;
+    rdfs:comment "Scala causale: associazione, intervento, controfattuale."@it ;
+    :discussoInUnita :Gen23, :Gen32 .
+
+:Hume a :Teorico ;
+    rdfs:label "David Hume"@it ;
+    rdfs:comment "La causalità come inferenza abituale, non percezione diretta."@it ;
+    :discussoInUnita :Gen32 .
+
+:Searle a :Teorico ;
+    rdfs:label "John Searle"@it ;
+    rdfs:comment "Esperimento mentale della stanza cinese (1980)."@it ;
+    :discussoInUnita :Gen31 .
+
+:Chalmers a :Teorico ;
+    rdfs:label "David Chalmers"@it ;
+    rdfs:comment "Problema facile / problema difficile della coscienza (1995)."@it ;
+    :discussoInUnita :Gen34 .
+
+:Tononi a :Teorico ;
+    rdfs:label "Giulio Tononi"@it ;
+    rdfs:comment "Integrated Information Theory (Φ)."@it ;
+    :discussoInUnita :Gen34 .
+
+:Baars a :Teorico ;
+    rdfs:label "Bernard Baars"@it ;
+    rdfs:comment "Global Workspace Theory."@it ;
+    :discussoInUnita :Gen34 .
+
+:Dehaene a :Teorico ;
+    rdfs:label "Stanislas Dehaene"@it ;
+    rdfs:comment "Sviluppo della Global Workspace Theory."@it ;
+    :discussoInUnita :Gen34 .
+
+:Kant a :Teorico ;
+    rdfs:label "Immanuel Kant"@it ;
+    rdfs:comment "Spazio come forma dell'intuizione."@it ;
+    :discussoInUnita :Gen41 .
+
+:MerleauPonty a :Teorico ;
+    rdfs:label "Maurice Merleau-Ponty"@it ;
+    rdfs:comment "Spazio vissuto attraverso il corpo."@it ;
+    :discussoInUnita :Gen41 .
+
+:Brooks a :Teorico ;
+    rdfs:label "Rodney Brooks"@it ;
+    rdfs:comment "Robotica embodied: l'intelligenza richiede corpi, non solo simboli."@it ;
+    :discussoInUnita :Gen42 .
+
+:Lakoff a :Teorico ;
+    rdfs:label "George Lakoff"@it ;
+    rdfs:comment "Metafore concettuali a origine sensomotoria (con Johnson)."@it ;
+    :discussoInUnita :Gen42 .
+
+:Johnson a :Teorico ;
+    rdfs:label "Mark Johnson"@it ;
+    rdfs:comment "Metafore concettuali a origine sensomotoria (con Lakoff)."@it ;
+    :discussoInUnita :Gen42 .
+
+:GalileoGalilei a :Teorico ;
+    rdfs:label "Galileo Galilei"@it ;
+    rdfs:comment "Qualità primarie/secondarie; fondazione della scienza quantificabile."@it ;
+    :discussoInUnita :U32, :U54 .
+
+:Wigner a :Teorico ;
+    rdfs:label "Eugene Wigner"@it ;
+    rdfs:comment "\"Irragionevole efficacia della matematica\"."@it ;
+    :discussoInUnita :U34 .
+
+:WeiEtAl2022 a :Teorico ;
+    rdfs:label "Wei et al. (2022)"@it ;
+    rdfs:comment "Conia il termine \"capacità emergenti\"."@it ;
+    :discussoInUnita :Gen21, :U62 ;
+    :citaOpera "TMLR, 2022, arXiv:2206.07682" .
+
+:SchaefferEtAl2023 a :Teorico ;
+    rdfs:label "Schaeffer, Miranda, Koyejo (2023)"@it ;
+    rdfs:comment "Controargomento: l'emergenza può essere artefatto delle metriche."@it ;
+    :discussoInUnita :Gen21, :U62 .
+
+:HerculanoHouzel a :Teorico ;
+    rdfs:label "Suzana Herculano-Houzel"@it ;
+    rdfs:comment "Stima di ~86 miliardi di neuroni nel cervello umano (2009)."@it ;
+    :discussoInUnita :U61 ;
+    :citaOpera "Frontiers in Human Neuroscience, 2009" .
+
+:BrownEtAl2020 a :Teorico ;
+    rdfs:label "Brown et al. (2020)"@it ;
+    rdfs:comment "Paper GPT-3, citato per gli ordini di grandezza dei parametri."@it ;
+    :discussoInUnita :U61 .
+
+:ChowdheryEtAl2022 a :Teorico ;
+    rdfs:label "Chowdhery et al. (2022)"@it ;
+    rdfs:comment "Paper PaLM (Google), citato per gli ordini di grandezza."@it ;
+    :discussoInUnita :U61 .
+
+:OuyangEtAl2022 a :Teorico ;
+    rdfs:label "Ouyang et al. (2022)"@it ;
+    rdfs:comment "Introduce il fine-tuning verso il comportamento istruito."@it ;
+    :discussoInUnita :U64 ;
+    :citaOpera "InstructGPT, 2022" .
+
+:Bacon a :Teorico ;
+    rdfs:label "Francis Bacon"@it ;
+    rdfs:comment "\"Veritas filia temporis\" — la verità è figlia del tempo."@it ;
+    :discussoInUnita :U63 ;
+    :citaOpera "Veritas filia temporis" .
+
+:Bayle a :Teorico ;
+    rdfs:label "Pierre Bayle"@it ;
+    rdfs:comment "Contro-tesi \"error filius temporis\"."@it ;
+    :discussoInUnita :U63 ;
+    :citaOpera "Error filius temporis" .
+
+:Lawvere a :Teorico ;
+    rdfs:label "William Lawvere"@it ;
+    rdfs:comment "Geometria differenziale sintetica: il continuo come primitivo."@it ;
+    :discussoInUnita :U66 .
+
+:Peirce a :Teorico ;
+    rdfs:label "Charles Sanders Peirce"@it ;
+    rdfs:comment "Abbozza una versione della tavola di verità già tra il 1883 e il 1902, in manoscritti rimasti inediti per decenni."@it ;
+    :discussoInUnita :Fondamenti1 .
+
+:Post a :Teorico ;
+    rdfs:label "Emil Post"@it ;
+    rdfs:comment "Usa la tavola di verità (1921, indipendentemente da Wittgenstein) per dimostrare che E, O e NON bastano a costruire qualsiasi funzione booleana."@it ;
+    :discussoInUnita :Fondamenti1 .
+
+:Shatz a :Teorico ;
+    rdfs:label "Carla Shatz"@it ;
+    rdfs:comment "Conia decenni dopo lo slogan «neurons that fire together, wire together», spesso attribuito per errore direttamente a Hebb (1949) — nessuna data/opera specifica data dal testo."@it ;
+    :discussoInUnita :Gen33 .
+
+########################################################################
+# Dataset
+########################################################################
+
+:VocabolarioBpeDelCorso a :Dataset ;
+    rdfs:label "Vocabolario BPE del corso"@it ;
+    rdfs:comment "334 simboli (34 caratteri base + 300 unioni apprese), addestrato realmente sul testo di Genealogia."@it ;
+    :haStatoEpistemico :Reale ;
+    :dataVerifica "2026-07-06"^^xsd:date .
+
+:Corpus46FrasiItaliane a :Dataset ;
+    rdfs:label "Corpus di 46 frasi italiane"@it ;
+    rdfs:comment "Corpus scritto apposta per il predittore n-grammi (34 training, 12 test)."@it ;
+    :haStatoEpistemico :Reale ;
+    :dataVerifica "2026-07-06"^^xsd:date .
+
+:DatiCalibrazioneReliability a :Dataset ;
+    rdfs:label "Dati di calibrazione (reliability diagram)"@it ;
+    rdfs:comment "65 previsioni reali raggruppate in 3 bucket di confidenza, misurate sul corpus di 46 frasi."@it ;
+    :haStatoEpistemico :Reale ;
+    :dataVerifica "2026-07-06"^^xsd:date .
+
+:EmbeddingFastTextIt23Parole a :Dataset ;
+    rdfs:label "Embedding fastText di 23 parole italiane"@it ;
+    rdfs:comment "Vettori reali a 300 dimensioni, proiettati in 2D per esplorazione, aritmetica e polisemia."@it ;
+    :haStatoEpistemico :Reale ;
+    :dataVerifica "2026-07-06"^^xsd:date .
+
+:DiagonaleCantorInterattiva a :Dataset ;
+    rdfs:label "Diagonale di Cantor interattiva"@it ;
+    rdfs:comment "Griglia di cifre con costruzione del numero che sfugge a qualunque lista."@it ;
+    :haStatoEpistemico :Reale ;
+    :dataVerifica "2026-07-06"^^xsd:date .
+
+:ReteXorAddestrata a :Dataset ;
+    rdfs:label "Rete XOR addestrata realmente"@it ;
+    rdfs:comment "Multi-layer perceptron addestrato via backpropagation, 4/4 corretto, confine di decisione curvo."@it ;
+    :haStatoEpistemico :Reale ;
+    :dataVerifica "2026-07-06"^^xsd:date .
+
+:PaesaggioPerditaDueMinimi a :Dataset ;
+    rdfs:label "Paesaggio di perdita a due minimi"@it ;
+    rdfs:comment "Superficie di loss (due gaussiane invertite) con minimo globale e locale; discesa del gradiente verificata numericamente. Costruita (non misurata da un modello reale), ma verificata: \"reale\" qui significa verificato algoritmicamente, non proveniente da un training di produzione — nota esplicita per non confondere le due cose."@it ;
+    :haStatoEpistemico :Reale ;
+    :dataVerifica "2026-07-06"^^xsd:date .
+
+:EsempiNeuroneSingolo a :Dataset ;
+    rdfs:label "Esempi di neurone singolo"@it ;
+    rdfs:comment "Pesi/ingressi regolabili a slider, variante continua del calcolatore booleano. Nessun addestramento o verifica: calcolatore dal vivo."@it ;
+    :haStatoEpistemico :Illustrativo .
+
+:DatiAttentionIllustrativi a :Dataset ;
+    rdfs:label "Dati di attention illustrativi"@it ;
+    rdfs:comment "Pesi scritti a mano per chiarezza pedagogica — esplicitamente non output di un vero Transformer."@it ;
+    :haStatoEpistemico :Illustrativo .
+
+:ConfrontoBaseFineTuned a :Dataset ;
+    rdfs:label "Confronto modello di base / fine-tuned"@it ;
+    rdfs:comment "Prompt/risposta scritti per illustrare l'effetto di fine-tuning e RLHF, non output di un modello reale."@it ;
+    :haStatoEpistemico :Illustrativo .
+
+:CurvaCapacitaEmergentiIllustrativa a :Dataset ;
+    rdfs:label "Curva illustrativa delle capacità emergenti"@it ;
+    rdfs:comment "Andamento piatto-poi-salto per un compito tipo, dichiarato esplicitamente non misurato da un paper specifico."@it ;
+    :haStatoEpistemico :Illustrativo .
+
+:SliderScalaLogaritmica a :Dataset ;
+    rdfs:label "Slider di scala logaritmica"@it ;
+    rdfs:comment "Confronto parametri/dati (GPT-3, PaLM) con il cervello umano, su numeri reali verificati."@it ;
+    :haStatoEpistemico :Reale ;
+    :dataVerifica "2026-07-06"^^xsd:date .
+
+:TimelineAlfabetoCorporaLlm a :Dataset ;
+    rdfs:label "Timeline storica alfabeto→corpora LLM"@it ;
+    rdfs:comment "Alfabeto, von Neumann 1958, digitalizzazione di massa, corpora di addestramento — date verificate."@it ;
+    :haStatoEpistemico :Reale ;
+    :dataVerifica "2026-07-06"^^xsd:date .
+
+:LivelliQuantizzazione a :Dataset ;
+    rdfs:label "Livelli di quantizzazione"@it ;
+    rdfs:comment "FP32→FP16/BF16→INT8→INT4, con riferimento a strumenti reali (llama.cpp)."@it ;
+    :haStatoEpistemico :Reale ;
+    :dataVerifica "2026-07-06"^^xsd:date .
+
+:ConfrontoRasterSvg a :Dataset ;
+    rdfs:label "Confronto raster/SVG"@it ;
+    rdfs:comment "Cerchio raster 24×24px generato via Pillow e suo equivalente SVG, stessi colori del design system."@it ;
+    :haStatoEpistemico :Reale ;
+    :dataVerifica "2026-07-06"^^xsd:date .
+
+:CalcolatoreBooleanoInterattivo a :Dataset ;
+    rdfs:label "Calcolatore booleano interattivo"@it ;
+    rdfs:comment "Interruttori A/B che mostrano dal vivo E, O, NON, XOR e F = (A∧B)∨¬A."@it ;
+    :haStatoEpistemico :Reale .
+
+########################################################################
+# Relazioni fra Concetti
+########################################################################
+
+:Tokenizzazione :prerequisitoDi :Embedding .
+:Numerabilita :contrappostoA :Embedding .
+:Sparsita :spiegataDa :TokenId .
+:MultiLayerPerceptron :risolve :SeparabilitaLineare .
+:Backpropagation :prerequisitoDi :DiscesaDelGradiente .
+:Attention :risolve :DipendenzeLungoRaggio .
+:Attention :risolve :EmbeddingStatico .
+:Attention :risolve :Polisemia .
+:Softmax :analogoA :ProbabilitaComeNumeroReale .
+:AritmeticaVettoriale :esemplifica :Abduzione .
+:AritmeticaVettoriale :esemplifica :SillogismoDellErba .
+:Ngramma :esemplifica :Induzione .
+:EmbeddingContestuale :contrappostoA :EmbeddingStatico .
+:QualitaPrimarieSecondarie :analogoA :EmbeddingContestuale .
+:Embedding :rendeOperativo :QualitaPrimarieSecondarie .
+:IpotesiDistribuzionale :rendeOperativo :SignificatoComeUso .
+:Grounding :collegatoA :GapSensorimotor .
+:Backpropagation :contrappostoA :Schismogenesi .
+:Backpropagation :contrappostoA :PlasticitaSinaptica .
+:DiagonaleDiCantor :prerequisitoDi :Numerabilita .
+:SistemaFormale :prerequisitoDi :TeoremaIncompletezzaGodel .
+:StanzaCinese :esemplifica :Grounding .
+:ModelloDiBase :prerequisitoDi :FineTuning .
+:FineTuning :prerequisitoDi :Rlhf .
+:Quantizzazione :contrappostoA :DiscesaDelGradiente .
+:Word2Vec :esemplifica :CapacitaEmergenti .
+
+########################################################################
+# Relazioni Concetto -> Teorico
+########################################################################
+
+:TeoremaIncompletezzaGodel :teorizzatoDa :Godel .
+:TestDiTuring :teorizzatoDa :Turing .
+:Autopoiesi :teorizzatoDa :Varela .
+:Autopoiesi :teorizzatoDa :Maturana .
+:ChiusuraOperazionale :teorizzatoDa :Varela .
+:PleromaCreatura :teorizzatoDa :Bateson .
+:SillogismoDellErba :teorizzatoDa :Bateson .
+:Schismogenesi :teorizzatoDa :Bateson .
+:QualitaPrimarieSecondarie :teorizzatoDa :GalileoGalilei .
+:IpotesiDistribuzionale :teorizzatoDa :Firth .
+:SignificatoComeUso :teorizzatoDa :Wittgenstein .
+:StanzaCinese :teorizzatoDa :Searle .
+:Grounding :teorizzatoDa :Harnad .
+:RagionamentoCausale :teorizzatoDa :Pearl .
+:ProblemaDifficileCoscienza :teorizzatoDa :Chalmers .
+:IntegratedInformationTheory :teorizzatoDa :Tononi .
+:GlobalWorkspaceTheory :teorizzatoDa :Baars .
+:GlobalWorkspaceTheory :teorizzatoDa :Dehaene .
+:SpazioFormaIntuizione :teorizzatoDa :Kant .
+:SpazioVissuto :teorizzatoDa :MerleauPonty .
+:SpazioContenitoreAssoluto :teorizzatoDa :Newton .
+:RoboticaEmbodied :teorizzatoDa :Brooks .
+:MetaforeConcettuali :teorizzatoDa :Lakoff .
+:MetaforeConcettuali :teorizzatoDa :Johnson .
+:IrragionevoleEfficaciaMatematica :teorizzatoDa :Wigner .
+:CapacitaEmergenti :teorizzatoDa :WeiEtAl2022 .
+:Word2Vec :teorizzatoDa :Mikolov .
+:Attention :teorizzatoDa :Bahdanau .
+:FunzioneBooleana :teorizzatoDa :Boole .
+:Backpropagation :teorizzatoDa :Rumelhart .
+:Backpropagation :teorizzatoDa :Hinton .
+:Backpropagation :teorizzatoDa :Williams .
+:DeepLearning :teorizzatoDa :Hinton .
+:DeepLearning :teorizzatoDa :Osindero .
+:DeepLearning :teorizzatoDa :Teh .
+:SupportVectorMachine :teorizzatoDa :Vapnik .
+:FineTuning :teorizzatoDa :OuyangEtAl2022 .
+:VeritasFiliaTemporis :teorizzatoDa :Bacon .
+:VeritasFiliaTemporis :teorizzatoDa :Bayle .
+:ParametriScala :teorizzatoDa :BrownEtAl2020 .
+:ParametriScala :teorizzatoDa :ChowdheryEtAl2022 .
+:DiagonaleDiCantor :teorizzatoDa :Cantor .
+:Discretizzazione :teorizzatoDa :VonNeumann .
+:SeparabilitaLineare :teorizzatoDa :Minsky .
+:SeparabilitaLineare :teorizzatoDa :Papert .
+:NeuroneArtificiale :teorizzatoDa :McCulloch .
+:NeuroneArtificiale :teorizzatoDa :Pitts .
+
+:CapacitaEmergenti :messoInDiscussioneDa :SchaefferEtAl2023 .
+
+########################################################################
+# Relazioni Teorico -> Teorico
+########################################################################
+
+:Lucas :riprendeArgomentazioneDi :Turing .
+:Penrose :riprendeArgomentazioneDi :Lucas .
+
+########################################################################
+# Relazioni Unita -> Unita (rimandi narrativi)
+########################################################################
+
+:Gen12 :rimandaA :U15 .
+:Gen13 :rimandaA :U42 .
+:Gen15 :rimandaA :U45 .
+:Gen21 :rimandaA :Gen31 .
+:Gen23 :rimandaA :Gen32 .
+:Gen23 :rimandaA :Gen34 .
+:Gen31 :rimandaA :Gen42 .
+

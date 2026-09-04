@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Genealogia · 1 — La storia come sequenza di problemi irrisolti</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0F2A22;
+    --surface: #173B30;
+    --surface-2: #1E4A3C;
+    --copper: #C97D3D;
+    --copper-bright: #F0A85E;
+    --text: #F2ECE0;
+    --text-dim: #A9BFB6;
+    --line: rgba(242,236,224,0.12);
+    --rail-w: 300px;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Source Serif 4', Georgia, serif;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,h2,h3, .display{
+    font-family: 'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+  .mono{ font-family: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace; }
+  a{ color: var(--copper-bright); }
+
+  /* ---------- layout shell: sidebar fissa con indice del sito ---------- */
+  .sidebar{
+    background: rgba(15,42,34,0.92);
+    border-bottom: 1px solid var(--line);
+    padding: 28px 24px 32px;
+  }
+  .sidebar-kicker{
+    font-family: 'IBM Plex Mono', monospace; font-size: .74rem; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px;
+  }
+  .sidebar-title{
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.02rem;
+    color: var(--text); margin-bottom: 22px;
+  }
+  .sidebar .parte{ margin-top: 26px; }
+  .sidebar .parte:first-of-type{ margin-top: 0; }
+  .sidebar .parte-heading{
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: .74rem;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--copper-bright);
+    padding-bottom: 10px; margin-bottom: 2px; border-bottom: 1px solid var(--line);
+  }
+  .sidebar .voce-semplice{
+    display: block; padding: 10px 4px; border-bottom: 1px solid var(--line);
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem;
+    color: var(--text); text-decoration: none;
+  }
+  .sidebar .voce-semplice:hover{ color: var(--copper-bright); }
+  .sidebar .voce-semplice.current{ color: var(--copper-bright); }
+  .sidebar details.modulo{ border-bottom: 1px solid var(--line); }
+  .sidebar details.modulo summary{
+    display: flex; align-items: center; gap: 8px; padding: 10px 4px; cursor: pointer;
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem; color: var(--text);
+    list-style: none;
+  }
+  .sidebar details.modulo summary.current{ color: var(--copper-bright); }
+  .sidebar details.modulo summary::-webkit-details-marker{ display: none; }
+  .sidebar details.modulo summary::before{
+    content: "›"; display: inline-block; font-family: 'IBM Plex Mono', monospace;
+    color: var(--text-dim); transition: transform .15s ease; flex-shrink: 0;
+  }
+  .sidebar details.modulo[open] summary::before{ transform: rotate(90deg); color: var(--copper-bright); }
+  .sidebar details.modulo summary:hover{ color: var(--copper-bright); }
+  .sidebar .unita-list{ padding: 2px 0 12px 22px; display: flex; flex-direction: column; gap: 1px; }
+  .sidebar .unita-list a{
+    display: block; padding: 6px 4px; font-size: .82rem; color: var(--text-dim); text-decoration: none;
+  }
+  .sidebar .unita-list a:hover{ color: var(--copper-bright); }
+  .sidebar .unita-list a .num{ color: var(--copper); margin-right: 6px; font-family: 'IBM Plex Mono', monospace; font-size: .74rem; }
+
+  /* pallini luminosi di scroll-spy, sulle voci dell'unità corrente */
+  .sidebar .unita-list.scrollspy a{ position: relative; padding-left: 20px; }
+  .sidebar .unita-list.scrollspy a::before{
+    content: "";
+    position: absolute; left: 2px; top: 50%;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--surface-2); border: 1px solid var(--line);
+    transform: translateY(-50%);
+    transition: background .25s, box-shadow .25s, transform .25s;
+  }
+  .sidebar .unita-list.scrollspy a.active{ color: var(--copper-bright); }
+  .sidebar .unita-list.scrollspy a.active::before{
+    background: var(--copper-bright);
+    box-shadow: 0 0 0 4px rgba(240,168,94,0.18);
+    transform: translateY(-50%) scale(1.2);
+  }
+
+  main{ padding-top: 0; }
+
+  @media (min-width: 900px){
+    .sidebar{
+      position: fixed; z-index: 50; top:0; bottom:0; left:0; width: var(--rail-w);
+      overflow-y: auto; border-bottom:none; border-right: 1px solid var(--line);
+    }
+    main{ padding-left: var(--rail-w); }
+  }
+
+  .wrap{ max-width: 740px; margin: 0 auto; padding: 0 24px; }
+
+  .unit-block section{ padding: 92px 0 84px; border-bottom: 1px solid var(--line); }
+  .unit-block:last-child section:last-of-type{ border-bottom:none; }
+
+  .eyebrow{
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--copper-bright);
+    margin-bottom: 14px; display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{ content:""; width: 22px; height:1px; background: var(--copper-bright); display:inline-block; }
+
+  h2.title{ font-size: clamp(1.6rem, 4vw, 2.3rem); margin-bottom: 20px; }
+
+  p{ margin: 0 0 18px; color: var(--text); font-size: 1.05rem; }
+  p.dim{ color: var(--text-dim); }
+  .lede{ font-size: 1.15rem; color: var(--text); }
+
+  .reveal{ opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.visible{ opacity:1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce){
+    .reveal{ transition: opacity .2s linear; transform:none; }
+    *{ scroll-behavior: auto !important; }
+  }
+
+  .aside{
+    margin: 26px 0; padding: 18px 20px; background: var(--surface);
+    border-left: 3px solid var(--copper); border-radius: 2px;
+  }
+  .aside .label{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--copper-bright); margin-bottom: 8px; display:block;
+  }
+  .aside p{ margin-bottom:0; font-size: 0.96rem; color: var(--text-dim); }
+
+  .question{
+    margin: 28px 0; padding: 20px 22px; border: 1px dashed var(--line); border-radius: 4px;
+    font-family: 'Space Grotesk', sans-serif; font-size: 1.0rem; color: var(--copper-bright);
+  }
+
+  blockquote{
+    margin: 0; padding-left: 22px; border-left: 2px solid var(--copper);
+    font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; color: var(--text);
+  }
+
+  /* ---------- hero ---------- */
+  .hero{ padding-top: 62px; }
+  .hero .kicker{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.8rem; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--text-dim); margin-bottom: 18px;
+  }
+  .hero h1{ font-size: clamp(1.9rem, 5.6vw, 2.9rem); line-height:1.12; margin-bottom: 24px; }
+  .hero h1 em{ font-style: normal; color: var(--copper-bright); }
+
+  .motto{
+    display:inline-block; margin-top: 36px; padding: 20px 26px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+  }
+  .motto .latin{
+    font-family:'Space Grotesk', sans-serif; font-size: 1.35rem; color: var(--copper-bright); margin-bottom: 6px;
+  }
+  .motto .transl{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.76rem; color: var(--text-dim);
+    text-transform: uppercase; letter-spacing: 0.08em;
+  }
+
+  .scrolldown{
+    margin-top: 50px; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem;
+    color: var(--text-dim); letter-spacing: 0.08em; text-transform: uppercase;
+    display:flex; align-items:center; gap:8px;
+  }
+  .scrolldown::after{ content:"↓"; color: var(--copper-bright); animation: nudge 1.8s infinite ease-in-out; }
+  @media (prefers-reduced-motion: reduce){ .scrolldown::after{ animation:none; } }
+  @keyframes nudge{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(5px); } }
+
+  /* ---------- self-reference callout (Unità 2) ---------- */
+  .selfref{
+    background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+    padding: 26px 28px; margin: 30px 0; font-family:'IBM Plex Mono', monospace;
+  }
+  .selfref .line{
+    font-size: 0.98rem; color: var(--text); margin-bottom: 10px; padding-left: 18px;
+    border-left: 2px solid var(--surface-2); position: relative;
+  }
+  .selfref .line:last-child{ margin-bottom:0; }
+  .selfref .line.hi{ color: var(--copper-bright); border-left-color: var(--copper-bright); }
+
+  /* ---------- timeline (motivo ricorrente di Genealogia · 1) ---------- */
+  .timeline{
+    position: relative; margin: 32px 0 8px; padding-left: 30px;
+    border-left: 2px solid var(--line);
+  }
+  .tl-node{ position: relative; padding-bottom: 32px; }
+  .tl-node:last-child{ padding-bottom: 0; }
+  .tl-node::before{
+    content:""; position:absolute; left:-37px; top:3px;
+    width: 12px; height:12px; border-radius:50%;
+    background: var(--copper-bright);
+    box-shadow: 0 0 0 3px var(--bg), 0 0 0 4px var(--line);
+  }
+  .tl-node.tl-break::before{
+    background: var(--bg);
+    border: 2px solid var(--copper-bright);
+  }
+  .tl-tag{
+    display:inline-block; font-family:'IBM Plex Mono', monospace; font-size: 0.66rem;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--copper-bright);
+    border: 1px solid var(--copper); border-radius: 3px; padding: 2px 8px; margin-bottom: 8px;
+  }
+  .tl-date{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.76rem; letter-spacing:0.06em;
+    text-transform: uppercase; color: var(--copper-bright); margin-bottom: 6px;
+  }
+  .tl-title{
+    font-family:'Space Grotesk', sans-serif; font-size: 1.02rem; color: var(--text); margin-bottom: 6px;
+  }
+  .tl-desc{ font-size: 0.94rem; color: var(--text-dim); margin: 0; }
+
+  /* ---------- chiusura ---------- */
+  .chiusura{ background: linear-gradient(180deg, var(--bg), var(--surface)); }
+  .footer-note{
+    margin-top: 46px; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem; color: var(--text-dim);
+  }
+</style>
+</head>
+<body>
+
+<nav class="sidebar" aria-label="Indice del saggio">
+  <div class="sidebar-kicker">Indice</div>
+  <div class="sidebar-title">Dal bit alle entità semantiche</div>
+
+  <div class="parte">
+    <details class="modulo">
+      <summary>Presentazione — Dal bit alle entità semantiche</summary>
+      <div class="unita-list">
+        <a href="presentazione.html#parte-1"><span class="num">1</span>Framework epistemologico: i limiti che condividiamo con le macchine</a>
+        <a href="presentazione.html#parte-2"><span class="num">2</span>Il dominio: struttura e composizione del saggio interattivo</a>
+        <a href="presentazione.html#parte-3"><span class="num">3</span>La lente semantica</a>
+      </div>
+    </details>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Parte I — Fondamenti</div>
+    <a class="voce-semplice" href="fondamenti-1-funzioni-booleane.html">1. Funzioni booleane</a>
+    <a class="voce-semplice" href="fondamenti-2-hardware-software.html">2. Hardware e software</a>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Parte II — Genealogia</div>
+
+    <details class="modulo" open>
+      <summary class="current">1. Tre ore di disputa senza esito</summary>
+      <div class="unita-list scrollspy" id="local-scrollspy">
+        <a href="#unit-a1" data-spy-target="unit-a1"><span class="num">1.1</span>Dalla characteristica universalis alla pura ideografia</a>
+        <a href="#unit-a2" data-spy-target="unit-a2"><span class="num">1.2</span>Gödel, Turing, Lucas</a>
+        <a href="#unit-a3" data-spy-target="unit-a3"><span class="num">1.3</span>Il perceptron e la disgiunzione esclusiva (XOR)</a>
+        <a href="#unit-a4" data-spy-target="unit-a4"><span class="num">1.4</span>Dai sistemi esperti alle macchine statistiche</a>
+        <a href="#unit-a5" data-spy-target="unit-a5"><span class="num">1.5</span>Re, donna, regina</a>
+        <a href="#unit-a6" data-spy-target="unit-a6"><span class="num">1.6</span>L'attenzione sostituisce la memoria</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>2. Il fenomeno e i suoi limiti</summary>
+      <div class="unita-list">
+        <a href="genealogia-2-limiti.html#unit-b1"><span class="num">2.1</span>Completamento statistico a scala massiva, in-context learning, transfer cross-dominio e altre capacità emergenti</a>
+        <a href="genealogia-2-limiti.html#unit-b2"><span class="num">2.2</span>Interpolazione, pesi statistici, metacognizione</a>
+        <a href="genealogia-2-limiti.html#unit-b3"><span class="num">2.3</span>Grounding, ragionamento causale, generalizzazione composizionale, cortocircuito dell'apprendimento</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>3. Perché ci vuole un villaggio</summary>
+      <div class="unita-list">
+        <a href="genealogia-3-villaggio.html#unit-c1"><span class="num">3.1</span>Il problema del significato</a>
+        <a href="genealogia-3-villaggio.html#unit-c2"><span class="num">3.2</span>Il problema della causalità</a>
+        <a href="genealogia-3-villaggio.html#unit-c3"><span class="num">3.3</span>Il problema biologico</a>
+        <a href="genealogia-3-villaggio.html#unit-c4"><span class="num">3.4</span>Il problema della coscienza</a>
+        <a href="genealogia-3-villaggio.html#unit-c5"><span class="num">3.5</span>Cosa siamo, per contrasto</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>4. Lo spazio, il corpo, la macchina</summary>
+      <div class="unita-list">
+        <a href="genealogia-4-corpo.html#unit-d1"><span class="num">4.1</span>Cos'è lo spazio? Il corpo come strumento di misura</a>
+        <a href="genealogia-4-corpo.html#unit-d2"><span class="num">4.2</span>Il corpo mancante</a>
+      </div>
+    </details>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Parte III — Meccanismo</div>
+
+    <details class="modulo">
+      <summary>1. Il testo come dato</summary>
+      <div class="unita-list">
+        <a href="meccanismo-1-testo-come-dato.html#unit-u1"><span class="num">1.1</span>Encoding</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u2"><span class="num">1.2</span>Tokenizzazione</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u3"><span class="num">1.3</span>Problema del vocabolario</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u4"><span class="num">1.4</span>Dagli ID al punto più discreto</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u5"><span class="num">1.5</span>Gödel</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>2. Probabilità e linguaggio</summary>
+      <div class="unita-list">
+        <a href="meccanismo-2-probabilita.html#unit-u1"><span class="num">2.1</span>Prevedere la parola successiva</a>
+        <a href="meccanismo-2-probabilita.html#unit-u2"><span class="num">2.2</span>Unigrammi/bigrammi, induzione, calibrazione</a>
+        <a href="meccanismo-2-probabilita.html#unit-u3"><span class="num">2.3</span>N-grammi e assunzione di Markov</a>
+        <a href="meccanismo-2-probabilita.html#unit-u4"><span class="num">2.4</span>Sparsità e dipendenze lontane</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>3. Parole come punti nello spazio</summary>
+      <div class="unita-list">
+        <a href="meccanismo-3-embedding.html#unit-u1"><span class="num">3.1</span>Il problema lasciato aperto</a>
+        <a href="meccanismo-3-embedding.html#unit-u2"><span class="num">3.2</span>Le parole come vettori (embedding)</a>
+        <a href="meccanismo-3-embedding.html#unit-u3"><span class="num">3.3</span>L'ipotesi distribuzionale</a>
+        <a href="meccanismo-3-embedding.html#unit-u4"><span class="num">3.4</span>L'aritmetica vettoriale</a>
+        <a href="meccanismo-3-embedding.html#unit-u5"><span class="num">3.5</span>Polisemia ed embedding statico</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>4. Reti neurali</summary>
+      <div class="unita-list">
+        <a href="meccanismo-4-reti-neurali.html#unit-u1"><span class="num">4.1</span>Dal neurone biologico al neurone artificiale</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u2"><span class="num">4.2</span>Il perceptron e XOR</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u3"><span class="num">4.3</span>Strati e profondità</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u4"><span class="num">4.4</span>La funzione di perdita</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u5"><span class="num">4.5</span>Il gradiente e la backpropagation</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>5. Il Transformer</summary>
+      <div class="unita-list">
+        <a href="meccanismo-5-transformer.html#unit-u1"><span class="num">5.1</span>Il problema che l'attenzione risolve</a>
+        <a href="meccanismo-5-transformer.html#unit-u2"><span class="num">5.2</span>L'idea dell'attention</a>
+        <a href="meccanismo-5-transformer.html#unit-u3"><span class="num">5.3</span>Query, Key, Value</a>
+        <a href="meccanismo-5-transformer.html#unit-u4"><span class="num">5.4</span>Embedding contestuale</a>
+        <a href="meccanismo-5-transformer.html#unit-u5"><span class="num">5.5</span>Multi-head e posizione</a>
+        <a href="meccanismo-5-transformer.html#unit-u6"><span class="num">5.6</span>Parallelismo e scala</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>6. Cosa significa "Large"</summary>
+      <div class="unita-list">
+        <a href="meccanismo-6-large.html#unit-u1"><span class="num">6.1</span>Scala</a>
+        <a href="meccanismo-6-large.html#unit-u2"><span class="num">6.2</span>Capacità emergenti</a>
+        <a href="meccanismo-6-large.html#unit-u3"><span class="num">6.3</span>I dati</a>
+        <a href="meccanismo-6-large.html#unit-u4"><span class="num">6.4</span>Fine-tuning</a>
+        <a href="meccanismo-6-large.html#unit-u5"><span class="num">6.5</span>RLHF</a>
+        <a href="meccanismo-6-large.html#unit-u6"><span class="num">6.6</span>Quantizzazione (chiusura dell'arco tecnico)</a>
+      </div>
+    </details>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Appendice</div>
+
+    <details class="modulo">
+      <summary>Dietro i widget</summary>
+      <div class="unita-list">
+        <a href="dietro-i-widget.html#unit-u1"><span class="num">A.1</span>Il tokenizzatore (Meccanismo · 1)</a>
+        <a href="dietro-i-widget.html#unit-u2"><span class="num">A.2</span>Il predittore n-grammi (Meccanismo · 2)</a>
+        <a href="dietro-i-widget.html#unit-u3"><span class="num">A.3</span>La mappa embedding (Meccanismo · 3)</a>
+        <a href="dietro-i-widget.html#unit-u4"><span class="num">A.4</span>Neurone, XOR, superficie di perdita (Meccanismo · 4)</a>
+        <a href="dietro-i-widget.html#unit-u5"><span class="num">A.5</span>L'attention (Meccanismo · 5)</a>
+        <a href="dietro-i-widget.html#unit-u6"><span class="num">A.6</span>Scala e capacità (Meccanismo · 6)</a>
+      </div>
+    </details>
+  </div>
+</nav>
+
+<main>
+
+<div class="unit-block" id="unit-a1" data-unit="a1">
+
+  <section id="a1-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Genealogia · 1.1</div>
+      <h1>Tre ore di disputa senza esito.<br><em>Poi qualcuno dice: calcoliamo.</em></h1>
+      <p class="lede dim">Due persone in disaccordo su una questione difficile — morale, politica, filosofica. Ore di argomenti, nessuna convergenza. Si immagini ora che, invece di continuare a discutere, uno dei due estraesse un procedimento — non un'opinione più convincente, un calcolo — capace di stabilire chi ha ragione con la stessa certezza con cui si stabilisce quanto fa 7×8.</p>
+      <p class="dim">Non è una battuta: è esattamente ciò che un filosofo tedesco del Seicento pensava di poter costruire.</p>
+
+      <div class="motto">
+        <div class="latin">"Calculemus!"</div>
+        <div class="transl">Calcoliamo — Gottfried Leibniz</div>
+      </div>
+
+      <div class="scrolldown">tre secoli dopo, siamo ancora dentro questo sogno</div>
+    </div>
+  </section>
+
+  <section id="a1-sez-leibniz">
+    <div class="wrap reveal">
+      <div class="eyebrow">Tappa 01 · XVII secolo</div>
+      <h2 class="title">Il sogno di Leibniz: la Characteristica Universalis</h2>
+      <p>Gottfried Wilhelm Leibniz — lo stesso che, insieme a Newton, sviluppò il calcolo infinitesimale — propose qualcosa di più ambizioso di una nuova branca della matematica: un <strong>alfabeto del pensiero</strong>. Un linguaggio simbolico universale in cui ogni concetto avesse una notazione esatta, e un procedimento — il <em>calculus ratiocinator</em> — capace di combinare quei simboli meccanicamente.</p>
+
+      <p>La conseguenza, se il progetto fosse riuscito: due filosofi in disaccordo non avrebbero più dovuto discutere. Si sarebbero seduti, penna in mano, e avrebbero calcolato. Da cui l'invito che apre questa lezione.</p>
+
+      <div class="aside">
+        <span class="label">Da non confondere</span>
+        <p>Il calcolo infinitesimale (derivate, integrali) è un'invenzione di Leibniz realizzata e tuttora insegnata. La characteristica universalis è un progetto mai completato — restano solo frammenti e appunti. Due invenzioni dello stesso uomo, due destini opposti.</p>
+      </div>
+
+      <p class="dim">Il dettaglio che vale la pena trattenere: il sogno è completo, in forma, tre secoli prima che esista una macchina capace anche solo di avvicinarcisi. Manca solo l'hardware — nel senso più letterale di Fondamenti · 2.</p>
+    </div>
+  </section>
+
+  <section id="a1-sez-boole">
+    <div class="wrap reveal">
+      <div class="eyebrow">Tappa 02 · 1854</div>
+      <h2 class="title">Boole trasforma la logica in algebra</h2>
+      <p>George Boole è già comparso in questo corso, da un'altra porta: gli operatori E, O, NON di Fondamenti · 1 sono esattamente il contributo di cui si parla qui. In <em>The Laws of Thought</em> (1854), Boole mostra che il ragionamento può essere trattato come algebra — variabili che assumono solo due valori, vero e falso, e operazioni logiche che seguono regole formali tanto rigorose quanto quelle dell'addizione o della moltiplicazione.</p>
+
+      <p>Non è un trucco notazionale. È il primo mattone concreto dopo due secoli in cui il sogno di Leibniz era rimasto solo un'intenzione: la logica, per la prima volta, ha una grammatica calcolabile.</p>
+
+      <div class="question">Quanto manipolato con gli interruttori nella lezione precedente — E, O, NON, tavole di verità — non è un'illustrazione pedagogica moderna: è l'algebra di Boole, tale e quale, del 1854. Il fatto che oggi giri anche dentro un transistor è una coincidenza storica arrivata un secolo più tardi, non il motivo per cui Boole l'ha inventata.</div>
+    </div>
+  </section>
+
+  <section id="a1-sez-frege-russell">
+    <div class="wrap reveal">
+      <div class="eyebrow">Tappa 03 · 1879–1913</div>
+      <h2 class="title">Frege, il paradosso di Russell, e Principia Mathematica</h2>
+      <p>Gottlob Frege tenta qualcosa di più ambizioso di Boole: non solo formalizzare la logica, ma ridurre <em>tutta</em> l'aritmetica alla logica. La tesi: «2+2=4» non è un fatto empirico né una convenzione utile — è, in fondo, una verità puramente logica.</p>
+
+      <p>Nel 1902, mentre il secondo volume dei <em>Grundgesetze der Arithmetik</em> è già in stampa, Frege riceve una lettera da un giovane matematico inglese, Bertrand Russell. Contiene una contraddizione al cuore stesso del sistema: l'insieme di tutti gli insiemi che non contengono se stessi — contiene se stesso o no? Entrambe le risposte producono una contraddizione. Frege fa in tempo ad aggiungere, in extremis, una nota al secondo volume: riconosce che il fondamento del suo lavoro è appena stato scosso da una lettera. Una delle ammissioni più contenute nella storia della matematica.</p>
+
+      <p>Invece di abbandonare il progetto, Russell — con Alfred North Whitehead — tenta di ripararlo. Il risultato: <em>Principia Mathematica</em> (1910–1913), tre volumi, oltre 1900 pagine, una teoria dei tipi costruita apposta per vietare il paradosso per costruzione. Nell'edizione originale, la dimostrazione che 1+1=2 arriva dopo circa 360 pagine di apparato formale, accompagnata da un commento che resta il vertice dell'understatement matematico: la proposizione, si legge, è <span class="mono">"occasionally useful."</span></p>
+
+      <div class="aside">
+        <span class="label">Perché vale la pena saperlo</span>
+        <p>Non è un aneddoto folkloristico. È la misura esatta di quanto lavoro serva per rendere rigoroso qualcosa che il senso comune considera ovvio — un tema che tornerà, con altri nomi, ogni volta che nel corso si parlerà di quanto sia difficile formalizzare ciò che sembra intuitivo.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="a1-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">Tre secoli, la stessa scommessa</h2>
+      <p class="dim">Non una sequenza casuale di nomi. Ogni tappa costruisce sulla precedente, verso lo stesso obiettivo: rendere il pensiero — o almeno una sua parte — calcolabile senza resti.</p>
+
+      <div class="timeline">
+        <div class="tl-node">
+          <div class="tl-date">XVII secolo</div>
+          <div class="tl-title">Leibniz — Characteristica Universalis</div>
+          <p class="tl-desc">Il sogno completo in forma, nessuna macchina per realizzarlo.</p>
+        </div>
+        <div class="tl-node">
+          <div class="tl-date">1854</div>
+          <div class="tl-title">Boole — The Laws of Thought</div>
+          <p class="tl-desc">La logica diventa algebra: primo strumento calcolabile davvero.</p>
+        </div>
+        <div class="tl-node">
+          <div class="tl-date">1879–1893</div>
+          <div class="tl-title">Frege — Begriffsschrift, Grundgesetze der Arithmetik</div>
+          <p class="tl-desc">Tentativo di ridurre l'intera aritmetica a logica pura.</p>
+        </div>
+        <div class="tl-node">
+          <div class="tl-date">1901</div>
+          <div class="tl-title">Il paradosso di Russell</div>
+          <p class="tl-desc">Una crepa scoperta nel fondamento, non ai margini.</p>
+        </div>
+        <div class="tl-node">
+          <div class="tl-date">1910–1913</div>
+          <div class="tl-title">Whitehead &amp; Russell — Principia Mathematica</div>
+          <p class="tl-desc">Il tentativo — enorme, meticoloso — di sigillare la crepa.</p>
+        </div>
+      </div>
+
+      <div class="question">Un'osservazione da tenere a mente per il resto del blocco: ogni tappa segue lo stesso schema — qualcuno costruisce un sistema, qualcun altro (a volte la stessa persona) ne scopre il limite. Vale la pena chiedersi, fin da ora, se questo schema sia un incidente della storia dell'intelligenza artificiale, o una sua caratteristica strutturale.</div>
+    </div>
+  </section>
+
+  <section id="a1-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura</div>
+      <h2 class="title">Il sogno è completo. O sembra esserlo.</h2>
+
+      <blockquote>
+        Nel 1913 la logica formale sembra aver inghiottito l'intera matematica. Tre volumi enormi dimostrano, passo dopo passo, che persino il fatto più banale dell'aritmetica poggia su un fondamento non solo accettato, ma dimostrato.
+        <br><br>
+        Diciotto anni dopo, un solo uomo rovina la cerimonia con un'unica dimostrazione.
+      </blockquote>
+
+      <p style="margin-top:28px;">Nella prossima unità, quel sogno si scontra con un teorema che nessuno aveva previsto — e il primo inverno arriva prima ancora che esista un computer.</p>
+
+      <div class="footer-note">Genealogia — 1.1 · Il sogno formale</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="unit-block" id="unit-a2" data-unit="a2">
+
+  <section id="a2-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Genealogia · 1.2</div>
+      <h1>Diciotto anni. <em>È quanto è durata la cerimonia.</em></h1>
+      <p class="lede dim">Si immagini un sistema di regole abbastanza potente da dimostrare, in linea di principio, ogni verità aritmetica — quello che Whitehead e Russell avevano appena speso tre volumi a costruire. E si immagini poi che qualcuno dimostri, con quelle stesse regole, che un sistema del genere non può esistere.</p>
+      <p class="dim">Non è accaduto per caso, né lentamente: è accaduto nel 1931, con un unico articolo.</p>
+
+      <div class="scrolldown">il primo inverno, prima ancora che esista un computer</div>
+    </div>
+  </section>
+
+  <section id="a2-sez-godel">
+    <div class="wrap reveal">
+      <div class="eyebrow">Tappa 04 · 1931</div>
+      <h2 class="title">Gödel rompe tutto</h2>
+      <p>Kurt Gödel, venticinquenne, pubblica due teoremi che demoliscono — con gli strumenti stessi della logica formale — il progetto che aveva appena riempito <em>Principia Mathematica</em>. Detto senza formule: per qualsiasi sistema di regole coerente e abbastanza potente da parlare di aritmetica, esistono affermazioni vere che il sistema non può dimostrare al proprio interno. E — secondo colpo — il sistema non può nemmeno dimostrare la propria coerenza usando solo le proprie regole.</p>
+
+      <p>Il trucco — se si può chiamare così un lavoro di questa portata — è l'autoriferimento reso rigoroso. Gödel trova un modo per far sì che il sistema formale possa parlare di se stesso: ogni affermazione sul sistema viene tradotta in un numero, secondo una codifica precisa, così che una frase come «questa affermazione non è dimostrabile in questo sistema» smette di essere un gioco di parole alla Liar Paradox e diventa un enunciato matematico vero e proprio, costruibile dentro il sistema.</p>
+
+      <div class="selfref">
+        <div class="line">Il sistema può esprimere l'enunciato G</div>
+        <div class="line">G dice, in sostanza: <span class="mono">"G non è dimostrabile in questo sistema"</span></div>
+        <div class="line hi">Se il sistema dimostrasse G, G sarebbe falso → contraddizione</div>
+        <div class="line hi">Quindi G è vero, ma il sistema non può dimostrarlo</div>
+      </div>
+
+      <p class="dim">L'ironia che vale la pena notare: l'apparato tecnico necessario per costruire questa dimostrazione è dello stesso tipo di quello messo a punto proprio in <em>Principia Mathematica</em>. Il martello che rompe il vaso è stato in parte forgiato dal vasaio.</p>
+
+      <div class="aside">
+        <span class="label">Cosa NON dice il teorema</span>
+        <p>Non dice che la matematica è «sbagliata», né che la logica è inaffidabile. Dice che completezza e coerenza dimostrabile-dall'interno non possono coesistere in nessun sistema abbastanza espressivo da fare aritmetica. È un limite strutturale, non un difetto correggibile con più lavoro.</p>
+      </div>
+
+      <p>Il progetto che chiudeva l'Unità 1 — sigillare la crepa scoperta da Russell — si scopre, diciotto anni dopo, non riparabile per principio. Il primo inverno del sogno formale arriva così: non per mancanza di fondi o di ambizione, ma perché qualcuno ha dimostrato che l'obiettivo stesso era, in un senso preciso, irraggiungibile.</p>
+    </div>
+  </section>
+
+  <section id="a2-sez-turing">
+    <div class="wrap reveal">
+      <div class="eyebrow">Tappa 05 · 1936, 1950</div>
+      <h2 class="title">Turing reincornicia la domanda</h2>
+      <p>Cinque anni dopo Gödel, Alan Turing affronta un problema imparentato — l'<em>Entscheidungsproblem</em> di Hilbert, se esista un procedimento meccanico per stabilire la verità di qualunque enunciato matematico — e per rispondere (no) inventa un oggetto che sopravvivrà al problema che doveva risolvere: la macchina universale, l'antenato astratto di ogni computer che userà mai.</p>
+
+      <p>Ma il contributo che conta di più per questo corso arriva nel 1950, con un articolo che non prova un teorema: pone una domanda diversa. Non «una macchina può pensare?» — Turing liquida la domanda come mal posta, troppo legata a definizioni intuitive di «pensare» su cui nessuno concorda — ma «una macchina può ingannare un osservatore abbastanza a lungo da sembrare indistinguibile da un umano?». Lo <em>Imitation Game</em>, oggi noto come test di Turing.</p>
+
+      <div class="question">Lo spostamento è la mossa: Turing non risolve il problema filosofico, lo sostituisce con uno empiricamente verificabile. È esattamente lo stesso tipo di mossa che ricorre, molto più avanti nel corso, ogni volta che un problema difficile di «comprensione» viene silenziosamente sostituito da un problema più facile di «prestazione osservabile».</div>
+
+      <p>Turing, da logico, sa perfettamente che cosa Gödel ha appena dimostrato — e nel suo articolo del 1950 affronta direttamente quella che chiama «l'obiezione matematica»: se ogni macchina è un sistema formale, il teorema di Gödel implica che esiste sempre una verità che quella macchina specifica non può raggiungere. La sua risposta è misurata, non trionfale: osserva che non esiste alcuna prova che la mente umana sfugga a limitazioni analoghe, e che pretendere infallibilità da una macchina prima di concederle intelligenza è un criterio che nessun umano supererebbe.</p>
+    </div>
+  </section>
+
+  <section id="a2-sez-lucas">
+    <div class="wrap reveal">
+      <div class="eyebrow">Tappa 05.1 · 1961</div>
+      <h2 class="title">Lucas riapre la ferita</h2>
+      <p>La risposta di Turing convince, ma non chiude la discussione. Undici anni dopo, il filosofo oxoniense J.R. Lucas pubblica <em>Minds, Machines, and Gödel</em>, e riformula l'obiezione matematica in una forma molto più aggressiva di quella che Turing aveva liquidato con un'alzata di spalle metodologica.</p>
+
+      <p>L'argomento, in sintesi: se una macchina è — come dev'essere — l'istanziazione concreta di un sistema formale coerente capace di aritmetica, allora esiste per quella macchina un enunciato di Gödel che la macchina non può dimostrare vero. Ma noi, guardando da fuori, <em>possiamo</em> vederlo come vero. Se una mente umana può fare qualcosa che nessuna macchina di quel tipo può fare, conclude Lucas, allora la mente non è, e non potrà mai essere, riducibile a una macchina.</p>
+
+      <div class="aside">
+        <span class="label">Una ferita che non si è più rimarginata</span>
+        <p>L'argomento di Lucas ha ricevuto obiezioni pesanti fin da subito — tra le altre, che non è affatto ovvio che un umano possa conoscere con certezza il proprio enunciato di Gödel, né dimostrare la propria coerenza più di quanto possa farlo una macchina (il secondo teorema di Gödel si applica, con gli stessi problemi, anche a noi). Eppure l'argomento non è mai stato seppellito del tutto: negli anni Novanta è stato ripreso, in una forma più elaborata, dal fisico e matematico Roger Penrose, questa volta collegato non solo al ragionamento ma alla coscienza stessa — un filo che questo corso riprenderà esplicitamente più avanti, quando si arriverà a parlare di filosofia della mente.</p>
+      </div>
+
+      <p class="dim">Vale la pena trattenere la struttura, non solo il contenuto: è la terza volta, in questa unità, che lo stesso teorema del 1931 viene riletto da una prospettiva diversa — matematica con Gödel, metodologica con Turing, filosofica con Lucas. Un solo risultato, tre inverni diversi a seconda di chi lo guarda.</p>
+    </div>
+  </section>
+
+  <section id="a2-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">Un teorema, tre repliche</h2>
+      <p class="dim">Il marcatore vuoto segna una rottura — un momento in cui un progetto si scopre, per principio, irrealizzabile. Il marcatore pieno segna una mossa costruttiva — qualcuno che sposta il terreno di gioco invece di arrendersi.</p>
+
+      <div class="timeline">
+        <div class="tl-node tl-break">
+          <span class="tl-tag">primo inverno</span>
+          <div class="tl-date">1931</div>
+          <div class="tl-title">Gödel — Teoremi di incompletezza</div>
+          <p class="tl-desc">Nessun sistema formale abbastanza potente può dimostrare tutte le proprie verità.</p>
+        </div>
+        <div class="tl-node">
+          <div class="tl-date">1936</div>
+          <div class="tl-title">Turing — La macchina universale</div>
+          <p class="tl-desc">Un risultato di impossibilità imparentato produce, come sottoprodotto, l'idea di computer.</p>
+        </div>
+        <div class="tl-node">
+          <div class="tl-date">1950</div>
+          <div class="tl-title">Turing — Computing Machinery and Intelligence</div>
+          <p class="tl-desc">«Può pensare?» sostituita da «può ingannare?» — e l'obiezione di Gödel affrontata di petto.</p>
+        </div>
+        <div class="tl-node tl-break">
+          <span class="tl-tag">obiezione riaperta</span>
+          <div class="tl-date">1961</div>
+          <div class="tl-title">Lucas — Minds, Machines, and Gödel</div>
+          <p class="tl-desc">La risposta di Turing non basta: l'argomento gödeliano contro il meccanicismo torna, più aggressivo.</p>
+        </div>
+      </div>
+
+      <div class="question">Una domanda che il piano di questo corso mette esplicitamente in lista, e che vale la pena lasciare aperta qui, senza risposta: un LLM è un sistema formale nel senso di Gödel? E se lo è, l'argomento di Lucas — qualunque cosa valga per un essere umano — si applica anche a lui?</div>
+    </div>
+  </section>
+
+  <section id="a2-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura</div>
+      <h2 class="title">L'ottimismo e l'obiezione, sullo stesso calendario</h2>
+
+      <blockquote>
+        Nel 1956, a Dartmouth, un gruppo di ricercatori si dà appuntamento per un'estate di lavoro, convinto che i tratti essenziali dell'intelligenza si potranno riprodurre nel giro di una generazione.
+        <br><br>
+        Cinque anni dopo, mentre quella scommessa è ancora aperta, un filosofo a Oxford pubblica la dimostrazione — formale, non retorica — che la scommessa è, in linea di principio, persa in partenza.
+      </blockquote>
+
+      <p style="margin-top:28px;">Le due cose accadono nello stesso decennio, non in sequenza ordinata. La prossima unità va a Dartmouth, osserva l'euforia da vicino — e arriva al primo modello che promette di imparare da solo, per poi scoprire, nel giro di pochi anni, che non sa fare una cosa che un bambino di sei anni farebbe senza pensarci.</p>
+
+      <div class="footer-note">Genealogia — 1.2 · Il sogno si rompe</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="unit-block" id="unit-a3" data-unit="a3">
+
+  <section id="a3-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Genealogia · 1.3</div>
+      <h1>Una proposta di ricerca<br><em>che comincia dando il problema per già risolto.</em></h1>
+      <p class="lede dim">Non è ironia retrospettiva: è, con qualche parafrasi, il tono reale della proposta che nell'estate del 1956 riunisce un gruppo di ricercatori a Dartmouth College, e che dà per la prima volta un nome al campo di cui questo corso si occupa.</p>
+      <p class="dim">La sequenza temporale conta: quando il gruppo si riunisce, Lucas non ha ancora scritto una riga contro il meccanicismo — la scriverà cinque anni dopo. La rottura filosofica dell'Unità 2 e l'euforia ingegneristica di questa unità corrono, per un tratto, fianco a fianco — non in fila indiana.</p>
+
+      <div class="scrolldown">Dartmouth, il Perceptron, e il primo schianto pratico</div>
+    </div>
+  </section>
+
+  <section id="a3-sez-dartmouth">
+    <div class="wrap reveal">
+      <div class="eyebrow">Tappa 1 · 1956</div>
+      <h2 class="title">Dartmouth: nasce un nome, non ancora un campo</h2>
+      <p>John McCarthy, insieme a Marvin Minsky, Claude Shannon e Nathaniel Rochester, firma la proposta che convoca l'incontro — ed è McCarthy a coniare, in quella proposta, l'espressione «intelligenza artificiale». La tesi di fondo, parafrasata: ogni aspetto dell'apprendimento e ogni altro tratto dell'intelligenza può, in linea di principio, essere descritto con tale precisione da permettere a una macchina di simularlo.</p>
+
+      <p>Vale la pena leggerla due volte: non dice «forse», dice «può» — con la sicurezza di chi descrive un problema di ingegneria, non un mistero aperto.</p>
+
+      <div class="aside">
+        <span class="label">Quello che è successo davvero, quell'estate</span>
+        <p>L'incontro dura circa due mesi, i partecipanti sono una decina, i progressi concreti sono modesti rispetto alle attese dichiarate. Quello che resta, in modo duraturo, non è un risultato tecnico ma un nome — e un gruppo di persone che, da quel momento, si riconoscono come appartenenti allo stesso campo.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="a3-sez-perceptron">
+    <div class="wrap reveal">
+      <div class="eyebrow">Tappa 2 · 1958</div>
+      <h2 class="title">Il Perceptron: la macchina che impara guardando</h2>
+      <p>Frank Rosenblatt costruisce il Perceptron, ispirandosi al modello matematico del neurone di McCulloch e Pitts (1943) — un dispositivo capace di <em>imparare</em> a classificare pattern semplici regolando i propri pesi in base agli esempi che riceve, invece di eseguire regole scritte a mano. È la prima incarnazione pratica e visibile di un'idea che tornerà, sotto altro nome e con altra scala, in ogni rete neurale di questo corso.</p>
+
+      <p>La stampa dell'epoca non si trattiene. Il New York Times, nel 1958, riporta che secondo la Marina degli Stati Uniti il dispositivo sarebbe diventato capace di <span class="mono">"walk, talk, see, write, reproduce itself and be conscious of its existence"</span> — camminare, parlare, vedere, scrivere, riprodursi ed essere cosciente della propria esistenza.</p>
+
+      <div class="aside">
+        <span class="label">Da tenere a mente</span>
+        <p>Il Perceptron di Rosenblatt, nella sua forma del 1958, è a un solo strato. Sa separare solo pattern che si possono dividere con una linea retta — la nozione tecnica è «separabilità lineare». Questo dettaglio, nella tappa successiva, diventa l'intera storia.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="a3-sez-minsky-papert">
+    <div class="wrap reveal">
+      <div class="eyebrow">Tappa 3 · 1969</div>
+      <h2 class="title">Minsky e Papert: il conto che nessuno aveva fatto</h2>
+      <p>Undici anni dopo, Marvin Minsky — lo stesso nome che compare nella proposta di Dartmouth — pubblica con Seymour Papert un libro dal titolo asciutto, <em>Perceptrons</em>. Contiene una dimostrazione matematica rigorosa: un Perceptron a un solo strato non può calcolare la funzione XOR — esattamente l'operatore di Fondamenti · 1, dove un avviso era stato lasciato apposta per questo momento.</p>
+
+      <p>Il motivo è geometrico, non un dettaglio implementativo: gli esempi in cui XOR è vero e quelli in cui è falso non si possono separare con una singola linea retta. Nessuna quantità di addestramento aggiuntivo risolve il problema — è un limite strutturale del modello a un solo strato, non un difetto correggibile con più dati.</p>
+
+      <div class="aside">
+        <span class="label">Un dettaglio che complica la storia standard</span>
+        <p>Minsky e Papert, nello stesso libro, riconoscono che uno strato aggiuntivo risolverebbe il problema in linea di principio — ma congetturano, sbagliando, che estensioni multistrato avrebbero sofferto di limiti simili. In più: nel 1969 non esisteva ancora un algoritmo capace di addestrare efficacemente una rete a più strati. Il libro non ha "ucciso" le reti neurali da solo — la ricerca connessionista era già in difficoltà da anni per ragioni di finanziamento e di risultati; alcuni storici della disciplina considerano il ruolo del libro nella vicenda più mitologico che causale. Resta, comunque, il momento in cui il pubblico smette di crederci.</p>
+      </div>
+
+      <div class="question">Una macchina lodata dalla stampa come capace, in prospettiva, di essere cosciente della propria esistenza non riesce a calcolare una funzione a due variabili già padroneggiata, in questo corso, manipolando due interruttori. Questo scarto tra promessa e limite va trattenuto: tornerà, con proporzioni diverse, ogni volta che nel corso si parlerà di capacità emergenti e dei loro confini reali.</div>
+    </div>
+  </section>
+
+  <section id="a3-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">Un nome, una promessa, un conto</h2>
+      <p class="dim">Il marcatore vuoto segna una rottura — un momento in cui un progetto si scopre, per principio, irrealizzabile. Il marcatore pieno segna una mossa costruttiva — qualcuno che costruisce qualcosa di concretamente nuovo.</p>
+
+      <div class="timeline">
+        <div class="tl-node">
+          <div class="tl-date">1956</div>
+          <div class="tl-title">Dartmouth</div>
+          <p class="tl-desc">Nasce il nome «intelligenza artificiale», con aspettative che il campo impiegherà decenni a onorare.</p>
+        </div>
+        <div class="tl-node">
+          <div class="tl-date">1958</div>
+          <div class="tl-title">Rosenblatt — il Perceptron</div>
+          <p class="tl-desc">Prima macchina che impara dai dati invece di eseguire regole.</p>
+        </div>
+        <div class="tl-node tl-break">
+          <span class="tl-tag">primo schianto pratico</span>
+          <div class="tl-date">1969</div>
+          <div class="tl-title">Minsky e Papert — Perceptrons</div>
+          <p class="tl-desc">Il Perceptron a uno strato non risolve XOR — limite geometrico, non correggibile con più addestramento.</p>
+        </div>
+      </div>
+
+      <div class="question">Lo schema costruzione-rottura, già visto nell'Unità 2 con Gödel-Turing-Lucas, si ripete qui con protagonisti diversi — e con un dettaglio in comune sorprendente: in entrambi i casi, chi scrive la rottura (Gödel, Minsky) lo fa con gli stessi strumenti concettuali di chi aveva costruito il sogno. Vale la pena chiedersi se sia un caso, o se ogni programma abbastanza ambizioso porti in sé i mezzi della propria confutazione.</div>
+    </div>
+  </section>
+
+  <section id="a3-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura</div>
+      <h2 class="title">La fine di un capitolo scritto troppo in fretta</h2>
+
+      <blockquote>
+        Nel 1958 un giornale nazionale prometteva una macchina cosciente della propria esistenza. Undici anni dopo, la stessa comunità scientifica ammette che quella macchina non sa risolvere un problema che un bambino, con un minimo di pazienza, impara a gestire intuitivamente.
+        <br><br>
+        Non è la fine della storia. È solo la fine di un capitolo scritto troppo in fretta.
+      </blockquote>
+
+      <p style="margin-top:28px;">Nella prossima unità il pendolo si sposta dall'altra parte: se le macchine non possono imparare da sole, si prova a scrivere a mano tutto ciò che sanno gli esperti umani. Funziona, per un po' — poi si scopre perché non basta.</p>
+
+      <div class="footer-note">Genealogia — 1.3 · Euforia e primo schianto pratico</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="unit-block" id="unit-a4" data-unit="a4">
+
+  <section id="a4-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Genealogia · 1.4</div>
+      <h1>Se una macchina non impara da sola,<br><em>resta un'altra strada.</em></h1>
+      <p class="lede dim">Prendere un esperto umano, sedersi con lui per mesi, ed estrarre tutto ciò che sa sotto forma di regole — «se il paziente presenta questi sintomi, allora considera questa diagnosi». Niente apprendimento, niente ambiguità statistica: solo logica scritta a mano, dalla persona che ne sa di più al mondo.</p>
+      <p class="dim">Sembra imbattibile. Per un decennio, quasi lo è.</p>
+
+      <div class="scrolldown">regole scritte a mano, poi i dati</div>
+    </div>
+  </section>
+
+  <section id="a4-sez-sistemi-esperti">
+    <div class="wrap reveal">
+      <div class="eyebrow">Tappa 1 · Anni '70-'80</div>
+      <h2 class="title">I sistemi esperti: l'intelligenza come elenco di regole</h2>
+      <p>L'approccio si chiama, con qualche variazione, «sistema esperto»: un motore di regole logiche del tipo «se-allora», scritte a mano da un umano esperto del dominio insieme a un «ingegnere della conoscenza» che le traduce in codice. MYCIN, sviluppato a Stanford, suggerisce terapie antibatteriche con un'accuratezza che regge il confronto con specialisti umani, in un dominio ristretto. XCON (noto anche come R1), alla Digital Equipment Corporation, configura ordini complessi di computer VAX e fa risparmiare all'azienda decine di milioni di dollari l'anno.</p>
+
+      <p>Intorno a questi sistemi cresce un'industria vera: macchine specializzate — le «macchine LISP», costruite apposta per eseguire questo tipo di software — vendute da aziende come Symbolics a prezzi molto superiori a un computer generico, giustificati dalle prestazioni superiori su questo carico di lavoro specifico.</p>
+
+      <div class="aside">
+        <span class="label">Perché funziona, in un dominio ristretto</span>
+        <p>Un sistema esperto non ha bisogno di "capire" la medicina o la configurazione hardware. Ha bisogno che qualcuno abbia già trasformato la competenza in una lista sufficientemente esaustiva di condizioni. Finché il dominio resta stretto e stabile, la lista può davvero essere abbastanza esaustiva.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="a4-sez-secondo-inverno">
+    <div class="wrap reveal">
+      <div class="eyebrow">Tappa 2 · 1987–1993</div>
+      <h2 class="title">Il secondo inverno: quando la lista non basta più</h2>
+      <p>Il problema si chiama, nel gergo del campo, <em>brittleness</em> — fragilità: un sistema esperto non degrada con eleganza fuori dal proprio dominio, si rompe di colpo. Non «non lo so» — semplicemente non ha una regola per quel caso, e non ha modo di accorgersi che gli manca. Ogni cambiamento nel dominio richiede che un ingegnere della conoscenza, costoso e specializzato, aggiorni a mano centinaia di regole. Il sistema non impara da un caso nuovo: va riscritto.</p>
+
+      <p>Nel 1987 il mercato delle macchine LISP collassa: workstation generiche di Apple e Sun, sempre più potenti per la legge di Moore, raggiungono le stesse prestazioni a una frazione del costo — e nessuno ha più motivo di comprare hardware specializzato per eseguire regole scritte a mano. Nel 1991 la Strategic Computing Initiative della DARPA valuta deludenti i propri progetti di AI e ritira i finanziamenti. Il progetto giapponese di «quinta generazione», basato sullo stesso paradigma, viene abbandonato senza aver raggiunto i propri obiettivi originali.</p>
+
+      <div class="aside">
+        <span class="label">Questo, a differenza di Gödel e del Perceptron, è l'inverno propriamente detto</span>
+        <p>Il termine «inverno dell'AI» nasce nel 1984, coniato da ricercatori che avevano già attraversato i tagli di finanziamento degli anni '70, per analogia con «inverno nucleare». Questo — 1987-1993 — insieme al primo (1974-1980, innescato dal Lighthill Report), è uno dei due episodi a cui il termine si applica in senso storiografico stretto.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="a4-sez-rivincita-statistica">
+    <div class="wrap reveal">
+      <div class="eyebrow">Tappa 3 · Anni '90</div>
+      <h2 class="title">La rivincita statistica: lasciar parlare i dati</h2>
+      <p>Mentre i sistemi a regole collassano sotto il proprio peso, un approccio diverso guadagna terreno — non nuove regole scritte meglio, ma modelli statistici che estraggono pattern direttamente dai dati, senza che nessun umano codifichi esplicitamente la conoscenza. Gli Hidden Markov Model permettono progressi concreti nel riconoscimento vocale. Le Support Vector Machines, formalizzate da Vladimir Vapnik, offrono un metodo matematicamente elegante per classificare dati complessi.</p>
+
+      <p>Il cambio di filosofia è più importante del singolo strumento: invece di chiedere «che cosa sa l'esperto, e come scriverlo come regola», la domanda diventa «quali pattern sono già nei dati, e come estrarli automaticamente». È la prima comparsa, in forma ancora acerba, dell'idea che guiderà tutto il resto di questo corso.</p>
+
+      <div class="question">Un sistema esperto e un modello linguistico moderno hanno in comune più di quanto sembri a prima vista: entrambi comprimono conoscenza in una forma eseguibile. La differenza — se è una differenza di natura o solo di scala — è una delle domande che il piano di questo saggio lascia esplicitamente aperta per Genealogia · 2. Non va risolta ora: va tenuta in mente.</div>
+    </div>
+  </section>
+
+  <section id="a4-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">Regole, collasso, dati</h2>
+      <p class="dim">Il marcatore vuoto segna una rottura — un momento in cui un progetto si scopre, per principio, irrealizzabile. Il marcatore pieno segna una mossa costruttiva — qualcuno che costruisce qualcosa di concretamente nuovo.</p>
+
+      <div class="timeline">
+        <div class="tl-node">
+          <div class="tl-date">Anni '70-'80</div>
+          <div class="tl-title">Sistemi esperti</div>
+          <p class="tl-desc">MYCIN, XCON, un'industria intera costruita su regole scritte a mano.</p>
+        </div>
+        <div class="tl-node tl-break">
+          <span class="tl-tag">secondo inverno</span>
+          <div class="tl-date">1987–1993</div>
+          <div class="tl-title">Secondo inverno dell'AI</div>
+          <p class="tl-desc">Collasso del mercato LISP, tagli DARPA, abbandono del progetto giapponese di quinta generazione.</p>
+        </div>
+        <div class="tl-node">
+          <div class="tl-date">Anni '90</div>
+          <div class="tl-title">Rivincita statistica</div>
+          <p class="tl-desc">Hidden Markov Model, Support Vector Machine — i dati sostituiscono le regole scritte a mano.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="a4-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura</div>
+      <h2 class="title">Smettere di scriverla a mano</h2>
+
+      <blockquote>
+        Per un decennio, insegnare a un computer significa scrivere tutto ciò che si sa, per iscritto, in una lista che non finisce mai. Poi la lista si rompe contro il primo caso che non aveva previsto — e qualcuno si accorge che forse il problema non era scrivere meglio la lista, ma smettere di scriverla a mano.
+      </blockquote>
+
+      <p style="margin-top:28px;">Nella prossima unità quell'intuizione statistica incontra di nuovo le reti neurali — la stessa idea del Perceptron, uscita di scena nel 1969, che aspettava solo che il mondo le fornisse abbastanza scala per funzionare.</p>
+
+      <div class="footer-note">Genealogia — 1.4 · Regole scritte a mano, poi i dati</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="unit-block" id="unit-a5" data-unit="a5">
+
+  <section id="a5-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Genealogia · 1.5</div>
+      <h1>Ogni tanto un'idea scartata non era sbagliata.<br><em>Era solo arrivata prima del suo tempo.</em></h1>
+      <p class="lede dim">Questa unità racconta esattamente un caso del genere: la stessa intuizione del Perceptron, morta sulla carta nel 1969, che risorge non perché qualcuno la corregge concettualmente, ma perché il mondo, col tempo, le fornisce ciò che le mancava.</p>
+
+      <div class="scrolldown">tornano le reti, stavolta con la scala</div>
+    </div>
+  </section>
+
+  <section id="a5-sez-backpropagation">
+    <div class="wrap reveal">
+      <div class="eyebrow">Tappa 1 · Anni '80</div>
+      <h2 class="title">Backpropagation: il problema del 1969, risolto</h2>
+      <p>Un algoritmo chiamato <em>backpropagation</em> — la cui origine tecnica risale addirittura ai primi anni '70, ma che diventa noto alla comunità scientifica soprattutto grazie a un articolo di David Rumelhart, Geoffrey Hinton e Ronald Williams nel 1986 — permette finalmente di addestrare reti neurali a più strati, non solo il singolo strato del Perceptron originale.</p>
+
+      <p>Il dettaglio che chiude un cerchio aperto in questo blocco: una rete neurale a più strati <strong>risolve</strong> XOR. Il limite geometrico che Minsky e Papert avevano dimostrato riguardava specificamente i modelli a un solo strato — loro stessi lo sapevano, come già notato nell'Unità 3. Mancava solo un metodo per addestrare più strati insieme. Ora c'è.</p>
+
+      <div class="aside">
+        <span class="label">Perché non è bastato, comunque</span>
+        <p>La disponibilità dell'algoritmo non basta a rilanciare il campo su vasta scala. Mancano ancora due cose: dati sufficienti, e potenza di calcolo sufficiente per reti abbastanza profonde. Le reti neurali degli anni '80-'90 restano, per lo più, poco profonde — l'addestramento di reti davvero profonde soffre di un problema tecnico (il gradiente che si "affievolisce" attraversando molti strati) che nessuno sa ancora affrontare bene.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="a5-sez-hinton">
+    <div class="wrap reveal">
+      <div class="eyebrow">Tappa 2 · 2006</div>
+      <h2 class="title">Hinton: il "deep learning" prende un nome</h2>
+      <p>Geoffrey Hinton, insieme a Simon Osindero e Yee-Whye Teh, pubblica un metodo per addestrare reti profonde strato per strato, dimostrando che l'addestramento di reti realmente profonde è possibile. Il termine «deep learning» comincia a diffondersi da questo momento come etichetta per l'intero approccio.</p>
+
+      <p>Vale la pena essere onesti su che cosa sia davvero nuovo qui, e che cosa no: l'idea di base — strati di neuroni artificiali, pesi aggiustati tramite backpropagation — è la stessa degli anni '80. Quello che cambia, nel decennio successivo, è tutt'altro: la disponibilità di dataset molto più grandi, e — aggancio diretto alla lezione sull'hardware già trattata in questo corso — la scoperta che le GPU, nate per i videogiochi, sono perfette per addestrare reti neurali su scala molto maggiore di prima.</p>
+
+      <div class="question">Lo schema si ripete: un'idea concettualmente completa aspetta vent'anni un contesto materiale — dati, hardware — che la renda praticabile. È lo stesso schema che ha separato il sogno di Leibniz dalla sua realizzazione. Vale la pena chiedersi quante altre idee «morte» della storia dell'AI aspettino, in questo momento, solo il contesto giusto.</div>
+    </div>
+  </section>
+
+  <section id="a5-sez-word2vec">
+    <div class="wrap reveal">
+      <div class="eyebrow">Tappa 3 · 2013</div>
+      <h2 class="title">Word2Vec: le parole diventano punti nello spazio</h2>
+      <p>Un gruppo di ricercatori guidato da Tomas Mikolov, a Google, pubblica Word2Vec: un metodo per rappresentare ogni parola come un vettore — un punto in uno spazio a molte dimensioni — addestrato in modo che parole con significati simili finiscano vicine tra loro. L'esempio diventato celebre, e che il corso riprenderà per intero in Meccanismo · 3: sottraendo il vettore di «uomo» da quello di «re» e aggiungendo quello di «donna», il punto più vicino nello spazio risultante è «regina» — un'operazione puramente aritmetica che produce un risultato semanticamente sensato.</p>
+
+      <div class="aside">
+        <span class="label">Perché sorprende anche chi lo ha costruito</span>
+        <p>Nessuno ha progettato esplicitamente questa struttura algebrica: emerge dall'addestramento sui dati, senza che sia stata codificata a mano da nessuna parte. È il primo caso, in questo saggio, di una capacità che compare senza essere stata esplicitamente costruita — un tema che tornerà, con proporzioni molto maggiori, quando si parlerà di capacità emergenti in Genealogia · 2.1.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="a5-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">Tre tappe, nessun crollo</h2>
+      <p class="dim">Da notare: questa unità, a differenza delle precedenti, non contiene una vera rottura — è l'arco della ricostruzione dopo due inverni. Qui ogni marcatore è pieno: una mossa costruttiva dopo l'altra.</p>
+
+      <div class="timeline">
+        <div class="tl-node">
+          <div class="tl-date">Anni '80</div>
+          <div class="tl-title">Backpropagation</div>
+          <p class="tl-desc">Il limite del 1969 (XOR) viene risolto strutturalmente, ma manca ancora scala.</p>
+        </div>
+        <div class="tl-node">
+          <div class="tl-date">2006</div>
+          <div class="tl-title">Hinton — deep learning</div>
+          <p class="tl-desc">Le reti profonde si addestrano davvero, nasce il termine «deep learning».</p>
+        </div>
+        <div class="tl-node">
+          <div class="tl-date">2013</div>
+          <div class="tl-title">Word2Vec</div>
+          <p class="tl-desc">Le parole diventano vettori, e l'algebra tra vettori produce senso semantico.</p>
+        </div>
+      </div>
+
+      <div class="question">Per la prima volta in questo blocco, tre tappe di fila senza un crollo. Vale la pena chiedersi se questo significhi che il ciclo costruzione-rottura si sia interrotto per sempre, o solo che la prossima rottura non è ancora avvenuta.</div>
+    </div>
+  </section>
+
+  <section id="a5-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura</div>
+      <h2 class="title">Cinquant'anni tra l'intuizione e la sua realizzazione</h2>
+
+      <blockquote>
+        Un'idea del 1958, dichiarata clinicamente morta nel 1969, risolta sulla carta negli anni '80, e finalmente utile su vasta scala solo a partire dal 2006. Cinquant'anni tra l'intuizione e la sua realizzazione pratica — non per un errore concettuale, ma perché al mondo mancava, per decenni, il contesto materiale giusto.
+      </blockquote>
+
+      <p style="margin-top:28px;">Resta un problema che nessuna delle tre tappe di questa unità risolve: le reti viste finora processano l'informazione in sequenza, un pezzo alla volta, e faticano a tenere a mente ciò che hanno visto molti passi prima. Nella prossima e ultima unità del blocco, un'idea diversa elimina il problema alla radice — ed è l'architettura su cui gira, oggi, ogni modello linguistico di grandi dimensioni, incluso quello con cui si sta interagendo in questo momento.</p>
+
+      <div class="footer-note">Genealogia — 1.5 · Tornano le reti, stavolta con la scala</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="unit-block" id="unit-a6" data-unit="a6">
+
+  <section id="a6-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Genealogia · 1.6 (chiusura)</div>
+      <h1>Tradurre una frase lunga una parola alla volta,<br><em>senza mai poter tornare a rileggere l'inizio.</em></h1>
+      <p class="lede dim">Tenendo a mente solo un riassunto sempre più compresso di tutto ciò che si è letto fin lì. È, più o meno, il modo in cui le reti neurali «ricorrenti» — il tipo di architettura dominante per il linguaggio prima del 2017 — gestiscono le sequenze. Funziona, fino a un certo punto. Poi la frase si allunga, e il riassunto compresso comincia a perdere esattamente i dettagli che servivano.</p>
+
+      <div class="scrolldown">l'attenzione e il salto finale</div>
+    </div>
+  </section>
+
+  <section id="a6-sez-limite-rnn">
+    <div class="wrap reveal">
+      <div class="eyebrow">Tappa 1</div>
+      <h2 class="title">Il limite delle reti ricorrenti</h2>
+      <p>Le reti ricorrenti (e le loro varianti più sofisticate, le LSTM) processano una sequenza — una frase, un testo — un elemento alla volta, mantenendo uno stato interno che riassume tutto ciò che hanno visto fino a quel punto. Due problemi strutturali: primo, le dipendenze a lungo raggio si degradano — informazione rilevante all'inizio di una frase lunga tende a "svanire" prima che la rete raggiunga la fine. Secondo, e forse più limitante nella pratica: il processamento è intrinsecamente sequenziale — non si può calcolare l'elemento numero 50 prima di aver calcolato il numero 49. Questo rende l'addestramento su grandi quantità di testo molto più lento di quanto potrebbe essere.</p>
+    </div>
+  </section>
+
+  <section id="a6-sez-attenzione">
+    <div class="wrap reveal">
+      <div class="eyebrow">Tappa 2 · 2014-2015</div>
+      <h2 class="title">L'attenzione: guardare indietro, selettivamente</h2>
+      <p>Nel contesto della traduzione automatica, un gruppo di ricercatori guidato da Dzmitry Bahdanau introduce un meccanismo che permette a una rete, nel produrre ogni parola di output, di «guardare» direttamente a tutte le parole dell'input — pesando ciascuna in base a quanto è rilevante in quel momento specifico — invece di affidarsi a un unico riassunto compresso dell'intera frase. L'idea si chiama, semplicemente, <em>attenzione</em>.</p>
+
+      <div class="aside">
+        <span class="label">Cosa risolve, in una frase</span>
+        <p>Invece di comprimere l'intera frase di input in un solo vettore e sperare che basti, il modello impara a consultare selettivamente le parti dell'input più rilevanti per ogni parola che sta generando — un po' come un traduttore umano che, scrivendo la parola dieci, rilegge la parola tre dell'originale perché è quella che conta davvero in quel punto.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="a6-sez-transformer">
+    <div class="wrap reveal">
+      <div class="eyebrow">Tappa 3 · 2017</div>
+      <h2 class="title">"Attention Is All You Need": il Transformer</h2>
+      <p>Un gruppo di ricercatori a Google, con un articolo dal titolo che è già un programma — <em>Attention Is All You Need</em> — compie il passo decisivo: elimina del tutto la componente ricorrente, e costruisce un'architettura basata unicamente sull'attenzione (più semplici strati di elaborazione). Il nome dell'architettura: <strong>Transformer</strong>.</p>
+
+      <p>Il vantaggio pratico è enorme, e si riaggancia direttamente alla lezione sull'hardware già affrontata in questo corso: senza il vincolo sequenziale delle reti ricorrenti, tutte le posizioni di una sequenza possono essere elaborate in parallelo — esattamente il tipo di carico di lavoro per cui una GPU, con le sue migliaia di operazioni simultanee, è stata costruita. Non è un dettaglio marginale: è, in buona parte, il motivo per cui i modelli linguistici di oggi possono essere addestrati sulla scala documentata in Meccanismo · 6.</p>
+
+      <div class="question">Il Transformer è l'architettura sotto ogni modello linguistico di grandi dimensioni oggi in uso — incluso quello con cui si sta interagendo in questo momento. Come funzioni esattamente il meccanismo di attenzione, in dettaglio, è materia di Meccanismo · 5. Qui basti sapere che esiste, che ha una data di nascita precisa, e che senza il passaggio dell'Unità 5 — GPU, scala, dati — sarebbe rimasto teoricamente interessante e praticamente inutilizzabile, come già accaduto altre volte in questo blocco.</div>
+    </div>
+  </section>
+
+  <section id="a6-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro — timeline locale</div>
+      <h2 class="title">Dall'informazione compressa all'attenzione totale</h2>
+      <p class="dim">Il marcatore vuoto segna qui una rottura in senso tecnico più che narrativo — un limite strutturale che va aggirato, non un crollo di un progetto. Il marcatore pieno segna, come sempre, una mossa costruttiva.</p>
+
+      <div class="timeline">
+        <div class="tl-node tl-break">
+          <span class="tl-tag">collo di bottiglia</span>
+          <div class="tl-date">Prima del 2017</div>
+          <div class="tl-title">Reti ricorrenti</div>
+          <p class="tl-desc">Gestiscono sequenze, ma soffrono di dipendenze a lungo raggio e di un collo di bottiglia sequenziale.</p>
+        </div>
+        <div class="tl-node">
+          <div class="tl-date">2014-2015</div>
+          <div class="tl-title">Attenzione</div>
+          <p class="tl-desc">Un modo per consultare selettivamente l'intero input invece di comprimerlo in un solo vettore.</p>
+        </div>
+        <div class="tl-node">
+          <div class="tl-date">2017</div>
+          <div class="tl-title">Transformer</div>
+          <p class="tl-desc">L'attenzione diventa l'intera architettura, il calcolo si parallelizza, la scala diventa gestibile.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="a6-timeline-blocco">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro — timeline dell'intera Genealogia · 1</div>
+      <h2 class="title">Quindici tappe, dal XVII secolo al Transformer</h2>
+      <p class="dim">L'unico posto nel blocco dove ha senso vederle tutte insieme: tre secoli, quindici tappe, quattro rotture.</p>
+
+      <div class="timeline">
+        <div class="tl-node">
+          <div class="tl-date">XVII sec.</div>
+          <div class="tl-title">Leibniz — Characteristica Universalis</div>
+        </div>
+        <div class="tl-node">
+          <div class="tl-date">1854</div>
+          <div class="tl-title">Boole — The Laws of Thought</div>
+        </div>
+        <div class="tl-node">
+          <div class="tl-date">1879–1913</div>
+          <div class="tl-title">Frege, il paradosso di Russell, Principia Mathematica</div>
+        </div>
+        <div class="tl-node tl-break">
+          <span class="tl-tag">rottura</span>
+          <div class="tl-date">1931</div>
+          <div class="tl-title">Gödel — teoremi di incompletezza</div>
+        </div>
+        <div class="tl-node">
+          <div class="tl-date">1936, 1950</div>
+          <div class="tl-title">Turing — la macchina universale e il test dell'imitazione</div>
+        </div>
+        <div class="tl-node tl-break">
+          <span class="tl-tag">rottura</span>
+          <div class="tl-date">1961</div>
+          <div class="tl-title">Lucas — l'obiezione matematica formalizzata</div>
+        </div>
+        <div class="tl-node">
+          <div class="tl-date">1956</div>
+          <div class="tl-title">Dartmouth — nasce il nome "intelligenza artificiale"</div>
+        </div>
+        <div class="tl-node">
+          <div class="tl-date">1958</div>
+          <div class="tl-title">Rosenblatt — il Perceptron</div>
+        </div>
+        <div class="tl-node tl-break">
+          <span class="tl-tag">rottura</span>
+          <div class="tl-date">1969</div>
+          <div class="tl-title">Minsky e Papert — il limite di XOR</div>
+        </div>
+        <div class="tl-node">
+          <div class="tl-date">1970-80</div>
+          <div class="tl-title">Sistemi esperti</div>
+        </div>
+        <div class="tl-node tl-break">
+          <span class="tl-tag">rottura</span>
+          <div class="tl-date">1987–1993</div>
+          <div class="tl-title">Il secondo inverno dell'AI</div>
+        </div>
+        <div class="tl-node">
+          <div class="tl-date">Anni '90</div>
+          <div class="tl-title">Rivincita statistica</div>
+        </div>
+        <div class="tl-node">
+          <div class="tl-date">1986, 2006</div>
+          <div class="tl-title">Backpropagation, poi deep learning</div>
+        </div>
+        <div class="tl-node">
+          <div class="tl-date">2013</div>
+          <div class="tl-title">Word2Vec</div>
+        </div>
+        <div class="tl-node">
+          <div class="tl-date">2017</div>
+          <div class="tl-title">Transformer</div>
+        </div>
+      </div>
+
+      <div class="question">Guardata tutta insieme, la timeline del blocco mostra qualcosa che nessuna singola unità poteva mostrare da sola: le rotture sono minoranza (quattro su quindici tappe), eppure sono quelle che si ricordano. Vale la pena chiedersi se la storia dell'AI sia davvero fatta soprattutto di crolli, come la si racconta spesso, o se la si racconti così perché i crolli fanno storie migliori delle costruzioni lente.</div>
+    </div>
+  </section>
+
+  <section id="a6-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura del blocco</div>
+      <h2 class="title">Niente di tutto questo era inevitabile</h2>
+
+      <blockquote>
+        Tre secoli, quindici tappe, quattro rotture. Un filosofo secentesco che sogna di eliminare il disaccordo con un calcolo; un teorema che dimostra che nessun calcolo del genere può essere completo; una macchina lodata dalla stampa come futura coscienza, che non sa risolvere un problema a due variabili; e infine un'architettura, nata per tradurre frasi meglio, che oggi genera questo stesso testo.
+        <br><br>
+        Niente di tutto questo era inevitabile. Ogni tappa avrebbe potuto fermarsi lì.
+      </blockquote>
+
+      <p style="margin-top:28px;">Prima di chiudere davvero il blocco, alcune domande restano deliberatamente senza risposta — non per pigrizia, ma perché nessuna risposta onesta esiste ancora, e il corso le riprenderà da prospettive diverse più avanti:</p>
+
+      <p>Un modello linguistico di grandi dimensioni è un sistema formale nel senso di Gödel? E se lo è, l'obiezione di Lucas — qualunque cosa valga per una mente umana — si applica anche a lui?</p>
+      <p>Cosa ha cambiato, esattamente, l'introduzione della profondità nelle reti neurali — è una differenza di grado o di natura rispetto ai modelli a singolo strato del 1958?</p>
+      <p>Un modello linguistico di oggi è, in fondo, un sistema esperto molto più grande — o c'è una differenza qualitativa tra regole scritte a mano e pattern estratti da miliardi di esempi?</p>
+
+      <p>Queste domande non si chiudono qui. Il blocco successivo, Genealogia · 2, comincia esattamente da dove questo si ferma: non più la storia di come si è arrivati fin qui, ma una mappa onesta di cosa un modello come questo sa fare davvero, cosa simula di saper fare, e cosa non sa fare affatto.</p>
+
+      <div class="footer-note">Genealogia — 1.6 · L'attenzione e il salto finale (chiusura)</div>
+    </div>
+  </section>
+
+</div>
+
+</main>
+
+<script>
+  // --- reveal on scroll (globale, indipendente dall'unità attiva) ---
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => io.observe(el));
+
+  // --- scroll-spy sulla sidebar: illumina l'unità dell'accordion in vista ---
+  const spyLinks = document.querySelectorAll('#local-scrollspy a[data-spy-target]');
+  const unitBlocksForSpy = document.querySelectorAll('.unit-block');
+  const localSpy2 = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        spyLinks.forEach(a => a.classList.toggle('active', a.dataset.spyTarget === e.target.id));
+      }
+    });
+  }, { threshold: 0, rootMargin: '-45% 0px -45% 0px' });
+  unitBlocksForSpy.forEach(b => localSpy2.observe(b));
+</script>
+
+</body>
+</html>

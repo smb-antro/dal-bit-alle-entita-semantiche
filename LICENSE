@@ -1,0 +1,31 @@
+LICENZA — DA DECIDERE PRIMA DELLA PUBBLICAZIONE
+
+Questo repository non ha ancora una licenza definitiva. La scelta è stata discussa il
+4 settembre 2026 tra le quattro alternative seguenti, e resta aperta — va chiusa prima
+di pubblicare il repository (push su GitHub):
+
+1. MIT (codice) + CC BY 4.0 (contenuti originali — saggio e ontologia)
+   Permissiva su entrambi i fronti: riuso libero, anche commerciale, con solo obbligo
+   di attribuzione. Combinazione tipica per repository portfolio open.
+
+2. MIT (codice) + CC BY-NC 4.0 (contenuti originali)
+   Codice permissivo come sopra; saggio e ontologia restano protetti dal riuso
+   commerciale non autorizzato — solo attribuzione e uso non commerciale.
+
+3. Apache 2.0 (codice) + CC BY-SA 4.0 (contenuti originali)
+   Codice permissivo con clausola brevetti esplicita; saggio e ontologia riutilizzabili
+   ma con obbligo di condividere allo stesso modo (share-alike).
+
+4. Tutti i diritti riservati
+   Nessuna licenza open: il repository resta pubblico solo per consultazione
+   (portfolio), senza concedere diritti di riuso su codice o contenuti.
+
+Questa scelta riguarda solo il codice e i contenuti originali di questo repository
+(dominio/ e ontologia/). Non riguarda le librerie di terze parti già vendorizzate con
+licenza propria, invariate:
+
+- D3.js v7 — BSD — licenza in ontologia/lente-semantica/output/vendor/LICENSE-d3
+- EB Garamond (font) — SIL Open Font License — licenza in ontologia/output/fonts/OFL.txt
+
+Fino alla decisione, nessun diritto di riuso è concesso su dominio/ e ontologia/ oltre
+a quanto già garantito dalle licenze di terzi elencate sopra.

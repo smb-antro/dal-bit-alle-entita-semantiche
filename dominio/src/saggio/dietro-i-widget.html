@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Appendice · Dietro i widget</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0F2A22;
+    --surface: #173B30;
+    --surface-2: #1E4A3C;
+    --copper: #C97D3D;
+    --copper-bright: #F0A85E;
+    --text: #F2ECE0;
+    --text-dim: #A9BFB6;
+    --line: rgba(242,236,224,0.12);
+    --rail-w: 300px;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Source Serif 4', Georgia, serif;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,h2,h3, .display{
+    font-family: 'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+  .mono{ font-family: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace; }
+  a{ color: var(--copper-bright); }
+
+  code{
+    font-family: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+    font-size: 0.88em;
+    background: var(--surface);
+    padding: 0.12em 0.42em;
+    border-radius: 3px;
+    color: var(--text);
+  }
+
+  /* ---------- layout shell: sidebar fissa con indice del sito (riusata verbatim da saggio/) ---------- */
+  .sidebar{
+    background: rgba(15,42,34,0.92);
+    border-bottom: 1px solid var(--line);
+    padding: 28px 24px 32px;
+  }
+  .sidebar-kicker{
+    font-family: 'IBM Plex Mono', monospace; font-size: .74rem; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px;
+  }
+  .sidebar-title{
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.02rem;
+    color: var(--text); margin-bottom: 22px;
+  }
+  .sidebar .parte{ margin-top: 26px; }
+  .sidebar .parte:first-of-type{ margin-top: 0; }
+  .sidebar .parte-heading{
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: .74rem;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--copper-bright);
+    padding-bottom: 10px; margin-bottom: 2px; border-bottom: 1px solid var(--line);
+  }
+  .sidebar .voce-semplice{
+    display: block; padding: 10px 4px; border-bottom: 1px solid var(--line);
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem;
+    color: var(--text); text-decoration: none;
+  }
+  .sidebar .voce-semplice:hover{ color: var(--copper-bright); }
+  .sidebar .voce-semplice.current{ color: var(--copper-bright); }
+  .sidebar details.modulo{ border-bottom: 1px solid var(--line); }
+  .sidebar details.modulo summary{
+    display: flex; align-items: center; gap: 8px; padding: 10px 4px; cursor: pointer;
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem; color: var(--text);
+    list-style: none;
+  }
+  .sidebar details.modulo summary.current{ color: var(--copper-bright); }
+  .sidebar details.modulo summary::-webkit-details-marker{ display: none; }
+  .sidebar details.modulo summary::before{
+    content: "›"; display: inline-block; font-family: 'IBM Plex Mono', monospace;
+    color: var(--text-dim); transition: transform .15s ease; flex-shrink: 0;
+  }
+  .sidebar details.modulo[open] summary::before{ transform: rotate(90deg); color: var(--copper-bright); }
+  .sidebar details.modulo summary:hover{ color: var(--copper-bright); }
+  .sidebar .unita-list{ padding: 2px 0 12px 22px; display: flex; flex-direction: column; gap: 1px; }
+  .sidebar .unita-list a{
+    display: block; padding: 6px 4px; font-size: .82rem; color: var(--text-dim); text-decoration: none;
+  }
+  .sidebar .unita-list a:hover{ color: var(--copper-bright); }
+  .sidebar .unita-list a .num{ color: var(--copper); margin-right: 6px; font-family: 'IBM Plex Mono', monospace; font-size: .74rem; }
+
+  /* pallini luminosi di scroll-spy, sulle voci dell'unità corrente */
+  .sidebar .unita-list.scrollspy a{ position: relative; padding-left: 20px; }
+  .sidebar .unita-list.scrollspy a::before{
+    content: "";
+    position: absolute; left: 2px; top: 50%;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--surface-2); border: 1px solid var(--line);
+    transform: translateY(-50%);
+    transition: background .25s, box-shadow .25s, transform .25s;
+  }
+  .sidebar .unita-list.scrollspy a.active{ color: var(--copper-bright); }
+  .sidebar .unita-list.scrollspy a.active::before{
+    background: var(--copper-bright);
+    box-shadow: 0 0 0 4px rgba(240,168,94,0.18);
+    transform: translateY(-50%) scale(1.2);
+  }
+
+  main{ padding-top: 0; }
+
+  @media (min-width: 900px){
+    .sidebar{
+      position: fixed; z-index: 50; top:0; bottom:0; left:0; width: var(--rail-w);
+      overflow-y: auto; border-bottom:none; border-right: 1px solid var(--line);
+    }
+    main{ padding-left: var(--rail-w); }
+  }
+
+  .wrap{ max-width: 740px; margin: 0 auto; padding: 0 24px; }
+
+  .unit-block section{ padding: 92px 0 84px; border-bottom: 1px solid var(--line); }
+  .unit-block:last-child section:last-of-type{ border-bottom:none; }
+
+  .eyebrow{
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--copper-bright);
+    margin-bottom: 14px; display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{ content:""; width: 22px; height:1px; background: var(--copper-bright); display:inline-block; }
+
+  h2.title{ font-size: clamp(1.6rem, 4vw, 2.3rem); margin-bottom: 20px; }
+
+  p{ margin: 0 0 18px; color: var(--text); font-size: 1.05rem; }
+  p.dim{ color: var(--text-dim); }
+  .lede{ font-size: 1.15rem; color: var(--text); }
+
+  .reveal{ opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.visible{ opacity:1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce){
+    .reveal{ transition: opacity .2s linear; transform:none; }
+    *{ scroll-behavior: auto !important; }
+  }
+
+  .aside{
+    margin: 26px 0; padding: 18px 20px; background: var(--surface);
+    border-left: 3px solid var(--copper); border-radius: 2px;
+  }
+  .aside .label{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--copper-bright); margin-bottom: 8px; display:block;
+  }
+  .aside p{ margin-bottom:0; font-size: 0.96rem; color: var(--text-dim); }
+
+  .question{
+    margin: 28px 0; padding: 20px 22px; border: 1px dashed var(--line); border-radius: 4px;
+    font-family: 'Space Grotesk', sans-serif; font-size: 1.0rem; color: var(--copper-bright);
+  }
+
+  blockquote{
+    margin: 0; padding-left: 22px; border-left: 2px solid var(--copper);
+    font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; color: var(--text);
+  }
+
+  /* ---------- hero ---------- */
+  .hero{ padding-top: 62px; }
+  .hero .kicker{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.8rem; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--text-dim); margin-bottom: 18px;
+  }
+  .hero h1{ font-size: clamp(1.9rem, 5.6vw, 2.9rem); line-height:1.12; margin-bottom: 24px; }
+  .hero h1 em{ font-style: normal; color: var(--copper-bright); }
+  .scrolldown{
+    margin-top: 50px; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem;
+    color: var(--text-dim); letter-spacing: 0.08em; text-transform: uppercase;
+    display:flex; align-items:center; gap:8px;
+  }
+  .scrolldown::after{ content:"↓"; color: var(--copper-bright); animation: nudge 1.8s infinite ease-in-out; }
+  @media (prefers-reduced-motion: reduce){ .scrolldown::after{ animation:none; } }
+  @keyframes nudge{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(5px); } }
+
+  /* ---------- masthead dell'appendice (non è un'unità, sta prima di unit-u1) ---------- */
+  .masthead-app{ padding: 62px 0 84px; border-bottom: 1px solid var(--line); }
+  .masthead-app .kicker{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.8rem; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--text-dim); margin-bottom: 18px;
+  }
+  .masthead-app h1{ font-size: clamp(1.9rem, 5.6vw, 2.9rem); line-height:1.12; margin-bottom: 22px; }
+  .masthead-app h1 em{ font-style: normal; color: var(--copper-bright); }
+  .masthead-app .lede{ max-width: 62ch; }
+
+  /* ---------- chiusura ---------- */
+  .chiusura{ background: linear-gradient(180deg, var(--bg), var(--surface)); }
+  .footer-note{
+    margin-top: 46px; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem; color: var(--text-dim);
+  }
+</style>
+</head>
+<body>
+
+<nav class="sidebar" aria-label="Indice del saggio">
+  <div class="sidebar-kicker">Indice</div>
+  <div class="sidebar-title">Dal bit alle entità semantiche</div>
+
+  <div class="parte">
+    <details class="modulo">
+      <summary>Presentazione — Dal bit alle entità semantiche</summary>
+      <div class="unita-list">
+        <a href="presentazione.html#parte-1"><span class="num">1</span>Framework epistemologico: i limiti che condividiamo con le macchine</a>
+        <a href="presentazione.html#parte-2"><span class="num">2</span>Il dominio: struttura e composizione del saggio interattivo</a>
+        <a href="presentazione.html#parte-3"><span class="num">3</span>La lente semantica</a>
+      </div>
+    </details>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Parte I — Fondamenti</div>
+    <a class="voce-semplice" href="fondamenti-1-funzioni-booleane.html">1. Funzioni booleane</a>
+    <a class="voce-semplice" href="fondamenti-2-hardware-software.html">2. Hardware e software</a>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Parte II — Genealogia</div>
+
+    <details class="modulo">
+      <summary>1. Tre ore di disputa senza esito</summary>
+      <div class="unita-list">
+        <a href="genealogia-1-disputa.html#unit-a1"><span class="num">1.1</span>Dalla characteristica universalis alla pura ideografia</a>
+        <a href="genealogia-1-disputa.html#unit-a2"><span class="num">1.2</span>Gödel, Turing, Lucas</a>
+        <a href="genealogia-1-disputa.html#unit-a3"><span class="num">1.3</span>Il perceptron e la disgiunzione esclusiva (XOR)</a>
+        <a href="genealogia-1-disputa.html#unit-a4"><span class="num">1.4</span>Dai sistemi esperti alle macchine statistiche</a>
+        <a href="genealogia-1-disputa.html#unit-a5"><span class="num">1.5</span>Re, donna, regina</a>
+        <a href="genealogia-1-disputa.html#unit-a6"><span class="num">1.6</span>L'attenzione sostituisce la memoria</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>2. Il fenomeno e i suoi limiti</summary>
+      <div class="unita-list">
+        <a href="genealogia-2-limiti.html#unit-b1"><span class="num">2.1</span>Completamento statistico a scala massiva, in-context learning, transfer cross-dominio e altre capacità emergenti</a>
+        <a href="genealogia-2-limiti.html#unit-b2"><span class="num">2.2</span>Interpolazione, pesi statistici, metacognizione</a>
+        <a href="genealogia-2-limiti.html#unit-b3"><span class="num">2.3</span>Grounding, ragionamento causale, generalizzazione composizionale, cortocircuito dell'apprendimento</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>3. Perché ci vuole un villaggio</summary>
+      <div class="unita-list">
+        <a href="genealogia-3-villaggio.html#unit-c1"><span class="num">3.1</span>Il problema del significato</a>
+        <a href="genealogia-3-villaggio.html#unit-c2"><span class="num">3.2</span>Il problema della causalità</a>
+        <a href="genealogia-3-villaggio.html#unit-c3"><span class="num">3.3</span>Il problema biologico</a>
+        <a href="genealogia-3-villaggio.html#unit-c4"><span class="num">3.4</span>Il problema della coscienza</a>
+        <a href="genealogia-3-villaggio.html#unit-c5"><span class="num">3.5</span>Cosa siamo, per contrasto</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>4. Lo spazio, il corpo, la macchina</summary>
+      <div class="unita-list">
+        <a href="genealogia-4-corpo.html#unit-d1"><span class="num">4.1</span>Cos'è lo spazio? Il corpo come strumento di misura</a>
+        <a href="genealogia-4-corpo.html#unit-d2"><span class="num">4.2</span>Il corpo mancante</a>
+      </div>
+    </details>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Parte III — Meccanismo</div>
+
+    <details class="modulo">
+      <summary>1. Il testo come dato</summary>
+      <div class="unita-list">
+        <a href="meccanismo-1-testo-come-dato.html#unit-u1"><span class="num">1.1</span>Encoding</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u2"><span class="num">1.2</span>Tokenizzazione</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u3"><span class="num">1.3</span>Problema del vocabolario</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u4"><span class="num">1.4</span>Dagli ID al punto più discreto</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u5"><span class="num">1.5</span>Gödel</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>2. Probabilità e linguaggio</summary>
+      <div class="unita-list">
+        <a href="meccanismo-2-probabilita.html#unit-u1"><span class="num">2.1</span>Prevedere la parola successiva</a>
+        <a href="meccanismo-2-probabilita.html#unit-u2"><span class="num">2.2</span>Unigrammi/bigrammi, induzione, calibrazione</a>
+        <a href="meccanismo-2-probabilita.html#unit-u3"><span class="num">2.3</span>N-grammi e assunzione di Markov</a>
+        <a href="meccanismo-2-probabilita.html#unit-u4"><span class="num">2.4</span>Sparsità e dipendenze lontane</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>3. Parole come punti nello spazio</summary>
+      <div class="unita-list">
+        <a href="meccanismo-3-embedding.html#unit-u1"><span class="num">3.1</span>Il problema lasciato aperto</a>
+        <a href="meccanismo-3-embedding.html#unit-u2"><span class="num">3.2</span>Le parole come vettori (embedding)</a>
+        <a href="meccanismo-3-embedding.html#unit-u3"><span class="num">3.3</span>L'ipotesi distribuzionale</a>
+        <a href="meccanismo-3-embedding.html#unit-u4"><span class="num">3.4</span>L'aritmetica vettoriale</a>
+        <a href="meccanismo-3-embedding.html#unit-u5"><span class="num">3.5</span>Polisemia ed embedding statico</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>4. Reti neurali</summary>
+      <div class="unita-list">
+        <a href="meccanismo-4-reti-neurali.html#unit-u1"><span class="num">4.1</span>Dal neurone biologico al neurone artificiale</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u2"><span class="num">4.2</span>Il perceptron e XOR</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u3"><span class="num">4.3</span>Strati e profondità</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u4"><span class="num">4.4</span>La funzione di perdita</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u5"><span class="num">4.5</span>Il gradiente e la backpropagation</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>5. Il Transformer</summary>
+      <div class="unita-list">
+        <a href="meccanismo-5-transformer.html#unit-u1"><span class="num">5.1</span>Il problema che l'attenzione risolve</a>
+        <a href="meccanismo-5-transformer.html#unit-u2"><span class="num">5.2</span>L'idea dell'attention</a>
+        <a href="meccanismo-5-transformer.html#unit-u3"><span class="num">5.3</span>Query, Key, Value</a>
+        <a href="meccanismo-5-transformer.html#unit-u4"><span class="num">5.4</span>Embedding contestuale</a>
+        <a href="meccanismo-5-transformer.html#unit-u5"><span class="num">5.5</span>Multi-head e posizione</a>
+        <a href="meccanismo-5-transformer.html#unit-u6"><span class="num">5.6</span>Parallelismo e scala</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>6. Cosa significa "Large"</summary>
+      <div class="unita-list">
+        <a href="meccanismo-6-large.html#unit-u1"><span class="num">6.1</span>Scala</a>
+        <a href="meccanismo-6-large.html#unit-u2"><span class="num">6.2</span>Capacità emergenti</a>
+        <a href="meccanismo-6-large.html#unit-u3"><span class="num">6.3</span>I dati</a>
+        <a href="meccanismo-6-large.html#unit-u4"><span class="num">6.4</span>Fine-tuning</a>
+        <a href="meccanismo-6-large.html#unit-u5"><span class="num">6.5</span>RLHF</a>
+        <a href="meccanismo-6-large.html#unit-u6"><span class="num">6.6</span>Quantizzazione (chiusura dell'arco tecnico)</a>
+      </div>
+    </details>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Appendice</div>
+
+    <details class="modulo" open>
+      <summary class="current">Dietro i widget</summary>
+      <div class="unita-list scrollspy" id="local-scrollspy">
+        <a href="#unit-u1" data-spy-target="unit-u1"><span class="num">A.1</span>Il tokenizzatore (Meccanismo · 1)</a>
+        <a href="#unit-u2" data-spy-target="unit-u2"><span class="num">A.2</span>Il predittore n-grammi (Meccanismo · 2)</a>
+        <a href="#unit-u3" data-spy-target="unit-u3"><span class="num">A.3</span>La mappa embedding (Meccanismo · 3)</a>
+        <a href="#unit-u4" data-spy-target="unit-u4"><span class="num">A.4</span>Neurone, XOR, superficie di perdita (Meccanismo · 4)</a>
+        <a href="#unit-u5" data-spy-target="unit-u5"><span class="num">A.5</span>L'attention (Meccanismo · 5)</a>
+        <a href="#unit-u6" data-spy-target="unit-u6"><span class="num">A.6</span>Scala e capacità (Meccanismo · 6)</a>
+      </div>
+    </details>
+  </div>
+</nav>
+
+<main>
+
+  <div class="masthead-app">
+    <div class="wrap">
+      <div class="kicker">Appendice</div>
+      <h1>Dietro <em>i widget</em></h1>
+      <p class="lede dim">Il saggio mostra sei componenti interattivi. Questa appendice non li rispiega — presuppone che chi legge li abbia già incontrati — ma ricostruisce, per ciascuno, la scelta di design dietro la forma che ha preso, lo stack tecnico usato per costruirlo, e il dataset reale su cui gira. Un secondo passaggio, a parte, tornerà su ciò che di questi widget assomiglia a un grafo — e su cosa lo distingue da un'ontologia formale.</p>
+    </div>
+  </div>
+
+<div class="unit-block" id="unit-u1" data-unit="u1">
+
+  <section id="u1-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Appendice · Dietro i widget · A.1</div>
+      <h1>Perché il tokenizzatore non è un tokenizzatore <em>qualunque</em></h1>
+      <p class="lede dim">Il playground di Meccanismo · 1 non usa un algoritmo BPE generico: è addestrato sul testo di questo stesso saggio. Questa sezione spiega perché, e cosa cambia.</p>
+      <div class="scrolldown">un tokenizzatore che conosce le proprie parole</div>
+    </div>
+  </section>
+
+  <section id="u1-cosa-fa">
+    <div class="wrap reveal">
+      <div class="eyebrow">Un solo strumento, cinque usi</div>
+      <h2 class="title">Encoding, tokenizzazione, vocabolario, ID, discreto/continuo</h2>
+      <p>In Meccanismo · 1 un solo playground attraversa cinque unità senza mai cambiare natura: mostra prima l'encoding di un carattere (1.1), poi la sua scomposizione in token BPE (1.2), poi il problema del vocabolario — cosa succede a una parola inventata, mai vista in addestramento (1.3) — poi il passaggio dai token agli ID numerici (1.4), dove entra anche il confronto fra un cerchio disegnato come raster e lo stesso cerchio disegnato come SVG. L'unità 1.5 chiude il modulo con un widget statico sulla diagonale di Cantor, agganciato a Gödel.</p>
+    </div>
+  </section>
+
+  <section id="u1-perche-cosi">
+    <div class="wrap reveal">
+      <div class="eyebrow">La scelta di dati</div>
+      <h2 class="title">Un tokenizzatore addestrato sul proprio testo, non preso in prestito</h2>
+      <p>La scelta meno visibile non è nell'interfaccia, è nei dati sotto. Il tokenizzatore BPE che il lettore usa non è un modello pre-addestrato generico, preso in prestito da qualche libreria: è stato addestrato realmente sul corpus del Modulo 00 di questo stesso saggio, con 300 merge, verificato a round-trip senza errori — encoding seguito da decoding restituisce esattamente il testo di partenza. Chi digita una parola presa dal testo che sta leggendo vede una tokenizzazione che riflette letteralmente quel testo, non un vocabolario generico presumibilmente familiare.</p>
+      <p>Il confronto raster/SVG dell'unità 1.4 fa lo stesso lavoro con un mezzo diverso: zoomando, il cerchio raster si scompone in pixel visibili — discreto per costruzione, indipendentemente da come lo si guarda — mentre il cerchio SVG resta una curva descritta matematicamente, ridisegnata a ogni livello di zoom. È lo stesso tema discreto/continuo dell'intero saggio, reso qui interamente visivo, senza una riga di spiegazione testuale necessaria per capirlo.</p>
+    </div>
+  </section>
+
+  <section id="u1-con-quali-dati">
+    <div class="wrap reveal">
+      <div class="eyebrow">I dati dietro</div>
+      <h2 class="title">Verificato al bit, non solo all'occhio</h2>
+      <p><code>bpe_merges_modulo1.json</code> contiene le 300 regole di merge apprese realmente dall'algoritmo BPE sul corpus del saggio, verificate con un motore JS reale a garantire zero errori di round-trip su tutto il vocabolario. <code>cantor_diagonale_modulo1.json</code> fornisce i dati per la diagonale dell'unità 1.5. Le immagini di <code>immagini_modulo1/</code> — raster e SVG dello stesso cerchio — sono asset preparati apposta per il confronto di 1.4, non placeholder generici presi da uno stock.</p>
+    </div>
+  </section>
+
+  <section id="u1-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura — A.1</div>
+      <blockquote>
+        Un tokenizzatore qualunque avrebbe funzionato. Uno addestrato su questo stesso testo rende visibile, fin dalla prima unità, che il modello di cui si parla non è un'astrazione — è uno specifico oggetto costruito su uno specifico corpus.
+      </blockquote>
+      <div class="footer-note">Appendice — Dietro i widget · A.1 — Meccanismo · 1: il tokenizzatore</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="unit-block" id="unit-u2" data-unit="u2">
+
+  <section id="u2-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Appendice · Dietro i widget · A.2</div>
+      <h1>Perché il predittore n-grammi <em>cresce</em> invece di apparire finito</h1>
+      <p class="lede dim">In Meccanismo · 2 lo stesso componente si arricchisce unità dopo unità, invece di comparire già completo alla prima unità. Questa sezione spiega perché, e cosa gira davvero sotto.</p>
+      <div class="scrolldown">un conteggio dal vivo, non una tabella precotta</div>
+    </div>
+  </section>
+
+  <section id="u2-cosa-fa">
+    <div class="wrap reveal">
+      <div class="eyebrow">Un componente che si costruisce in pubblico</div>
+      <h2 class="title">Da finestra fissa a slider 1-3, unità dopo unità</h2>
+      <p>Il predittore n-grammi di Meccanismo · 2 non nasce completo: l'unità 2.1 mostra solo una finestra fissa; la 2.2 introduce il confronto diretto fra unigramma e bigramma, insieme a un reliability diagram cliccabile per la calibrazione; la 2.3 apre lo slider completo da 1 a 3 con preimpostazioni; la 2.4 riusa lo stesso strumento per illustrare la sparsità e le dipendenze lontane. È lo stesso identico componente, non quattro widget diversi.</p>
+    </div>
+  </section>
+
+  <section id="u2-perche-cosi">
+    <div class="wrap reveal">
+      <div class="eyebrow">Crescita pedagogica, non economia di sviluppo</div>
+      <h2 class="title">Perché non mostrarlo già completo alla 2.1</h2>
+      <p>La scelta di far crescere il widget invece di presentarlo già finito non è un risparmio di lavoro — è la stessa logica con cui è stato costruito: l'unità 2.1 è stata verificata e confermata da sola prima di procedere con 2.2-2.4, lo stesso schema di conferma incrementale usato per gli altri moduli tecnici del saggio. Il lettore attraversa la stessa progressione di complessità che ha scandito la costruzione del widget.</p>
+      <p>Il conteggio n-grammi non è precalcolato: gira dal vivo in JavaScript sul corpus di 46 frasi ogni volta che il lettore interroga un prefisso, non su una tabella di risposte pronte per casi previsti in anticipo — verificato con un motore JS reale che la funzione di conteggio riproduce esattamente 9 casi di riferimento noti. Il reliability diagram di 2.2 segue la stessa disciplina: i bucket di calibrazione mostrati sono ricalcolati dalle 65 predizioni grezze del modello, e coincidono con quelli già misurati indipendentemente — non un grafico disegnato per assomigliare a un reliability diagram plausibile.</p>
+    </div>
+  </section>
+
+  <section id="u2-con-quali-dati">
+    <div class="wrap reveal">
+      <div class="eyebrow">I dati dietro</div>
+      <h2 class="title">Un corpus scritto apposta, non un dataset di comodo</h2>
+      <p><code>ngram_dati_modulo2.json</code> contiene il corpus grezzo di 46 frasi scritto apposta per il modulo, più tre esempi di riferimento — non una tabella precotta per prefissi arbitrari, che avrebbe reso il "vivo" del conteggio solo apparente. <code>calibrazione_modulo2.json</code> contiene il reliability diagram misurato su un vero insieme held-out, non simulato per assomigliare a dati plausibili.</p>
+    </div>
+  </section>
+
+  <section id="u2-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura — A.2</div>
+      <blockquote>
+        Se il conteggio fosse stato precalcolato, il widget avrebbe mostrato una tabella. Facendolo girare dal vivo, mostra invece un meccanismo — la differenza pedagogica tra vedere un risultato e vedere un calcolo accadere.
+      </blockquote>
+      <div class="footer-note">Appendice — Dietro i widget · A.2 — Meccanismo · 2: il predittore n-grammi</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="unit-block" id="unit-u3" data-unit="u3">
+
+  <section id="u3-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Appendice · Dietro i widget · A.3</div>
+      <h1>Perché la mappa degli embedding non usa gli assi che la matematica <em>suggerirebbe</em></h1>
+      <p class="lede dim">Le tre modalità della mappa di Meccanismo · 3 — esplorazione, aritmetica, polisemia — non condividono gli stessi assi calcolati allo stesso modo. È una scelta deliberata, non un'incoerenza.</p>
+      <div class="scrolldown">vicinanza spaziale come grafo implicito</div>
+    </div>
+  </section>
+
+  <section id="u3-cosa-fa">
+    <div class="wrap reveal">
+      <div class="eyebrow">Un componente, tre modalità</div>
+      <h2 class="title">Esplorazione, aritmetica vettoriale, polisemia</h2>
+      <p>Lo stesso widget di mappa cambia funzione tre volte nel corso di Meccanismo · 3: come esplorazione libera dello spazio (3.2), come calcolatrice vettoriale con selezione libera di tre punti A/B/C per l'aritmetica re−uomo+donna (3.4), e come visualizzazione di centroidi calcolati dal vivo per illustrare la polisemia di un embedding statico (3.5).</p>
+    </div>
+  </section>
+
+  <section id="u3-perche-cosi">
+    <div class="wrap reveal">
+      <div class="eyebrow">La scelta di dati</div>
+      <h2 class="title">Assi costruiti su misura, non PCA generica</h2>
+      <p>La scelta meno visibile: gli assi mostrati nelle tre modalità non vengono da un'unica riduzione dimensionale calcolata una volta e riusata — sono costruiti su misura per ciascuna modalità, perché una PCA generica non preservava le relazioni che ciascuna modalità doveva mostrare (la vicinanza intuitiva nell'esplorazione, la geometria dell'analogia nell'aritmetica, la separazione dei sensi nella polisemia). È un compromesso dichiarato: la mappa è pedagogicamente leggibile prima che geometricamente fedele in un unico senso assoluto — la stessa tensione, in piccolo, di ogni proiezione a bassa dimensione di uno spazio ad alta dimensione.</p>
+      <p>C'è un punto da esplicitare qui, prima ancora del confronto con le ontologie formali, rimandato a un capitolo a parte: la vicinanza fra punti in questa mappa <em>è</em> già un grafo. Ogni coppia di parole vicine è, implicitamente, un arco pesato — il widget lo mostra come distanza spaziale, non come una linea disegnata, ma la struttura relazionale sottostante è la stessa. È il punto di raccordo naturale con Meccanismo · 5, dove lo stesso tipo di relazione torna a comparire, questa volta disegnata esplicitamente come arco.</p>
+    </div>
+  </section>
+
+  <section id="u3-con-quali-dati">
+    <div class="wrap reveal">
+      <div class="eyebrow">I dati dietro</div>
+      <h2 class="title">Vettori reali, non generati per l'occasione</h2>
+      <p><code>embedding_dati_moduli_3_5.json</code> contiene 23 parole con vettori reali di fastText italiano — non embedding generati sinteticamente per assomigliare a un caso plausibile — con tre insiemi di coordinate distinte, uno per ciascuna modalità del widget. Lo stesso file alimenta anche il widget di Meccanismo · 5 (A.5): la condivisione del dataset non è un dettaglio implementativo, è ciò che rende possibile mostrare la stessa parola muoversi, nello stesso spazio, da un significato statico a uno contestuale.</p>
+    </div>
+  </section>
+
+  <section id="u3-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura — A.3</div>
+      <blockquote>
+        Prima ancora di parlare di ontologie, un embedding è già una forma di grafo — solo con gli archi impliciti nella distanza invece che disegnati. Il confronto con un grafo dichiarato esplicitamente, come un'ontologia formale, resta un capitolo a parte.
+      </blockquote>
+      <div class="footer-note">Appendice — Dietro i widget · A.3 — Meccanismo · 3: la mappa embedding</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="unit-block" id="unit-u4" data-unit="u4">
+
+  <section id="u4-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Appendice · Dietro i widget · A.4</div>
+      <h1>Perché la superficie di perdita è scritta in uno <em>shader</em>, non in SVG</h1>
+      <p class="lede dim">Ogni altro widget di questo saggio è vanilla JavaScript e SVG. Qui, in Meccanismo · 4, no — ed è la sola eccezione in tutto il sito. Questa sezione ricostruisce perché.</p>
+      <div class="scrolldown">una superficie continua, non un insieme di punti</div>
+    </div>
+  </section>
+
+  <section id="u4-cosa-fa">
+    <div class="wrap reveal">
+      <div class="eyebrow">Tre widget, un'unica logica</div>
+      <h2 class="title">Il neurone, il confine di XOR, la superficie di perdita</h2>
+      <p>In Meccanismo · 4 tre componenti condividono lo stesso filo, dal neurone singolo alla rete che lo contiene. L'unità 4.1 riprende, in versione continua a slider, il calcolatore booleano già incontrato in Genealogia · 1.3; le unità 4.2/4.3 mostrano il confine di decisione di una rete realmente addestrata sul problema XOR — prima il tentativo fallito di separarlo con una retta, poi il confine curvo che lo risolve davvero, verificato corretto su tutti e 4 i casi possibili dell'operatore; le unità 4.4/4.5 rendono visibile la superficie di perdita che quella stessa rete ha disceso durante l'addestramento.</p>
+      <p>Quest'ultimo componente è reso con uno shader GLSL/SDF eseguito via WebGL — l'unica eccezione, in tutto il sito, al vanilla JavaScript e SVG usati ovunque altrove, dal tokenizzatore di Meccanismo · 1 fino ai widget di scala di Meccanismo · 6.</p>
+    </div>
+  </section>
+
+  <section id="u4-perche-cosi">
+    <div class="wrap reveal">
+      <div class="eyebrow">La scelta di stack</div>
+      <h2 class="title">Un campo continuo non è un insieme di punti</h2>
+      <p>SVG e Canvas 2D, usati ovunque nel resto del saggio, rappresentano bene ciò che è discreto per natura: un punto nello spazio degli embedding (Meccanismo · 3), un arco di attention tra due token (Meccanismo · 5) — entità singole, contabili, disegnabili una per una. La superficie di perdita di 4.4 è un'altra cosa: un valore definito con continuità su ogni punto di un piano, non su un campione di punti scelti in anticipo.</p>
+      <p>Renderla con SVG avrebbe significato scegliere a priori una griglia di campionamento, con l'illusione di continuità ottenuta solo interpolando visivamente fra i punti campionati — esattamente il tipo di scorciatoia che un saggio che tratta il rapporto discreto/continuo come tema esplicito, fin da Fondamenti · 1 e Meccanismo · 1.5, non poteva permettersi senza che si vedesse. Uno shader GLSL, eseguito via WebGL, valuta invece la funzione di perdita per ogni pixel dello schermo in tempo reale sulla GPU — non un campione a bassa risoluzione, ma il campo stesso, alla risoluzione del display. Tecnicamente, la superficie è descritta con una funzione a distanza con segno (SDF, <em>signed distance function</em>), la stessa famiglia di tecniche usata per il rendering procedurale di forme continue in computer graphics.</p>
+      <div class="aside">
+        <span class="label">Nessun fallback necessario</span>
+        <p>L'eccezione GLSL/WebGL era stata segnalata, in fase di pianificazione, come la scelta più rischiosa dell'intero arco tecnico — compatibilità del browser, complessità di debug di uno shader rispetto a JavaScript ordinario. È stata implementata con successo, senza dover ripiegare su un'approssimazione Canvas 2D di riserva.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="u4-con-quali-dati">
+    <div class="wrap reveal">
+      <div class="eyebrow">I dati dietro</div>
+      <h2 class="title">Una rete vera, non un esempio di comodo</h2>
+      <p>I tre widget non illustrano un caso di scuola disegnato a mano. Dietro c'è una rete neurale realmente addestrata sul problema XOR (<code>xor_rete_modulo4.json</code>), verificata contro tutti e 4 i casi possibili dell'operatore prima di essere usata nel widget. La superficie di perdita stessa (<code>paesaggio_perdita_modulo4.json</code>) è stata specificata e verificata numericamente prima di essere tradotta in shader — i valori che il GLSL disegna sono stati controllati contro un calcolo di riferimento, non scritti a occhio per «sembrare giusti». Gli esempi del neurone singolo (<code>neurone_esempi_modulo4.json</code>) completano il terzetto di dati alla base di 4.1-4.5.</p>
+      <p>La verifica non si è fermata al numero: lo shader è stato riletto pixel per pixel in un browser reale, dove è emerso un bug concreto — gli argomenti della funzione <code>smoothstep</code> erano invertiti — corretto prima della consegna. È il tipo di errore che un controllo puramente numerico sui dati non avrebbe trovato: solo guardare l'immagine risultante lo ha reso visibile.</p>
+    </div>
+  </section>
+
+  <section id="u4-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura — A.4</div>
+      <blockquote>
+        Il resto del saggio disegna punti e archi. Qui, per una volta, doveva disegnare un campo — ed è per questo, non per capriccio tecnico, che lo stack cambia.
+      </blockquote>
+      <div class="footer-note">Appendice — Dietro i widget · A.4 — Meccanismo · 4: neurone, XOR, superficie di perdita</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="unit-block" id="unit-u5" data-unit="u5">
+
+  <section id="u5-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Appendice · Dietro i widget · A.5</div>
+      <h1>L'unico widget del saggio che disegna un grafo, <em>apertamente</em></h1>
+      <p class="lede dim">In Meccanismo · 5 la struttura relazionale non resta nascosta dietro una distanza spaziale, come nella mappa di Meccanismo · 3: viene disegnata apertamente, con archi e pesi visibili. Questa sezione spiega perché, e con quali limiti dichiarati sui propri dati.</p>
+      <div class="scrolldown">archi pesati, visibili invece che impliciti</div>
+    </div>
+  </section>
+
+  <section id="u5-cosa-fa">
+    <div class="wrap reveal">
+      <div class="eyebrow">Un widget, quattro usi</div>
+      <h2 class="title">Frase principale, polisemia contestuale, multi-head, posizione</h2>
+      <p>La frase cliccabile con pesi di attention di Meccanismo · 5 viene riusata in quattro contesti: la frase principale delle unità 5.2/5.3, la parola «calcio» mostrata in due contesti diversi con una mini-mappa animata collegata alla mappa embedding di Meccanismo · 3 (5.4), la vista multi-head (5.5), e la codifica di posizione (5.5).</p>
+    </div>
+  </section>
+
+  <section id="u5-perche-cosi">
+    <div class="wrap reveal">
+      <div class="eyebrow">La scelta di design</div>
+      <h2 class="title">Il grafo, questa volta, è esplicito</h2>
+      <p>In Meccanismo · 3 (A.3) la struttura relazionale fra parole restava implicita nella distanza spaziale. Qui è l'opposto, per scelta esplicita: i pesi di attention sono disegnati come linee di spessore variabile fra token — archi diretti e pesati, mostrati apertamente invece che dedotti dalla vicinanza. È il punto in cui il saggio, senza mai nominare la parola «grafo» nel proprio testo, la rende visivamente inequivocabile.</p>
+      <p>La mini-mappa animata di 5.4 collega letteralmente i due widget: la stessa parola, «calcio», si sposta nello stesso spazio di Meccanismo · 3 da una posizione statica a due posizioni diverse a seconda del contesto — l'idea, prevista fin dalla pianificazione grafica del corso, che l'embedding contestuale non sia un concetto nuovo ma lo stesso spazio di prima, reso dinamico dall'attention.</p>
+    </div>
+  </section>
+
+  <section id="u5-con-quali-dati">
+    <div class="wrap reveal">
+      <div class="eyebrow">I dati dietro</div>
+      <h2 class="title">Pesi illustrativi, dichiarati come tali</h2>
+      <p><code>attention_dati_modulo5.json</code> contiene pesi di attention costruiti per essere illustrativi del meccanismo — non i pesi reali estratti da un modello Transformer effettivamente addestrato. È una semplificazione dichiarata esplicitamente, non nascosta: il punto pedagogico — come l'attention pesa e ricombina le informazioni — non richiede pesi autentici per essere vero, ma l'onestà su questo punto è la stessa che il saggio applica altrove ai propri dati (vedi il grafico di Meccanismo · 6 in A.6, esplicitamente dichiarato illustrativo).</p>
+    </div>
+  </section>
+
+  <section id="u5-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura — A.5</div>
+      <blockquote>
+        Un grafo mostrato di nascosto, come la vicinanza di Meccanismo · 3, e un grafo mostrato apertamente, come i pesi di qui, sono la stessa struttura relazionale, con due gradi diversi di visibilità. Nessuno dei due è ancora un'ontologia — nessuno dei due è mai stato asserito da qualcuno.
+      </blockquote>
+      <div class="footer-note">Appendice — Dietro i widget · A.5 — Meccanismo · 5: l'attention</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="unit-block" id="unit-u6" data-unit="u6">
+
+  <section id="u6-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Appendice · Dietro i widget · A.6</div>
+      <h1>Dove il pattern di un componente per modulo smette di <em>valere</em></h1>
+      <p class="lede dim">Ogni altro modulo tecnico di questo saggio ha un componente centrale riusato più volte. Qui, in Meccanismo · 6, i widget sono cinque, minori, ciascuno usato una volta sola — l'unica altra eccezione del corso, insieme allo shader di Meccanismo · 4.</p>
+      <div class="scrolldown">sei temi, nessun meccanismo condiviso</div>
+    </div>
+  </section>
+
+  <section id="u6-cosa-fa">
+    <div class="wrap reveal">
+      <div class="eyebrow">Cinque widget, non uno</div>
+      <h2 class="title">Scala, capacità emergenti, dati, fine-tuning, RLHF, quantizzazione</h2>
+      <p>Sei unità, in Meccanismo · 6, si affidano a cinque widget distinti: uno slider log-scala con quattro punti di ancoraggio reali (6.1), un grafico SVG statico delle capacità emergenti (6.2), una timeline (6.3), un toggle prima/dopo condiviso fra due istanze indipendenti per fine-tuning e RLHF (6.4, 6.5), e una barra che si spacca in blocchi discreti per la quantizzazione (6.6).</p>
+    </div>
+  </section>
+
+  <section id="u6-perche-cosi">
+    <div class="wrap reveal">
+      <div class="eyebrow">La scelta di design</div>
+      <h2 class="title">Perché non un solo componente riusato, questa volta</h2>
+      <p>Il pattern confermato in tutto il resto del saggio è un componente centrale per modulo, non un widget per unità — visto in A.1, A.2, A.3. Qui si rompe perché le sei unità di Meccanismo · 6 trattano sei fenomeni empiricamente distinti, senza un meccanismo sottostante condiviso che li unifichi: la scala di un modello, la comparsa di capacità emergenti, la provenienza dei dati, il fine-tuning, l'RLHF e la quantizzazione non sono variazioni dello stesso oggetto, come lo erano le tre modalità della mappa embedding. Forzarli in un unico widget avrebbe significato inventare un meccanismo comune che non esiste.</p>
+      <p>Il grafico delle capacità emergenti (6.2) è deliberatamente poco interattivo — nessun controllo che permetta di alterare la curva mostrata. È una scelta di correttezza, non un limite tecnico: la curva rappresenta un andamento empirico discusso in letteratura, non qualcosa su cui il lettore debba poter «giocare» come se fosse un parametro libero. Il toggle di 6.4/6.5 riusa la stessa funzione di rendering per due istanze indipendenti nel DOM — piccola disciplina di non-duplicazione dentro un modulo che, per il resto, rinuncia a un componente unico.</p>
+    </div>
+  </section>
+
+  <section id="u6-con-quali-dati">
+    <div class="wrap reveal">
+      <div class="eyebrow">I dati dietro</div>
+      <h2 class="title">Verificati, o dichiarati illustrativi — mai confusi fra loro</h2>
+      <p><code>scala_modulo6.json</code> contiene i quattro punti di ancoraggio (fra cui il cervello umano, 86 miliardi di neuroni) verificati via ricerca web, non stimati. <code>capacita_emergenti_modulo6.json</code> alimenta il grafico di 6.2, esplicitamente etichettato nel widget stesso come curva illustrativa dell'andamento descritto in letteratura (Wei et al., 2022) — non dati misurati di un paper specifico, e il widget lo dice al lettore, non lo nasconde. <code>timeline_modulo6.json</code>, <code>base_vs_tuned_modulo6.json</code> e <code>quantizzazione_modulo6.json</code> completano il modulo, quest'ultimo con livelli di quantizzazione (FP32, FP16/BF16, INT8, INT4) corrispondenti a standard reali del settore, non inventati per l'occasione.</p>
+    </div>
+  </section>
+
+  <section id="u6-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura — A.6 e dell'intera appendice</div>
+      <blockquote>
+        Sei widget, due eccezioni dichiarate — lo shader di A.4, i cinque componenti minori di qui — e in ciascuno degli altri la stessa domanda posta prima di scrivere una riga di codice: cosa, esattamente, deve poter fare chi guarda, e cosa, di proposito, non deve poter fare.
+      </blockquote>
+      <p style="margin-top:28px;">Le strutture relazionali incontrate lungo il percorso — la vicinanza implicita di A.3, gli archi espliciti di A.5 — restano, per ora, grafi senza nome scritti in JavaScript. Il confronto con un'ontologia formale, dichiarata e verificabile, e le sue applicazioni pratiche, è il capitolo che questa appendice lascia volutamente aperto.</p>
+
+      <div class="footer-note">Appendice — Dietro i widget · A.6 — Meccanismo · 6: scala e capacità · fine dell'appendice sui widget</div>
+    </div>
+  </section>
+
+</div>
+
+</main>
+
+<script>
+  // ============ reveal on scroll (riusato verbatim da saggio/) ============
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => io.observe(el));
+
+  // ============ scroll-spy sulla sidebar (riusato verbatim da saggio/) ============
+  const spyLinks = document.querySelectorAll('#local-scrollspy a[data-spy-target]');
+  const unitBlocksForSpy = document.querySelectorAll('.unit-block');
+  const localSpy = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        spyLinks.forEach(a => a.classList.toggle('active', a.dataset.spyTarget === e.target.id));
+      }
+    });
+  }, { threshold: 0, rootMargin: '-45% 0px -45% 0px' });
+  unitBlocksForSpy.forEach(b => localSpy.observe(b));
+</script>
+
+</body>
+</html>

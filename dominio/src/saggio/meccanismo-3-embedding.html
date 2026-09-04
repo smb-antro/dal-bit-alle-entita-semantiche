@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meccanismo · 3 · Parole come punti nello spazio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0F2A22;
+    --surface: #173B30;
+    --surface-2: #1E4A3C;
+    --copper: #C97D3D;
+    --copper-bright: #F0A85E;
+    --text: #F2ECE0;
+    --text-dim: #A9BFB6;
+    --line: rgba(242,236,224,0.12);
+    --rail-w: 300px;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Source Serif 4', Georgia, serif;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,h2,h3, .display{
+    font-family: 'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+  .mono{ font-family: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace; }
+  a{ color: var(--copper-bright); }
+
+  /* ---------- layout shell: sidebar fissa con indice del sito ---------- */
+  .sidebar{
+    background: rgba(15,42,34,0.92);
+    border-bottom: 1px solid var(--line);
+    padding: 28px 24px 32px;
+  }
+  .sidebar-kicker{
+    font-family: 'IBM Plex Mono', monospace; font-size: .74rem; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px;
+  }
+  .sidebar-title{
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.02rem;
+    color: var(--text); margin-bottom: 22px;
+  }
+  .sidebar .parte{ margin-top: 26px; }
+  .sidebar .parte:first-of-type{ margin-top: 0; }
+  .sidebar .parte-heading{
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: .74rem;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--copper-bright);
+    padding-bottom: 10px; margin-bottom: 2px; border-bottom: 1px solid var(--line);
+  }
+  .sidebar .voce-semplice{
+    display: block; padding: 10px 4px; border-bottom: 1px solid var(--line);
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem;
+    color: var(--text); text-decoration: none;
+  }
+  .sidebar .voce-semplice:hover{ color: var(--copper-bright); }
+  .sidebar .voce-semplice.current{ color: var(--copper-bright); }
+  .sidebar details.modulo{ border-bottom: 1px solid var(--line); }
+  .sidebar details.modulo summary{
+    display: flex; align-items: center; gap: 8px; padding: 10px 4px; cursor: pointer;
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem; color: var(--text);
+    list-style: none;
+  }
+  .sidebar details.modulo summary.current{ color: var(--copper-bright); }
+  .sidebar details.modulo summary::-webkit-details-marker{ display: none; }
+  .sidebar details.modulo summary::before{
+    content: "›"; display: inline-block; font-family: 'IBM Plex Mono', monospace;
+    color: var(--text-dim); transition: transform .15s ease; flex-shrink: 0;
+  }
+  .sidebar details.modulo[open] summary::before{ transform: rotate(90deg); color: var(--copper-bright); }
+  .sidebar details.modulo summary:hover{ color: var(--copper-bright); }
+  .sidebar .unita-list{ padding: 2px 0 12px 22px; display: flex; flex-direction: column; gap: 1px; }
+  .sidebar .unita-list a{
+    display: block; padding: 6px 4px; font-size: .82rem; color: var(--text-dim); text-decoration: none;
+  }
+  .sidebar .unita-list a:hover{ color: var(--copper-bright); }
+  .sidebar .unita-list a .num{ color: var(--copper); margin-right: 6px; font-family: 'IBM Plex Mono', monospace; font-size: .74rem; }
+
+  /* pallini luminosi di scroll-spy, sulle voci dell'unità corrente */
+  .sidebar .unita-list.scrollspy a{ position: relative; padding-left: 20px; }
+  .sidebar .unita-list.scrollspy a::before{
+    content: "";
+    position: absolute; left: 2px; top: 50%;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--surface-2); border: 1px solid var(--line);
+    transform: translateY(-50%);
+    transition: background .25s, box-shadow .25s, transform .25s;
+  }
+  .sidebar .unita-list.scrollspy a.active{ color: var(--copper-bright); }
+  .sidebar .unita-list.scrollspy a.active::before{
+    background: var(--copper-bright);
+    box-shadow: 0 0 0 4px rgba(240,168,94,0.18);
+    transform: translateY(-50%) scale(1.2);
+  }
+
+  main{ padding-top: 0; }
+
+  @media (min-width: 900px){
+    .sidebar{
+      position: fixed; z-index: 50; top:0; bottom:0; left:0; width: var(--rail-w);
+      overflow-y: auto; border-bottom:none; border-right: 1px solid var(--line);
+    }
+    main{ padding-left: var(--rail-w); }
+  }
+
+  .wrap{ max-width: 740px; margin: 0 auto; padding: 0 24px; }
+
+  .unit-block section{ padding: 92px 0 84px; border-bottom: 1px solid var(--line); }
+  .unit-block:last-child section:last-of-type{ border-bottom:none; }
+
+  .eyebrow{
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--copper-bright);
+    margin-bottom: 14px; display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{ content:""; width: 22px; height:1px; background: var(--copper-bright); display:inline-block; }
+
+  h2.title{ font-size: clamp(1.6rem, 4vw, 2.3rem); margin-bottom: 20px; }
+
+  p{ margin: 0 0 18px; color: var(--text); font-size: 1.05rem; }
+  p.dim{ color: var(--text-dim); }
+  .lede{ font-size: 1.15rem; color: var(--text); }
+
+  .reveal{ opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.visible{ opacity:1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce){
+    .reveal{ transition: opacity .2s linear; transform:none; }
+    *{ scroll-behavior: auto !important; }
+  }
+
+  .aside{
+    margin: 26px 0; padding: 18px 20px; background: var(--surface);
+    border-left: 3px solid var(--copper); border-radius: 2px;
+  }
+  .aside .label{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--copper-bright); margin-bottom: 8px; display:block;
+  }
+  .aside p{ margin-bottom:0; font-size: 0.96rem; color: var(--text-dim); }
+
+  .question{
+    margin: 28px 0; padding: 20px 22px; border: 1px dashed var(--line); border-radius: 4px;
+    font-family: 'Space Grotesk', sans-serif; font-size: 1.0rem; color: var(--copper-bright);
+  }
+
+  blockquote{
+    margin: 0; padding-left: 22px; border-left: 2px solid var(--copper);
+    font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; color: var(--text);
+  }
+
+  /* ---------- hero ---------- */
+  .hero{ padding-top: 62px; }
+  .hero .kicker{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.8rem; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--text-dim); margin-bottom: 18px;
+  }
+  .hero h1{ font-size: clamp(1.9rem, 5.6vw, 2.9rem); line-height:1.12; margin-bottom: 24px; }
+  .hero h1 em{ font-style: normal; color: var(--copper-bright); }
+  .scrolldown{
+    margin-top: 50px; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem;
+    color: var(--text-dim); letter-spacing: 0.08em; text-transform: uppercase;
+    display:flex; align-items:center; gap:8px;
+  }
+  .scrolldown::after{ content:"↓"; color: var(--copper-bright); animation: nudge 1.8s infinite ease-in-out; }
+  @media (prefers-reduced-motion: reduce){ .scrolldown::after{ animation:none; } }
+  @keyframes nudge{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(5px); } }
+
+  /* ---------- contenitore generico dei widget ---------- */
+  .playground{
+    margin: 30px 0; background: var(--surface); border: 1px solid var(--line);
+    border-radius: 10px; padding: 24px 26px;
+  }
+  .playground .ptitle{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--copper-bright); margin-bottom: 14px; display:block;
+  }
+
+  /* ---------- widget: mappa degli embedding ---------- */
+  .em-wrap{ position: relative; }
+  .em-legend{ display:flex; flex-wrap:wrap; gap: 8px; margin: 0 0 14px; }
+  .em-legend-item{
+    display:flex; align-items:center; gap: 7px;
+    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.04em;
+    color: var(--text-dim); background: transparent;
+    border: 1px solid var(--line); border-radius: 20px; padding: 5px 12px;
+    cursor: pointer; transition: opacity .2s, border-color .2s;
+  }
+  .em-legend-item:hover{ border-color: var(--copper); }
+  .em-legend-item.off{ opacity: 0.35; text-decoration: line-through; }
+  .em-swatch{ width: 10px; height: 10px; border-radius: 50%; flex-shrink:0; }
+  .em-svg{
+    display:block; width:100%; height:auto;
+    background: var(--bg); border: 1px solid var(--line); border-radius: 8px;
+  }
+  .em-pt{ transition: opacity .2s; }
+  .em-svg.has-hover .em-pt{ opacity: 0.25; }
+  .em-svg.has-hover .em-pt.hover{ opacity: 1; }
+  .em-label{ font-family:'IBM Plex Mono', monospace; font-size: 10px; fill: var(--text-dim); }
+  .em-label.accent{ fill: var(--copper-bright); }
+  .em-tooltip{
+    position:absolute; z-index: 5; pointer-events: none; display:none;
+    background: var(--surface-2); border: 1px solid var(--copper); border-radius: 6px;
+    padding: 6px 10px; font-family:'IBM Plex Mono', monospace; font-size: 0.72rem;
+    color: var(--text); white-space: nowrap; transform: translate(-50%, -135%);
+  }
+  .em-controls{ display:flex; flex-wrap:wrap; gap: 14px; margin-bottom: 16px; }
+  .em-control{ display:flex; flex-direction:column; gap: 5px; }
+  .em-control label{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text-dim);
+  }
+  .em-select{
+    background: var(--bg); color: var(--text); border: 1px solid var(--line); border-radius: 6px;
+    font-family:'IBM Plex Mono', monospace; font-size: 0.85rem; padding: 7px 10px; outline:none;
+    cursor: pointer;
+  }
+  .em-select:focus{ border-color: var(--copper-bright); }
+  .em-nearest{
+    margin: 16px 0 0; padding-left: 24px;
+    font-family:'IBM Plex Mono', monospace; font-size: 0.85rem; color: var(--text);
+  }
+  .em-nearest li{ margin-bottom: 4px; }
+  .em-nearest .dist{ color: var(--copper-bright); }
+  .em-nearest-label{
+    font-family:'IBM Plex Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text-dim); margin: 18px 0 6px;
+  }
+  .em-caption{ margin-top: 16px; font-size: 0.92rem; color: var(--text-dim); }
+
+  /* ---------- chiusura ---------- */
+  .chiusura{ background: linear-gradient(180deg, var(--bg), var(--surface)); }
+  .footer-note{
+    margin-top: 46px; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem; color: var(--text-dim);
+  }
+</style>
+</head>
+<body>
+
+<nav class="sidebar" aria-label="Indice del saggio">
+  <div class="sidebar-kicker">Indice</div>
+  <div class="sidebar-title">Dal bit alle entità semantiche</div>
+
+  <div class="parte">
+    <details class="modulo">
+      <summary>Presentazione — Dal bit alle entità semantiche</summary>
+      <div class="unita-list">
+        <a href="presentazione.html#parte-1"><span class="num">1</span>Framework epistemologico: i limiti che condividiamo con le macchine</a>
+        <a href="presentazione.html#parte-2"><span class="num">2</span>Il dominio: struttura e composizione del saggio interattivo</a>
+        <a href="presentazione.html#parte-3"><span class="num">3</span>La lente semantica</a>
+      </div>
+    </details>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Parte I — Fondamenti</div>
+    <a class="voce-semplice" href="fondamenti-1-funzioni-booleane.html">1. Funzioni booleane</a>
+    <a class="voce-semplice" href="fondamenti-2-hardware-software.html">2. Hardware e software</a>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Parte II — Genealogia</div>
+
+    <details class="modulo">
+      <summary>1. Tre ore di disputa senza esito</summary>
+      <div class="unita-list">
+        <a href="genealogia-1-disputa.html#unit-a1"><span class="num">1.1</span>Dalla characteristica universalis alla pura ideografia</a>
+        <a href="genealogia-1-disputa.html#unit-a2"><span class="num">1.2</span>Gödel, Turing, Lucas</a>
+        <a href="genealogia-1-disputa.html#unit-a3"><span class="num">1.3</span>Il perceptron e la disgiunzione esclusiva (XOR)</a>
+        <a href="genealogia-1-disputa.html#unit-a4"><span class="num">1.4</span>Dai sistemi esperti alle macchine statistiche</a>
+        <a href="genealogia-1-disputa.html#unit-a5"><span class="num">1.5</span>Re, donna, regina</a>
+        <a href="genealogia-1-disputa.html#unit-a6"><span class="num">1.6</span>L'attenzione sostituisce la memoria</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>2. Il fenomeno e i suoi limiti</summary>
+      <div class="unita-list">
+        <a href="genealogia-2-limiti.html#unit-b1"><span class="num">2.1</span>Completamento statistico a scala massiva, in-context learning, transfer cross-dominio e altre capacità emergenti</a>
+        <a href="genealogia-2-limiti.html#unit-b2"><span class="num">2.2</span>Interpolazione, pesi statistici, metacognizione</a>
+        <a href="genealogia-2-limiti.html#unit-b3"><span class="num">2.3</span>Grounding, ragionamento causale, generalizzazione composizionale, cortocircuito dell'apprendimento</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>3. Perché ci vuole un villaggio</summary>
+      <div class="unita-list">
+        <a href="genealogia-3-villaggio.html#unit-c1"><span class="num">3.1</span>Il problema del significato</a>
+        <a href="genealogia-3-villaggio.html#unit-c2"><span class="num">3.2</span>Il problema della causalità</a>
+        <a href="genealogia-3-villaggio.html#unit-c3"><span class="num">3.3</span>Il problema biologico</a>
+        <a href="genealogia-3-villaggio.html#unit-c4"><span class="num">3.4</span>Il problema della coscienza</a>
+        <a href="genealogia-3-villaggio.html#unit-c5"><span class="num">3.5</span>Cosa siamo, per contrasto</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>4. Lo spazio, il corpo, la macchina</summary>
+      <div class="unita-list">
+        <a href="genealogia-4-corpo.html#unit-d1"><span class="num">4.1</span>Cos'è lo spazio? Il corpo come strumento di misura</a>
+        <a href="genealogia-4-corpo.html#unit-d2"><span class="num">4.2</span>Il corpo mancante</a>
+      </div>
+    </details>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Parte III — Meccanismo</div>
+
+    <details class="modulo">
+      <summary>1. Il testo come dato</summary>
+      <div class="unita-list">
+        <a href="meccanismo-1-testo-come-dato.html#unit-u1"><span class="num">1.1</span>Encoding</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u2"><span class="num">1.2</span>Tokenizzazione</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u3"><span class="num">1.3</span>Problema del vocabolario</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u4"><span class="num">1.4</span>Dagli ID al punto più discreto</a>
+        <a href="meccanismo-1-testo-come-dato.html#unit-u5"><span class="num">1.5</span>Gödel</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>2. Probabilità e linguaggio</summary>
+      <div class="unita-list">
+        <a href="meccanismo-2-probabilita.html#unit-u1"><span class="num">2.1</span>Prevedere la parola successiva</a>
+        <a href="meccanismo-2-probabilita.html#unit-u2"><span class="num">2.2</span>Unigrammi/bigrammi, induzione, calibrazione</a>
+        <a href="meccanismo-2-probabilita.html#unit-u3"><span class="num">2.3</span>N-grammi e assunzione di Markov</a>
+        <a href="meccanismo-2-probabilita.html#unit-u4"><span class="num">2.4</span>Sparsità e dipendenze lontane</a>
+      </div>
+    </details>
+
+    <details class="modulo" open>
+      <summary class="current">3. Parole come punti nello spazio</summary>
+      <div class="unita-list scrollspy" id="local-scrollspy">
+        <a href="#unit-u1" data-spy-target="unit-u1"><span class="num">3.1</span>Il problema lasciato aperto</a>
+        <a href="#unit-u2" data-spy-target="unit-u2"><span class="num">3.2</span>Le parole come vettori (embedding)</a>
+        <a href="#unit-u3" data-spy-target="unit-u3"><span class="num">3.3</span>L'ipotesi distribuzionale</a>
+        <a href="#unit-u4" data-spy-target="unit-u4"><span class="num">3.4</span>L'aritmetica vettoriale</a>
+        <a href="#unit-u5" data-spy-target="unit-u5"><span class="num">3.5</span>Polisemia ed embedding statico</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>4. Reti neurali</summary>
+      <div class="unita-list">
+        <a href="meccanismo-4-reti-neurali.html#unit-u1"><span class="num">4.1</span>Dal neurone biologico al neurone artificiale</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u2"><span class="num">4.2</span>Il perceptron e XOR</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u3"><span class="num">4.3</span>Strati e profondità</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u4"><span class="num">4.4</span>La funzione di perdita</a>
+        <a href="meccanismo-4-reti-neurali.html#unit-u5"><span class="num">4.5</span>Il gradiente e la backpropagation</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>5. Il Transformer</summary>
+      <div class="unita-list">
+        <a href="meccanismo-5-transformer.html#unit-u1"><span class="num">5.1</span>Il problema che l'attenzione risolve</a>
+        <a href="meccanismo-5-transformer.html#unit-u2"><span class="num">5.2</span>L'idea dell'attention</a>
+        <a href="meccanismo-5-transformer.html#unit-u3"><span class="num">5.3</span>Query, Key, Value</a>
+        <a href="meccanismo-5-transformer.html#unit-u4"><span class="num">5.4</span>Embedding contestuale</a>
+        <a href="meccanismo-5-transformer.html#unit-u5"><span class="num">5.5</span>Multi-head e posizione</a>
+        <a href="meccanismo-5-transformer.html#unit-u6"><span class="num">5.6</span>Parallelismo e scala</a>
+      </div>
+    </details>
+
+    <details class="modulo">
+      <summary>6. Cosa significa "Large"</summary>
+      <div class="unita-list">
+        <a href="meccanismo-6-large.html#unit-u1"><span class="num">6.1</span>Scala</a>
+        <a href="meccanismo-6-large.html#unit-u2"><span class="num">6.2</span>Capacità emergenti</a>
+        <a href="meccanismo-6-large.html#unit-u3"><span class="num">6.3</span>I dati</a>
+        <a href="meccanismo-6-large.html#unit-u4"><span class="num">6.4</span>Fine-tuning</a>
+        <a href="meccanismo-6-large.html#unit-u5"><span class="num">6.5</span>RLHF</a>
+        <a href="meccanismo-6-large.html#unit-u6"><span class="num">6.6</span>Quantizzazione (chiusura dell'arco tecnico)</a>
+      </div>
+    </details>
+  </div>
+
+  <div class="parte">
+    <div class="parte-heading">Appendice</div>
+
+    <details class="modulo">
+      <summary>Dietro i widget</summary>
+      <div class="unita-list">
+        <a href="dietro-i-widget.html#unit-u1"><span class="num">A.1</span>Il tokenizzatore (Meccanismo · 1)</a>
+        <a href="dietro-i-widget.html#unit-u2"><span class="num">A.2</span>Il predittore n-grammi (Meccanismo · 2)</a>
+        <a href="dietro-i-widget.html#unit-u3"><span class="num">A.3</span>La mappa embedding (Meccanismo · 3)</a>
+        <a href="dietro-i-widget.html#unit-u4"><span class="num">A.4</span>Neurone, XOR, superficie di perdita (Meccanismo · 4)</a>
+        <a href="dietro-i-widget.html#unit-u5"><span class="num">A.5</span>L'attention (Meccanismo · 5)</a>
+        <a href="dietro-i-widget.html#unit-u6"><span class="num">A.6</span>Scala e capacità (Meccanismo · 6)</a>
+      </div>
+    </details>
+  </div>
+</nav>
+
+<main>
+
+<div class="unit-block" id="unit-u1" data-unit="u1">
+
+  <section id="m3-u1-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Meccanismo · 3 · Parole come punti nello spazio · Unità 3.1</div>
+      <h1>Un simbolo discreto <em>non ha vicini</em></h1>
+      <p class="lede dim">In Meccanismo · 1 ci si era fermati su una constatazione volutamente scomoda: il token 47 non è «vicino» al token 48 in nessun senso che riguardi il significato. In Meccanismo · 2 si è aggiunto un limite diverso ma imparentato: un n-gramma che ha visto mille volte «il gatto dorme» non sa nulla di «il cane dorme», se quella combinazione non è mai comparsa nei dati. Questa unità mostra che i due problemi sono, in realtà, lo stesso problema.</p>
+      <div class="scrolldown">due fili che si annodano</div>
+    </div>
+  </section>
+
+  <section id="m3-u1-sez-fili">
+    <div class="wrap reveal">
+      <div class="eyebrow">Due fili, un nodo</div>
+      <h2 class="title">Dalla mancanza di vicini alla mancanza di generalizzazione</h2>
+      <p>Vale la pena riprendere i due fili con precisione, perché il nesso causale è il punto dell'unità. Primo filo: gli ID di Meccanismo · 1 sono etichette arbitrarie. «Gatto» e «cane» ricevono due numeri privi di qualunque relazione reciproca — potrebbero essere 47 e 3.012, e nulla cambierebbe. Secondo filo: il conteggio di Meccanismo · 2 non generalizza. Se il corpus contiene molte frasi su gatti che dormono e nessuna su cani che dormono, per un n-gramma «il cane dorme» è terra incognita — anche se ogni parlante italiano sa che gatto e cane sono intercambiabili in quasi tutti i contesti domestici.</p>
+      <p>Il nodo: un simbolo discreto non ha «vicini» <em>per costruzione</em>. Non c'è alcun senso in cui il simbolo 47 sia «quasi» il simbolo 48. E senza una nozione di vicinanza non può esistere una nozione di similarità; senza similarità, nessun modo di trasferire ciò che si è imparato su «gatto» a ciò che non si è mai visto su «cane». La sparsità di Meccanismo · 2 non era un difetto di quantità — pochi dati — ma di struttura: la rappresentazione stessa rende impossibile generalizzare.</p>
+      <div class="aside">
+        <span class="label">Densità non è continuità</span>
+        <p>Si potrebbe obiettare: con abbastanza dati, prima o poi ogni combinazione compare. Gli n-grammi si comportano come un insieme <em>denso ma pieno di buchi</em> — dato un contesto, di solito si trova qualcosa di vicino nei dati visti, ma restano lacune che nessun affinamento del conteggio può colmare. Ciò che serve è un continuo <em>senza buchi</em>, dove l'interpolazione sia sempre possibile, anche verso punti mai osservati esplicitamente. Non è «più dati»: è un altro tipo di struttura matematica.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="m3-u1-sez-cantor">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il fondamento rigoroso</div>
+      <h2 class="title">Cantor, di nuovo — e non per analogia</h2>
+      <p>Nell'unità 1.5 la diagonale di Cantor era servita a mostrare che un insieme numerabile — elencabile con un metodo sistematico, come un sistema formale o come il vocabolario di token costruito in Meccanismo · 1 — è strutturalmente più «piccolo» dell'insieme dei numeri reali, che nessuna lista può contenere per intero. Quel risultato torna qui con un ruolo preciso: il vocabolario discreto di token è numerabile per costruzione; uno spazio a coordinate reali, quello che questo modulo sta per introdurre, non lo è.</p>
+      <p>Non è un'analogia di stile, è la stessa distinzione matematica. Passare dai token agli embedding significa attraversare esattamente il confine che Cantor ha tracciato: dal numerabile al continuo. Ed è per questo che un simbolo discreto non può avere «vicini» nel senso rilevante — tra il 47 e il 48 non c'è nulla, mentre tra due punti di uno spazio continuo c'è sempre un altro punto, e poi un altro ancora, senza fine.</p>
+      <div class="question">Se tra due simboli non c'è mai nulla, e tra due punti c'è sempre qualcosa — che aspetto avrebbe una rappresentazione delle parole fatta di punti invece che di simboli?</div>
+    </div>
+  </section>
+
+  <section id="m3-u1-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">Il problema è la rappresentazione, non i dati</h2>
+      <p>Questa unità non ha introdotto nulla di nuovo: ha annodato ciò che c'era già. Gli ID arbitrari di Meccanismo · 1 e la sparsità di Meccanismo · 2 sono due facce dello stesso limite — un alfabeto di simboli senza geometria. La soluzione, se esiste, non può essere un conteggio più fine o un corpus più grande: deve cambiare il tipo di oggetto matematico con cui le parole vengono rappresentate. È la mossa dell'unità successiva.</p>
+    </div>
+  </section>
+
+  <section id="m3-u1-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura — Unità 3.1</div>
+      <blockquote>
+        Nessuna quantità di dati può dare dei vicini a un simbolo che, per costruzione, non ne ha.
+      </blockquote>
+      <p style="margin-top:28px;">Nell'unità successiva: le parole diventano punti in uno spazio — coordinate, distanze, direzioni. E il vocabolario tecnico si fissa su una parola che accompagnerà tutto il resto del corso: <em>embedding</em>.</p>
+      <div class="footer-note">Meccanismo · 3 — Parole come punti nello spazio · Unità 3.1 — Il problema lasciato aperto</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="unit-block" id="unit-u2" data-unit="u2">
+
+  <section id="m3-u2-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Meccanismo · 3 · Parole come punti nello spazio · Unità 3.2</div>
+      <h1>E se una parola fosse <em>un punto nello spazio?</em></h1>
+      <p class="lede dim">Un punto su un piano è descritto da due numeri: quanto a destra, quanto in alto. Un punto in uno spazio a trecento dimensioni è descritto da trecento numeri — impossibile da visualizzare, ma matematicamente identico. L'idea di questa unità è tutta qui: assegnare a ogni parola non un ID arbitrario, ma una lista di coordinate. E con le coordinate, all'improvviso, esistono le distanze.</p>
+      <div class="scrolldown">vicinanza spaziale come somiglianza di significato</div>
+    </div>
+  </section>
+
+  <section id="m3-u2-sez-embedding">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il vocabolario si fissa</div>
+      <h2 class="title">Embedding: la parola tecnica, da qui in avanti</h2>
+      <p>Un vettore, nel senso minimo che serve qui, è una lista ordinata di numeri: le coordinate di un punto. Rappresentare una parola come vettore significa piazzarla in uno spazio geometrico, e la scommessa è che la geometria possa svolgere il lavoro che i simboli non sapevano fare: <strong>vicinanza spaziale = somiglianza semantica</strong>. «Gatto» e «cane» vicini tra loro, entrambi lontani da «ossigeno».</p>
+      <p>Questa rappresentazione ha un nome tecnico preciso, che da questa unità in poi il corso userà senza più reintrodurlo: <strong>embedding</strong>. Letteralmente, «incastonamento»: la parola viene incastonata in uno spazio continuo. Non «vettore» generico, non «rappresentazione vettoriale» — <em>embedding</em> è il termine che i Moduli 4, 5 e 6 daranno per acquisito, ed è il momento giusto per fissarlo.</p>
+      <div class="aside">
+        <span class="label">Leibniz, seconda apparizione</span>
+        <p>In Genealogia · 1.1 ci si era aperti con Leibniz e il sogno del pensiero come calcolo su simboli discreti. Lo stesso Leibniz è anche, con Newton, tra gli inventori del calcolo infinitesimale — lo strumento matematico per trattare il continuo. Le due metà del suo lascito, il discreto e il continuo, sono esattamente i due poli tra cui questo corso continua a muoversi. Qui il pendolo passa dal primo al secondo.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="m3-u2-sez-mappa">
+    <div class="wrap reveal">
+      <div class="eyebrow">La mappa</div>
+      <h2 class="title">Ventitré parole italiane, viste dall'alto</h2>
+      <p>Qui sotto figurano ventitré parole italiane come punti in un piano. Le coordinate non sono inventate: provengono da vettori reali a 300 dimensioni (fastText, addestrato su testo italiano reale), proiettati in due dimensioni per poterli disegnare. Passi il mouse sui punti; clicchi le voci della legenda per nascondere o mostrare un gruppo.</p>
+      <div class="playground">
+        <span class="ptitle">Mappa — lo spazio degli embedding, proiettato in 2D</span>
+        <div id="m3-mappa-esplorazione"></div>
+        <p class="em-caption">I quattro colori raggruppano le parole per tema. Nessuno ha detto al modello quali fossero i gruppi: la vicinanza emerge dai numeri, ed è visibile a occhio. Si notino anche le posizioni relative fini — «regina» e «principessa» quasi sovrapposte, «calcio» tra i suoi compagni sportivi.</p>
+      </div>
+      <p class="dim">Due avvertenze oneste. Primo: lo spazio reale ha 300 dimensioni, e ogni proiezione in 2D scarta informazione — le distanze visibili sono un'ombra fedele ma parziale. Secondo: la disposizione non è magia, è il risultato di un addestramento che l'unità 3.3 spiegherà.</p>
+    </div>
+  </section>
+
+  <section id="m3-u2-sez-galileo">
+    <div class="wrap reveal">
+      <div class="eyebrow">Un filo lungo quattro secoli</div>
+      <h2 class="title">La mossa che Galileo aveva escluso</h2>
+      <p>Galileo fondò la scienza moderna con una separazione netta: da un lato le qualità <em>primarie</em> — forma, posizione, numero, ciò che si può misurare e resta identico per qualunque osservatore — dall'altro le qualità <em>secondarie</em> — colore, sapore, odore, tutto ciò che sembra soggettivo e relazionale. La scienza, decise, si sarebbe occupata solo delle prime. Il significato di una parola era il caso limite della qualità secondaria: relazionale per eccellenza, dipendente dall'uso, apparentemente impossibile da mettere su una bilancia.</p>
+      <p>La mappa che ha appena esplorato fa esattamente la mossa che Galileo escludeva: trasforma il significato in coordinate quantificabili. Non è solo un trucco statistico riuscito — è un'estensione radicale, quattro secoli dopo, dello stesso programma galileiano a un territorio che Galileo aveva dichiarato fuori portata. Vale la pena tenerlo a mente non come curiosità storica, ma come un punto su cui il corso tornerà: nell'unità 5.4 questa stessa distinzione tra primario e secondario comincerà a incrinarsi, e non per ragioni filosofiche — per ragioni tecniche.</p>
+      <div class="question">Misurare il significato: la frase avrebbe fatto sorridere Galileo. Eppure la mappa è lì. Che cosa, esattamente, è stato misurato?</div>
+    </div>
+  </section>
+
+  <section id="m3-u2-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">Dalla tabella allo spazio</h2>
+      <p>Il salto compiuto in questa unità è di tipo, non di grado: dal numerabile al continuo, dalla tabella di simboli allo spazio geometrico, dall'identità («è il token 47») alla posizione («sta qui, vicino a questi, lontano da quelli»). Resta la domanda più importante: chi decide dove va ogni parola? Nessuno la decide — si impara. Come, è il tema della prossima unità.</p>
+    </div>
+  </section>
+
+  <section id="m3-u2-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura — Unità 3.2</div>
+      <blockquote>
+        Un embedding è una parola trasformata in luogo: non più un simbolo che è solo se stesso, ma un punto che è definito da tutto ciò che gli sta intorno.
+      </blockquote>
+      <p style="margin-top:28px;">Nell'unità successiva: da dove vengono queste coordinate. Un'ipotesi linguistica degli anni Cinquanta, un'intuizione ingegneristica del 2013, e nessun dizionario coinvolto.</p>
+      <div class="footer-note">Meccanismo · 3 — Parole come punti nello spazio · Unità 3.2 — Le parole come vettori: coordinate in uno spazio di significato</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="unit-block" id="unit-u3" data-unit="u3">
+
+  <section id="m3-u3-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Meccanismo · 3 · Parole come punti nello spazio · Unità 3.3</div>
+      <h1>Si conosce una parola <em>dalla compagnia che tiene</em></h1>
+      <p class="lede dim">La frase è del linguista John Rupert Firth, 1957: «You shall know a word by the company it keeps». È l'ipotesi distribuzionale: parole che compaiono in contesti simili hanno significati simili. Sembra un'osservazione da salotto. È, invece, l'unico principio da cui tutte le coordinate della mappa precedente sono state ricavate.</p>
+      <div class="scrolldown">nessun dizionario, solo contesti</div>
+    </div>
+  </section>
+
+  <section id="m3-u3-sez-firth">
+    <div class="wrap reveal">
+      <div class="eyebrow">L'ipotesi distribuzionale</div>
+      <h2 class="title">Il contesto come definizione</h2>
+      <p>Si considerino le frasi in cui compare «gatto»: «il ___ dorme sul divano», «ho dato da mangiare al ___», «il ___ miagola». Ora quelle in cui compare «cane»: in gran parte, le stesse — tranne l'ultima. L'ipotesi distribuzionale dice che questa sovrapposizione di contesti <em>è</em> la somiglianza di significato, o almeno ne è una misura fedele. Non serve sapere che cosa sia un gatto: basta osservare dove la parola compare, su una quantità di testo sufficiente.</p>
+      <p>Se questa idea suona familiare, è perché il corso l'ha già incontrata in forma filosofica. In Genealogia · 3.1, il primo nodo era Wittgenstein e il significato come uso: non chiedersi che cosa una parola <em>denoti</em>, ma come venga <em>usata</em> — il significato non sta dietro la parola, sta nella sua pratica. Firth (contemporaneo di Wittgenstein) trasforma quell'intuizione filosofica in un programma operativo: se il significato è l'uso, allora l'uso si può contare, e ciò che si può contare si può trasformare in coordinate. L'ipotesi distribuzionale è Wittgenstein reso misurabile.</p>
+      <div class="aside">
+        <span class="label">Callback esplicito</span>
+        <p>Genealogia · 3.1: «il significato di una parola è il suo uso nel linguaggio». Unità 3.3: «il significato di una parola è la distribuzione dei suoi contesti». La seconda frase è la prima, riscritta in un linguaggio che una macchina può eseguire.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="m3-u3-sez-word2vec">
+    <div class="wrap reveal">
+      <div class="eyebrow">Dall'ipotesi all'algoritmo</div>
+      <h2 class="title">Prevedere il contesto come compito di addestramento</h2>
+      <p>L'intuizione che nel 2013 rese tutto questo pratico su scala industriale (il sistema si chiamava Word2Vec, già incrociato nella storia di Genealogia · 1.5) è di una semplicità quasi irritante: si dà a un modello un compito di previsione. Data una parola, indovina le parole che le stanno intorno — o viceversa. Ogni parola parte da coordinate casuali; ogni volta che il modello sbaglia una previsione, le coordinate vengono corrette di un poco, in modo da rendere quell'errore meno probabile la volta successiva.</p>
+      <p>Il punto elegante: a nessuno interessa la previsione in sé. È un pretesto. Ciò che interessa è l'effetto collaterale — per prevedere bene i contesti, il modello è <em>costretto</em> ad avvicinare le parole che compaiono in contesti simili. La geometria della mappa di 3.2 non è stata disegnata da nessuno: è il sedimento di miliardi di piccole correzioni d'errore. Come le correzioni avvengano meccanicamente — la discesa del gradiente — è materia di Meccanismo · 4; qui basta l'idea.</p>
+      <div class="question">Un compito che non interessa a nessuno, svolto miliardi di volte, produce una mappa del significato che nessuno ha progettato. Dove sta, in questo processo, la «conoscenza della lingua»?</div>
+    </div>
+  </section>
+
+  <section id="m3-u3-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">Il significato senza definizioni</h2>
+      <p>Nessun dizionario, nessuna regola grammaticale, nessun esperto che etichetta: solo testo in quantità e un compito di previsione. Da questo, uno spazio in cui la vicinanza ricalca la somiglianza semantica con una fedeltà che nel 2013 sorprese anche gli addetti ai lavori. Quanto sia sorprendente — e quanto strane siano le proprietà geometriche di questo spazio — è il tema della prossima unità, la più famosa del modulo.</p>
+    </div>
+  </section>
+
+  <section id="m3-u3-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura — Unità 3.3</div>
+      <blockquote>
+        Il significato come uso era una tesi filosofica. Contare gli usi e trasformarli in coordinate l'ha resa un algoritmo.
+      </blockquote>
+      <p style="margin-top:28px;">Nell'unità successiva: cosa succede quando sullo spazio degli embedding si prova a fare aritmetica. Re meno uomo più donna — e il risultato è un punto preciso dello spazio.</p>
+      <div class="footer-note">Meccanismo · 3 — Parole come punti nello spazio · Unità 3.3 — Come si imparano questi vettori: l'ipotesi distribuzionale</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="unit-block" id="unit-u4" data-unit="u4">
+
+  <section id="m3-u4-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Meccanismo · 3 · Parole come punti nello spazio · Unità 3.4</div>
+      <h1>Re − uomo + donna <em>= regina</em></h1>
+      <p class="lede dim">È l'esempio più citato di tutta la storia degli embedding, e per una volta la fama è meritata: si prendono le coordinate di «re», si sottraggono quelle di «uomo», si sommano quelle di «donna» — e il punto dello spazio più vicino al risultato è «regina». Nessuno ha insegnato al modello che cosa siano il genere e la regalità. Questa unità mostra il fenomeno dal vivo, spiega perché funziona, e — altrettanto importante — perché a volte non funziona.</p>
+      <div class="scrolldown">aritmetica sul significato</div>
+    </div>
+  </section>
+
+  <section id="m3-u4-sez-direzioni">
+    <div class="wrap reveal">
+      <div class="eyebrow">Perché funziona</div>
+      <h2 class="title">Direzioni consistenti, non magia</h2>
+      <p>La spiegazione geometrica è più sobria della sua fama. Se l'addestramento ha davvero catturato le regolarità d'uso, allora coppie di parole legate dalla stessa relazione tendono a essere separate dallo stesso spostamento: il passo che porta da «uomo» a «donna» è all'incirca lo stesso, come direzione e lunghezza, che porta da «re» a «regina», da «principe» a «principessa». Nello spazio esiste, cioè, qualcosa come una «direzione del genere» — non perché qualcuno l'abbia messa lì, ma perché i contesti d'uso la inducono con coerenza.</p>
+      <p>Se le direzioni sono consistenti, l'aritmetica segue da sola: «re − uomo + donna» significa <em>partire da re, e applicare lo spostamento che separa donna da uomo</em>. È la regola del parallelogramma delle elementari, applicata al significato. Il componente qui sotto la disegna letteralmente: la freccia da «uomo» a «donna», e la stessa freccia traslata a partire da «re».</p>
+    </div>
+  </section>
+
+  <section id="m3-u4-sez-widget">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il fenomeno, dal vivo</div>
+      <h2 class="title">Una prova diretta</h2>
+      <p>Le coordinate sono le stesse ventitré parole reali di prima, proiettate su assi costruiti apposta per rendere visibile l'aritmetica (la proiezione è lineare: il calcolo sulle coordinate 2D è un calcolo reale, non una messinscena). Il rombo color rame è il bersaglio A − B + C; sotto la mappa, le tre parole più vicine con la loro distanza.</p>
+      <div class="playground">
+        <span class="ptitle">Aritmetica vettoriale — A − B + C</span>
+        <div class="em-controls">
+          <div class="em-control">
+            <label for="m3-arit-a">A (positivo)</label>
+            <select class="em-select" id="m3-arit-a"></select>
+          </div>
+          <div class="em-control">
+            <label for="m3-arit-b">B (negativo)</label>
+            <select class="em-select" id="m3-arit-b"></select>
+          </div>
+          <div class="em-control">
+            <label for="m3-arit-c">C (positivo)</label>
+            <select class="em-select" id="m3-arit-c"></select>
+          </div>
+        </div>
+        <div id="m3-mappa-aritmetica"></div>
+        <div class="em-nearest-label">Le 3 parole più vicine al bersaglio (distanza euclidea 2D)</div>
+        <ol class="em-nearest" id="m3-arit-nearest"></ol>
+        <p class="em-caption">Provi altre combinazioni — ad esempio principe − uomo + donna, o gatto − maschio + femmina. A volte il risultato è netto, a volte molto meno: il bersaglio cade in una zona affollata, o la parola «giusta» è solo seconda o terza. È un fenomeno reale degli embedding, non un difetto del componente: la fama dell'esempio «re − uomo + donna» viene anche dall'essere uno dei casi più puliti.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="m3-u4-sez-bateson">
+    <div class="wrap reveal">
+      <div class="eyebrow">Che tipo di ragionamento è?</div>
+      <h2 class="title">Il sillogismo dell'erba</h2>
+      <p>Gregory Bateson distingueva due modi di ragionare. Il primo è il sillogismo classico, «in Barbara»: gli uomini muoiono, Socrate è un uomo, dunque Socrate muore. Valido per struttura di classe: Socrate <em>appartiene</em> alla classe degli uomini, e ne eredita le proprietà. Il secondo lo chiamava il <em>sillogismo dell'erba</em>: l'erba muore, gli uomini muoiono, dunque gli uomini sono erba. Formalmente invalido — eppure, notava Bateson, è la logica reale della metafora, della poesia, e di buona parte del pensiero vivente: ragiona per <em>predicato condiviso</em>, non per appartenenza di classe.</p>
+      <p>L'aritmetica vettoriale è, strutturalmente, un sillogismo dell'erba. «Re sta a regina come uomo sta a donna» non afferma che regina appartenga a una classe da cui la conclusione discende con necessità: afferma che due coppie condividono un predicato — una direzione nello spazio — e scommette che la condivisione regga. In termini classici non è una deduzione, e non è nemmeno la semplice induzione per conteggio già vista in 2.2: è un caso di <strong>abduzione</strong> — l'inferenza all'analogia più plausibile. Questo spiega con precisione entrambe le facce del fenomeno: perché funziona (la metafora geometrica è reale, le direzioni sono davvero consistenti) e perché a volte fallisce (la logica del predicato condiviso non è mai truth-preserving come Barbara — nessuna metafora lo è).</p>
+      <div class="aside">
+        <span class="label">Wigner, di passaggio</span>
+        <p>Il fisico Eugene Wigner parlò di «irragionevole efficacia della matematica» nel descrivere il mondo fisico. Che una manciata di operazioni lineari su coordinate catturi relazioni come il genere o la regalità è un piccolo caso dello stesso enigma — e perché l'aritmetica vettoriale funzioni <em>così</em> bene resta, in un senso preciso, non del tutto spiegato.</p>
+      </div>
+      <div class="question">Domanda da lasciare aperta, deliberatamente: la geometria di questo spazio <em>descrive</em> qualcosa di reale sul significato — che esisteva anche prima, e il modello ha solo trovato — o lo <em>costruisce</em>, artefatto statistico utile senza nulla di «reale» dietro? È la stessa domanda che si pone da secoli su che cosa siano davvero i numeri.</div>
+    </div>
+  </section>
+
+  <section id="m3-u4-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">Lo stesso passaggio, visto dal basso</h2>
+      <p>In Genealogia · 1 era stato raccontato dall'alto, come storia, il passaggio dal paradigma simbolico a quello statistico-connessionista. Questo modulo lo sta attraversando dal basso, tecnicamente: via via che le parole smettono di essere simboli e diventano punti, il ragionamento smette di essere manipolazione di regole e diventa geometria — con i poteri nuovi e le fragilità nuove che ha appena toccato con mano. I due racconti, quello storico e quello tecnico, descrivono lo stesso attraversamento.</p>
+    </div>
+  </section>
+
+  <section id="m3-u4-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura — Unità 3.4</div>
+      <blockquote>
+        L'aritmetica vettoriale non deduce: fa metafore geometriche. Quando la metafora è buona, la si chiama intelligenza; quando è cattiva, errore. In entrambi i casi è la stessa operazione.
+      </blockquote>
+      <p style="margin-top:28px;">Nell'unità successiva, l'ultimo passo del modulo: il limite strutturale di tutto ciò che è stato costruito fin qui. Una parola, un punto. Ma «calcio» è una parola sola — e due significati.</p>
+      <div class="footer-note">Meccanismo · 3 — Parole come punti nello spazio · Unità 3.4 — «Re − Uomo + Donna = Regina»: l'aritmetica vettoriale come fenomeno</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="unit-block" id="unit-u5" data-unit="u5">
+
+  <section id="m3-u5-apertura" class="hero">
+    <div class="wrap">
+      <div class="kicker">Meccanismo · 3 · Parole come punti nello spazio · Unità 3.5</div>
+      <h1>Un punto solo <em>per due significati</em></h1>
+      <p class="lede dim">«Ha segnato un gol nella partita di calcio.» «Il calcio rinforza le ossa.» La stessa parola, due mondi che non si toccano. Ma nello spazio costruito in questo modulo ogni parola è <em>un</em> punto — uno solo, fisso, deciso una volta per tutte dall'addestramento. Dove va collocato, il punto di «calcio»?</p>
+      <div class="scrolldown">la polisemia come limite strutturale</div>
+    </div>
+  </section>
+
+  <section id="m3-u5-sez-widget">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il compromesso, misurato</div>
+      <h2 class="title">Dove finisce davvero il punto di «calcio»</h2>
+      <p>La risposta empirica: lo spazio colloca «calcio» in un compromesso sbilanciato. La mappa qui sotto — stesse ventitré parole, proiezione costruita per rendere visibile il contrasto tra i due sensi — mostra il punto di «calcio» con le distanze reali dai due baricentri: il centroide del gruppo sportivo e quello del gruppo chimico, calcolati come media delle coordinate dei punti di ciascun gruppo.</p>
+      <div class="playground">
+        <span class="ptitle">Polisemia — un vettore, due famiglie</span>
+        <div id="m3-mappa-polisemia"></div>
+        <p class="em-caption" id="m3-poli-caption"></p>
+      </div>
+      <p>L'uso sportivo di «calcio» domina schiacciante nel corpus, e il punto ne è la prova fossile: il senso chimico esiste, ma pesa poco, e viene trascinato quasi interamente dalla parte del pallone. Chi scrive di chimica e incontra l'embedding statico di «calcio» riceve, di fatto, un vettore che parla soprattutto di sport.</p>
+      <div class="aside">
+        <span class="label">Il punto strutturale</span>
+        <p>Il difetto non è del corpus, né della proiezione: è della premessa. <em>Una parola, un vettore</em> significa che il significato viene fissato prima e indipendentemente da qualunque frase concreta. Nessun riequilibrio dei dati può dare a «calcio» due posizioni — la rappresentazione ne prevede una sola.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="m3-u5-quadro">
+    <div class="wrap reveal">
+      <div class="eyebrow">Il quadro</div>
+      <h2 class="title">Statico è la parola chiave</h2>
+      <p>Gli embedding di questo modulo si dicono <em>statici</em>: calcolati una volta, uguali per sempre, identici in ogni frase in cui la parola compare. Per tutto ciò che il modulo ha mostrato — vicinanza, direzioni, aritmetica — la staticità era invisibile. La polisemia la rende visibile: il significato reale di una parola non è una proprietà della parola da sola, è una proprietà della parola <em>in un contesto</em>. Serve una rappresentazione che venga calcolata frase per frase.</p>
+    </div>
+  </section>
+
+  <section id="m3-u5-chiusura" class="chiusura">
+    <div class="wrap reveal">
+      <div class="eyebrow">Chiusura — Meccanismo · 3</div>
+      <blockquote>
+        Il modulo ha dato alle parole ciò che i simboli non avevano: vicini, distanze, direzioni. Il prezzo è un significato congelato — lo stesso punto per ogni frase possibile.
+      </blockquote>
+      <p style="margin-top:28px;">Il modulo successivo, Meccanismo · 5, riprende esattamente da qui: un meccanismo — l'<em>attention</em> — che ricalcola la rappresentazione di ogni parola a partire dalle parole che la circondano, frase per frase. L'embedding di «calcio» smetterà di essere un punto fisso e diventerà qualcosa che accade ogni volta di nuovo. (In mezzo, Meccanismo · 4: le reti neurali, cioè il macchinario che rende possibile impararlo.)</p>
+      <div class="footer-note">Meccanismo · 3 — Parole come punti nello spazio · Unità 3.5 — I limiti: un vettore, molti significati</div>
+    </div>
+  </section>
+
+</div>
+
+</main>
+
+<script>
+  // ============ dati incorporati (embedding reali fastText, proiettati in 2D) ============
+  const EMB = {"_metadata":{"descrizione":"Coordinate 2D precalcolate per il widget dello spazio degli embedding (Meccanismo · 3 e Meccanismo · 5, riferimento: struttura_moduli_1-6.md).","fonte_vettori":"fastText cc.it.300.vec (Facebook, vettori italiani a 300 dimensioni, addestrati su Common Crawl + Wikipedia)","metodo":"Vettori normalizzati a lunghezza 1. Non è stata usata una singola PCA generica: le prime 2 componenti principali spiegavano solo il 6% della varianza su un campione ampio di vocabolario e distorcevano sia l'aritmetica vettoriale sia la polisemia. Per ciascuna modalità sono stati costruiti assi su misura, ma sempre a partire da vettori reali (nessuna coordinata inventata a mano).","parole":{"reale_genere":["re","regina","principe","principessa","uomo","donna","maschio","femmina"],"sportivo":["calcio","pallone","gol","squadra","partita","allenatore"],"chimico":["sodio","ferro","ossigeno","idrogeno","elemento"],"animali":["gatto","cane","cavallo","leone"],"nota":"'calcio' appartiene sia al cluster sportivo che a quello chimico (senso polisemico); è la parola condivisa usata in 'polisemia'."},"modalita":{"esplorazione":"PCA sui 23 vettori normalizzati (non su un vocabolario esterno) — separa visivamente i 4 gruppi tematici. Usata per le unità 3.1/3.2 (esplorazione libera dello spazio).","aritmetica":"Assi costruiti a mano: asse 1 = direzione di genere (media di donna-uomo e principessa-principe); asse 2 = direzione di regalità (media di regina-donna e re-uomo, ortogonalizzata rispetto all'asse di genere). 'target' è la proiezione del vettore reale (re - uomo + donna) su questi due assi. Usata per l'unità 3.4: 'Regina' risulta la parola più vicina al target (distanza 0.445), seconda 'Principessa' (0.636), poi salto netto (0.92+).","polisemia":"Asse 1 = differenza tra il centroide del cluster chimico e quello sportivo; asse 2 = direzione di massima varianza residua dopo aver rimosso l'asse 1. Usata per l'unità 3.5: 'calcio' risulta molto più vicino al centroide sportivo (0.139) che a quello chimico (0.748), coerente con le similarità coseno nello spazio a 300 dimensioni (0.62 vs 0.44)."}},"esplorazione":{"uomo":[0.1779783996413858,-0.09906590719565098],"squadra":[-0.30715071196049676,-0.4839100939171862],"donna":[0.37662513671286924,-0.23783981704283316],"re":[0.20500299384390394,0.258684214402093],"calcio":[-0.4829512351239931,-0.1845677849060383],"partita":[-0.40914046718027164,-0.4633990305874043],"allenatore":[-0.27821629735150577,-0.3870763893193529],"elemento":[-0.0791118523956936,0.22690914547406293],"gol":[-0.4329865636624988,-0.2623435535725566],"principe":[0.3179137499335559,0.1305928647405437],"ferro":[-0.1966055453892392,0.3161806177925047],"cavallo":[0.1266029409358174,-0.006921930373001751],"cane":[0.2330091073161673,-0.07779595600958913],"regina":[0.37515717904198426,-0.00725561536907662],"principessa":[0.40957078083709214,-0.011602488262650368],"gatto":[0.2701342228164803,-0.05924387866891506],"maschio":[0.39334148221515786,-0.026841026473988075],"femmina":[0.45853313596157197,-0.12832138820887035],"ossigeno":[-0.355746249818186,0.5220232081264407],"pallone":[-0.41814155852934487,-0.17081864445901995],"leone":[0.22154164625620182,0.03676989227990869],"idrogeno":[-0.30464699326377087,0.5875536125792413],"sodio":[-0.3007133008371876,0.5282899489713386]},"aritmetica":{"coords":{"uomo":[-0.3194259980443455,-0.623516719934252],"squadra":[0.14274005724152308,-0.18503424629133639],"donna":[0.39765456940250155,-0.5685985667200261],"re":[-0.12187112065808606,0.6178792109788716],"calcio":[-0.07954842899140813,-0.0932522710230302],"partita":[0.12966524918618685,-0.11583117524184271],"allenatore":[-0.21099044401954006,-0.20252990839900642],"elemento":[-0.20875823468629856,-0.17672968686157695],"gol":[-0.14472430332175934,-0.05588027608459997],"principe":[-0.30225247297074237,0.11566565971444344],"ferro":[-0.07045276455057754,-0.035880820635732724],"cavallo":[-0.06427395606593833,-0.1261750284470546],"cane":[-0.15127136381374462,-0.2731342214409167],"regina":[0.3145103553857185,0.3268609472088394],"principessa":[0.42388130923731815,0.06074750650021757],"gatto":[-0.10475305471350077,-0.23923797771524108],"maschio":[-0.07716840113024413,-0.2538214031126376],"femmina":[0.25398156585812837,-0.2461742630991775],"ossigeno":[-0.1434436210432291,-0.09927603953547008],"pallone":[-0.10779581280698713,-0.14992203214329675],"leone":[-0.11203007714574159,-0.026300834254578097],"idrogeno":[-0.12499520629300313,-0.08436831199013956],"sodio":[-0.055646379540872384,-0.01782136510972747]},"target":[0.595209446788761,0.6727973641930973]},"polisemia":{"uomo":[-0.02911896400654171,-0.24407564174942215],"squadra":[-0.503888427893004,0.15979508843329443],"donna":[-0.09625328969259292,-0.4639928000445714],"re":[0.04526637769699491,-0.23566435439852956],"calcio":[-0.3678312987471762,0.37858724136362015],"partita":[-0.5308970968303808,0.2611664475623699],"allenatore":[-0.47303033388204907,0.14505499244945297],"elemento":[0.2853340123531901,0.06612358859265574],"gol":[-0.4396267022831467,0.31443896469654903],"principe":[0.02710948162592133,-0.3604455178813737],"ferro":[0.28897023488951346,0.19216733572712238],"cavallo":[-0.010823304886241369,-0.1836604551297416],"cane":[-0.05601828652605856,-0.2985085691027348],"regina":[-0.04783157486913145,-0.43982423206139687],"principessa":[-0.039420458604052876,-0.47287541291520785],"gatto":[-0.04425433323595154,-0.3330676204928136],"maschio":[0.008610059914652378,-0.4483205880013499],"femmina":[-0.04358888035482021,-0.5290578153138819],"ossigeno":[0.4193865024381095,0.38434215465003907],"pallone":[-0.3546153497441052,0.31769714884421174],"leone":[-0.01684201440456492,-0.2750817134856416],"idrogeno":[0.4707040970911973,0.3442842645658094],"sodio":[0.38939674157666937,0.3270325592556218]}};
+
+  // gruppo di appartenenza di ogni parola (da _metadata.parole; "calcio" resta nel gruppo sportivo)
+  const GROUP_OF = {};
+  Object.entries(EMB._metadata.parole).forEach(([gruppo, parole]) => {
+    if(Array.isArray(parole)) parole.forEach(p => { if(!(p in GROUP_OF)) GROUP_OF[p] = gruppo; });
+  });
+
+  const GROUP_COLORS = {
+    reale_genere: '#F0A85E',
+    sportivo: '#7EB8D4',
+    chimico: '#B79FD6',
+    animali: '#8FC9A0'
+  };
+  const GROUP_LABELS = {
+    reale_genere: 'genere e regalità',
+    sportivo: 'sportivo',
+    chimico: 'chimico',
+    animali: 'animali'
+  };
+
+  function toPoints(coordsObj){
+    return Object.entries(coordsObj).map(([parola, [x, y]]) => ({ parola, x, y, gruppo: GROUP_OF[parola] }));
+  }
+
+  // ============ widget riusabile: mappa degli embedding ============
+  function renderEmbeddingMap(containerId, points, options = {}){
+    const wrap = document.getElementById(containerId);
+    wrap.classList.add('em-wrap');
+    const hidden = new Set();
+    const W = 640, H = 460, PAD = 14;
+
+    const legendEl = document.createElement('div');
+    legendEl.className = 'em-legend';
+    const groups = [...new Set(points.map(p => p.gruppo))];
+    groups.forEach(g => {
+      const btn = document.createElement('button');
+      btn.className = 'em-legend-item';
+      btn.innerHTML = `<span class="em-swatch" style="background:${GROUP_COLORS[g]}"></span>${GROUP_LABELS[g]}`;
+      btn.addEventListener('click', () => {
+        if(hidden.has(g)) hidden.delete(g); else hidden.add(g);
+        btn.classList.toggle('off', hidden.has(g));
+        draw();
+      });
+      legendEl.appendChild(btn);
+    });
+
+    const svgHolder = document.createElement('div');
+    const tooltip = document.createElement('div');
+    tooltip.className = 'em-tooltip';
+    wrap.appendChild(legendEl);
+    wrap.appendChild(svgHolder);
+    wrap.appendChild(tooltip);
+
+    function draw(){
+      const visible = points.filter(p => !hidden.has(p.gruppo));
+      const xs = visible.map(p => p.x), ys = visible.map(p => p.y);
+      if(options.extraExtent){
+        options.extraExtent().forEach(([x, y]) => { xs.push(x); ys.push(y); });
+      }
+      xs.push(0); ys.push(0); // assi per l'origine sempre in vista
+      let minX = Math.min(...xs), maxX = Math.max(...xs);
+      let minY = Math.min(...ys), maxY = Math.max(...ys);
+      const rx = (maxX - minX) || 1, ry = (maxY - minY) || 1;
+      minX -= rx * 0.15; maxX += rx * 0.15;
+      minY -= ry * 0.15; maxY += ry * 0.15;
+      const sx = x => PAD + (x - minX) / (maxX - minX) * (W - 2 * PAD);
+      const sy = y => H - PAD - (y - minY) / (maxY - minY) * (H - 2 * PAD);
+
+      const parts = [];
+      parts.push(`<line x1="${sx(minX)}" y1="${sy(0)}" x2="${sx(maxX)}" y2="${sy(0)}" stroke="var(--line)" stroke-width="1"/>`);
+      parts.push(`<line x1="${sx(0)}" y1="${sy(minY)}" x2="${sx(0)}" y2="${sy(maxY)}" stroke="var(--line)" stroke-width="1"/>`);
+      if(options.overlay) parts.push(options.overlay(sx, sy));
+      visible.forEach(p => {
+        parts.push(`<g class="em-pt" data-parola="${p.parola}" data-gruppo="${p.gruppo}">` +
+          `<circle cx="${sx(p.x)}" cy="${sy(p.y)}" r="5" fill="${GROUP_COLORS[p.gruppo]}"/>` +
+          `<text class="em-label" x="${sx(p.x) + 8}" y="${sy(p.y) + 3.5}">${p.parola}</text></g>`);
+      });
+      svgHolder.innerHTML = `<svg class="em-svg" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Mappa 2D degli embedding">${parts.join('')}</svg>`;
+      const svg = svgHolder.querySelector('svg');
+      svg.querySelectorAll('.em-pt').forEach(g => {
+        g.addEventListener('mouseenter', () => {
+          svg.classList.add('has-hover');
+          g.classList.add('hover');
+          const c = g.querySelector('circle');
+          c.setAttribute('r', 7);
+          const cr = c.getBoundingClientRect();
+          const wr = wrap.getBoundingClientRect();
+          tooltip.style.left = (cr.left + cr.width / 2 - wr.left) + 'px';
+          tooltip.style.top = (cr.top - wr.top) + 'px';
+          tooltip.textContent = g.dataset.parola + ' · ' + GROUP_LABELS[g.dataset.gruppo];
+          tooltip.style.display = 'block';
+        });
+        g.addEventListener('mouseleave', () => {
+          svg.classList.remove('has-hover');
+          g.classList.remove('hover');
+          g.querySelector('circle').setAttribute('r', 5);
+          tooltip.style.display = 'none';
+        });
+      });
+    }
+    draw();
+    return { redraw: draw };
+  }
+
+  // ============ reveal on scroll ============
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => io.observe(el));
+
+  // ============ scroll-spy sulla sidebar ============
+  const spyLinks = document.querySelectorAll('#local-scrollspy a[data-spy-target]');
+  const unitBlocksForSpy = document.querySelectorAll('.unit-block');
+  const localSpy2 = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        spyLinks.forEach(a => a.classList.toggle('active', a.dataset.spyTarget === e.target.id));
+      }
+    });
+  }, { threshold: 0, rootMargin: '-45% 0px -45% 0px' });
+  unitBlocksForSpy.forEach(b => localSpy2.observe(b));
+
+  // ============ istanza 3.2: esplorazione libera ============
+  renderEmbeddingMap('m3-mappa-esplorazione', toPoints(EMB.esplorazione));
+
+  // ============ istanza 3.4: aritmetica vettoriale ============
+  const ARIT = EMB.aritmetica.coords;
+  const aritWords = Object.keys(ARIT);
+  const selA = document.getElementById('m3-arit-a');
+  const selB = document.getElementById('m3-arit-b');
+  const selC = document.getElementById('m3-arit-c');
+  [selA, selB, selC].forEach(sel => {
+    sel.innerHTML = aritWords.map(w => `<option value="${w}">${w}</option>`).join('');
+  });
+  selA.value = 're'; selB.value = 'uomo'; selC.value = 'donna';
+
+  function aritTarget(){
+    const A = ARIT[selA.value], B = ARIT[selB.value], C = ARIT[selC.value];
+    return [A[0] - B[0] + C[0], A[1] - B[1] + C[1]];
+  }
+
+  function aritOverlay(sx, sy){
+    const A = ARIT[selA.value], B = ARIT[selB.value], C = ARIT[selC.value];
+    const t = aritTarget();
+    const arrow = (x1, y1, x2, y2) =>
+      `<line x1="${sx(x1)}" y1="${sy(y1)}" x2="${sx(x2)}" y2="${sy(y2)}" stroke="var(--copper-bright)" stroke-width="1.4" stroke-dasharray="5 4" opacity="0.75" marker-end="url(#m3-arrowhead)"/>`;
+    const tx = sx(t[0]), ty = sy(t[1]);
+    const diamond = `M ${tx} ${ty - 7} L ${tx + 7} ${ty} L ${tx} ${ty + 7} L ${tx - 7} ${ty} Z`;
+    return `<defs><marker id="m3-arrowhead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="var(--copper-bright)"/></marker></defs>` +
+      arrow(B[0], B[1], A[0], A[1]) +
+      arrow(C[0], C[1], t[0], t[1]) +
+      `<path d="${diamond}" fill="var(--copper-bright)"/>` +
+      `<text class="em-label accent" x="${tx + 10}" y="${ty - 8}">bersaglio</text>`;
+  }
+
+  const nearestEl = document.getElementById('m3-arit-nearest');
+  function updateNearest(){
+    const t = aritTarget();
+    const ranked = aritWords
+      .map(w => ({ w, d: Math.hypot(ARIT[w][0] - t[0], ARIT[w][1] - t[1]) }))
+      .sort((a, b) => a.d - b.d)
+      .slice(0, 3);
+    nearestEl.innerHTML = ranked.map(r =>
+      `<li>${r.w} — <span class="dist">${r.d.toFixed(3)}</span></li>`
+    ).join('');
+  }
+
+  const aritMap = renderEmbeddingMap('m3-mappa-aritmetica', toPoints(ARIT), {
+    overlay: aritOverlay,
+    extraExtent: () => [aritTarget()]
+  });
+  [selA, selB, selC].forEach(sel => {
+    sel.addEventListener('change', () => { aritMap.redraw(); updateNearest(); });
+  });
+  updateNearest();
+
+  // ============ istanza 3.5: polisemia ============
+  const POLI = EMB.polisemia;
+
+  function centroid2D(coordsObj, gruppo){
+    const pts = Object.entries(coordsObj)
+      .filter(([w]) => GROUP_OF[w] === gruppo)
+      .map(([, c]) => c);
+    const cx = pts.reduce((s, c) => s + c[0], 0) / pts.length;
+    const cy = pts.reduce((s, c) => s + c[1], 0) / pts.length;
+    return [cx, cy];
+  }
+
+  const centroSport = centroid2D(POLI, 'sportivo');
+  const centroChim = centroid2D(POLI, 'chimico');
+  const calcioPt = POLI.calcio;
+  const distSport = Math.hypot(calcioPt[0] - centroSport[0], calcioPt[1] - centroSport[1]);
+  const distChim = Math.hypot(calcioPt[0] - centroChim[0], calcioPt[1] - centroChim[1]);
+
+  function poliOverlay(sx, sy){
+    const mark = (c, color, label, labelDy) =>
+      `<g><circle cx="${sx(c[0])}" cy="${sy(c[1])}" r="8" fill="none" stroke="${color}" stroke-width="1.6" stroke-dasharray="2 2"/>` +
+      `<line x1="${sx(c[0]) - 4}" y1="${sy(c[1])}" x2="${sx(c[0]) + 4}" y2="${sy(c[1])}" stroke="${color}" stroke-width="1.4"/>` +
+      `<line x1="${sx(c[0])}" y1="${sy(c[1]) - 4}" x2="${sx(c[0])}" y2="${sy(c[1]) + 4}" stroke="${color}" stroke-width="1.4"/>` +
+      `<text class="em-label" x="${sx(c[0]) + 12}" y="${sy(c[1]) + labelDy}" style="fill:${color}">${label}</text></g>`;
+    const link = (c, color, dist) => {
+      const mx = (sx(calcioPt[0]) + sx(c[0])) / 2;
+      const my = (sy(calcioPt[1]) + sy(c[1])) / 2;
+      return `<line x1="${sx(calcioPt[0])}" y1="${sy(calcioPt[1])}" x2="${sx(c[0])}" y2="${sy(c[1])}" stroke="${color}" stroke-width="1.3" stroke-dasharray="4 4" opacity="0.85"/>` +
+        `<text class="em-label" x="${mx + 8}" y="${my - 6}" style="fill:${color}">${dist.toFixed(3)}</text>`;
+    };
+    return link(centroSport, GROUP_COLORS.sportivo, distSport) +
+      link(centroChim, GROUP_COLORS.chimico, distChim) +
+      mark(centroSport, GROUP_COLORS.sportivo, 'centroide sportivo', 4) +
+      mark(centroChim, GROUP_COLORS.chimico, 'centroide chimico', 4);
+  }
+
+  renderEmbeddingMap('m3-mappa-polisemia', toPoints(POLI), {
+    overlay: poliOverlay,
+    extraExtent: () => [centroSport, centroChim]
+  });
+
+  document.getElementById('m3-poli-caption').innerHTML =
+    `Nella proiezione 2D qui sopra, "calcio" dista <strong>${distSport.toFixed(3)}</strong> dal centroide sportivo e <strong>${distChim.toFixed(3)}</strong> da quello chimico (distanze euclidee calcolate dal vivo su questa proiezione). Nello spazio reale a 300 dimensioni la misura è diversa — una similarità coseno, non una distanza su una proiezione — ma racconta la stessa storia: <strong>0.62</strong> di similarità con il gruppo sportivo contro <strong>0.44</strong> con quello chimico. Due misure distinte, da non confondere: la prima serve al disegno, la seconda è il dato nello spazio originale.`;
+</script>
+
+</body>
+</html>
