@@ -84,11 +84,12 @@
   }
   .sidebar-kicker{
     font-variant: small-caps; letter-spacing: .06em; font-size: .74rem;
-    color: var(--grigio-soft); margin-bottom: 10px;
+    color: var(--blu-chiaro); margin-bottom: 10px;
   }
   .sidebar-title{
-    font-family: var(--serif); font-weight: 500; font-size: 1.02rem;
-    color: var(--inchiostro); margin-bottom: 22px;
+    font-family: var(--serif); font-weight: 700; font-size: 1.02rem;
+    color: var(--blu); margin-bottom: 22px; font-variant: small-caps;
+    text-decoration: none; display: block;
   }
   .sidebar .parte{ margin-top: 26px; }
   .sidebar .parte:first-of-type{ margin-top: 0; }
@@ -196,13 +197,23 @@
     color: var(--inchiostro);
   }
 
-  .abstract{
-    font-size: 1.06rem;
-    color: var(--grigio-testo);
-    padding: 22px 24px;
-    background: var(--bianco);
-    border-left: 3px solid var(--arancio);
-    border-radius: 2px;
+  /* taglio editoriale per l'abstract d'apertura (Parte 1): capolettera, righe
+     sottili sopra/sotto, etichetta centrata — un registro da rivista/paper,
+     riservato a questo unico paragrafo, non condiviso con gli altri. */
+  .editoriale-abstract{
+    margin: 8px 0 32px;
+    padding: 30px 0;
+  }
+  .editoriale-abstract-label{
+    display: block;
+    text-align: center;
+    margin-bottom: 18px;
+  }
+  .editoriale-abstract-testo{
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: var(--inchiostro);
+    margin: 0;
   }
 
   /* reveal-on-scroll */
@@ -234,16 +245,11 @@
     font-size: clamp(2rem, 6vw, 3.1rem);
     line-height:1.08;
     margin-bottom: 26px;
+    text-transform: uppercase;
   }
   .hero h1 em{
     font-style: italic;
     color: var(--arancio-scuro);
-  }
-  .hero .sottotitolo{
-    font-size: 1.15rem;
-    color: var(--grigio-testo);
-    max-width: 62ch;
-    margin-bottom: 40px;
   }
 
   /* ---------- chiusura ---------- */
@@ -408,17 +414,16 @@
 
 <nav class="sidebar" aria-label="Indice del saggio">
   <div class="sidebar-kicker">Indice</div>
-  <div class="sidebar-title">Dal bit alle entità semantiche</div>
+  <a class="sidebar-title" href="presentazione.html#apertura">Dal bit alle entità semantiche</a>
 
   <div class="parte">
-    <details class="modulo" open>
-      <summary class="current">Presentazione — Dal bit alle entità semantiche</summary>
-      <div class="unita-list scrollspy" id="presentazione-scrollspy">
-        <a href="presentazione.html#parte-1" data-spy-target="parte-1"><span class="num">1</span>Framework epistemologico: i limiti che condividiamo con le macchine</a>
-        <a href="presentazione.html#parte-2" data-spy-target="parte-2"><span class="num">2</span>Il dominio: struttura e composizione del saggio interattivo</a>
-        <a href="presentazione.html#parte-3" data-spy-target="parte-3"><span class="num">3</span>La lente semantica</a>
-      </div>
-    </details>
+    <div class="parte-heading">Presentazione</div>
+    <div class="unita-list scrollspy" id="presentazione-scrollspy">
+      <a href="presentazione.html#parte-1" data-spy-target="parte-1"><span class="num">1</span>Da «re» a «regina»</a>
+      <a href="presentazione.html#parte-2" data-spy-target="parte-2"><span class="num">2</span>I limiti che condividiamo</a>
+      <a href="presentazione.html#parte-3" data-spy-target="parte-3"><span class="num">3</span>Struttura, composizione e stack del saggio interattivo</a>
+      <a href="presentazione.html#parte-4" data-spy-target="parte-4"><span class="num">4</span>Il grafo e la lente semantica</a>
+    </div>
   </div>
 
   <div class="parte">
@@ -565,26 +570,34 @@
     <div class="wrap">
       <div class="kicker">Presentazione</div>
       <h1>Dal bit alle <em>entità semantiche</em></h1>
-      <p class="sottotitolo">Un saggio interattivo come dominio, formalizzato in un'ontologia: cartografia della conoscenza tra spazio vettoriale e grafo — dall'apprendimento dei modelli linguistici al knowledge engineering.</p>
-
-      <p class="abstract">Il presente caso di studio integra in un unico lavoro la scrittura tecnica, che produce un saggio interattivo su come funzionano i modelli linguistici — dai principi discreti dell'hardware fino allo spazio vettoriale in cui si rappresenta il significato — e la sua cartografia: un vocabolario controllato e un'ontologia OWL che formalizzano quello stesso dominio in un grafo di entità semantiche verificabile da un reasoner, non solo descritto in prosa.</p>
-
-      <p class="abstract">C'è un piccolo gioco linguistico che chiunque risolve all'istante, quasi senza pensarci. Alla parola «re» si toglie mentalmente tutto ciò che ha a che fare con l'essere un uomo, e si aggiunge tutto ciò che ha a che fare con l'essere una donna. La risposta arriva da sola: «regina». Sembra solo buon senso linguistico, non un calcolo. Eppure è precisamente questo calcolo — fatto non con le parole ma con i numeri che le rappresentano dentro un modello linguistico — a rivelare qualcosa di sorprendente su come i modelli linguistici (ovvero le reti neurali che imparano il linguaggio) trattano il significato.</p>
-
-      <p class="abstract">Un interruttore non sa cosa vuol dire «regina». Sa solo accendersi o spegnersi — un bit, niente altro. Eppure, sommando miliardi di quegli scatti in una rete addestrata a prevedere la parola successiva, succede qualcosa che nessun singolo interruttore prevede: le parole finiscono per occupare posizioni in uno spazio a centinaia di dimensioni, e quelle posizioni si comportano come se avessero una geometria del senso. Quella stessa sottrazione e quella stessa somma, fatte non sulle parole ma sui numeri che le rappresentano, atterrano nello stesso punto: vicino a «regina». Nessuno ha scritto questa regola: è emersa dai dati, non è stata dichiarata da nessuno — ed è precisamente qui che comincia la domanda a cui il resto di questo lavoro prova a rispondere. Una cosa è vedere il significato comportarsi in modo prevedibile dentro un vettore. Un'altra è poterlo dichiarare, interrogare, sottoporre a un controllo che non dipenda dal fidarsi della geometria. Quello che segue racconta entrambi i percorsi: come si arriva dal primo bit a quel punto nello spazio, e cosa serve, dopo, per trasformare quella posizione in un concetto di cui si possa rispondere.</p>
-
-      <p class="abstract">Il caso di studio è stato costruito in due fasi. La prima ha prodotto il dominio: il saggio interattivo, con i componenti tecnici — tokenizzatore, embedding, aritmetica vettoriale — calcolati su dati reali, non simulati; la stessa aritmetica che il saggio chiama esplicitamente non deduzione ma abduzione, inferenza all'analogia più plausibile. La seconda ha prodotto la mappa: il vocabolario controllato in SKOS e la micro-ontologia in OWL, verificati con un reasoner. Le due fasi corrispondono a due forme di rappresentazione della conoscenza: sub-simbolica la prima, dove il significato emerge dai dati come geometria, plausibile ma mai certa; simbolica la seconda, dove il significato è dichiarato come categoria verificabile — difendibile in un tribunale che non conosce sfumature geometriche.</p>
-
-      <p class="abstract">Entrambe le fasi sono state svolte in collaborazione con un agente AI — un assistente in grado di leggere e scrivere codice, eseguire strumenti di verifica e iterare sul proprio lavoro, con modelli diversi impiegati a seconda del compito. Nella prima fase l'agente ha contribuito alla stesura e alla verifica tecnica dei componenti del saggio. Nella seconda, alla costruzione e al controllo formale dell'ontologia. La verifica finale, in entrambe le fasi, resta umana.</p>
-
-      <p class="abstract">Chi lavora oggi fuori dai grandi laboratori — un'organizzazione piccola, un progetto indipendente — raramente può permettersi entrambe le competenze come ruoli separati: la scrittura tecnica che rende un dominio comprensibile a un lettore, e la costruzione di un grafo di conoscenza o di un'ontologia che lo rende interrogabile da una macchina — quello che oggi si chiama knowledge engineering. Di solito resta solo una delle due, e l'altra si perde. Questo caso di studio è un piccolo controesempio: la stessa persona, con l'aiuto dello stesso agente, ha attraversato entrambe le fasi in sequenza — prima il mestiere di chi spiega, poi quello di chi formalizza. Non perché le due competenze siano diventate la stessa cosa, ma perché un assistente capace di scrivere codice, verificare un'ontologia e iterare sul proprio lavoro abbassa il costo di attraversare il confine tra l'una e l'altra: è un piccolo contrappeso tecnico alla logica per cui solo chi possiede grande scala — infrastrutture, laboratori, ruoli distinti e retribuiti separatamente — può permettersi entrambe le competenze insieme.</p>
+      <div class="editoriale-abstract">
+        <span class="editoriale-abstract-label apparato">Abstract</span>
+        <p class="editoriale-abstract-testo">Il presente caso di studio integra in un unico lavoro la scrittura tecnica, che produce un saggio interattivo su come funzionano i modelli linguistici — dai principi discreti dell'hardware fino allo spazio vettoriale in cui si rappresenta il significato — e la sua cartografia: un vocabolario controllato e un'ontologia OWL che formalizzano quello stesso dominio in un grafo di entità semantiche verificabile da un reasoner. Un percorso che parte dall'analisi dell'apprendimento dei modelli linguistici per approdare al knowledge engineering.</p>
+      </div>
     </div>
   </section>
 
   <section id="parte-1">
     <div class="wrap reveal">
       <div class="eyebrow">Parte 1</div>
-      <h2 class="title">Framework epistemologico: i limiti che condividiamo con le macchine</h2>
+      <h2 class="title">Da «re» a «regina»</h2>
+
+      <p>C'è un piccolo gioco linguistico che chiunque risolve all'istante, quasi senza pensarci. Alla parola «re» si toglie mentalmente tutto ciò che ha a che fare con l'essere un uomo, e si aggiunge tutto ciò che ha a che fare con l'essere una donna. La risposta arriva da sola: «regina». Sembra solo buon senso linguistico, non un calcolo. Eppure è precisamente questo calcolo — fatto non con le parole ma con i numeri che le rappresentano dentro un modello linguistico — a rivelare qualcosa di sorprendente su come i modelli linguistici (ovvero le reti neurali che imparano il linguaggio) trattano il significato.</p>
+
+      <p>Un interruttore non sa cosa vuol dire «regina». Sa solo accendersi o spegnersi — un bit, niente altro. Eppure, sommando miliardi di quegli scatti in una rete addestrata a prevedere la parola successiva, succede qualcosa che nessun singolo interruttore prevede: le parole finiscono per occupare posizioni in uno spazio a centinaia di dimensioni, e quelle posizioni si comportano come se avessero una geometria del senso. Quella stessa sottrazione e quella stessa somma, fatte non sulle parole ma sui numeri che le rappresentano, atterrano nello stesso punto: vicino a «regina». Nessuno ha scritto questa regola: è emersa dai dati, non è stata dichiarata da nessuno — ed è precisamente qui che comincia la domanda a cui il resto di questo lavoro prova a rispondere. Una cosa è vedere il significato comportarsi in modo prevedibile dentro un vettore. Un'altra è poterlo dichiarare, interrogare, sottoporre a un controllo che non dipenda dal fidarsi della geometria. Quello che segue racconta entrambi i percorsi: come si arriva dal primo bit a quel punto nello spazio, e cosa serve, dopo, per trasformare quella posizione in un concetto di cui si possa rispondere.</p>
+
+      <p>Il caso di studio è stato costruito in due fasi. La prima ha prodotto il dominio: il saggio interattivo, con i componenti tecnici — tokenizzatore, embedding, aritmetica vettoriale — calcolati su dati reali, non simulati; la stessa aritmetica che il saggio chiama esplicitamente non deduzione ma abduzione, inferenza all'analogia più plausibile. La seconda ha prodotto la mappa: il vocabolario controllato in SKOS e la micro-ontologia in OWL, verificati con un reasoner. Le due fasi corrispondono a due forme di rappresentazione della conoscenza: sub-simbolica la prima, dove il significato emerge dai dati come geometria, plausibile ma mai certa; simbolica la seconda, dove il significato è dichiarato come categoria verificabile — difendibile in un tribunale che non conosce sfumature geometriche.</p>
+
+      <p>Entrambe le fasi sono state svolte in collaborazione con un agente AI — un assistente in grado di leggere e scrivere codice, eseguire strumenti di verifica e iterare sul proprio lavoro, con modelli diversi impiegati a seconda del compito. Nella prima fase l'agente ha contribuito alla stesura e alla verifica tecnica dei componenti del saggio. Nella seconda, alla costruzione e al controllo formale dell'ontologia. La verifica finale, in entrambe le fasi, resta umana.</p>
+
+      <p>Chi lavora oggi fuori dai grandi laboratori — un'organizzazione piccola, un progetto indipendente — raramente può permettersi entrambe le competenze come ruoli separati: la scrittura tecnica che rende un dominio comprensibile a un lettore, e la costruzione di un grafo di conoscenza o di un'ontologia che lo rende interrogabile da una macchina — quello che oggi si chiama knowledge engineering. Di solito resta solo una delle due, e l'altra si perde. Questo caso di studio è un piccolo controesempio: la stessa persona, con l'aiuto dello stesso agente, ha attraversato entrambe le fasi in sequenza — prima il mestiere di chi spiega, poi quello di chi formalizza. Non perché le due competenze siano diventate la stessa cosa, ma perché un assistente capace di scrivere codice, verificare un'ontologia e iterare sul proprio lavoro abbassa il costo di attraversare il confine tra l'una e l'altra: è un piccolo contrappeso tecnico alla logica per cui solo chi possiede grande scala — infrastrutture, laboratori, ruoli distinti e retribuiti separatamente — può permettersi entrambe le competenze insieme.</p>
+    </div>
+  </section>
+
+  <section id="parte-2">
+    <div class="wrap reveal">
+      <div class="eyebrow">Parte 2</div>
+      <h2 class="title">I limiti che condividiamo</h2>
 
       <p>Il confine appena attraversato — tra chi spiega e chi formalizza, reso più economico da un agente capace di entrambi i mestieri — è un caso piccolo di una domanda più grande, e più temuta. C'è un timore che circola, oggi, attorno a ogni discorso sull'intelligenza artificiale: che le macchine stiano per sostituire l'uomo — nel lavoro, nel pensiero, forse anche nella coscienza. Il lavoro appena descritto suggerisce altro: un agente ha reso più facile attraversare un confine tra due competenze umane, non ha eliminato nessuna delle due. Eppure è proprio questo timore a costruire gran parte della retorica di mercato di questi anni, tanto nell'annuncio trionfale quanto nell'allarme. Non si può governare ciò che non si conosce, e conoscere la macchina — davvero, nei suoi meccanismi, non nelle sue promesse — è indispensabile per saperla governare. Conoscere, qui, significa conoscerne i limiti epistemologici: i limiti di ciò che possiamo sapere della macchina.</p>
 
@@ -598,20 +611,20 @@
     </div>
   </section>
 
-  <section id="parte-2">
+  <section id="parte-3">
     <div class="wrap reveal">
-      <div class="eyebrow">Parte 2</div>
-      <h2 class="title">Il dominio: struttura e composizione del saggio interattivo</h2>
+      <div class="eyebrow">Parte 3</div>
+      <h2 class="title">Struttura, composizione e stack del saggio interattivo</h2>
 
       <p>Il saggio è organizzato in tre parti. La prima comincia dalle funzioni booleane e dall'hardware — i mattoni discreti su cui tutto il resto poggia. La seconda racconta, in quattro tappe, da dove viene il sogno di una macchina che calcola il pensiero e quali limiti ha oggi — informatica, filosofia della mente, biologia e fisica messe in dialogo, non separate. La terza e ultima ricostruisce il funzionamento tecnico vero e proprio: tokenizzazione, probabilità, lo spazio vettoriale del significato già anticipato in apertura, reti neurali, Transformer, scala.</p>
       <p>Un filo attraversa l'intera trattazione: la tensione tra discreto e continuo. Il saggio non risolve questa tensione ma la usa come chiave di lettura. Un vocabolario di token è un insieme enumerabile, finito; lo spazio vettoriale in cui quei token vengono proiettati è invece continuo, ad alta dimensionalità — la stessa distanza che separa, in matematica, i numeri naturali dai numeri reali. Inoltre ogni componente interattivo è verificato su dati reali, non simulato: il tokenizzatore BPE è addestrato per davvero sul testo del saggio stesso; i vettori sono fastText reali, non inventati per l'occasione; la rete neurale del modulo sulle reti è effettivamente addestrata sul problema XOR, non animata a mano. Chi clicca guarda l'output di un calcolo realmente avvenuto, non una messinscena.</p>
     </div>
   </section>
 
-  <section id="parte-3">
+  <section id="parte-4">
     <div class="wrap reveal">
-      <div class="eyebrow">Parte 3</div>
-      <h2 class="title">La lente semantica</h2>
+      <div class="eyebrow">Parte 4</div>
+      <h2 class="title">Il grafo e la lente semantica</h2>
 
       <p>Formalizzare un dominio come ontologia non è raccontarlo di nuovo in un linguaggio più rigido: è essere costretti a decidere cose che la prosa lascia sospese. Tre esempi bastano a mostrare la differenza. Cos'è un termine, e cosa non lo è? I teorici citati nel saggio non sono concetti nel dominio: sono agenti, autori di un'affermazione. Confonderli con i concetti che nominano avrebbe mescolato una gerarchia con una relazione di attribuzione. Dove finisce una gerarchia genere-specie, e comincia una relazione di tutt'altro tipo? Un generico «è collegato a» avrebbe appiattito «risolve un problema» e «è analogo a» sotto la stessa freccia. Quale incertezza va formalizzata, e quale resta solo descritta? Che un dataset sia reale o illustrativo non è una sfumatura da lasciare a un commento: è una classe che un reasoner può far rispettare, o violare visibilmente.</p>
 
@@ -657,14 +670,14 @@
 
   // --- scroll-spy: illumina nella sidebar la Parte attualmente in vista ---
   const spyLinks = document.querySelectorAll('#presentazione-scrollspy a[data-spy-target]');
-  const spySections = document.querySelectorAll('#parte-1, #parte-2, #parte-3');
+  const spySections = document.querySelectorAll('#parte-1, #parte-2, #parte-3, #parte-4');
   const spy = new IntersectionObserver((entries) => {
     entries.forEach(e => {
       if (e.isIntersecting) {
         spyLinks.forEach(a => a.classList.toggle('active', a.dataset.spyTarget === e.target.id));
       }
     });
-  }, { threshold: 0.5 });
+  }, { rootMargin: '-45% 0px -45% 0px', threshold: 0 });
   spySections.forEach(s => spy.observe(s));
 
   // ============ termini collegati all'ontologia + tenda laterale ============
