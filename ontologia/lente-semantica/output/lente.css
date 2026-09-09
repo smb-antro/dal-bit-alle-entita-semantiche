@@ -196,8 +196,16 @@ a:hover { text-decoration-color: var(--verde-scuro); }
 .satellite:hover text { fill: var(--verde-scuro); }
 .linea-guida { stroke-width: 1; opacity: 0.55; }
 
-.satellite-2 circle { cursor: pointer; opacity: 0.6; }
+.satellite-2 circle { cursor: pointer; stroke-width: 1; opacity: 0.85; }
 .satellite-2:hover circle { opacity: 1; }
+.ramo-2 { fill: none; stroke-width: 1; opacity: 0.5; }
+.satellite-2:hover .ramo-2 { opacity: 0.9; }
+.satellite-2 text {
+    font-size: 8.5px;
+    fill: var(--grigio-soft);
+    pointer-events: none;
+}
+.satellite-2:hover text { fill: var(--grigio-testo); }
 
 .arco-categoria { fill: none; stroke-width: 5; }
 

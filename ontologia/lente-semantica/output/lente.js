@@ -207,8 +207,30 @@
 
     const svg = d3.select("#svg-grafo");
     const CX = 440, CY = 440;
-    const R_ARCO = 95, R_NODO = 195, R_TESTO = 205, R_NODO2 = 235;
+    const R_ARCO = 95, R_NODO = 195, R_TESTO = 205, R_NODO2 = 258;
     const GAP = 0.045; // radianti fra un gruppo di relazione e il successivo
+    const MAX_FIGLI_PER_NODO = 5;
+    const GAP_FIGLI = 0.08; // scarto minimo dei rami di 2° grado dalla direzione radiale del nodo, su entrambi i lati
+    const STEP_FIGLI = 0.055; // incremento fra un ramo e il successivo sullo stesso lato
+
+    // I rami di 2° grado non sono una linea dritta: sono una curva che
+    // diverge subito dall'angolo del nodo padre invece di restarci vicina
+    // (come fa invece d3.linkRadial, pensato per alberi dove il salto di
+    // raggio è grande — qui è corto, e l'etichetta del nodo padre corre
+    // esattamente su quell'angolo per un bel tratto). Messo a punto e
+    // verificato in lente-semantica/lab/backpropagation-grado2.js e
+    // attention-grado2.js: senza questa curva, i rami tagliano quasi
+    // sempre l'etichetta del proprio nodo padre.
+    function ramoPath(r0, a0, r1, a1) {
+        const p0 = [r0 * Math.cos(a0), r0 * Math.sin(a0)];
+        const rC1 = r0 + (r1 - r0) * 0.15;
+        const aC1 = a0 + (a1 - a0) * 0.7;
+        const c1 = [rC1 * Math.cos(aC1), rC1 * Math.sin(aC1)];
+        const rC2 = r0 + (r1 - r0) * 0.5;
+        const c2 = [rC2 * Math.cos(a1), rC2 * Math.sin(a1)];
+        const p1 = [r1 * Math.cos(a1), r1 * Math.sin(a1)];
+        return `M${p0[0]},${p0[1]} C${c1[0]},${c1[1]} ${c2[0]},${c2[1]} ${p1[0]},${p1[1]}`;
+    }
 
     // Etichetta col tipo di relazione + nodo di destinazione: non più un
     // testo permanente sull'arco (si sovrapponeva sempre a una linea guida
@@ -314,22 +336,54 @@
                     .text(tronca(altro.label, 34));
 
                 if (grado2Attivo) {
-                    const viciniAltro = viciniDi(altroId)
+                    const figli = viciniDi(altroId)
                         .filter((v) => v.altro !== id && !g.voci.includes(v.altro))
-                        .slice(0, 5);
-                    viciniAltro.forEach((v2, j) => {
-                        const spread = 0.11;
-                        const a2 = aNodo - spread / 2 + (viciniAltro.length > 1 ? (spread * j) / (viciniAltro.length - 1) : spread / 2);
-                        const x2 = CX + R_NODO2 * Math.cos(a2), y2 = CY + R_NODO2 * Math.sin(a2);
+                        .slice(0, MAX_FIGLI_PER_NODO);
+
+                    // Ventaglio simmetrico attorno alla direzione radiale del
+                    // nodo padre (non da un lato solo — non serve, il vero
+                    // motivo per cui i rami toccavano l'etichetta era la
+                    // curva, non il lato): alternando i figli a destra/
+                    // sinistra a distanza crescente, nessuno cade mai a
+                    // scarto zero, dove finirebbe esattamente sull'etichetta.
+                    let latoDestro = 0, latoSinistro = 0;
+                    figli.forEach((v2, j) => {
                         const n2 = NODI_PER_ID.get(v2.altro);
+                        const a2 = j % 2 === 0
+                            ? aNodo + (GAP_FIGLI + STEP_FIGLI * latoDestro++)
+                            : aNodo - (GAP_FIGLI + STEP_FIGLI * latoSinistro++);
+                        const catFiglio = categoriaDi(v2.prop);
+                        const x2 = CX + R_NODO2 * Math.cos(a2), y2 = CY + R_NODO2 * Math.sin(a2);
+
                         const grp2 = layer2.append("g").attr("class", "satellite-2")
+                            .attr("data-cat", catFiglio)
                             .style("cursor", "pointer")
-                            .on("click", () => selezionaNodo(v2.altro));
-                        grp2.append("title").text(`${n2.label} (2° grado, via ${altro.label})`);
-                        grp2.append("line").attr("x1", x).attr("y1", y).attr("x2", x2).attr("y2", y2)
-                            .attr("stroke", COLORE_CATEGORIA[categoriaDi(v2.prop)]).attr("stroke-width", 0.75).attr("opacity", 0.35);
-                        grp2.append("circle").attr("cx", x2).attr("cy", y2).attr("r", 3)
-                            .attr("fill", COLORE_CATEGORIA[categoriaDi(v2.prop)]);
+                            .on("click", () => selezionaNodo(v2.altro))
+                            .on("mouseenter", () => mostraBadgeRelazione({ prop: v2.prop, categoria: catFiglio }, n2))
+                            .on("mouseleave", () => nascondiBadgeRelazione());
+                        grp2.append("title").text(`${n2.label} — ${etichettaRelazione(v2.prop, v2.uscente)} (2° grado, via ${altro.label})`);
+
+                        grp2.append("path")
+                            .attr("class", "ramo-2")
+                            .attr("d", ramoPath(R_NODO, aNodo, R_NODO2, a2))
+                            .attr("transform", `translate(${CX},${CY})`)
+                            .attr("stroke", COLORE_CATEGORIA[catFiglio]);
+
+                        grp2.append("circle").attr("cx", x2).attr("cy", y2).attr("r", 3.5)
+                            .attr("fill", TENUE_CATEGORIA[catFiglio]).attr("stroke", COLORE_CATEGORIA[catFiglio]);
+
+                        // Etichetta piccola ma sempre visibile (non solo al
+                        // passaggio del mouse): prima il 2° grado era un
+                        // punto muto, nominato solo dal tooltip nativo.
+                        const gradiTesto2 = (a2 * 180) / Math.PI;
+                        const specchiato2 = gradiTesto2 > 90 && gradiTesto2 < 270;
+                        const xTesto2 = CX + (R_NODO2 + 9) * Math.cos(a2), yTesto2 = CY + (R_NODO2 + 9) * Math.sin(a2);
+                        grp2.append("text")
+                            .attr("x", xTesto2).attr("y", yTesto2)
+                            .attr("transform", `rotate(${specchiato2 ? gradiTesto2 + 180 : gradiTesto2}, ${xTesto2}, ${yTesto2})`)
+                            .attr("text-anchor", specchiato2 ? "end" : "start")
+                            .attr("dominant-baseline", "middle")
+                            .text(tronca(n2.label, 20));
                     });
                 }
             });
