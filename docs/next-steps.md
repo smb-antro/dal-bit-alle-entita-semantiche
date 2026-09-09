@@ -56,17 +56,29 @@
 
    Altri mockup potrebbero aggiungersi.
 
+   **Aggiornamento 9 settembre 2026**: il secondo grado della Lente semantica
+   (vicini dei vicini) era una lacuna di leggibilità nota — punti muti senza
+   etichetta, segnalata come "ancora da fare" in una versione precedente di
+   questo file. ✅ **Risolta**: vedi `decision-log.md`, voce "Lente semantica:
+   secondo grado come ramificazione leggibile".
+
 5. **Collegare la card** già riservata in `~/projects/portfolio/site/lab.html`
    ("Dal bit alle entità semantiche") a questo repository, una volta pronto.
 
 ## Debito rimasto, non ancora fatto
 
 - **Rigenerare `dominio/output/dal-bit-alle-entità-semantiche_it.html`** via
-  `dominio/src/build_output.py` — deliberatamente non rigenerato dal 4 settembre,
-  quando 7 capitoli erano ancora da convertire. Ora che il saggio è interamente
-  convertito e arricchito, il bundle statico è stale.
-- **Commit** — il repository ha ancora solo 2 commit (`feat(init)`,
-  `feat(design-system)`); tutto il lavoro successivo — conversione del design system
-  ai capitoli restanti, tenda dei concetti sull'intero saggio, poster del grafo —
-  non è mai stato committato. Da fare solo su richiesta esplicita (vedi
-  `../CLAUDE.md`, Regole operative).
+  `dominio/src/build_output.py` — deliberatamente non rigenerato dal 4 settembre.
+  Il bundle statico è ormai molto indietro rispetto ai file reali (contenuto,
+  design system, tenda dei concetti, indice riorganizzato), e lo script stesso
+  si è rivelato in parte disallineato (testo e font vecchi hardcoded in alcuni
+  punti) — non un semplice ri-lancio, va prima aggiornato.
+- **Licenza e push su GitHub** — vedi sopra, "Prima della pubblicazione".
+
+## Fatto, non più debito
+
+- ~~**Commit**~~ — ✅ 9 settembre 2026: 5 commit totali (`feat(init)`,
+  `feat(design-system)`, due `feat(saggio)` per il lavoro sul tema chiaro e
+  sulla riorganizzazione di sidebar/presentazione, `feat(lente)` per il
+  secondo grado). Repository ancora non pubblicato su GitHub — decisione a
+  parte, vedi sopra.

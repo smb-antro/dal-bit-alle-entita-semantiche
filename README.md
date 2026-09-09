@@ -45,10 +45,15 @@ non riscritte per l'occasione.
 
 ## Stato
 
-Repository appena creato (4 settembre 2026), struttura in ordine, non ancora integrato
-— vedi la roadmap in [docs/next-steps.md](docs/next-steps.md) — e non ancora pubblicato
-su GitHub. La card è già riservata in `portfolio/site/lab.html` ("Dal bit alle
-entità semantiche"), da collegare qui solo a integrazione avvenuta.
+Integrazione sostanzialmente conclusa (9 settembre 2026): design chiaro uniforme su
+tutte le pagine navigabili, tenda dei concetti su tutto il saggio (110 concetti
+cliccabili), poster statico del grafo completo, secondo grado della Lente semantica
+reso leggibile — vedi lo stato di dettaglio in [docs/snapshot.md](docs/snapshot.md).
+5 commit locali, non ancora pubblicato su GitHub (decisione a parte, da confermare).
+Resta da fare: scegliere la licenza, aggiornare e rigenerare il bundle statico a file
+singolo — vedi [docs/next-steps.md](docs/next-steps.md). La card è già riservata in
+`portfolio/site/lab.html` ("Dal bit alle entità semantiche"), da collegare qui
+quando il repository sarà pubblicato.
 
 ## Licenza
 

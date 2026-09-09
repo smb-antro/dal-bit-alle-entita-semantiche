@@ -408,6 +408,17 @@ reale e nella Lente semantica.
 - **Verifica**: colore letto via `getComputedStyle` (non a occhio) su un capitolo
   campione e sulla Lente semantica dopo la modifica; screenshot di conferma.
 
+## 2026-09-08 — Dimensione dei caratteri +20%, non registrato finora
+
+Voce mancante in questo log fino ad ora: lo stesso test di grafica sul
+prototipo PMI che ha portato al verde più luminoso (voce precedente) aveva
+confermato anche che EB Garamond risultava visivamente piccolo. Applicato
+`font-size: 120%` su `html` a 13 dei 14 file navigabili del saggio (i 12
+capitoli più `presentazione.html`), stesso giro di lavoro, stesso commit.
+L'appendice `dietro-i-widget.html` è rimasta fuori — non risulta una
+motivazione registrata all'epoca; verificare se sia un'omissione o una scelta
+deliberata prima di un prossimo intervento sulla tipografia.
+
 ## 2026-09-09 — `indice.html` rimosso, non ricollegato
 
 Deciso dall'utente dopo aver riletto il contenuto: la sidebar presente in ogni
@@ -423,3 +434,102 @@ diversi dal resto — Space Grotesk/Source Serif 4 invece di EB Garamond) e la t
 ridondanza con la sidebar. File committato nel commit iniziale
 (`feat(init)`, 4 settembre 2026) — rimosso dalla working tree ma recuperabile dallo
 storico git in qualunque momento, nessuna perdita reale.
+
+## 2026-09-09 — Sidebar e presentazione: indice riorganizzato, abstract editoriale
+
+Sessione di modifiche puntuali guidate dal vivo nel browser (screenshot +
+elemento selezionato, una modifica alla volta, verifica immediata) su
+`presentazione.html`.
+
+- **Sidebar**: titolo del saggio passato da tutto maiuscolo a maiuscoletto, blu,
+  grassetto, e reso un link diretto al titolo/abstract in apertura pagina
+  (`<a class="sidebar-title" href="presentazione.html#apertura">`). Kicker
+  "Indice" passato da grigio a blu chiaro.
+- **Bug reale trovato e corretto**: la voce "Presentazione" nell'indice
+  risultava nera invece che blu — `.sidebar .voce-presentazione` (specificità
+  0,2,0) perdeva contro la regola preesistente `.sidebar details.modulo summary`
+  (0,2,2) nonostante fosse dichiarata dopo nel foglio di stile; la specificità
+  decide, non l'ordine. Risolto qualificando il selettore
+  (`.sidebar details.modulo summary.voce-presentazione`, 0,3,2).
+- **"Presentazione" non è più una voce collassabile**: era un `<details>` con
+  `<summary>` proprio, unica voce dell'indice trattata diversamente dalle
+  "Parte I/II/III" (semplici `<div class="parte-heading">`). Uniformata: ora è
+  un `div.parte-heading` come le altre, la lista dei 4 sotto-capitoli resta
+  sotto come prima (con lo scrollspy che la illumina scorrendo). La regola CSS
+  duplicata `summary.voce-presentazione` (identica a `.parte-heading`, non più
+  referenziata) è stata rimossa.
+- **Bug reale nello scrollspy, trovato verificando lo scroll dal vivo, non a
+  lettura**: l'`IntersectionObserver` usava `threshold: 0.5` — una sezione
+  doveva occupare il 50% del viewport per "accendere" il pallino
+  corrispondente nell'indice. Le quattro sezioni sono tutte più alte del
+  viewport (calcolato: il massimo raggiungibile va dal 29% al 41% per tre
+  sezioni su quattro), quindi la soglia non era quasi mai raggiungibile.
+  Sostituito con una fascia sottile al centro del viewport
+  (`rootMargin: '-45% 0px -45% 0px', threshold: 0`) — tecnica standard per
+  scrollspy con sezioni di altezza variabile, indipendente dall'altezza della
+  sezione.
+- **Contenuto riorganizzato**: il contenuto introduttivo, prima paragrafi
+  sciolti sotto un unico "abstract" generico, è diventato una vera Parte 1
+  ("Da «re» a «regina»", i 5 paragrafi sul gioco linguistico re/regina, bit,
+  le due fasi del lavoro, l'agente AI, il controesempio) — indice a 4 voci
+  (1 Da «re» a «regina», 2 I limiti che condividiamo, 3 Struttura,
+  composizione e stack del saggio interattivo, 4 Il grafo e la lente
+  semantica), rinumerando le vecchie Parte 1/2/3 a 2/3/4 con titoli più
+  brevi.
+- **Malinteso corretto durante il lavoro**: un'istruzione in due punti
+  ("qui inizia il paragrafo 1 del nuovo indice" + "il primo paragrafo diventa
+  l'abstract") è stata inizialmente fraintesa come riferita allo stesso
+  paragrafo — in realtà il secondo "primo paragrafo" indicava il primissimo
+  paragrafo della pagina (il sottotitolo), non il primo elemento della nuova
+  Parte 1. Corretto spostando il trattamento editoriale (etichetta "Abstract"
+  centrata) sul sottotitolo, non sul paragrafo re/regina.
+- **Trattamento editoriale dell'abstract**, affinato in tre passaggi su
+  richiesta esplicita: capolettera grande e colorato con linee di bordo →
+  capolettera più piccolo senza bordi → nessun capolettera. Resta solo
+  l'etichetta "Abstract" in maiuscoletto centrato sopra il testo.
+
+## 2026-09-09 — Lente semantica: secondo grado come ramificazione leggibile
+
+Lacuna di leggibilità nota da tempo (già segnalata in `next-steps.md`): nel
+grafo radiale, i vicini di secondo grado erano punti pieni collegati da una
+linea dritta quasi invisibile (`opacity: 0.35`), nominati solo dal tooltip
+nativo del browser al passaggio del mouse — nessuna etichetta visibile, nessun
+filtro di legenda funzionante (mancava `data-cat` sui nodi di secondo grado,
+bug indipendente trovato durante il lavoro).
+
+Messo a punto in due prototipi isolati in `ontologia/lente-semantica/lab/`
+(`backpropagation-grado2.*`, poi `attention-grado2.*` come caso denso — 16
+relazioni di primo grado contro le 9 di Backpropagation) prima di toccare la
+pagina reale, su richiesta esplicita dell'utente.
+
+- **Prima ipotesi sbagliata, corretta durante il lavoro**: sembrava bastasse
+  una curva a ramo (`d3.linkRadial`, geometria da dendrogramma) al posto della
+  linea dritta. Verificato dal vivo che i rami continuavano ad attraversare
+  l'etichetta del proprio nodo padre — **causa reale**: l'etichetta del nodo
+  non corre tangente al cerchio come sembrava a un primo sguardo, corre
+  radialmente verso l'esterno (stessa direzione in cui si aprono i rami), e
+  `d3.linkRadial` resta vicino all'angolo di partenza per quasi tutta la
+  lunghezza della curva (verificato campionando punti lungo il tracciato: a
+  metà percorso ancora a metà dello scarto angolare totale) — comodo per
+  alberi con salti di raggio ampi, non per questo caso.
+- **Fix**: curva su misura (`ramoPath`) che diverge subito dall'angolo del
+  nodo padre invece di restarci vicina; ventaglio simmetrico che alterna i
+  figli a destra/sinistra a distanza crescente (mai a scarto zero, dove
+  cadrebbe esattamente sulla direzione dell'etichetta); etichetta piccola ma
+  sempre visibile, non solo al hover; `data-cat` aggiunto (il filtro della
+  legenda ora nasconde anche il secondo grado, prima non lo toccava affatto).
+- **Verifica non solo a occhio**: controllo geometrico automatico (bounding
+  box del testo ruotato, campionamento di punti lungo ogni ramo) su tutti i
+  nodi di entrambi i prototipi — zero rami che attraversano l'etichetta del
+  proprio nodo padre, in entrambi i casi. Confermato anche visivamente con
+  zoom mirati nei punti più affollati del caso denso (Attention).
+- **Portato in `output/lente.js`/`lente.css`** e riverificato sulla pagina
+  reale con lo stesso controllo geometrico (stesso risultato: zero
+  attraversamenti) più test funzionali dal vivo (click di navigazione sui
+  nodi di secondo grado, filtro di legenda). Un problema di cache del
+  server locale di sviluppo durante la verifica (script serviti stale anche
+  dopo una navigazione fresca) risolto temporaneamente con un parametro
+  anti-cache sui tag `<script>`/`<link>`, rimosso prima del commit.
+- Due commit separati: uno per il lavoro di sidebar/presentazione sopra, uno
+  per questa correzione — lavoro semanticamente indipendente.
+
