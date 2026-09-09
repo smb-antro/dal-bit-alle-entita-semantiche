@@ -4,7 +4,12 @@
    specificato — uso font-variant-caps: small-caps sulla stessa famiglia
    (tecnica CSS standard, usa il taglio small-caps reale del font se presente,
    altrimenti sintetizza) invece di introdurre una seconda famiglia non
-   richiesta esplicitamente. Vedi docs/decisioni-modellazione.md, Fase 5. */
+   richiesta esplicitamente. Vedi docs/decisioni-modellazione.md, Fase 5.
+
+   Palette riarmonizzata sulla palette generale del portfolio (bianco/brina/
+   inchiostro/grigio + verde), la stessa ora usata da dominio/ e dalla Lente
+   semantica — verde resta riservato a numerazione e rimandi, come prima.
+   Vedi ../../design-system/README.md. */
 
 @font-face {
     font-family: "EB Garamond";
@@ -22,22 +27,24 @@
 }
 
 :root {
-    --carta: #faf7f0;
-    --carta-alt: #f2ede1;
-    --inchiostro: #1e1a15;
-    --inchiostro-attenuato: #5a5245;
-    --bordo: #ddd3bd;
-    --verde: #1f5c3d;
-    --verde-tenue: #e8efe9;
+    --bianco:        #FFFFFF;
+    --brina:         #F6F8FB;
+    --inchiostro:    #1a1a1a;
+    --grigio-testo:  #4a4540;
+    --grigio-soft:   #8A8580;
+    --verde-scuro:   #2A5628;
+    --verde:         #3D7A3A;
+    --verde-chiaro:  #7AAD76;
+    --line:          rgba(26,26,26,0.12);
 }
 
 * { box-sizing: border-box; }
 
-html { background: var(--carta); }
+html { background: var(--brina); }
 
 body {
     margin: 0;
-    background: var(--carta);
+    background: var(--brina);
     color: var(--inchiostro);
     font-family: "EB Garamond", "Iowan Old Style", Georgia, serif;
     font-size: 1.15rem;
@@ -50,25 +57,25 @@ body {
     padding: 2.5rem 1.5rem 5rem;
 }
 
-a { color: var(--inchiostro); text-decoration-color: var(--bordo); }
-a:hover { text-decoration-color: var(--verde); }
+a { color: var(--inchiostro); text-decoration-color: var(--grigio-soft); }
+a:hover { text-decoration-color: var(--verde-scuro); }
 
 /* Apparato: etichette, breadcrumb, codici unità — maiuscoletto spaziato */
 .apparato, nav.briciole, .etichetta, .codice-unita, .contatore {
     font-variant-caps: small-caps;
     letter-spacing: 0.06em;
     font-size: 0.85rem;
-    color: var(--inchiostro-attenuato);
+    color: var(--grigio-soft);
 }
 
 nav.briciole {
     margin-bottom: 2rem;
 }
-nav.briciole a { color: var(--inchiostro-attenuato); }
-nav.briciole .sep { color: var(--bordo); margin: 0 0.4em; }
+nav.briciole a { color: var(--grigio-soft); }
+nav.briciole .sep { color: var(--grigio-soft); margin: 0 0.4em; }
 
 header.testata {
-    border-bottom: 1px solid var(--bordo);
+    border-bottom: 1px solid var(--line);
     padding-bottom: 1.25rem;
     margin-bottom: 2rem;
 }
@@ -79,13 +86,13 @@ header.testata h1 {
 }
 header.testata .sottotitolo {
     font-style: italic;
-    color: var(--inchiostro-attenuato);
+    color: var(--grigio-testo);
 }
 
 /* Accento verde: SOLO numerazione e rimandi — mai fondi, mai titoli */
-.codice-unita, .contatore, a.rimando { color: var(--verde); }
-a.rimando:hover { text-decoration-color: var(--verde); }
-.freccia { color: var(--verde); }
+.codice-unita, .contatore, a.rimando { color: var(--verde-scuro); }
+a.rimando:hover { text-decoration-color: var(--verde-scuro); }
+.freccia { color: var(--verde-scuro); }
 
 h2 {
     font-weight: 600;
@@ -93,7 +100,7 @@ h2 {
     margin-top: 2.4rem;
     margin-bottom: 0.8rem;
     padding-bottom: 0.3rem;
-    border-bottom: 1px solid var(--bordo);
+    border-bottom: 1px solid var(--line);
 }
 
 .scope-note { margin: 0.6rem 0 1.4rem; }
@@ -101,7 +108,7 @@ h2 {
 .lista-piatta { list-style: none; padding: 0; margin: 0; }
 .lista-piatta li {
     padding: 0.35rem 0;
-    border-bottom: 1px dotted var(--bordo);
+    border-bottom: 1px dotted var(--line);
 }
 .lista-piatta li:last-child { border-bottom: none; }
 
@@ -118,8 +125,8 @@ h2 {
 
 .card-nav {
     display: block;
-    border: 1px solid var(--bordo);
-    background: var(--carta-alt);
+    border: 1px solid var(--line);
+    background: var(--bianco);
     padding: 1.1rem 1.3rem;
     margin-bottom: 0.9rem;
     text-decoration: none;
@@ -133,7 +140,7 @@ h2 {
 }
 .card-nav .desc-card {
     font-size: 0.95rem;
-    color: var(--inchiostro-attenuato);
+    color: var(--grigio-testo);
     font-style: italic;
 }
 
@@ -142,7 +149,7 @@ h2 {
     counter-increment: passo;
     padding: 0.5rem 0 0.5rem 2.6rem;
     position: relative;
-    border-bottom: 1px dotted var(--bordo);
+    border-bottom: 1px dotted var(--line);
 }
 .percorso-ordinato li::before {
     content: counter(passo);
@@ -150,7 +157,7 @@ h2 {
     left: 0; top: 0.5rem;
     font-variant-caps: normal;
     font-weight: 600;
-    color: var(--verde);
+    color: var(--verde-scuro);
     width: 1.8rem;
 }
 
@@ -160,8 +167,8 @@ h2 {
     letter-spacing: 0.04em;
     font-size: 0.8rem;
     vertical-align: middle;
-    border: 1px solid var(--verde);
-    color: var(--verde);
+    border: 1px solid var(--verde-scuro);
+    color: var(--verde-scuro);
     padding: 0.15em 0.5em 0.1em;
     margin-left: 0.5em;
 }
@@ -171,21 +178,21 @@ h2 {
     letter-spacing: 0.04em;
     font-size: 0.8rem;
     padding: 0.05em 0.5em;
-    border: 1px solid var(--bordo);
+    border: 1px solid var(--line);
 }
-.stato-epistemico.reale { border-color: var(--verde); color: var(--verde); }
+.stato-epistemico.reale { border-color: var(--verde-scuro); color: var(--verde-scuro); }
 
 footer.piede {
     margin-top: 4rem;
     padding-top: 1rem;
-    border-top: 1px solid var(--bordo);
+    border-top: 1px solid var(--line);
     font-size: 0.85rem;
-    color: var(--inchiostro-attenuato);
+    color: var(--grigio-testo);
 }
 
 table.tabella-piatta { border-collapse: collapse; width: 100%; margin: 1rem 0; }
 table.tabella-piatta th, table.tabella-piatta td {
     text-align: left; padding: 0.4rem 0.8rem 0.4rem 0;
-    border-bottom: 1px dotted var(--bordo); vertical-align: top;
+    border-bottom: 1px dotted var(--line); vertical-align: top;
 }
 table.tabella-piatta th { font-variant-caps: small-caps; letter-spacing: 0.05em; font-weight: 600; }

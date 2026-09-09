@@ -5,104 +5,132 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Meccanismo · 5 · Il Transformer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+  @font-face {
+    font-family: 'EB Garamond';
+    src: url('fonts/EBGaramond-Variable.woff2') format('woff2-variations');
+    font-weight: 400 800;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'EB Garamond';
+    src: url('fonts/EBGaramond-Italic-Variable.woff2') format('woff2-variations');
+    font-weight: 400 800;
+    font-style: italic;
+    font-display: swap;
+  }
+
   :root{
-    --bg: #0F2A22;
-    --surface: #173B30;
-    --surface-2: #1E4A3C;
-    --copper: #C97D3D;
-    --copper-bright: #F0A85E;
-    --text: #F2ECE0;
-    --text-dim: #A9BFB6;
-    --line: rgba(242,236,224,0.12);
+    --bianco:        #FFFFFF;
+    --brina:         #F6F8FB;
+    --inchiostro:    #1a1a1a;
+    --grigio-testo:  #4a4540;
+    --grigio-soft:   #8A8580;
+    --blu-scuro:     #1F2B6B;
+    --blu:           #2B3A8C;
+    --blu-chiaro:    #5A6FB8;
+    --arancio-scuro: #A85419;
+    --arancio:       #D4722A;
+    --arancio-chiaro:#E9A66B;
+    --verde-scuro:   #2A5628;
+    --verde:         #3D7A3A;
+    --verde-chiaro:  #7AAD76;
+
+    --serif: 'EB Garamond', Garamond, Georgia, 'Times New Roman', serif;
+    --mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+
+    --line: rgba(26,26,26,0.12);
     --rail-w: 300px;
   }
 
   *{ box-sizing: border-box; }
-  html{ scroll-behavior: smooth; }
+  html{ scroll-behavior: smooth; font-size: 120%; }
 
   body{
     margin:0;
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Source Serif 4', Georgia, serif;
-    line-height: 1.65;
+    background: var(--brina);
+    color: var(--inchiostro);
+    font-family: var(--serif);
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
   }
 
   h1,h2,h3, .display{
-    font-family: 'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
-    font-weight: 600;
-    letter-spacing: -0.01em;
+    font-family: var(--serif);
+    font-weight: 500;
     margin: 0;
   }
-  .mono{ font-family: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace; }
-  a{ color: var(--copper-bright); }
+  .mono{ font-family: var(--mono); }
+  a{ color: var(--arancio-scuro); }
 
-  /* ---------- layout shell: sidebar fissa con indice del sito ---------- */
+  /* ---------- layout shell: sidebar fissa con indice del sito — solo blu, niente
+     arancio (regola confermata: la navigazione è blu, l'apparato di contenuto resta
+     arancio, i due non si mescolano) ---------- */
   .sidebar{
-    background: rgba(15,42,34,0.92);
+    background: var(--bianco);
     border-bottom: 1px solid var(--line);
     padding: 28px 24px 32px;
   }
   .sidebar-kicker{
-    font-family: 'IBM Plex Mono', monospace; font-size: .74rem; letter-spacing: .12em;
-    text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px;
+    font-variant: small-caps; letter-spacing: .06em; font-size: .8rem;
+    color: var(--grigio-soft); margin-bottom: 10px;
   }
   .sidebar-title{
-    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.02rem;
-    color: var(--text); margin-bottom: 22px;
+    font-family: var(--serif); font-weight: 500; font-size: 1.1rem;
+    color: var(--inchiostro); margin-bottom: 22px;
   }
   .sidebar .parte{ margin-top: 26px; }
   .sidebar .parte:first-of-type{ margin-top: 0; }
   .sidebar .parte-heading{
-    font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: .74rem;
-    letter-spacing: .1em; text-transform: uppercase; color: var(--copper-bright);
+    font-family: var(--serif); font-weight: 600; font-size: .82rem;
+    font-variant: small-caps; letter-spacing: .06em; color: var(--blu);
     padding-bottom: 10px; margin-bottom: 2px; border-bottom: 1px solid var(--line);
   }
   .sidebar .voce-semplice{
     display: block; padding: 10px 4px; border-bottom: 1px solid var(--line);
-    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem;
-    color: var(--text); text-decoration: none;
+    font-family: var(--serif); font-weight: 500; font-size: .98rem;
+    color: var(--inchiostro); text-decoration: none;
   }
-  .sidebar .voce-semplice:hover{ color: var(--copper-bright); }
-  .sidebar .voce-semplice.current{ color: var(--copper-bright); }
+  .sidebar .voce-semplice:hover{ color: var(--blu); }
+  .sidebar .voce-semplice.current{ color: var(--blu); }
   .sidebar details.modulo{ border-bottom: 1px solid var(--line); }
   .sidebar details.modulo summary{
     display: flex; align-items: center; gap: 8px; padding: 10px 4px; cursor: pointer;
-    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem; color: var(--text);
+    font-family: var(--serif); font-weight: 500; font-size: .98rem; color: var(--inchiostro);
     list-style: none;
   }
-  .sidebar details.modulo summary.current{ color: var(--copper-bright); }
+  .sidebar details.modulo summary.current{ color: var(--blu); }
   .sidebar details.modulo summary::-webkit-details-marker{ display: none; }
   .sidebar details.modulo summary::before{
-    content: "›"; display: inline-block; font-family: 'IBM Plex Mono', monospace;
-    color: var(--text-dim); transition: transform .15s ease; flex-shrink: 0;
+    content: "›"; display: inline-block;
+    color: var(--grigio-soft); transition: transform .15s ease; flex-shrink: 0;
   }
-  .sidebar details.modulo[open] summary::before{ transform: rotate(90deg); color: var(--copper-bright); }
-  .sidebar details.modulo summary:hover{ color: var(--copper-bright); }
+  .sidebar details.modulo[open] summary::before{ transform: rotate(90deg); color: var(--blu); }
+  .sidebar details.modulo summary:hover{ color: var(--blu); }
   .sidebar .unita-list{ padding: 2px 0 12px 22px; display: flex; flex-direction: column; gap: 1px; }
   .sidebar .unita-list a{
-    display: block; padding: 6px 4px; font-size: .82rem; color: var(--text-dim); text-decoration: none;
+    display: block; padding: 6px 4px; font-size: .9rem; color: var(--grigio-testo); text-decoration: none;
   }
-  .sidebar .unita-list a:hover{ color: var(--copper-bright); }
-  .sidebar .unita-list a .num{ color: var(--copper); margin-right: 6px; font-family: 'IBM Plex Mono', monospace; font-size: .74rem; }
+  .sidebar .unita-list a:hover{ color: var(--blu); }
+  .sidebar .unita-list a .num{ color: var(--blu); margin-right: 6px; font-size: .82rem; }
 
-  /* pallini luminosi di scroll-spy, sulle voci dell'unità corrente */
+  /* pallini di scroll-spy: blu, come tutta la sidebar */
   .sidebar .unita-list.scrollspy a{ position: relative; padding-left: 20px; }
   .sidebar .unita-list.scrollspy a::before{
     content: "";
     position: absolute; left: 2px; top: 50%;
     width: 7px; height: 7px; border-radius: 50%;
-    background: var(--surface-2); border: 1px solid var(--line);
+    background: var(--brina); border: 1px solid var(--line);
     transform: translateY(-50%);
     transition: background .25s, box-shadow .25s, transform .25s;
   }
-  .sidebar .unita-list.scrollspy a.active{ color: var(--copper-bright); }
+  .sidebar .unita-list.scrollspy a.active{ color: var(--blu); }
   .sidebar .unita-list.scrollspy a.active::before{
-    background: var(--copper-bright);
-    box-shadow: 0 0 0 4px rgba(240,168,94,0.18);
+    background: var(--blu);
+    box-shadow: 0 0 0 4px rgba(43,58,140,0.18);
     transform: translateY(-50%) scale(1.2);
   }
 
@@ -122,17 +150,17 @@
   .unit-block:last-child section:last-of-type{ border-bottom:none; }
 
   .eyebrow{
-    font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
-    letter-spacing: 0.12em; text-transform: uppercase; color: var(--copper-bright);
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.92rem;
+    color: var(--grigio-soft);
     margin-bottom: 14px; display:flex; align-items:center; gap:10px;
   }
-  .eyebrow::before{ content:""; width: 22px; height:1px; background: var(--copper-bright); display:inline-block; }
+  .eyebrow::before{ content:""; width: 22px; height:1px; background: var(--grigio-soft); display:inline-block; }
 
   h2.title{ font-size: clamp(1.6rem, 4vw, 2.3rem); margin-bottom: 20px; }
 
-  p{ margin: 0 0 18px; color: var(--text); font-size: 1.05rem; }
-  p.dim{ color: var(--text-dim); }
-  .lede{ font-size: 1.15rem; color: var(--text); }
+  p{ margin: 0 0 18px; color: var(--inchiostro); font-size: 1.1rem; }
+  p.dim{ color: var(--grigio-testo); }
+  .lede{ font-size: 1.2rem; color: var(--inchiostro); }
 
   .reveal{ opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
   .reveal.visible{ opacity:1; transform: translateY(0); }
@@ -142,96 +170,105 @@
   }
 
   .aside{
-    margin: 26px 0; padding: 18px 20px; background: var(--surface);
-    border-left: 3px solid var(--copper); border-radius: 2px;
+    margin: 26px 0; padding: 18px 20px; background: var(--bianco);
+    border-left: 3px solid var(--arancio); border-radius: 2px;
   }
   .aside .label{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--copper-bright); margin-bottom: 8px; display:block;
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.88rem;
+    color: var(--grigio-soft); margin-bottom: 8px; display:block;
   }
-  .aside p{ margin-bottom:0; font-size: 0.96rem; color: var(--text-dim); }
+  .aside p{ margin-bottom:0; font-size: 1rem; color: var(--grigio-testo); }
 
   .question{
     margin: 28px 0; padding: 20px 22px; border: 1px dashed var(--line); border-radius: 4px;
-    font-family: 'Space Grotesk', sans-serif; font-size: 1.0rem; color: var(--copper-bright);
+    font-family: var(--serif); font-size: 1.05rem; color: var(--arancio-scuro);
   }
 
   blockquote{
-    margin: 0; padding-left: 22px; border-left: 2px solid var(--copper);
-    font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; color: var(--text);
+    margin: 0; padding-left: 22px; border-left: 2px solid var(--arancio);
+    font-family: var(--serif); font-size: 1.15rem; color: var(--inchiostro);
   }
 
   /* ---------- hero ---------- */
   .hero{ padding-top: 62px; }
   .hero .kicker{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.8rem; letter-spacing: 0.14em;
-    text-transform: uppercase; color: var(--text-dim); margin-bottom: 18px;
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.92rem;
+    color: var(--grigio-soft); margin-bottom: 18px;
   }
-  .hero h1{ font-size: clamp(1.9rem, 5.6vw, 2.9rem); line-height:1.12; margin-bottom: 24px; }
-  .hero h1 em{ font-style: normal; color: var(--copper-bright); }
+  .hero h1{ font-size: clamp(1.9rem, 5.6vw, 2.9rem); line-height:1.18; margin-bottom: 24px; }
+  .hero h1 em{ font-style: italic; color: var(--arancio-scuro); }
   .scrolldown{
-    margin-top: 50px; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem;
-    color: var(--text-dim); letter-spacing: 0.08em; text-transform: uppercase;
+    margin-top: 50px; font-variant: small-caps; letter-spacing: .06em; font-size: 0.9rem;
+    color: var(--grigio-soft);
     display:flex; align-items:center; gap:8px;
   }
-  .scrolldown::after{ content:"↓"; color: var(--copper-bright); animation: nudge 1.8s infinite ease-in-out; }
+  .scrolldown::after{ content:"↓"; color: var(--arancio-scuro); animation: nudge 1.8s infinite ease-in-out; }
   @media (prefers-reduced-motion: reduce){ .scrolldown::after{ animation:none; } }
   @keyframes nudge{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(5px); } }
 
   /* ---------- contenitore generico dei widget ---------- */
   .playground{
-    margin: 30px 0; background: var(--surface); border: 1px solid var(--line);
+    margin: 30px 0; background: var(--bianco); border: 1px solid var(--line);
     border-radius: 10px; padding: 24px 26px;
   }
   .playground .ptitle{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--copper-bright); margin-bottom: 14px; display:block;
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.88rem;
+    color: var(--grigio-soft); margin-bottom: 14px; display:block;
   }
 
-  /* ---------- widget: frase cliccabile con attention ---------- */
+  /* ---------- widget: frase cliccabile con attention — un solo colore (arancio),
+     il peso è codificato da spessore/opacità, non da tinte diverse: non serve
+     un'eccezione qui, il sistema a un accento basta e avanza ---------- */
   .at-wrap{ position: relative; padding-top: 96px; }
   .at-svg{ position:absolute; left:0; top:0; pointer-events:none; overflow: visible; }
   .at-chips{ position: relative; display:flex; flex-wrap: wrap; gap: 8px; }
   .at-chip{
-    font-family: 'Space Grotesk', sans-serif; font-size: 1.0rem; color: var(--text);
-    background: var(--bg); border: 1px solid var(--line); border-radius: 6px;
+    font-family: var(--serif); font-size: 1.05rem; color: var(--inchiostro);
+    background: var(--brina); border: 1px solid var(--line); border-radius: 6px;
     padding: 8px 12px; cursor: pointer;
     transition: border-color .2s, background .2s, color .2s;
   }
-  .at-chip:hover{ border-color: var(--copper); }
-  .at-chip.active{ border-color: var(--copper-bright); color: var(--copper-bright); background: var(--surface-2); }
+  .at-chip:hover{ border-color: var(--arancio); }
+  .at-chip.active{ border-color: var(--arancio-scuro); color: var(--arancio-scuro); background: var(--bianco); }
   .at-wrap.locked .at-chip{ cursor: default; }
-  .at-weight{ font-family:'IBM Plex Mono', monospace; font-size: 10px; fill: var(--copper-bright); }
+  .at-weight{ font-family: var(--serif); font-size: 11px; fill: var(--arancio-scuro); }
   .at-hint{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.78rem; color: var(--text-dim);
+    font-family: var(--serif); font-style: italic; font-size: 0.92rem; color: var(--grigio-testo);
     margin: 14px 0 0; min-height: 1.3em;
   }
   .at-tabs{ display:flex; flex-wrap:wrap; gap: 8px; margin-bottom: 18px; }
   .at-tab{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.74rem; letter-spacing: 0.04em;
-    color: var(--text-dim); background: transparent;
+    font-variant: small-caps; letter-spacing: .04em; font-size: 0.88rem;
+    color: var(--grigio-soft); background: transparent;
     border: 1px solid var(--line); border-radius: 20px; padding: 6px 14px;
     cursor: pointer; transition: color .2s, border-color .2s, background .2s;
   }
-  .at-tab:hover{ border-color: var(--copper); }
-  .at-tab.active{ color: var(--copper-bright); border-color: var(--copper); background: var(--surface-2); }
-  .at-caption{ margin-top: 16px; font-size: 0.92rem; color: var(--text-dim); }
+  .at-tab:hover{ border-color: var(--arancio); }
+  .at-tab.active{ color: var(--arancio-scuro); border-color: var(--arancio); background: var(--bianco); }
+  .at-caption{ margin-top: 16px; font-size: 0.98rem; color: var(--grigio-testo); }
 
-  /* ---------- widget 5.4: contesto + mini-mappa ---------- */
+  /* ---------- widget 5.4: contesto + mini-mappa — QUI serve l'eccezione: quattro
+     gruppi tematici di parole (reale_genere/sportivo/chimico/animali) da distinguere
+     visivamente, riarmonizzata sulle famiglie della palette (arancio-scuro/blu/verde
+     a piena saturazione, non i toni "chiaro") più un solo colore davvero nuovo — il
+     prugna del chimico, senza famiglia corrispondente, riuso dello stesso valore già
+     in ontologia/lente-semantica. Non c'è modo di coprire 4 categorie con 3 famiglie
+     di accento senza farne coincidere due, e coincidenza = perdere l'informazione che
+     il grafico esiste per mostrare. Vedi commento nel JS. ---------- */
   .ctx-grid{ display:grid; grid-template-columns: 1fr; gap: 26px; margin-top: 6px; }
   @media (min-width: 900px){
     .ctx-grid{ grid-template-columns: 3fr 2fr; align-items: start; }
   }
   .ctx-pane-label{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em;
-    text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px;
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.84rem;
+    color: var(--grigio-soft); margin-bottom: 10px;
   }
   .mm-svg{
     display:block; width:100%; height:auto;
-    background: var(--bg); border: 1px solid var(--line); border-radius: 8px;
+    background: var(--bianco); border: 1px solid var(--line); border-radius: 8px;
   }
-  .mm-label{ font-family:'IBM Plex Mono', monospace; font-size: 9px; fill: var(--text-dim); }
-  .mm-label.accent{ fill: var(--copper-bright); }
+  .mm-label{ font-family: var(--serif); font-size: 11px; fill: var(--grigio-testo); }
+  .mm-label.accent{ fill: var(--arancio-scuro); font-weight: 600; }
   .mm-calcio{ transition: transform .45s ease; }
   @media (prefers-reduced-motion: reduce){ .mm-calcio{ transition: none; } }
 
@@ -239,37 +276,121 @@
   .pos-chips{ display:flex; flex-wrap: wrap; gap: 14px; padding-top: 10px; }
   .pos-chip{
     position: relative;
-    font-family: 'Space Grotesk', sans-serif; font-size: 1.0rem; color: var(--text);
-    background: var(--bg); border: 1px solid var(--line); border-radius: 6px;
+    font-family: var(--serif); font-size: 1.05rem; color: var(--inchiostro);
+    background: var(--brina); border: 1px solid var(--line); border-radius: 6px;
     padding: 8px 12px;
   }
   .pos-badge{
     position:absolute; top: -9px; right: -9px; width: 19px; height: 19px;
     display:flex; align-items:center; justify-content:center;
-    background: var(--copper); color: var(--bg); border-radius: 50%;
-    font-family:'IBM Plex Mono', monospace; font-size: 0.62rem; font-weight: 600;
+    background: var(--arancio); color: var(--bianco); border-radius: 50%;
+    font-family: var(--serif); font-size: 0.68rem; font-weight: 600;
   }
   .pos-btns{ display:flex; flex-wrap:wrap; gap: 10px; margin-top: 22px; }
   .w-btn{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.82rem; color: var(--bg);
-    background: var(--copper-bright); border: none; border-radius: 6px;
+    font-variant: small-caps; letter-spacing: .04em; font-size: 0.88rem; color: var(--bianco);
+    background: var(--arancio-scuro); border: none; border-radius: 6px;
     padding: 10px 18px; cursor: pointer; font-weight: 600;
   }
-  .w-btn:hover{ background: var(--copper); }
+  .w-btn:hover{ background: var(--arancio); }
   .w-btn.ghost{
-    background: transparent; color: var(--copper-bright);
-    border: 1px solid var(--copper);
+    background: transparent; color: var(--arancio-scuro);
+    border: 1px solid var(--arancio);
   }
-  .w-btn.ghost:hover{ background: var(--surface-2); }
+  .w-btn.ghost:hover{ background: var(--bianco); }
 
   /* ---------- chiusura ---------- */
-  .chiusura{ background: linear-gradient(180deg, var(--bg), var(--surface)); }
+  .chiusura{ background: linear-gradient(180deg, var(--brina), var(--bianco)); }
   .footer-note{
-    margin-top: 46px; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem; color: var(--text-dim);
+    margin-top: 46px; font-variant: small-caps; letter-spacing: .06em; font-size: 0.9rem; color: var(--grigio-soft);
   }
+
+  /* ---------- termini collegati all'ontologia + tenda laterale ----------
+     Verde deliberatamente: è l'unico posto in questo capitolo dove il colore segnala
+     "stai per lasciare il saggio ed entrare nell'ontologia" — un registro diverso
+     dall'arancio (apparato del saggio stesso) e dal blu (navigazione del saggio).
+     Dati e link derivati SOLO da ciò che l'ontologia già espone (pagine
+     ontologia/output/concetti/*.html, sola lettura) — nessuna modifica ai .ttl o
+     agli script Python che li generano. */
+  .termine-concetto{
+    background: none; border: none; padding: 0; margin: 0; cursor: pointer;
+    font: inherit; color: var(--verde);
+    border-bottom: 1px dotted var(--verde);
+    transition: background .15s ease, border-bottom-style .15s ease;
+  }
+  .termine-concetto:hover, .termine-concetto:focus-visible{
+    background: rgba(61,122,58,0.14);
+    border-bottom-style: solid;
+    outline: none;
+  }
+  .termine-concetto.aperto{ background: rgba(61,122,58,0.22); border-bottom-style: solid; }
+
+  .tenda-scrim{
+    position: fixed; inset: 0; background: rgba(26,26,26,0.32);
+    opacity: 0; pointer-events: none; transition: opacity .25s ease; z-index: 90;
+  }
+  .tenda-scrim.visibile{ opacity: 1; pointer-events: auto; }
+
+  .tenda-concetto{
+    position: fixed; top: 0; right: 0; bottom: 0; width: min(420px, 92vw);
+    background: var(--bianco); z-index: 91;
+    box-shadow: -8px 0 28px rgba(26,26,26,0.18);
+    transform: translateX(100%); transition: transform .3s ease;
+    overflow-y: auto; padding: 28px 26px 40px;
+  }
+  .tenda-concetto.visibile{ transform: translateX(0); }
+  .tenda-testata{
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 14px;
+    border-bottom: 2px solid var(--verde); padding-bottom: 16px; margin-bottom: 18px;
+  }
+  .tenda-eyebrow{
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.86rem;
+    color: var(--verde); display: block; margin-bottom: 6px;
+  }
+  .tenda-titolo{ font-family: var(--serif); font-weight: 500; font-size: 1.5rem; color: var(--inchiostro); }
+  .tenda-titolo .tag{
+    font-variant: small-caps; letter-spacing: .04em; font-size: 0.8rem; color: var(--verde);
+    border: 1px solid var(--verde-chiaro); border-radius: 20px; padding: 1px 10px; margin-left: 8px;
+  }
+  .tenda-chiudi{
+    background: none; border: 1px solid var(--line); border-radius: 50%;
+    width: 32px; height: 32px; font-size: 1.1rem; line-height: 1; cursor: pointer;
+    color: var(--grigio-testo); flex-shrink: 0;
+  }
+  .tenda-chiudi:hover{ border-color: var(--verde); color: var(--verde-scuro); }
+  .tenda-nota{ font-size: 1.05rem; color: var(--inchiostro); margin: 0 0 22px; }
+  .tenda-sezione{ margin-bottom: 20px; }
+  .tenda-sezione h3{
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.86rem;
+    color: var(--grigio-soft); font-weight: 500; margin: 0 0 8px;
+  }
+  .tenda-lista{ list-style: none; margin: 0; padding: 0; font-size: 0.98rem; color: var(--grigio-testo); }
+  .tenda-lista li{ margin-bottom: 5px; }
+  .tenda-lista .rel-tipo{ color: var(--verde); font-size: 0.9em; }
+  .tenda-unita-cod{ font-variant: small-caps; color: var(--grigio-soft); font-size: 0.9em; }
+  .tenda-lente{
+    display: block; text-align: center; margin-top: 26px; padding: 12px 16px;
+    background: var(--verde); color: var(--bianco); border-radius: 8px;
+    text-decoration: none; font-variant: small-caps; letter-spacing: .04em; font-size: 0.98rem;
+  }
+  .tenda-lente:hover{ background: var(--verde-scuro); }
 </style>
 </head>
 <body>
+
+<div class="tenda-scrim" id="tenda-scrim"></div>
+<aside class="tenda-concetto" id="tenda-concetto" aria-hidden="true">
+  <div class="tenda-testata">
+    <div>
+      <span class="tenda-eyebrow">Dal vocabolario dell'ontologia</span>
+      <span class="tenda-titolo" id="tenda-titolo"></span>
+    </div>
+    <button class="tenda-chiudi" id="tenda-chiudi" aria-label="Chiudi">×</button>
+  </div>
+  <p class="tenda-nota" id="tenda-nota"></p>
+  <div id="tenda-corpo"></div>
+  <a class="tenda-lente" id="tenda-link-lente" href="#" target="_blank" rel="noopener">Apri nella Lente semantica →</a>
+</aside>
 
 <nav class="sidebar" aria-label="Indice del saggio">
   <div class="sidebar-kicker">Indice</div>
@@ -432,7 +553,7 @@
     <div class="wrap">
       <div class="kicker">Meccanismo · 5 · Il Transformer · Unità 5.1</div>
       <h1>Due problemi aperti, <em>una sola soluzione</em></h1>
-      <p class="lede dim">Il corso ha lasciato indietro due debiti. In Meccanismo · 2 ci si era arresi davanti alle dipendenze a lungo raggio: un n-gramma non può collegare parole troppo distanti, per costruzione. In Meccanismo · 3 ci si era fermati sulla polisemia: un embedding statico dà a «calcio» lo stesso punto in ogni frase possibile. Questo modulo li salda entrambi — con lo stesso, singolo meccanismo.</p>
+      <p class="lede dim">Il corso ha lasciato indietro due debiti. In Meccanismo · 2 ci si era arresi davanti alle <button class="termine-concetto" data-concetto="DipendenzeLungoRaggio">dipendenze a lungo raggio</button>: un n-gramma non può collegare parole troppo distanti, per costruzione. In Meccanismo · 3 ci si era fermati sulla polisemia: un embedding statico dà a «calcio» lo stesso punto in ogni frase possibile. Questo modulo li salda entrambi — con lo stesso, singolo meccanismo.</p>
       <div class="scrolldown">prima, però, un tentativo che non bastò</div>
     </div>
   </section>
@@ -450,7 +571,7 @@
     <div class="wrap reveal">
       <div class="eyebrow">Il momento unificante</div>
       <h2 class="title">Perché i due debiti si pagano insieme</h2>
-      <p>L'idea che dà il titolo a questo modulo si chiama <strong>attention</strong>, e la sua proprietà notevole è che risolve entrambi i problemi lasciati aperti, con una sola mossa. Le dipendenze lunghe: se ogni parola può guardare direttamente ogni altra parola della frase, la distanza smette di essere un ostacolo — non c'è più nessun tragitto in cui il segnale si diluisce. Gli embedding statici: se la rappresentazione di ogni parola viene ricalcolata a partire da ciò che essa guarda in <em>questa</em> frase, allora smette di essere statica — «calcio» vicino a «partita» e «calcio» vicino a «ossa» produrranno due risultati diversi.</p>
+      <p>L'idea che dà il titolo a questo modulo si chiama <strong><button class="termine-concetto" data-concetto="Attention">attention</button></strong>, e la sua proprietà notevole è che risolve entrambi i problemi lasciati aperti, con una sola mossa. Le dipendenze lunghe: se ogni parola può guardare direttamente ogni altra parola della frase, la distanza smette di essere un ostacolo — non c'è più nessun tragitto in cui il segnale si diluisce. Gli embedding statici: se la rappresentazione di ogni parola viene ricalcolata a partire da ciò che essa guarda in <em>questa</em> frase, allora smette di essere statica — «calcio» vicino a «partita» e «calcio» vicino a «ossa» produrranno due risultati diversi.</p>
       <div class="aside">
         <span class="label">Da tenere a mente</span>
         <p>Non è frequente che due problemi apparentemente scollegati — uno di distanza, uno di ambiguità — cadano sotto lo stesso colpo. Quando succede, di solito significa che erano lo stesso problema visto da due lati: entrambi chiedevano che ogni parola potesse consultare il proprio contesto per intero, senza intermediari.</p>
@@ -550,9 +671,9 @@
   <section id="m5-u3-sez-qkv">
     <div class="wrap reveal">
       <div class="eyebrow">La meccanica in tre mosse</div>
-      <h2 class="title">Query, Key, Value</h2>
+      <h2 class="title"><button class="termine-concetto" data-concetto="QueryKeyValue">Query, Key, Value</button></h2>
       <p>Si immagini ogni parola della frase come una scheda in un archivio, con tre facce. La <strong>Query</strong> è ciò che la parola sta cercando: «dormiva», da verbo, cerca qualcosa come <em>un soggetto animato</em>. La <strong>Key</strong> è l'etichetta che ogni parola espone al mondo: «gatto» espone qualcosa come <em>nome, animato, singolare</em>. Il punteggio di compatibilità tra la query di una parola e la key di ciascun'altra dice quanto l'offerta corrisponde alla domanda. Il <strong>Value</strong>, infine, è ciò che la parola porta con sé se viene scelta — il suo contenuto effettivo, quello che verrà davvero mescolato nella rappresentazione di chi la stava cercando.</p>
-      <p>Manca un dettaglio, ed è quello che collega questo modulo a Meccanismo · 2: i punteggi grezzi di compatibilità vengono trasformati in pesi che <strong>sommano a 1</strong> (l'operazione si chiama softmax). Ogni parola dispone, per così dire, di un budget fisso di attenzione da distribuire: dare di più a «gatto» significa necessariamente dare di meno a tutto il resto. Una distribuzione — la stessa struttura matematica delle probabilità, la prima crepa nel discreto, che continua ad allargarsi.</p>
+      <p>Manca un dettaglio, ed è quello che collega questo modulo a Meccanismo · 2: i punteggi grezzi di compatibilità vengono trasformati in pesi che <strong>sommano a 1</strong> (l'operazione si chiama <button class="termine-concetto" data-concetto="Softmax">softmax</button>). Ogni parola dispone, per così dire, di un budget fisso di attenzione da distribuire: dare di più a «gatto» significa necessariamente dare di meno a tutto il resto. Una distribuzione — la stessa struttura matematica delle probabilità, la prima crepa nel discreto, che continua ad allargarsi.</p>
     </div>
   </section>
 
@@ -623,7 +744,7 @@
             <div id="m5-minimappa"></div>
           </div>
         </div>
-        <p class="at-caption"><strong>Avvertenza esplicita, da leggere:</strong> lo spostamento del punto nella mini-mappa è un'illustrazione concettuale del "collasso contestuale", non un vero embedding contestuale calcolato da un modello. Il punto di partenza di "calcio" e i punti da cui sono calcolati i due centroidi sono reali (vettori fastText, proiettati in 2D); lo spostamento è un'interpolazione convenzionale — il punto percorre il 60% della strada verso il centroide del gruppo scelto. Anche i pesi di attention delle due frasi sono illustrativi, scritti a mano come quelli di 5.2.</p>
+        <p class="at-caption"><strong>Avvertenza esplicita, da leggere:</strong> lo spostamento del punto nella mini-mappa è un'illustrazione concettuale del "<button class="termine-concetto" data-concetto="CollassoContestuale">collasso contestuale</button>", non un vero <button class="termine-concetto" data-concetto="EmbeddingContestuale">embedding contestuale</button> calcolato da un modello. Il punto di partenza di "calcio" e i punti da cui sono calcolati i due centroidi sono reali (vettori fastText, proiettati in 2D); lo spostamento è un'interpolazione convenzionale — il punto percorre il 60% della strada verso il centroide del gruppo scelto. Anche i pesi di attention delle due frasi sono illustrativi, scritti a mano come quelli di 5.2.</p>
       </div>
     </div>
   </section>
@@ -632,7 +753,7 @@
     <div class="wrap reveal">
       <div class="eyebrow">Cuore concettuale</div>
       <h2 class="title">Il crollo di un presupposto galileiano</h2>
-      <p>Questa non è una decorazione filosofica: è il punto dell'unità. Si ricordi la mossa dell'unità 3.2 — misurare il significato era estendere il programma galileiano al territorio delle qualità secondarie. Ma si guardi ora che cosa era rimasto, in quell'operazione, di intatto e galileiano: l'embedding statico era ancora una qualità <em>primaria</em> — un valore fisso, che sta lì indipendentemente da chi lo osserva e da quando. Il punto di «calcio» sulla mappa di Meccanismo · 3 esisteva prima di qualunque frase, come la massa di un sasso esiste prima di qualunque pesata.</p>
+      <p>Questa non è una decorazione filosofica: è il punto dell'unità. Si ricordi la mossa dell'unità 3.2 — misurare il significato era estendere il programma galileiano al territorio delle <button class="termine-concetto" data-concetto="QualitaPrimarieSecondarie">qualità secondarie</button>. Ma si guardi ora che cosa era rimasto, in quell'operazione, di intatto e galileiano: l'embedding statico era ancora una qualità <em>primaria</em> — un valore fisso, che sta lì indipendentemente da chi lo osserva e da quando. Il punto di «calcio» sulla mappa di Meccanismo · 3 esisteva prima di qualunque frase, come la massa di un sasso esiste prima di qualunque pesata.</p>
       <p>È questo presupposto che è appena crollato. Il vettore contestuale di «calcio» <em>non ha</em> un valore che esiste a prescindere: assume un valore solo nel momento in cui viene calcolato insieme alle parole che lo circondano — «misurato» nel contesto, si potrebbe dire, e la scelta del verbo non è casuale. È la stessa mossa concettuale della meccanica quantistica: posizione e quantità di moto di una particella non sono entrambe definite indipendentemente dalla misura; la domanda «dov'era la particella prima che si guardasse?» è mal posta. Allo stesso modo, la domanda «qual è il vettore di calcio?» non ha più risposta — ne ha una soltanto la domanda «qual è il vettore di calcio <em>in questa frase</em>?».</p>
       <div class="aside">
         <span class="label">Quattro secoli, due mosse</span>
@@ -694,7 +815,7 @@
 
   <section id="m5-u5-sez-posizione">
     <div class="wrap reveal">
-      <div class="eyebrow">La codifica di posizione</div>
+      <div class="eyebrow"><button class="termine-concetto" data-concetto="CodificaPosizione">La codifica di posizione</button></div>
       <h2 class="title">Numerare le pagine del libro</h2>
       <p>C'è un prezzo nascosto nel guardare tutto insieme: l'attention, da sola, tratterebbe la frase come un sacchetto di parole senza ordine — «il gatto morde il cane» e «il cane morde il gatto» sarebbero indistinguibili. La soluzione è la stessa dei libri: numerare le pagine. A ogni parola viene aggiunto un codice che ne rappresenta la posizione nella frase; il codice si somma alla rappresentazione della parola, così l'attenzione riceve comunque l'informazione su chi viene prima e chi dopo. E come il numero stampato su una pagina, il codice resta attaccato alla sua parola anche se l'ordine visivo viene stravolto.</p>
       <div class="playground">
@@ -713,7 +834,7 @@
     <div class="wrap reveal">
       <div class="eyebrow">Il quadro</div>
       <h2 class="title">L'architettura, vista da lontano</h2>
-      <p>Ora tutti i pezzi ci sono, e l'architettura complessiva si può dire in una frase: embedding delle parole, più informazione di posizione, poi strati di attention multi-head ripetuti in blocchi, uno sopra l'altro — ogni blocco raffina le rappresentazioni contestuali del precedente. Questo oggetto ha un nome: <strong>Transformer</strong>. Resta un'ultima domanda, la più concreta di tutte: perché proprio questo progetto, tra i tanti possibili, ha sbloccato tutto?</p>
+      <p>Ora tutti i pezzi ci sono, e l'architettura complessiva si può dire in una frase: embedding delle parole, più informazione di posizione, poi strati di <button class="termine-concetto" data-concetto="MultiHeadAttention">attention multi-head</button> ripetuti in blocchi, uno sopra l'altro — ogni blocco raffina le rappresentazioni contestuali del precedente. Questo oggetto ha un nome: <strong>Transformer</strong>. Resta un'ultima domanda, la più concreta di tutte: perché proprio questo progetto, tra i tanti possibili, ha sbloccato tutto?</p>
     </div>
   </section>
 
@@ -743,7 +864,7 @@
 
   <section id="m5-u6-sez-parallelismo">
     <div class="wrap reveal">
-      <div class="eyebrow">Parallelismo</div>
+      <div class="eyebrow"><button class="termine-concetto" data-concetto="Parallelismo">Parallelismo</button></div>
       <h2 class="title">Migliaia di operai, finalmente tutti al lavoro</h2>
       <p>Si ricordi la GPU della lezione sull'hardware (Fondamenti · 2): non un operaio velocissimo ma <em>migliaia di operai</em> che eseguono la stessa operazione semplice su dati diversi, nello stesso istante. Un'architettura sequenziale lascia quasi tutti quegli operai fermi: c'è un solo passo da fare alla volta. L'attention, invece, è fatta su misura per loro — il confronto tra la query di «dormiva» e la key di «gatto» non dipende dal confronto tra «il» e «divano», e tutti i confronti dell'intera frase si distribuiscono sugli operai in un colpo solo.</p>
       <p>Le conseguenze sono di scala, non di eleganza: addestramenti che richiedevano settimane si comprimono; corpora che erano fuori portata diventano trattabili; e la dimensione dei modelli può crescere di ordini di grandezza, perché l'hardware, finalmente, viene usato per intero. La storia di Meccanismo · 6 — che cosa accade quando «grande» diventa «molto grande» — comincia esattamente qui.</p>
@@ -757,7 +878,7 @@
   <section id="m5-u6-sez-2017">
     <div class="wrap reveal">
       <div class="eyebrow">2017</div>
-      <h2 class="title">"Attention is All You Need"</h2>
+      <h2 class="title"><button class="termine-concetto" data-concetto="TransformerEAttenzione">"Attention is All You Need"</button></h2>
       <p>In Genealogia · 1.6 era già stata raccontata la data dall'alto: 2017, un articolo di ricercatori di Google dal titolo insolitamente spavaldo — <em>Attention is All You Need</em>, «l'attenzione è tutto ciò che serve». Ora quel titolo si può leggere tecnicamente, ed è una dichiarazione precisa: via la ricorrenza, via l'elaborazione sequenziale, via le impalcature — restino solo attention, informazione di posizione e strati impilati. Il modulo appena attraversato è, in sostanza, il contenuto di quell'articolo raccontato senza formule.</p>
       <p>Ogni LLM oggi in servizio — incluso quello con cui forse ha conversato oggi — è un discendente diretto di quell'architettura. Ciò che è cambiato da allora, più di ogni raffinamento strutturale, è una sola variabile: la scala.</p>
     </div>
@@ -799,11 +920,19 @@
   Object.entries(POLI5_GRUPPI).forEach(([gruppo, parole]) => {
     parole.forEach(p => { if(!(p in POLI5_GROUP_OF)) POLI5_GROUP_OF[p] = gruppo; });
   });
+  // ECCEZIONE DELIBERATA, riarmonizzata: 4 categorie da distinguere, la palette
+  // dell'interfaccia ha 3 famiglie (blu/arancio/verde) — riusate qui a piena
+  // saturazione (non i toni "chiaro", troppo tenui per reggere come punti su carta)
+  // invece delle tinte pastello scollegate di prima. Un solo colore è davvero nuovo:
+  // il prugna del chimico, senza famiglia corrispondente — stesso identico ruolo
+  // (distinguere categorie in un grafo) e stesso valore già in uso in
+  // ontologia/lente-semantica/output/lente.css (--cat-attribuzione), non inventato
+  // da zero qui.
   const POLI5_COLORS = {
-    reale_genere: '#F0A85E',
-    sportivo: '#7EB8D4',
-    chimico: '#B79FD6',
-    animali: '#8FC9A0'
+    reale_genere: '#A85419', // arancio-scuro
+    sportivo: '#2B3A8C',     // blu
+    chimico: '#6B4A7A',      // prugna — vedi lente-semantica
+    animali: '#3D7A3A'       // verde
   };
 
   // ============ widget riusabile: frase cliccabile con attention ============
@@ -869,7 +998,7 @@
         const mx = (a.x + t.x) / 2;
         const lift = 26 + Math.min(60, Math.abs(a.x - t.x) * 0.12);
         const my = Math.min(a.y, t.y) - lift;
-        parts.push(`<path d="M ${a.x} ${a.y} Q ${mx} ${my} ${t.x} ${t.y}" fill="none" stroke="var(--copper-bright)" stroke-width="${(0.5 + w * 8).toFixed(2)}" opacity="${lineOp(w)}" stroke-linecap="round"/>`);
+        parts.push(`<path d="M ${a.x} ${a.y} Q ${mx} ${my} ${t.x} ${t.y}" fill="none" stroke="var(--arancio-scuro)" stroke-width="${(0.5 + w * 8).toFixed(2)}" opacity="${lineOp(w)}" stroke-linecap="round"/>`);
         parts.push(`<text class="at-weight" x="${t.x}" y="${t.y - 6}" text-anchor="middle" opacity="${labelOp(w)}">${w.toFixed(2)}</text>`);
       });
       svg.innerHTML = parts.join('');
@@ -966,7 +1095,7 @@
       parts.push(`<g><circle cx="${sx(x)}" cy="${sy(y)}" r="3.5" fill="${POLI5_COLORS[POLI5_GROUP_OF[parola]]}" opacity="0.75"/>` +
         `<text class="mm-label" x="${sx(x) + 6}" y="${sy(y) + 3}">${parola}</text></g>`);
     });
-    parts.push(`<g class="mm-calcio"><circle cx="${sx(statica[0])}" cy="${sy(statica[1])}" r="6" fill="var(--copper-bright)" stroke="var(--bg)" stroke-width="1.5"/>` +
+    parts.push(`<g class="mm-calcio"><circle cx="${sx(statica[0])}" cy="${sy(statica[1])}" r="6" fill="var(--arancio-scuro)" stroke="var(--bianco)" stroke-width="1.5"/>` +
       `<text class="mm-label accent" x="${sx(statica[0]) + 9}" y="${sy(statica[1]) + 3}">calcio</text></g>`);
     holder.innerHTML = `<svg class="mm-svg" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Mini-mappa: il punto di calcio si sposta col contesto">${parts.join('')}</svg>`;
     const calcioG = holder.querySelector('.mm-calcio');
@@ -1048,6 +1177,152 @@
   }
   document.getElementById('m5-pos-shuffle').addEventListener('click', () => setPosOrder(POS_PERM));
   document.getElementById('m5-pos-reset').addEventListener('click', () => setPosOrder(POS_ORIG));
+
+  // ============ termini collegati all'ontologia + tenda laterale ============
+  const CONCETTI = {
+    TransformerEAttenzione: {
+      label: "Il Transformer e l'attenzione",
+      nota: "Il Modulo 5: il meccanismo che risolve insieme dipendenze lunghe e staticità degli embedding.",
+      specifici: ["Attention"],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Meccanismo · 5.1","Il problema che l'attenzione risolve"],["Meccanismo · 5.2","L'idea dell'attention"],["Meccanismo · 5.3","Query, Key, Value"],["Meccanismo · 5.4","Embedding contestuale"],["Meccanismo · 5.5","Multi-head e posizione"],["Meccanismo · 5.6","Parallelismo e scala"]]
+    },
+    Attention: {
+      label: "Attention",
+      tag: "Tecnica",
+      nota: "Meccanismo per cui ogni parola pesa direttamente ogni altra parola della frase; risolve dipendenze lunghe e staticità insieme (Bahdanau 2014-2015).",
+      specifici: ["Codifica di posizione","Multi-head attention","Parallelismo","Query, Key, Value","Softmax"],
+      relazioni: [["Risolve","Dipendenze a lungo raggio, Embedding statico, Polisemia"]],
+      teorici: ["Dzmitry Bahdanau"],
+      discussoIn: [["Meccanismo · 5.1","Il problema che l'attenzione risolve"],["Meccanismo · 5.2","L'idea dell'attention"],["Meccanismo · 5.3","Query, Key, Value"],["Meccanismo · 5.4","Embedding contestuale"],["Meccanismo · 5.5","Multi-head e posizione"],["Meccanismo · 5.6","Parallelismo e scala"]]
+    },
+    QueryKeyValue: {
+      label: "Query, Key, Value",
+      nota: "I tre ruoli con cui l'attention confronta (query↔key) e combina (value) le parole di una frase — componenti costitutive del meccanismo.",
+      specifici: [],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Meccanismo · 5.3","Query, Key, Value"]]
+    },
+    Softmax: {
+      label: "Softmax",
+      tag: "Tecnica",
+      nota: "Trasformazione dei punteggi di compatibilità grezzi in pesi che sommano a 1.",
+      specifici: [],
+      relazioni: [["È analogo a","Probabilità (come numero reale)"]],
+      teorici: [],
+      discussoIn: [["Meccanismo · 5.3","Query, Key, Value"]]
+    },
+    EmbeddingContestuale: {
+      label: "Embedding contestuale",
+      nota: "Rappresentazione ricalcolata a ogni frase tramite attention; risolve la polisemia.",
+      specifici: ["Collasso contestuale"],
+      relazioni: [["È analogo a","Qualità primarie e secondarie"],["Si contrappone a","Embedding statico"]],
+      teorici: [],
+      discussoIn: [["Meccanismo · 5.4","Embedding contestuale"]]
+    },
+    CollassoContestuale: {
+      label: "Collasso contestuale",
+      nota: "Lo spostamento/ricalcolo del vettore di una parola verso il baricentro del significato specifico attivato dal contesto.",
+      specifici: [],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Meccanismo · 5.4","Embedding contestuale"]]
+    },
+    QualitaPrimarieSecondarie: {
+      label: "Qualità primarie e secondarie",
+      nota: "Distinzione di Galileo fra ciò che è quantificabile (forma, numero) e ciò che sembra soggettivo/relazionale (colore, significato).",
+      specifici: [],
+      relazioni: [["È analogo a","Embedding contestuale"],["È reso operativo da","Embedding"]],
+      teorici: ["Galileo Galilei"],
+      discussoIn: [["Meccanismo · 3.2","Le parole come vettori (embedding)"],["Meccanismo · 5.4","Embedding contestuale"]]
+    },
+    MultiHeadAttention: {
+      label: "Multi-head attention",
+      tag: "Tecnica",
+      nota: "Più «teste» di attention in parallelo, ciascuna specializzata su un tipo diverso di relazione.",
+      specifici: [],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Meccanismo · 5.5","Multi-head e posizione"]]
+    },
+    CodificaPosizione: {
+      label: "Codifica di posizione",
+      tag: "Tecnica",
+      nota: "Codice sommato all'embedding che rappresenta la posizione della parola nella frase.",
+      specifici: [],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Meccanismo · 5.5","Multi-head e posizione"]]
+    },
+    DipendenzeLungoRaggio: {
+      label: "Dipendenze a lungo raggio",
+      nota: "Legami grammaticali fra parole lontane nella frase, invisibili per costruzione a una finestra fissa piccola.",
+      specifici: [],
+      relazioni: [["È risolto da","Attention"]],
+      teorici: [],
+      discussoIn: [["Meccanismo · 2.4","Sparsità e dipendenze lontane"],["Meccanismo · 5.1","Il problema che l'attenzione risolve"]]
+    },
+    Parallelismo: {
+      label: "Parallelismo",
+      nota: "Possibilità di calcolare simultaneamente tutti i confronti dell'attention, a differenza dell'elaborazione sequenziale.",
+      specifici: [],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Meccanismo · 5.6","Parallelismo e scala"]]
+    }
+  };
+
+  const tendaEl = document.getElementById('tenda-concetto');
+  const scrimEl = document.getElementById('tenda-scrim');
+  const tendaTitolo = document.getElementById('tenda-titolo');
+  const tendaNota = document.getElementById('tenda-nota');
+  const tendaCorpo = document.getElementById('tenda-corpo');
+  const tendaLinkLente = document.getElementById('tenda-link-lente');
+  let ultimoTermineAperto = null;
+
+  function sezioneLista(titolo, voci, render){
+    if(!voci || !voci.length) return '';
+    return `<div class="tenda-sezione"><h3>${titolo}</h3><ul class="tenda-lista">${voci.map(render).join('')}</ul></div>`;
+  }
+
+  function apriTenda(id, triggerEl){
+    const c = CONCETTI[id];
+    if(!c) return;
+    if(ultimoTermineAperto) ultimoTermineAperto.classList.remove('aperto');
+    ultimoTermineAperto = triggerEl || null;
+    if(triggerEl) triggerEl.classList.add('aperto');
+
+    tendaTitolo.innerHTML = c.label + (c.tag ? `<span class="tag">${c.tag}</span>` : '');
+    tendaNota.textContent = c.nota;
+    tendaCorpo.innerHTML =
+      sezioneLista('Concetti più specifici', c.specifici, v => `<li>${v}</li>`) +
+      sezioneLista('Relazioni con altri concetti', c.relazioni, r => `<li><span class="rel-tipo">${r[0]}</span> ${r[1]}</li>`) +
+      sezioneLista('Teorici', c.teorici, t => `<li><span class="rel-tipo">Teorizzato da</span> ${t}</li>`) +
+      sezioneLista('Discusso in', c.discussoIn, d => `<li><span class="tenda-unita-cod">${d[0]}</span> — ${d[1]}</li>`);
+    tendaLinkLente.href = `../../../ontologia/lente-semantica/output/index.html#${id}`;
+
+    tendaEl.classList.add('visibile');
+    tendaEl.setAttribute('aria-hidden', 'false');
+    scrimEl.classList.add('visibile');
+  }
+
+  function chiudiTenda(){
+    tendaEl.classList.remove('visibile');
+    tendaEl.setAttribute('aria-hidden', 'true');
+    scrimEl.classList.remove('visibile');
+    if(ultimoTermineAperto) ultimoTermineAperto.classList.remove('aperto');
+    ultimoTermineAperto = null;
+  }
+
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.termine-concetto');
+    if(btn){ apriTenda(btn.dataset.concetto, btn); return; }
+    if(e.target === scrimEl){ chiudiTenda(); }
+  });
+  document.getElementById('tenda-chiudi').addEventListener('click', chiudiTenda);
+  document.addEventListener('keydown', (e) => { if(e.key === 'Escape') chiudiTenda(); });
 </script>
 
 </body>

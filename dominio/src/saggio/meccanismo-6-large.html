@@ -4,105 +4,140 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Meccanismo · 6 · Cosa significa "Large"</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+  @font-face {
+    font-family: 'EB Garamond';
+    src: url('fonts/EBGaramond-Variable.woff2') format('woff2-variations');
+    font-weight: 400 800;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'EB Garamond';
+    src: url('fonts/EBGaramond-Italic-Variable.woff2') format('woff2-variations');
+    font-weight: 400 800;
+    font-style: italic;
+    font-display: swap;
+  }
+
   :root{
-    --bg: #0F2A22;
-    --surface: #173B30;
-    --surface-2: #1E4A3C;
-    --copper: #C97D3D;
-    --copper-bright: #F0A85E;
-    --text: #F2ECE0;
-    --text-dim: #A9BFB6;
-    --line: rgba(242,236,224,0.12);
+    /* palette — vedi ../../../design-system/README.md */
+    --bianco:        #FFFFFF;
+    --brina:         #F6F8FB;
+    --inchiostro:    #1a1a1a;
+    --grigio-testo:  #4a4540;
+    --grigio-soft:   #8A8580;
+    --blu-scuro:     #1F2B6B;
+    --blu:           #2B3A8C;
+    --blu-chiaro:    #5A6FB8;
+    --arancio-scuro: #A85419;
+    --arancio:       #D4722A;
+    --arancio-chiaro:#E9A66B;
+    --verde-scuro:   #2A5628;
+    --verde:         #3D7A3A;
+    --verde-chiaro:  #7AAD76;
+
+    --serif: 'EB Garamond', Garamond, Georgia, 'Times New Roman', serif;
+    --mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+
+    --line: rgba(26,26,26,0.12);
     --rail-w: 300px;
   }
 
   *{ box-sizing: border-box; }
-  html{ scroll-behavior: smooth; }
+  html{ scroll-behavior: smooth; font-size: 120%; }
 
   body{
     margin:0;
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Source Serif 4', Georgia, serif;
+    background: var(--brina);
+    color: var(--inchiostro);
+    font-family: var(--serif);
     line-height: 1.65;
     -webkit-font-smoothing: antialiased;
   }
 
   h1,h2,h3, .display{
-    font-family: 'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
-    font-weight: 600;
-    letter-spacing: -0.01em;
+    font-family: var(--serif);
+    font-weight: 500;
     margin: 0;
   }
-  .mono{ font-family: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace; }
-  a{ color: var(--copper-bright); }
+  .mono{ font-family: var(--mono); }
+  a{ color: var(--arancio-scuro); }
+
+  /* piccola utility per il ruolo "apparato": maiuscoletto spaziato sulla stessa
+     famiglia, non un cambio di font — stesso meccanismo di ontologia/output/style.css
+     e di ~/projects/portfolio/specimen.html (.apparato) */
+  .apparato{
+    font-variant: small-caps;
+    letter-spacing: .06em;
+    color: var(--grigio-soft);
+  }
 
   /* ---------- layout shell: sidebar fissa con indice del sito ---------- */
   .sidebar{
-    background: rgba(15,42,34,0.92);
+    background: var(--bianco);
     border-bottom: 1px solid var(--line);
     padding: 28px 24px 32px;
   }
   .sidebar-kicker{
-    font-family: 'IBM Plex Mono', monospace; font-size: .74rem; letter-spacing: .12em;
-    text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px;
+    font-variant: small-caps; letter-spacing: .06em; font-size: .74rem;
+    color: var(--grigio-soft); margin-bottom: 10px;
   }
   .sidebar-title{
-    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.02rem;
-    color: var(--text); margin-bottom: 22px;
+    font-family: var(--serif); font-weight: 500; font-size: 1.02rem;
+    color: var(--inchiostro); margin-bottom: 22px;
   }
   .sidebar .parte{ margin-top: 26px; }
   .sidebar .parte:first-of-type{ margin-top: 0; }
   .sidebar .parte-heading{
-    font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: .74rem;
-    letter-spacing: .1em; text-transform: uppercase; color: var(--copper-bright);
+    font-family: var(--serif); font-weight: 600; font-size: .74rem;
+    font-variant: small-caps; letter-spacing: .06em; color: var(--blu);
     padding-bottom: 10px; margin-bottom: 2px; border-bottom: 1px solid var(--line);
   }
   .sidebar .voce-semplice{
     display: block; padding: 10px 4px; border-bottom: 1px solid var(--line);
-    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem;
-    color: var(--text); text-decoration: none;
+    font-family: var(--serif); font-weight: 500; font-size: .9rem;
+    color: var(--inchiostro); text-decoration: none;
   }
-  .sidebar .voce-semplice:hover{ color: var(--copper-bright); }
-  .sidebar .voce-semplice.current{ color: var(--copper-bright); }
+  .sidebar .voce-semplice:hover{ color: var(--blu); }
+  .sidebar .voce-semplice.current{ color: var(--blu); }
   .sidebar details.modulo{ border-bottom: 1px solid var(--line); }
   .sidebar details.modulo summary{
     display: flex; align-items: center; gap: 8px; padding: 10px 4px; cursor: pointer;
-    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem; color: var(--text);
+    font-family: var(--serif); font-weight: 500; font-size: .9rem; color: var(--inchiostro);
     list-style: none;
   }
-  .sidebar details.modulo summary.current{ color: var(--copper-bright); }
+  .sidebar details.modulo summary.current{ color: var(--blu); }
   .sidebar details.modulo summary::-webkit-details-marker{ display: none; }
   .sidebar details.modulo summary::before{
-    content: "›"; display: inline-block; font-family: 'IBM Plex Mono', monospace;
-    color: var(--text-dim); transition: transform .15s ease; flex-shrink: 0;
+    content: "›"; display: inline-block;
+    color: var(--grigio-soft); transition: transform .15s ease; flex-shrink: 0;
   }
-  .sidebar details.modulo[open] summary::before{ transform: rotate(90deg); color: var(--copper-bright); }
-  .sidebar details.modulo summary:hover{ color: var(--copper-bright); }
+  .sidebar details.modulo[open] summary::before{ transform: rotate(90deg); color: var(--blu); }
+  .sidebar details.modulo summary:hover{ color: var(--blu); }
   .sidebar .unita-list{ padding: 2px 0 12px 22px; display: flex; flex-direction: column; gap: 1px; }
   .sidebar .unita-list a{
-    display: block; padding: 6px 4px; font-size: .82rem; color: var(--text-dim); text-decoration: none;
+    display: block; padding: 6px 4px; font-size: .82rem; color: var(--grigio-testo); text-decoration: none;
   }
-  .sidebar .unita-list a:hover{ color: var(--copper-bright); }
-  .sidebar .unita-list a .num{ color: var(--copper); margin-right: 6px; font-family: 'IBM Plex Mono', monospace; font-size: .74rem; }
+  .sidebar .unita-list a:hover{ color: var(--blu); }
+  .sidebar .unita-list a .num{ color: var(--blu); margin-right: 6px; font-size: .74rem; }
 
-  /* pallini luminosi di scroll-spy, sulle voci dell'unità corrente */
+  /* pallini luminosi di scroll-spy, sulle voci dell'unità corrente — stesso
+     accento blu della sidebar, non arancio: qui il pallino segna "sei qui nella
+     navigazione", ruolo diverso da un rimando arancio nel corpo del testo. */
   .sidebar .unita-list.scrollspy a{ position: relative; padding-left: 20px; }
   .sidebar .unita-list.scrollspy a::before{
     content: "";
     position: absolute; left: 2px; top: 50%;
     width: 7px; height: 7px; border-radius: 50%;
-    background: var(--surface-2); border: 1px solid var(--line);
+    background: var(--brina); border: 1px solid var(--line);
     transform: translateY(-50%);
     transition: background .25s, box-shadow .25s, transform .25s;
   }
-  .sidebar .unita-list.scrollspy a.active{ color: var(--copper-bright); }
+  .sidebar .unita-list.scrollspy a.active{ color: var(--blu); }
   .sidebar .unita-list.scrollspy a.active::before{
-    background: var(--copper-bright);
-    box-shadow: 0 0 0 4px rgba(240,168,94,0.18);
+    background: var(--blu);
+    box-shadow: 0 0 0 4px rgba(43,58,140,0.18);
     transform: translateY(-50%) scale(1.2);
   }
 
@@ -122,17 +157,17 @@
   .unit-block:last-child section:last-of-type{ border-bottom:none; }
 
   .eyebrow{
-    font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
-    letter-spacing: 0.12em; text-transform: uppercase; color: var(--copper-bright);
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.78rem;
+    color: var(--grigio-soft);
     margin-bottom: 14px; display:flex; align-items:center; gap:10px;
   }
-  .eyebrow::before{ content:""; width: 22px; height:1px; background: var(--copper-bright); display:inline-block; }
+  .eyebrow::before{ content:""; width: 22px; height:1px; background: var(--grigio-soft); display:inline-block; }
 
   h2.title{ font-size: clamp(1.6rem, 4vw, 2.3rem); margin-bottom: 20px; }
 
-  p{ margin: 0 0 18px; color: var(--text); font-size: 1.05rem; }
-  p.dim{ color: var(--text-dim); }
-  .lede{ font-size: 1.15rem; color: var(--text); }
+  p{ margin: 0 0 18px; color: var(--inchiostro); font-size: 1.05rem; }
+  p.dim{ color: var(--grigio-testo); }
+  .lede{ font-size: 1.15rem; color: var(--inchiostro); }
 
   .reveal{ opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
   .reveal.visible{ opacity:1; transform: translateY(0); }
@@ -142,60 +177,60 @@
   }
 
   .aside{
-    margin: 26px 0; padding: 18px 20px; background: var(--surface);
-    border-left: 3px solid var(--copper); border-radius: 2px;
+    margin: 26px 0; padding: 18px 20px; background: var(--bianco);
+    border-left: 3px solid var(--arancio); border-radius: 2px;
   }
   .aside .label{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--copper-bright); margin-bottom: 8px; display:block;
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.72rem;
+    color: var(--grigio-soft); margin-bottom: 8px; display:block;
   }
-  .aside p{ margin-bottom:0; font-size: 0.96rem; color: var(--text-dim); }
+  .aside p{ margin-bottom:0; font-size: 0.96rem; color: var(--grigio-testo); }
 
   .question{
     margin: 28px 0; padding: 20px 22px; border: 1px dashed var(--line); border-radius: 4px;
-    font-family: 'Space Grotesk', sans-serif; font-size: 1.0rem; color: var(--copper-bright);
+    font-family: var(--serif); font-size: 1.0rem; color: var(--arancio-scuro);
   }
 
   blockquote{
-    margin: 0; padding-left: 22px; border-left: 2px solid var(--copper);
-    font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; color: var(--text);
+    margin: 0; padding-left: 22px; border-left: 2px solid var(--arancio);
+    font-family: var(--serif); font-size: 1.1rem; color: var(--inchiostro);
   }
 
   /* ---------- hero ---------- */
   .hero{ padding-top: 62px; }
   .hero .kicker{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.8rem; letter-spacing: 0.14em;
-    text-transform: uppercase; color: var(--text-dim); margin-bottom: 18px;
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.8rem;
+    color: var(--grigio-soft); margin-bottom: 18px;
   }
   .hero h1{ font-size: clamp(1.9rem, 5.6vw, 2.9rem); line-height:1.12; margin-bottom: 24px; }
-  .hero h1 em{ font-style: normal; color: var(--copper-bright); }
+  .hero h1 em{ font-style: italic; color: var(--arancio-scuro); }
   .scrolldown{
-    margin-top: 50px; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem;
-    color: var(--text-dim); letter-spacing: 0.08em; text-transform: uppercase;
+    margin-top: 50px; font-variant: small-caps; font-size: 0.78rem;
+    color: var(--grigio-soft); letter-spacing: 0.06em;
     display:flex; align-items:center; gap:8px;
   }
-  .scrolldown::after{ content:"↓"; color: var(--copper-bright); animation: nudge 1.8s infinite ease-in-out; }
+  .scrolldown::after{ content:"↓"; color: var(--arancio-scuro); animation: nudge 1.8s infinite ease-in-out; }
   @media (prefers-reduced-motion: reduce){ .scrolldown::after{ animation:none; } }
   @keyframes nudge{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(5px); } }
 
   /* ---------- widget: elementi condivisi ---------- */
   .ptitle{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--copper-bright); margin-bottom: 14px; display:block;
+    font-size: 0.72rem; letter-spacing: 0.1em;
+    font-variant: small-caps; color: var(--grigio-soft); margin-bottom: 14px; display:block;
   }
 
   /* ---------- widget: slider log-scala (6.1) ---------- */
   .scale-widget{
-    margin: 30px 0; background: var(--surface); border: 1px solid var(--line);
+    margin: 30px 0; background: var(--bianco); border: 1px solid var(--line);
     border-radius: 10px; padding: 24px 26px;
   }
-  .scale-slider{ width:100%; margin: 4px 0 6px; accent-color: var(--copper-bright); }
+  .scale-slider{ width:100%; margin: 4px 0 6px; accent-color: var(--arancio-scuro); }
   .scale-readout{
-    font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; color: var(--copper-bright);
+    font-family: var(--serif); font-size: 1.2rem; color: var(--arancio-scuro);
     margin: 16px 0 28px;
   }
   .scale-readout .nearest{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.76rem; color: var(--text-dim);
+    font-size: 0.76rem; color: var(--grigio-testo);
     display:block; margin-top: 6px; letter-spacing: 0.01em;
   }
   .scale-track{ position: relative; height: 34px; margin-top: 4px; }
@@ -203,27 +238,27 @@
     position:absolute; top:0; transform: translateX(-50%); text-align:center;
     display:flex; flex-direction:column; align-items:center; gap:5px; width: 96px;
   }
-  .scale-marker .dot{ width:7px; height:7px; border-radius:50%; background: var(--copper-bright); }
+  .scale-marker .dot{ width:7px; height:7px; border-radius:50%; background: var(--arancio-scuro); }
   .scale-marker .lbl{
-    font-family:'IBM Plex Mono', monospace; font-size:0.62rem; color: var(--text-dim);
+    font-size:0.62rem; color: var(--grigio-testo);
     letter-spacing:0.01em; line-height: 1.3;
   }
 
   /* ---------- widget: grafico capacità emergenti (6.2) ---------- */
   .emergent-widget{
-    margin: 30px 0; background: var(--surface); border: 1px solid var(--line);
+    margin: 30px 0; background: var(--bianco); border: 1px solid var(--line);
     border-radius: 10px; padding: 24px 26px;
   }
   .emergent-chart{ width:100%; height:auto; display:block; }
-  .emergent-chart .axis-label{ font-family:'IBM Plex Mono', monospace; font-size: 10px; fill: var(--text-dim); }
-  .emergent-chart .curve{ fill:none; stroke: var(--copper-bright); stroke-width: 2.5; }
-  .emergent-chart .point{ fill: var(--copper-bright); }
-  .emergent-chart .soglia-band{ fill: var(--copper); opacity: 0.2; }
+  .emergent-chart .axis-label{ font-size: 10px; fill: var(--grigio-testo); }
+  .emergent-chart .curve{ fill:none; stroke: var(--arancio-scuro); stroke-width: 2.5; }
+  .emergent-chart .point{ fill: var(--arancio-scuro); }
+  .emergent-chart .soglia-band{ fill: var(--arancio); opacity: 0.2; }
   .emergent-chart .soglia-label{
-    font-family:'IBM Plex Mono', monospace; font-size: 10px; fill: var(--copper-bright);
-    text-transform:uppercase; letter-spacing:0.05em;
+    font-size: 10px; fill: var(--grigio-soft);
+    font-variant: small-caps; letter-spacing:0.05em;
   }
-  .emergent-caption{ margin-top: 14px; font-size: 0.86rem; color: var(--text-dim); margin-bottom:0; }
+  .emergent-caption{ margin-top: 14px; font-size: 0.86rem; color: var(--grigio-testo); margin-bottom:0; }
 
   /* ---------- timeline (riusata verbatim da genealogia-1-disputa.html) ---------- */
   .timeline{
@@ -235,84 +270,168 @@
   .tl-node::before{
     content:""; position:absolute; left:-37px; top:3px;
     width: 12px; height:12px; border-radius:50%;
-    background: var(--copper-bright);
-    box-shadow: 0 0 0 3px var(--bg), 0 0 0 4px var(--line);
+    background: var(--arancio-scuro);
+    box-shadow: 0 0 0 3px var(--brina), 0 0 0 4px var(--line);
   }
   .tl-node.tl-break::before{
-    background: var(--bg);
-    border: 2px solid var(--copper-bright);
+    background: var(--brina);
+    border: 2px solid var(--arancio-scuro);
   }
   .tl-tag{
-    display:inline-block; font-family:'IBM Plex Mono', monospace; font-size: 0.66rem;
-    letter-spacing: 0.08em; text-transform: uppercase; color: var(--copper-bright);
-    border: 1px solid var(--copper); border-radius: 3px; padding: 2px 8px; margin-bottom: 8px;
+    display:inline-block; font-size: 0.66rem;
+    letter-spacing: 0.08em; font-variant: small-caps; color: var(--arancio-scuro);
+    border: 1px solid var(--arancio); border-radius: 3px; padding: 2px 8px; margin-bottom: 8px;
   }
   .tl-date{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.76rem; letter-spacing:0.06em;
-    text-transform: uppercase; color: var(--copper-bright); margin-bottom: 6px;
+    font-size: 0.76rem; letter-spacing:0.06em;
+    font-variant: small-caps; color: var(--grigio-soft); margin-bottom: 6px;
   }
   .tl-title{
-    font-family:'Space Grotesk', sans-serif; font-size: 1.02rem; color: var(--text); margin-bottom: 6px;
+    font-family: var(--serif); font-size: 1.02rem; color: var(--inchiostro); margin-bottom: 6px;
   }
-  .tl-desc{ font-size: 0.94rem; color: var(--text-dim); margin: 0; }
+  .tl-desc{ font-size: 0.94rem; color: var(--grigio-testo); margin: 0; }
 
   /* ---------- widget: toggle prima/dopo (6.4, 6.5) ---------- */
   .tuning-toggle{
-    margin: 30px 0; background: var(--surface); border: 1px solid var(--line);
+    margin: 30px 0; background: var(--bianco); border: 1px solid var(--line);
     border-radius: 10px; padding: 24px 26px;
   }
   .tt-prompt{
-    font-size: 0.94rem; color: var(--copper-bright); margin-bottom: 16px;
+    font-size: 0.94rem; color: var(--arancio-scuro); margin-bottom: 16px;
   }
   .tt-switch{ display:flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
   .tt-btn{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.76rem; color: var(--text-dim);
-    background: var(--bg); border: 1px solid var(--line); border-radius: 20px;
+    font-size: 0.76rem; color: var(--grigio-testo);
+    background: var(--brina); border: 1px solid var(--line); border-radius: 20px;
     padding: 7px 16px; cursor: pointer; transition: color .2s, border-color .2s, background .2s;
   }
-  .tt-btn.active{ color: var(--copper-bright); border-color: var(--copper); background: var(--surface-2); }
+  .tt-btn.active{ color: var(--arancio-scuro); border-color: var(--arancio); background: var(--brina); }
   .tt-response{
-    font-size: 1.0rem; color: var(--text); padding: 14px 16px; background: var(--bg);
+    font-size: 1.0rem; color: var(--inchiostro); padding: 14px 16px; background: var(--brina);
     border-radius: 6px; border: 1px solid var(--line); transition: opacity .18s ease; min-height: 1.6em;
   }
   .tt-note{ margin-top: 12px; font-size: 0.86rem; }
 
   /* ---------- widget: barra di quantizzazione (6.6) ---------- */
   .quant-widget{
-    margin: 30px 0; background: var(--surface); border: 1px solid var(--line);
+    margin: 30px 0; background: var(--bianco); border: 1px solid var(--line);
     border-radius: 10px; padding: 24px 26px;
   }
   .quant-bar{
-    height: 44px; background: var(--bg); border: 1px solid var(--line); border-radius: 8px;
+    height: 44px; background: var(--brina); border: 1px solid var(--line); border-radius: 8px;
     overflow: hidden; display:flex; padding: 5px; gap: 0;
   }
   .quant-fill{
     flex:1; display:flex; gap: 3px;
-    background: linear-gradient(90deg, var(--copper), var(--copper-bright));
+    background: linear-gradient(90deg, var(--arancio), var(--arancio-scuro));
     border-radius: 4px;
   }
   .quant-fill.segmented{ background: none; }
   .quant-block{
-    background: linear-gradient(90deg, var(--copper), var(--copper-bright));
+    background: linear-gradient(90deg, var(--arancio), var(--arancio-scuro));
     border-radius: 3px; transition: all .3s ease;
   }
   .quant-levels{ display:flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
   .quant-level-btn{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.76rem; color: var(--text-dim);
-    background: var(--bg); border: 1px solid var(--line); border-radius: 20px;
+    font-size: 0.76rem; color: var(--grigio-testo);
+    background: var(--brina); border: 1px solid var(--line); border-radius: 20px;
     padding: 7px 16px; cursor: pointer; transition: color .2s, border-color .2s, background .2s;
   }
-  .quant-level-btn.active{ color: var(--copper-bright); border-color: var(--copper); background: var(--surface-2); }
+  .quant-level-btn.active{ color: var(--arancio-scuro); border-color: var(--arancio); background: var(--brina); }
   .quant-detail{ margin-top: 14px; font-size: 0.9rem; }
 
   /* ---------- chiusura ---------- */
-  .chiusura{ background: linear-gradient(180deg, var(--bg), var(--surface)); }
+  .chiusura{ background: linear-gradient(180deg, var(--brina), var(--bianco)); }
   .footer-note{
-    margin-top: 46px; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem; color: var(--text-dim);
+    margin-top: 46px; font-variant: small-caps; letter-spacing: .06em; font-size: 0.78rem; color: var(--grigio-soft);
   }
+
+  /* ---------- termini collegati all'ontologia + tenda laterale ----------
+     Verde deliberatamente: è l'unico posto in questo capitolo dove il colore segnala
+     "stai per lasciare il saggio ed entrare nell'ontologia" — un registro diverso
+     dall'arancio (apparato del saggio stesso) e dal blu (navigazione del saggio).
+     Dati e link derivati SOLO da ciò che l'ontologia già espone (pagine
+     ontologia/output/concetti/*.html, sola lettura) — nessuna modifica ai .ttl o
+     agli script Python che li generano. */
+  .termine-concetto{
+    background: none; border: none; padding: 0; margin: 0; cursor: pointer;
+    font: inherit; color: var(--verde);
+    border-bottom: 1px dotted var(--verde);
+    transition: background .15s ease, border-bottom-style .15s ease;
+  }
+  .termine-concetto:hover, .termine-concetto:focus-visible{
+    background: rgba(61,122,58,0.14);
+    border-bottom-style: solid;
+    outline: none;
+  }
+  .termine-concetto.aperto{ background: rgba(61,122,58,0.22); border-bottom-style: solid; }
+
+  .tenda-scrim{
+    position: fixed; inset: 0; background: rgba(26,26,26,0.32);
+    opacity: 0; pointer-events: none; transition: opacity .25s ease; z-index: 90;
+  }
+  .tenda-scrim.visibile{ opacity: 1; pointer-events: auto; }
+
+  .tenda-concetto{
+    position: fixed; top: 0; right: 0; bottom: 0; width: min(420px, 92vw);
+    background: var(--bianco); z-index: 91;
+    box-shadow: -8px 0 28px rgba(26,26,26,0.18);
+    transform: translateX(100%); transition: transform .3s ease;
+    overflow-y: auto; padding: 28px 26px 40px;
+  }
+  .tenda-concetto.visibile{ transform: translateX(0); }
+  .tenda-testata{
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 14px;
+    border-bottom: 2px solid var(--verde); padding-bottom: 16px; margin-bottom: 18px;
+  }
+  .tenda-eyebrow{
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.86rem;
+    color: var(--verde); display: block; margin-bottom: 6px;
+  }
+  .tenda-titolo{ font-family: var(--serif); font-weight: 500; font-size: 1.5rem; color: var(--inchiostro); }
+  .tenda-titolo .tag{
+    font-variant: small-caps; letter-spacing: .04em; font-size: 0.8rem; color: var(--verde);
+    border: 1px solid var(--verde-chiaro); border-radius: 20px; padding: 1px 10px; margin-left: 8px;
+  }
+  .tenda-chiudi{
+    background: none; border: 1px solid var(--line); border-radius: 50%;
+    width: 32px; height: 32px; font-size: 1.1rem; line-height: 1; cursor: pointer;
+    color: var(--grigio-testo); flex-shrink: 0;
+  }
+  .tenda-chiudi:hover{ border-color: var(--verde); color: var(--verde-scuro); }
+  .tenda-nota{ font-size: 1.05rem; color: var(--inchiostro); margin: 0 0 22px; }
+  .tenda-sezione{ margin-bottom: 20px; }
+  .tenda-sezione h3{
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.86rem;
+    color: var(--grigio-soft); font-weight: 500; margin: 0 0 8px;
+  }
+  .tenda-lista{ list-style: none; margin: 0; padding: 0; font-size: 0.98rem; color: var(--grigio-testo); }
+  .tenda-lista li{ margin-bottom: 5px; }
+  .tenda-lista .rel-tipo{ color: var(--verde); font-size: 0.9em; }
+  .tenda-unita-cod{ font-variant: small-caps; color: var(--grigio-soft); font-size: 0.9em; }
+  .tenda-lente{
+    display: block; text-align: center; margin-top: 26px; padding: 12px 16px;
+    background: var(--verde); color: var(--bianco); border-radius: 8px;
+    text-decoration: none; font-variant: small-caps; letter-spacing: .04em; font-size: 0.98rem;
+  }
+  .tenda-lente:hover{ background: var(--verde-scuro); }
 </style>
 </head>
 <body>
+
+<div class="tenda-scrim" id="tenda-scrim"></div>
+<aside class="tenda-concetto" id="tenda-concetto" aria-hidden="true">
+  <div class="tenda-testata">
+    <div>
+      <span class="tenda-eyebrow">Dal vocabolario dell'ontologia</span>
+      <span class="tenda-titolo" id="tenda-titolo"></span>
+    </div>
+    <button class="tenda-chiudi" id="tenda-chiudi" aria-label="Chiudi">×</button>
+  </div>
+  <p class="tenda-nota" id="tenda-nota"></p>
+  <div id="tenda-corpo"></div>
+  <a class="tenda-lente" id="tenda-link-lente" href="#" target="_blank" rel="noopener">Apri nella Lente semantica →</a>
+</aside>
 
 <nav class="sidebar" aria-label="Indice del saggio">
   <div class="sidebar-kicker">Indice</div>
@@ -476,7 +595,7 @@
       <div class="kicker">Meccanismo · 6 · Cosa significa "Large" · Unità 6.1</div>
       <h1>Quanto è <em>davvero grande</em> un modello linguistico?</h1>
       <p class="lede dim">Il nome stesso — Large Language Model — mette la grandezza al centro. Ma «grande» è un aggettivo vago finché non lo si confronta con qualcosa. Questa unità non chiede di memorizzare cifre: chiede di sentirne l'ordine di grandezza, prendendo come primo termine di paragone l'oggetto più grande già noto — il cervello di chi legge questa frase.</p>
-      <div class="scrolldown">numeri che si misurano in miliardi, non in memoria</div>
+      <div class="scrolldown"><button class="termine-concetto" data-concetto="AddestramentoEScala">numeri che si misurano in miliardi, non in memoria</button></div>
     </div>
   </section>
 
@@ -484,7 +603,7 @@
     <div class="wrap reveal">
       <div class="eyebrow">Tre assi di grandezza</div>
       <h2 class="title">Parametri, dati, calcolo</h2>
-      <p>«Large» in «Large Language Model» non è un'etichetta di marketing: indica una scelta tecnica precisa, misurabile lungo almeno tre assi diversi, spesso confusi tra loro. Il primo è il numero di <strong>parametri</strong>: i pesi continui — le «manopole» regolabili che l'addestramento aggiusta una per una — più sono, più capacità di rappresentare pattern complessi, ma anche più memoria e più calcolo richiesti. Il secondo è il volume dei <strong>dati di addestramento</strong>: quanto testo il modello ha visto prima di essere pronto. Il terzo è il <strong>costo computazionale</strong>: quanta potenza di calcolo — GPU, energia, tempo — è servita per arrivare a quel risultato. I tre assi crescono insieme, ma non sono la stessa cosa.</p>
+      <p>«Large» in «Large Language Model» non è un'etichetta di marketing: indica una scelta tecnica precisa, misurabile lungo almeno tre assi diversi, spesso confusi tra loro. Il primo è il numero di <strong><button class="termine-concetto" data-concetto="ParametriScala">parametri</button></strong>: i pesi continui — le «manopole» regolabili che l'addestramento aggiusta una per una — più sono, più capacità di rappresentare pattern complessi, ma anche più memoria e più calcolo richiesti. Il secondo è il volume dei <strong>dati di addestramento</strong>: quanto testo il modello ha visto prima di essere pronto. Il terzo è il <strong>costo computazionale</strong>: quanta potenza di calcolo — GPU, energia, tempo — è servita per arrivare a quel risultato. I tre assi crescono insieme, ma non sono la stessa cosa.</p>
 
       <p>GPT-3 (Brown et al., 2020) esiste in otto varianti di dimensione, dalla più piccola con 125 milioni di parametri fino alla versione completa con 175 miliardi, addestrata su 570 gigabyte di testo. PaLM (Chowdhery et al., Google, 2022) arriva a 540 miliardi di parametri, addestrato su 780 miliardi di token. Sono cifre storiche, non le più recenti possibili — scelte deliberatamente perché stabili e verificabili nel tempo, non perché siano il record del momento: il punto pedagogico è l'ordine di grandezza, non la cronaca dell'ultimo modello uscito.</p>
 
@@ -543,7 +662,7 @@
     <div class="wrap reveal">
       <div class="eyebrow">Una soglia, non una rampa</div>
       <h2 class="title">Capacità che restano piatte, poi saltano</h2>
-      <p>Alcune capacità — l'aritmetica a più cifre, il ragionamento a più passi — non migliorano gradualmente al crescere della scala del modello. Restano vicine allo zero fino a una certa soglia di parametri o dati, poi appaiono in modo quasi discontinuo, come se una soglia fosse stata superata. Il termine tecnico per questo fenomeno, coniato da Wei e colleghi (2022), è «capacità emergenti».</p>
+      <p>Alcune capacità — l'aritmetica a più cifre, il ragionamento a più passi — non migliorano gradualmente al crescere della scala del modello. Restano vicine allo zero fino a una certa soglia di parametri o dati, poi appaiono in modo quasi discontinuo, come se una soglia fosse stata superata. Il termine tecnico per questo fenomeno, coniato da Wei e colleghi (2022), è «<button class="termine-concetto" data-concetto="CapacitaEmergenti">capacità emergenti</button>».</p>
 
       <p>Il grafico qui sotto illustra il tipo di andamento descritto in letteratura per un compito come l'aritmetica a più cifre: piatto per la maggior parte della scala, poi un salto rapido oltre una certa soglia.</p>
 
@@ -602,7 +721,7 @@
     <div class="wrap reveal">
       <div class="eyebrow">Un arco di tremila anni</div>
       <h2 class="title">Dall'alfabeto ai corpora di addestramento</h2>
-      <p>L'alfabeto è il primo grande atto di discretizzazione della storia umana — trasforma il continuo del parlato in simboli finiti e ricombinabili, senza che esistesse ancora una parola per nominare l'operazione. Il concetto diventa consapevole solo nel Novecento, con von Neumann. Diventa esplicito e industriale solo con i grandi progetti di digitalizzazione di massa delle biblioteche, all'inizio degli anni 2000. Il testo con cui si addestra un LLM oggi è, in questo senso, l'ultimo anello — non il primo — di un arco molto più lungo.</p>
+      <p>L'alfabeto è il primo grande atto di <button class="termine-concetto" data-concetto="Discretizzazione">discretizzazione</button> della storia umana — trasforma il continuo del parlato in simboli finiti e ricombinabili, senza che esistesse ancora una parola per nominare l'operazione. Il concetto diventa consapevole solo nel Novecento, con von Neumann. Diventa esplicito e industriale solo con i grandi progetti di digitalizzazione di massa delle biblioteche, all'inizio degli anni 2000. Il testo con cui si addestra un LLM oggi è, in questo senso, l'ultimo anello — non il primo — di un arco molto più lungo.</p>
 
       <div class="timeline" id="timeline-6-3"></div>
     </div>
@@ -633,7 +752,7 @@
     <div class="wrap reveal">
       <div class="eyebrow">Chiusura — Unità 6.3</div>
       <blockquote>
-        <em>Veritas filia temporis</em> — la verità è figlia del tempo, diceva Bacone. <em>Error filius temporis</em>, ribatteva Bayle secoli dopo — anche l'errore lo è. Un modello addestrato su tutto il testo che l'umanità ha scritto eredita entrambe le filiazioni, senza poterle sempre distinguere.
+        <em><button class="termine-concetto" data-concetto="VeritasFiliaTemporis">Veritas filia temporis</button></em> — la verità è figlia del tempo, diceva Bacone. <em>Error filius temporis</em>, ribatteva Bayle secoli dopo — anche l'errore lo è. Un modello addestrato su tutto il testo che l'umanità ha scritto <button class="termine-concetto" data-concetto="RiflessioniEpistemologicheTrasversali">eredita entrambe le filiazioni, senza poterle sempre distinguere</button>.
       </blockquote>
       <p style="margin-top:28px;">Nell'unità successiva: cosa succede dopo che tutto questo testo ha già fatto il suo lavoro — quando un modello di base, puro predittore statistico, viene adattato per rispondere davvero.</p>
 
@@ -658,7 +777,7 @@
     <div class="wrap reveal">
       <div class="eyebrow">Il modello di base</div>
       <h2 class="title">Un predittore, senza comportamento intrinseco</h2>
-      <p>Il pre-addestramento — tutto ciò che questo corso ha descritto finora — produce un <strong>modello di base</strong>: un predittore statistico puro, addestrato solo a stimare quale token venga dopo un altro in un testo enorme. Non ha, per costruzione, alcun comportamento conversazionale intrinseco. Di fronte a un prompt che assomiglia a un'istruzione, il modello di base non «capisce» di dover eseguire un compito — continua semplicemente il pattern superficiale del testo che ha di fronte, qualunque esso sia.</p>
+      <p>Il pre-addestramento — tutto ciò che questo corso ha descritto finora — produce un <strong><button class="termine-concetto" data-concetto="ModelloDiBase">modello di base</button></strong>: un predittore statistico puro, addestrato solo a stimare quale token venga dopo un altro in un testo enorme. Non ha, per costruzione, alcun comportamento conversazionale intrinseco. Di fronte a un prompt che assomiglia a un'istruzione, il modello di base non «capisce» di dover eseguire un compito — continua semplicemente il pattern superficiale del testo che ha di fronte, qualunque esso sia.</p>
     </div>
   </section>
 
@@ -666,7 +785,7 @@
     <div class="wrap reveal">
       <div class="eyebrow">Il fine-tuning</div>
       <h2 class="title">Adattare il comportamento, con dati più piccoli e curati</h2>
-      <p>Il <strong>fine-tuning</strong> prende quel modello di base e lo addestra ulteriormente su un insieme di dati molto più piccolo e curato — spesso esempi scritti apposta di istruzione e risposta corretta — per orientarlo verso un comportamento specifico: seguire istruzioni, rispondere in un certo stile, invece di limitarsi a continuare un pattern testuale. Il fenomeno è reale e documentato (Ouyang et al., 2022, il lavoro che introduce InstructGPT). Confronti le due risposte allo stesso identico prompt.</p>
+      <p>Il <strong><button class="termine-concetto" data-concetto="FineTuning">fine-tuning</button></strong> prende quel modello di base e lo addestra ulteriormente su un insieme di dati molto più piccolo e curato — spesso esempi scritti apposta di istruzione e risposta corretta — per orientarlo verso un comportamento specifico: seguire istruzioni, rispondere in un certo stile, invece di limitarsi a continuare un pattern testuale. Il fenomeno è reale e documentato (Ouyang et al., 2022, il lavoro che introduce InstructGPT). Confronti le due risposte allo stesso identico prompt.</p>
 
       <div class="tuning-toggle" id="tuning-widget-64">
         <span class="ptitle">Stesso prompt, due modelli</span>
@@ -720,7 +839,7 @@
     <div class="wrap reveal">
       <div class="eyebrow">Dalle preferenze umane a un segnale di addestramento</div>
       <h2 class="title">Come si insegna una preferenza a un modello</h2>
-      <p>Nell'RLHF (<em>Reinforcement Learning from Human Feedback</em>), a valutatori umani vengono mostrate più risposte possibili a uno stesso prompt, e viene chiesto di ordinarle dalla migliore alla peggiore. Queste classifiche addestrano un secondo modello — un modello di ricompensa — a stimare quanto una risposta sarebbe piaciuta a un valutatore umano. Il modello principale viene poi ulteriormente addestrato, con tecniche di apprendimento per rinforzo, a produrre risposte che quel modello di ricompensa valuta più alte. Lo stesso identico confronto già visto in 6.4 — modello di base contro modello adattato — mostra anche l'effetto di questa fase: non solo l'istruzione viene eseguita, ma il tono e la forma della risposta riflettono ciò che i valutatori umani hanno premiato.</p>
+      <p>Nell'<button class="termine-concetto" data-concetto="Rlhf">RLHF</button> (<em>Reinforcement Learning from Human Feedback</em>), a valutatori umani vengono mostrate più risposte possibili a uno stesso prompt, e viene chiesto di ordinarle dalla migliore alla peggiore. Queste classifiche addestrano un secondo modello — un <button class="termine-concetto" data-concetto="ModelloDiRicompensa">modello di ricompensa</button> — a stimare quanto una risposta sarebbe piaciuta a un valutatore umano. Il modello principale viene poi ulteriormente addestrato, con tecniche di apprendimento per rinforzo, a produrre risposte che quel modello di ricompensa valuta più alte. Lo stesso identico confronto già visto in 6.4 — modello di base contro modello adattato — mostra anche l'effetto di questa fase: non solo l'istruzione viene eseguita, ma il tono e la forma della risposta riflettono ciò che i valutatori umani hanno premiato.</p>
 
       <div class="tuning-toggle" id="tuning-widget-65">
         <span class="ptitle">Lo stesso confronto, letto attraverso le preferenze</span>
@@ -779,7 +898,7 @@
   <section id="u6-sez-quantizzazione">
     <div class="wrap reveal">
       <div class="eyebrow">Tornare al discreto, di proposito</div>
-      <h2 class="title">La quantizzazione</h2>
+      <h2 class="title"><button class="termine-concetto" data-concetto="Quantizzazione">La quantizzazione</button></h2>
       <p>Durante l'addestramento, i pesi di un modello sono numeri continui ad alta precisione — tipicamente a 32 bit (FP32). Una volta addestrato, per il deployment — far girare il modello in pratica, su hardware con memoria ed energia limitate — questi pesi vengono spesso compressi riducendo deliberatamente la precisione numerica con cui sono rappresentati. È un ritorno, per scelta ingegneristica esplicita, verso il discreto: meno valori distinti possibili, meno memoria, meno energia, a fronte di una perdita di precisione che si cerca di mantenere il più possibile trascurabile.</p>
 
       <div class="quant-widget">
@@ -1062,6 +1181,151 @@
   renderQuantLevels();
   renderQuantBar();
   renderQuantDetail();
+
+  // ============ termini collegati all'ontologia + tenda laterale ============
+  const CONCETTI = {
+    AddestramentoEScala: {
+      label: "Addestramento e scala",
+      nota: "Il Modulo 6: cosa rende un modello «Large» e come lo si porta dal pre-training al comportamento istruito.",
+      specifici: ["Fine-tuning","Modello di base","Parametri / scala","Quantizzazione","RLHF"],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Meccanismo · 6.1","Scala"],["Meccanismo · 6.4","Fine-tuning"],["Meccanismo · 6.5","RLHF"],["Meccanismo · 6.6","Quantizzazione (chiusura dell'arco tecnico)"]]
+    },
+    ParametriScala: {
+      label: "Parametri / scala",
+      nota: "I pesi regolabili di un modello; i tre assi (parametri, dati, calcolo) lungo cui si misura la sua grandezza.",
+      specifici: [],
+      relazioni: [],
+      teorici: ["Brown et al. (2020)","Chowdhery et al. (2022)"],
+      discussoIn: [["Meccanismo · 6.1","Scala"]]
+    },
+    CapacitaEmergenti: {
+      label: "Capacità emergenti",
+      nota: "Capacità che appaiono in modo discontinuo sopra una soglia di scala, non gradualmente (Wei et al. 2022; discusso da Schaeffer et al. 2023).",
+      specifici: [],
+      relazioni: [["È esemplificato da","Word2Vec"]],
+      teorici: ["Wei et al. (2022)","Schaeffer, Miranda, Koyejo (2023)"],
+      discussoIn: [["Genealogia · 2.1","Completamento statistico a scala massiva, in-context learning, transfer cross-dominio e altre capacità emergenti"],["Meccanismo · 6.2","Capacità emergenti"]]
+    },
+    RiflessioniEpistemologicheTrasversali: {
+      label: "Riflessioni epistemologiche trasversali",
+      nota: "Aforismi e cornici epistemologiche usate nel corso per inquadrare i dati di addestramento e la loro storia.",
+      specifici: ["Veritas filia temporis / error filius temporis"],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Meccanismo · 6.3","I dati"]]
+    },
+    VeritasFiliaTemporis: {
+      label: "Veritas filia temporis / error filius temporis",
+      nota: "Coppia aforistica (Bacone/Bayle) su verità ed errore come «figli del tempo»; applicata nel corso ai dati di addestramento.",
+      specifici: [],
+      relazioni: [],
+      teorici: ["Francis Bacon","Pierre Bayle"],
+      discussoIn: [["Meccanismo · 6.3","I dati"]]
+    },
+    Discretizzazione: {
+      label: "Discretizzazione",
+      nota: "Trasformazione di un continuo in simboli finiti ricombinabili; tesi d'apertura del corso: nasce con la scrittura/l'alfabeto, non con il computer.",
+      specifici: ["Encoding","ID numerico (token ID)","Problema del vocabolario","Token","Tokenizzazione"],
+      relazioni: [],
+      teorici: ["John von Neumann"],
+      discussoIn: [["Fondamenti · 2","Hardware e software"],["Meccanismo · 1.1","Encoding"],["Meccanismo · 6.3","I dati"]]
+    },
+    ModelloDiBase: {
+      label: "Modello di base",
+      nota: "Modello pre-addestrato: puro predittore statistico, senza comportamento conversazionale intrinseco.",
+      specifici: [],
+      relazioni: [["È prerequisito di","Fine-tuning"]],
+      teorici: [],
+      discussoIn: [["Meccanismo · 6.4","Fine-tuning"]]
+    },
+    FineTuning: {
+      label: "Fine-tuning",
+      tag: "Tecnica",
+      nota: "Adattamento del comportamento di un modello di base con dati più piccoli e curati (Ouyang et al. 2022).",
+      specifici: [],
+      relazioni: [["È prerequisito di","RLHF"],["Richiede come prerequisito","Modello di base"]],
+      teorici: ["Ouyang et al. (2022)"],
+      discussoIn: [["Meccanismo · 6.4","Fine-tuning"]]
+    },
+    Rlhf: {
+      label: "RLHF",
+      tag: "Tecnica",
+      nota: "Trasformazione di preferenze/valutazioni umane in segnale di addestramento ulteriore, tramite un modello di ricompensa.",
+      specifici: ["Modello di ricompensa"],
+      relazioni: [["Richiede come prerequisito","Fine-tuning"]],
+      teorici: [],
+      discussoIn: [["Meccanismo · 6.5","RLHF"]]
+    },
+    ModelloDiRicompensa: {
+      label: "Modello di ricompensa",
+      nota: "Modello secondario addestrato a stimare quanto una risposta piacerebbe a un valutatore umano — componente costitutiva dell'RLHF.",
+      specifici: [],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Meccanismo · 6.5","RLHF"]]
+    },
+    Quantizzazione: {
+      label: "Quantizzazione",
+      tag: "Tecnica",
+      nota: "Riduzione deliberata della precisione numerica dei pesi (FP32→FP16/BF16→INT8→INT4) per il deployment, dopo un addestramento a precisione continua.",
+      specifici: [],
+      relazioni: [["Si contrappone a","Discesa del gradiente"]],
+      teorici: [],
+      discussoIn: [["Meccanismo · 4.4","La funzione di perdita"],["Meccanismo · 6.6","Quantizzazione (chiusura dell'arco tecnico)"]]
+    }
+  };
+
+  const tendaEl = document.getElementById('tenda-concetto');
+  const scrimEl = document.getElementById('tenda-scrim');
+  const tendaTitolo = document.getElementById('tenda-titolo');
+  const tendaNota = document.getElementById('tenda-nota');
+  const tendaCorpo = document.getElementById('tenda-corpo');
+  const tendaLinkLente = document.getElementById('tenda-link-lente');
+  let ultimoTermineAperto = null;
+
+  function sezioneLista(titolo, voci, render){
+    if(!voci || !voci.length) return '';
+    return `<div class="tenda-sezione"><h3>${titolo}</h3><ul class="tenda-lista">${voci.map(render).join('')}</ul></div>`;
+  }
+
+  function apriTenda(id, triggerEl){
+    const c = CONCETTI[id];
+    if(!c) return;
+    if(ultimoTermineAperto) ultimoTermineAperto.classList.remove('aperto');
+    ultimoTermineAperto = triggerEl || null;
+    if(triggerEl) triggerEl.classList.add('aperto');
+
+    tendaTitolo.innerHTML = c.label + (c.tag ? `<span class="tag">${c.tag}</span>` : '');
+    tendaNota.textContent = c.nota;
+    tendaCorpo.innerHTML =
+      sezioneLista('Concetti più specifici', c.specifici, v => `<li>${v}</li>`) +
+      sezioneLista('Relazioni con altri concetti', c.relazioni, r => `<li><span class="rel-tipo">${r[0]}</span> ${r[1]}</li>`) +
+      sezioneLista('Teorici', c.teorici, t => `<li><span class="rel-tipo">Teorizzato da</span> ${t}</li>`) +
+      sezioneLista('Discusso in', c.discussoIn, d => `<li><span class="tenda-unita-cod">${d[0]}</span> — ${d[1]}</li>`);
+    tendaLinkLente.href = `../../../ontologia/lente-semantica/output/index.html#${id}`;
+
+    tendaEl.classList.add('visibile');
+    tendaEl.setAttribute('aria-hidden', 'false');
+    scrimEl.classList.add('visibile');
+  }
+
+  function chiudiTenda(){
+    tendaEl.classList.remove('visibile');
+    tendaEl.setAttribute('aria-hidden', 'true');
+    scrimEl.classList.remove('visibile');
+    if(ultimoTermineAperto) ultimoTermineAperto.classList.remove('aperto');
+    ultimoTermineAperto = null;
+  }
+
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.termine-concetto');
+    if(btn){ apriTenda(btn.dataset.concetto, btn); return; }
+    if(e.target === scrimEl){ chiudiTenda(); }
+  });
+  document.getElementById('tenda-chiudi').addEventListener('click', chiudiTenda);
+  document.addEventListener('keydown', (e) => { if(e.key === 'Escape') chiudiTenda(); });
 </script>
 
 </body>

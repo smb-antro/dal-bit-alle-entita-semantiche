@@ -4,105 +4,140 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Genealogia · 3 — Perché ci vuole un villaggio</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+  @font-face {
+    font-family: 'EB Garamond';
+    src: url('fonts/EBGaramond-Variable.woff2') format('woff2-variations');
+    font-weight: 400 800;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'EB Garamond';
+    src: url('fonts/EBGaramond-Italic-Variable.woff2') format('woff2-variations');
+    font-weight: 400 800;
+    font-style: italic;
+    font-display: swap;
+  }
+
   :root{
-    --bg: #0F2A22;
-    --surface: #173B30;
-    --surface-2: #1E4A3C;
-    --copper: #C97D3D;
-    --copper-bright: #F0A85E;
-    --text: #F2ECE0;
-    --text-dim: #A9BFB6;
-    --line: rgba(242,236,224,0.12);
+    /* palette — vedi ../../../design-system/README.md */
+    --bianco:        #FFFFFF;
+    --brina:         #F6F8FB;
+    --inchiostro:    #1a1a1a;
+    --grigio-testo:  #4a4540;
+    --grigio-soft:   #8A8580;
+    --blu-scuro:     #1F2B6B;
+    --blu:           #2B3A8C;
+    --blu-chiaro:    #5A6FB8;
+    --arancio-scuro: #A85419;
+    --arancio:       #D4722A;
+    --arancio-chiaro:#E9A66B;
+    --verde-scuro:   #2A5628;
+    --verde:         #3D7A3A;
+    --verde-chiaro:  #7AAD76;
+
+    --serif: 'EB Garamond', Garamond, Georgia, 'Times New Roman', serif;
+    --mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+
+    --line: rgba(26,26,26,0.12);
     --rail-w: 300px;
   }
 
   *{ box-sizing: border-box; }
-  html{ scroll-behavior: smooth; }
+  html{ scroll-behavior: smooth; font-size: 120%; }
 
   body{
     margin:0;
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Source Serif 4', Georgia, serif;
+    background: var(--brina);
+    color: var(--inchiostro);
+    font-family: var(--serif);
     line-height: 1.65;
     -webkit-font-smoothing: antialiased;
   }
 
   h1,h2,h3, .display{
-    font-family: 'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
-    font-weight: 600;
-    letter-spacing: -0.01em;
+    font-family: var(--serif);
+    font-weight: 500;
     margin: 0;
   }
-  .mono{ font-family: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace; }
-  a{ color: var(--copper-bright); }
+  .mono{ font-family: var(--mono); }
+  a{ color: var(--arancio-scuro); }
+
+  /* piccola utility per il ruolo "apparato": maiuscoletto spaziato sulla stessa
+     famiglia, non un cambio di font — stesso meccanismo di ontologia/output/style.css
+     e di ~/projects/portfolio/specimen.html (.apparato) */
+  .apparato{
+    font-variant: small-caps;
+    letter-spacing: .06em;
+    color: var(--grigio-soft);
+  }
 
   /* ---------- layout shell: sidebar fissa con indice del sito ---------- */
   .sidebar{
-    background: rgba(15,42,34,0.92);
+    background: var(--bianco);
     border-bottom: 1px solid var(--line);
     padding: 28px 24px 32px;
   }
   .sidebar-kicker{
-    font-family: 'IBM Plex Mono', monospace; font-size: .74rem; letter-spacing: .12em;
-    text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px;
+    font-variant: small-caps; letter-spacing: .06em; font-size: .74rem;
+    color: var(--grigio-soft); margin-bottom: 10px;
   }
   .sidebar-title{
-    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.02rem;
-    color: var(--text); margin-bottom: 22px;
+    font-family: var(--serif); font-weight: 500; font-size: 1.02rem;
+    color: var(--inchiostro); margin-bottom: 22px;
   }
   .sidebar .parte{ margin-top: 26px; }
   .sidebar .parte:first-of-type{ margin-top: 0; }
   .sidebar .parte-heading{
-    font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: .74rem;
-    letter-spacing: .1em; text-transform: uppercase; color: var(--copper-bright);
+    font-family: var(--serif); font-weight: 600; font-size: .74rem;
+    font-variant: small-caps; letter-spacing: .06em; color: var(--blu);
     padding-bottom: 10px; margin-bottom: 2px; border-bottom: 1px solid var(--line);
   }
   .sidebar .voce-semplice{
     display: block; padding: 10px 4px; border-bottom: 1px solid var(--line);
-    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem;
-    color: var(--text); text-decoration: none;
+    font-family: var(--serif); font-weight: 500; font-size: .9rem;
+    color: var(--inchiostro); text-decoration: none;
   }
-  .sidebar .voce-semplice:hover{ color: var(--copper-bright); }
-  .sidebar .voce-semplice.current{ color: var(--copper-bright); }
+  .sidebar .voce-semplice:hover{ color: var(--blu); }
+  .sidebar .voce-semplice.current{ color: var(--blu); }
   .sidebar details.modulo{ border-bottom: 1px solid var(--line); }
   .sidebar details.modulo summary{
     display: flex; align-items: center; gap: 8px; padding: 10px 4px; cursor: pointer;
-    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem; color: var(--text);
+    font-family: var(--serif); font-weight: 500; font-size: .9rem; color: var(--inchiostro);
     list-style: none;
   }
-  .sidebar details.modulo summary.current{ color: var(--copper-bright); }
+  .sidebar details.modulo summary.current{ color: var(--blu); }
   .sidebar details.modulo summary::-webkit-details-marker{ display: none; }
   .sidebar details.modulo summary::before{
-    content: "›"; display: inline-block; font-family: 'IBM Plex Mono', monospace;
-    color: var(--text-dim); transition: transform .15s ease; flex-shrink: 0;
+    content: "›"; display: inline-block;
+    color: var(--grigio-soft); transition: transform .15s ease; flex-shrink: 0;
   }
-  .sidebar details.modulo[open] summary::before{ transform: rotate(90deg); color: var(--copper-bright); }
-  .sidebar details.modulo summary:hover{ color: var(--copper-bright); }
+  .sidebar details.modulo[open] summary::before{ transform: rotate(90deg); color: var(--blu); }
+  .sidebar details.modulo summary:hover{ color: var(--blu); }
   .sidebar .unita-list{ padding: 2px 0 12px 22px; display: flex; flex-direction: column; gap: 1px; }
   .sidebar .unita-list a{
-    display: block; padding: 6px 4px; font-size: .82rem; color: var(--text-dim); text-decoration: none;
+    display: block; padding: 6px 4px; font-size: .82rem; color: var(--grigio-testo); text-decoration: none;
   }
-  .sidebar .unita-list a:hover{ color: var(--copper-bright); }
-  .sidebar .unita-list a .num{ color: var(--copper); margin-right: 6px; font-family: 'IBM Plex Mono', monospace; font-size: .74rem; }
+  .sidebar .unita-list a:hover{ color: var(--blu); }
+  .sidebar .unita-list a .num{ color: var(--blu); margin-right: 6px; font-size: .74rem; }
 
-  /* pallini luminosi di scroll-spy, sulle voci dell'unità corrente */
+  /* pallini luminosi di scroll-spy, sulle voci dell'unità corrente — stesso
+     accento blu della sidebar, non arancio: qui il pallino segna "sei qui nella
+     navigazione", ruolo diverso da un rimando arancio nel corpo del testo. */
   .sidebar .unita-list.scrollspy a{ position: relative; padding-left: 20px; }
   .sidebar .unita-list.scrollspy a::before{
     content: "";
     position: absolute; left: 2px; top: 50%;
     width: 7px; height: 7px; border-radius: 50%;
-    background: var(--surface-2); border: 1px solid var(--line);
+    background: var(--brina); border: 1px solid var(--line);
     transform: translateY(-50%);
     transition: background .25s, box-shadow .25s, transform .25s;
   }
-  .sidebar .unita-list.scrollspy a.active{ color: var(--copper-bright); }
+  .sidebar .unita-list.scrollspy a.active{ color: var(--blu); }
   .sidebar .unita-list.scrollspy a.active::before{
-    background: var(--copper-bright);
-    box-shadow: 0 0 0 4px rgba(240,168,94,0.18);
+    background: var(--blu);
+    box-shadow: 0 0 0 4px rgba(43,58,140,0.18);
     transform: translateY(-50%) scale(1.2);
   }
 
@@ -122,17 +157,17 @@
   .unit-block:last-child section:last-of-type{ border-bottom:none; }
 
   .eyebrow{
-    font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
-    letter-spacing: 0.12em; text-transform: uppercase; color: var(--copper-bright);
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.78rem;
+    color: var(--grigio-soft);
     margin-bottom: 14px; display:flex; align-items:center; gap:10px;
   }
-  .eyebrow::before{ content:""; width: 22px; height:1px; background: var(--copper-bright); display:inline-block; }
+  .eyebrow::before{ content:""; width: 22px; height:1px; background: var(--grigio-soft); display:inline-block; }
 
   h2.title{ font-size: clamp(1.6rem, 4vw, 2.3rem); margin-bottom: 20px; }
 
-  p{ margin: 0 0 18px; color: var(--text); font-size: 1.05rem; }
-  p.dim{ color: var(--text-dim); }
-  .lede{ font-size: 1.15rem; color: var(--text); }
+  p{ margin: 0 0 18px; color: var(--inchiostro); font-size: 1.05rem; }
+  p.dim{ color: var(--grigio-testo); }
+  .lede{ font-size: 1.15rem; color: var(--inchiostro); }
 
   .reveal{ opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
   .reveal.visible{ opacity:1; transform: translateY(0); }
@@ -142,62 +177,62 @@
   }
 
   .aside{
-    margin: 26px 0; padding: 18px 20px; background: var(--surface);
-    border-left: 3px solid var(--copper); border-radius: 2px;
+    margin: 26px 0; padding: 18px 20px; background: var(--bianco);
+    border-left: 3px solid var(--arancio); border-radius: 2px;
   }
   .aside .label{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--copper-bright); margin-bottom: 8px; display:block;
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.72rem;
+    color: var(--grigio-soft); margin-bottom: 8px; display:block;
   }
-  .aside p{ margin-bottom:0; font-size: 0.96rem; color: var(--text-dim); }
+  .aside p{ margin-bottom:0; font-size: 0.96rem; color: var(--grigio-testo); }
 
   .question{
     margin: 28px 0; padding: 20px 22px; border: 1px dashed var(--line); border-radius: 4px;
-    font-family: 'Space Grotesk', sans-serif; font-size: 1.0rem; color: var(--copper-bright);
+    font-family: var(--serif); font-size: 1.0rem; color: var(--arancio-scuro);
   }
 
   blockquote{
-    margin: 0; padding-left: 22px; border-left: 2px solid var(--copper);
-    font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; color: var(--text);
+    margin: 0; padding-left: 22px; border-left: 2px solid var(--arancio);
+    font-family: var(--serif); font-size: 1.1rem; color: var(--inchiostro);
   }
 
   /* ---------- hero ---------- */
   .hero{ padding-top: 62px; }
   .hero .kicker{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.8rem; letter-spacing: 0.14em;
-    text-transform: uppercase; color: var(--text-dim); margin-bottom: 18px;
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.8rem;
+    color: var(--grigio-soft); margin-bottom: 18px;
   }
   .hero h1{ font-size: clamp(1.9rem, 5.6vw, 2.9rem); line-height:1.12; margin-bottom: 24px; }
-  .hero h1 em{ font-style: normal; color: var(--copper-bright); }
+  .hero h1 em{ font-style: italic; color: var(--arancio-scuro); }
 
   .scrolldown{
-    margin-top: 50px; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem;
-    color: var(--text-dim); letter-spacing: 0.08em; text-transform: uppercase;
+    margin-top: 50px; font-variant: small-caps; font-size: 0.78rem;
+    color: var(--grigio-soft); letter-spacing: 0.06em;
     display:flex; align-items:center; gap:8px;
   }
-  .scrolldown::after{ content:"↓"; color: var(--copper-bright); animation: nudge 1.8s infinite ease-in-out; }
+  .scrolldown::after{ content:"↓"; color: var(--arancio-scuro); animation: nudge 1.8s infinite ease-in-out; }
   @media (prefers-reduced-motion: reduce){ .scrolldown::after{ animation:none; } }
   @keyframes nudge{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(5px); } }
 
   /* ---------- chip disciplinari (nuovo, motivo ricorrente di Genealogia · 3) ---------- */
   .disc-chips{ display:flex; flex-wrap:wrap; gap:8px; margin: -6px 0 26px; }
   .disc-chip{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.7rem; letter-spacing: 0.06em;
-    text-transform: uppercase; color: var(--copper-bright);
-    border: 1px solid var(--copper); border-radius: 999px; padding: 4px 12px;
-    background: var(--surface);
+    font-size: 0.7rem; letter-spacing: 0.06em;
+    font-variant: small-caps; color: var(--arancio-scuro);
+    border: 1px solid var(--arancio); border-radius: 999px; padding: 4px 12px;
+    background: var(--bianco);
   }
 
   /* ---------- tabella dei gap (nuovo, unica in 3.5) ---------- */
   .gap-table{ width:100%; border-collapse: collapse; margin: 30px 0; font-size: 0.95rem; }
   .gap-table th, .gap-table td{ padding: 14px 16px; border-bottom: 1px solid var(--line); text-align:left; vertical-align: top; }
   .gap-table th{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.08em;
-    text-transform: uppercase; color: var(--copper-bright); font-weight: 600;
-    border-bottom: 1px solid var(--copper);
+    font-size: 0.72rem; letter-spacing: 0.08em;
+    font-variant: small-caps; color: var(--arancio-scuro); font-weight: 600;
+    border-bottom: 1px solid var(--arancio);
   }
-  .gap-table td{ color: var(--text-dim); }
-  .gap-table td:first-child{ color: var(--text); font-family:'Space Grotesk', sans-serif; font-weight: 600; }
+  .gap-table td{ color: var(--grigio-testo); }
+  .gap-table td:first-child{ color: var(--inchiostro); font-family: var(--serif); font-weight: 600; }
   .gap-table tr:last-child td{ border-bottom:none; }
   @media (max-width: 640px){
     .gap-table thead{ display:none; }
@@ -205,19 +240,102 @@
     .gap-table tr{ margin-bottom: 22px; border-bottom: 1px solid var(--line); padding-bottom: 12px; }
     .gap-table td{ border-bottom:none; padding: 4px 0; }
     .gap-table td::before{
-      content: attr(data-label); display:block; font-family:'IBM Plex Mono', monospace;
-      font-size: 0.66rem; text-transform: uppercase; color: var(--copper-bright); margin-bottom: 2px;
+      content: attr(data-label); display:block; font-size: 0.66rem; font-variant: small-caps; color: var(--arancio-scuro); margin-bottom: 2px;
     }
   }
 
   /* ---------- chiusura ---------- */
-  .chiusura{ background: linear-gradient(180deg, var(--bg), var(--surface)); }
+  .chiusura{ background: linear-gradient(180deg, var(--brina), var(--bianco)); }
   .footer-note{
-    margin-top: 46px; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem; color: var(--text-dim);
+    margin-top: 46px; font-variant: small-caps; letter-spacing: .06em; font-size: 0.78rem; color: var(--grigio-soft);
   }
+
+  /* ---------- termini collegati all'ontologia + tenda laterale ----------
+     Verde deliberatamente: è l'unico posto in questo capitolo dove il colore segnala
+     "stai per lasciare il saggio ed entrare nell'ontologia" — un registro diverso
+     dall'arancio (apparato del saggio stesso) e dal blu (navigazione del saggio).
+     Dati e link derivati SOLO da ciò che l'ontologia già espone (pagine
+     ontologia/output/concetti/*.html, sola lettura) — nessuna modifica ai .ttl o
+     agli script Python che li generano. */
+  .termine-concetto{
+    background: none; border: none; padding: 0; margin: 0; cursor: pointer;
+    font: inherit; color: var(--verde);
+    border-bottom: 1px dotted var(--verde);
+    transition: background .15s ease, border-bottom-style .15s ease;
+  }
+  .termine-concetto:hover, .termine-concetto:focus-visible{
+    background: rgba(61,122,58,0.14);
+    border-bottom-style: solid;
+    outline: none;
+  }
+  .termine-concetto.aperto{ background: rgba(61,122,58,0.22); border-bottom-style: solid; }
+
+  .tenda-scrim{
+    position: fixed; inset: 0; background: rgba(26,26,26,0.32);
+    opacity: 0; pointer-events: none; transition: opacity .25s ease; z-index: 90;
+  }
+  .tenda-scrim.visibile{ opacity: 1; pointer-events: auto; }
+
+  .tenda-concetto{
+    position: fixed; top: 0; right: 0; bottom: 0; width: min(420px, 92vw);
+    background: var(--bianco); z-index: 91;
+    box-shadow: -8px 0 28px rgba(26,26,26,0.18);
+    transform: translateX(100%); transition: transform .3s ease;
+    overflow-y: auto; padding: 28px 26px 40px;
+  }
+  .tenda-concetto.visibile{ transform: translateX(0); }
+  .tenda-testata{
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 14px;
+    border-bottom: 2px solid var(--verde); padding-bottom: 16px; margin-bottom: 18px;
+  }
+  .tenda-eyebrow{
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.86rem;
+    color: var(--verde); display: block; margin-bottom: 6px;
+  }
+  .tenda-titolo{ font-family: var(--serif); font-weight: 500; font-size: 1.5rem; color: var(--inchiostro); }
+  .tenda-titolo .tag{
+    font-variant: small-caps; letter-spacing: .04em; font-size: 0.8rem; color: var(--verde);
+    border: 1px solid var(--verde-chiaro); border-radius: 20px; padding: 1px 10px; margin-left: 8px;
+  }
+  .tenda-chiudi{
+    background: none; border: 1px solid var(--line); border-radius: 50%;
+    width: 32px; height: 32px; font-size: 1.1rem; line-height: 1; cursor: pointer;
+    color: var(--grigio-testo); flex-shrink: 0;
+  }
+  .tenda-chiudi:hover{ border-color: var(--verde); color: var(--verde-scuro); }
+  .tenda-nota{ font-size: 1.05rem; color: var(--inchiostro); margin: 0 0 22px; }
+  .tenda-sezione{ margin-bottom: 20px; }
+  .tenda-sezione h3{
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.86rem;
+    color: var(--grigio-soft); font-weight: 500; margin: 0 0 8px;
+  }
+  .tenda-lista{ list-style: none; margin: 0; padding: 0; font-size: 0.98rem; color: var(--grigio-testo); }
+  .tenda-lista li{ margin-bottom: 5px; }
+  .tenda-lista .rel-tipo{ color: var(--verde); font-size: 0.9em; }
+  .tenda-unita-cod{ font-variant: small-caps; color: var(--grigio-soft); font-size: 0.9em; }
+  .tenda-lente{
+    display: block; text-align: center; margin-top: 26px; padding: 12px 16px;
+    background: var(--verde); color: var(--bianco); border-radius: 8px;
+    text-decoration: none; font-variant: small-caps; letter-spacing: .04em; font-size: 0.98rem;
+  }
+  .tenda-lente:hover{ background: var(--verde-scuro); }
 </style>
 </head>
 <body>
+
+<div class="tenda-scrim" id="tenda-scrim"></div>
+<aside class="tenda-concetto" id="tenda-concetto" aria-hidden="true">
+  <div class="tenda-testata">
+    <div>
+      <span class="tenda-eyebrow">Dal vocabolario dell'ontologia</span>
+      <span class="tenda-titolo" id="tenda-titolo"></span>
+    </div>
+    <button class="tenda-chiudi" id="tenda-chiudi" aria-label="Chiudi">×</button>
+  </div>
+  <p class="tenda-nota" id="tenda-nota"></p>
+  <div id="tenda-corpo"></div>
+  <a class="tenda-lente" id="tenda-link-lente" href="#" target="_blank" rel="noopener">Apri nella Lente semantica →</a>
+</aside>
 
 <nav class="sidebar" aria-label="Indice del saggio">
   <div class="sidebar-kicker">Indice</div>
@@ -384,9 +502,9 @@
         <span class="disc-chip">Linguistica</span>
         <span class="disc-chip">Semiotica</span>
       </div>
-      <h1>Una domanda di Genealogia · 2.3 chiedeva: <em>il grounding richiede un corpo?</em> Prima va chiesto che cos'è, esattamente, il significato.</h1>
+      <h1>Una domanda di Genealogia · 2.3 chiedeva: <em>il <button class="termine-concetto" data-concetto="Grounding">grounding</button> richiede un corpo?</em> Prima va chiesto che cos'è, esattamente, il significato.</h1>
       <p class="lede dim">Si immagini di leggere un dizionario cinese senza conoscere una parola di cinese. Ogni voce rimanda ad altre voci, in cinese, che a loro volta rimandano ad altre ancora. Si possono seguire questi rimandi per ore, costruendosi una fitta rete di associazioni tra simboli — senza mai arrivare a sapere che cosa uno solo di quei simboli <em>significhi</em> davvero.</p>
-      <p class="dim">Questo è, in miniatura, il problema che l'unità affronta: un sistema può manipolare simboli con perfetta coerenza interna, e restare comunque a vuoto — senza contenuto semantico reale. È il problema filosofico più antico dietro alla domanda più recente («un LLM capisce quello che dice?»).</p>
+      <p class="dim">Questo è, in miniatura, il problema che l'unità affronta: un sistema può manipolare simboli con perfetta coerenza interna, e restare comunque a vuoto — senza contenuto semantico reale. È il <button class="termine-concetto" data-concetto="FilosofiaLinguaggioEMente">problema filosofico</button> più antico dietro alla domanda più recente («un LLM capisce quello che dice?»).</p>
 
       <div class="scrolldown">tre autori, tre porte sullo stesso problema</div>
     </div>
@@ -395,7 +513,7 @@
   <section id="c1-sez-frege">
     <div class="wrap reveal">
       <div class="eyebrow">Prima porta</div>
-      <h2 class="title">Frege: senso e riferimento</h2>
+      <h2 class="title">Frege: <button class="termine-concetto" data-concetto="SensoRiferimento">senso e riferimento</button></h2>
       <p>Gottlob Frege — già incontrato in Genealogia · 1.1 come uno dei fondatori del sogno formale — distingue due componenti del significato di un'espressione: il <em>riferimento</em> (l'oggetto reale a cui l'espressione punta) e il <em>senso</em> (il modo particolare in cui quell'oggetto viene presentato). «La stella del mattino» e «la stella della sera» hanno lo stesso riferimento — il pianeta Venere — ma sensi diversi: chi le usa non sa, a priori, che parlano della stessa cosa.</p>
 
       <p>Applicata a un LLM, la distinzione diventa scomoda: un modello può padroneggiare perfettamente il <em>senso</em> — la rete di relazioni linguistiche tra «stella del mattino» e ogni altra espressione — senza avere alcun accesso al <em>riferimento</em>, perché non ha mai osservato Venere, né alcun altro oggetto, al di fuori del testo che ne parla.</p>
@@ -405,7 +523,7 @@
   <section id="c1-sez-wittgenstein">
     <div class="wrap reveal">
       <div class="eyebrow">Seconda porta</div>
-      <h2 class="title">Wittgenstein tardo: il significato come uso</h2>
+      <h2 class="title">Wittgenstein tardo: <button class="termine-concetto" data-concetto="SignificatoComeUso">il significato come uso</button></h2>
       <p>Il secondo Wittgenstein (quello delle <em>Ricerche filosofiche</em>, molto diverso dal primo Wittgenstein del <em>Tractatus</em>) propone un'idea che ha spostato l'intera disciplina: il significato di una parola non è un'entità nascosta a cui la parola punta, ma il suo <em>uso</em> all'interno di pratiche sociali condivise — quelli che Wittgenstein chiama «giochi linguistici». Chiedere «qual è il vero significato di questa parola» fuori da ogni pratica d'uso è, per lui, una domanda mal posta.</p>
 
       <div class="aside">
@@ -418,7 +536,7 @@
   <section id="c1-sez-searle">
     <div class="wrap reveal">
       <div class="eyebrow">Terza porta · 1980</div>
-      <h2 class="title">Searle e la stanza cinese</h2>
+      <h2 class="title">Searle e la <button class="termine-concetto" data-concetto="StanzaCinese">stanza cinese</button></h2>
       <p>John Searle, nel 1980, propone l'esperimento mentale più citato — e più discusso — in questo campo. Un uomo, chiuso in una stanza, non conosce il cinese. Riceve, da una fessura, biglietti con simboli cinesi. Ha con sé un enorme manuale di regole, in italiano, che gli dice: «se ricevi questa sequenza di simboli, scrivi in risposta quest'altra sequenza». Seguendo il manuale alla lettera, produce risposte in cinese perfette — indistinguibili, da fuori, da quelle di un vero parlante. Ma dentro la stanza, nessuno ha capito una sola parola di cinese. C'è manipolazione sintattica pura, zero contenuto semantico.</p>
 
       <p>La tesi di Searle: questo è esattamente ciò che fa un computer che elabora simboli secondo regole — e, per estensione contemporanea, ciò che fa un LLM. Sintassi senza semantica, competenza comportamentale senza comprensione.</p>
@@ -471,7 +589,7 @@
   <section id="c2-sez-scala-pearl">
     <div class="wrap reveal">
       <div class="eyebrow">Prima porta</div>
-      <h2 class="title">La scala causale di Pearl</h2>
+      <h2 class="title">La <button class="termine-concetto" data-concetto="RagionamentoCausale">scala causale</button> di Pearl</h2>
       <p>Judea Pearl formalizza tre livelli di conoscenza causale, ordinati per profondità crescente. Al livello 1, l'<em>associazione</em>: osservare che due eventi ricorrono insieme («i pazienti che assumono questo farmaco guariscono più spesso»). Al livello 2, l'<em>intervento</em>: agire attivamente su una variabile e osservarne l'effetto («se il farmaco viene somministrato a un gruppo scelto a caso, guarisce di più?») — la differenza tra osservare e <em>fare</em>. Al livello 3, il <em>controfattuale</em>: ragionare su che cosa sarebbe accaduto in un mondo alternativo («questo specifico paziente sarebbe guarito comunque, anche senza il farmaco?»).</p>
 
       <p>Ogni livello richiede strumenti concettuali che il livello precedente non basta a fornire: nessuna quantità di dati puramente osservazionali, per quanto enorme, permette di rispondere da sola a una domanda del livello 2 o 3 — serve un modello esplicito della struttura causale, non solo della correlazione.</p>
@@ -559,7 +677,7 @@
       <h2 class="title">Cos'è stato abbandonato</h2>
       <p>Il <em>backpropagation</em> — l'algoritmo che permette a una rete neurale artificiale di imparare, propagando l'errore all'indietro attraverso tutti gli strati e aggiustando ogni peso in proporzione — non ha, ad oggi, un corrispettivo biologicamente plausibile confermato. I neuroni biologici comunicano con impulsi elettrici discreti nel tempo (<em>spike</em>), non con i numeri continui che circolano in una rete artificiale. E soprattutto: non esiste, nel cervello, un meccanismo noto capace di propagare un segnale di errore preciso all'indietro attraverso milioni di sinapsi, nella forma richiesta dal backpropagation matematico.</p>
 
-      <p>La plasticità sinaptica biologica, inoltre, è <em>continua e locale</em>: ogni sinapsi si aggiusta in base a segnali disponibili localmente, in tempo reale, mentre l'organismo vive. L'addestramento di una rete artificiale è invece tipicamente <em>discreto e globale</em>: un'enorme fase di addestramento separata, seguita da un utilizzo con pesi congelati — la stessa distinzione già incontrata in Genealogia · 2.3 come "apprendimento continuo assente".</p>
+      <p>La <button class="termine-concetto" data-concetto="PlasticitaSinaptica">plasticità sinaptica</button> biologica, inoltre, è <em>continua e locale</em>: ogni sinapsi si aggiusta in base a segnali disponibili localmente, in tempo reale, mentre l'organismo vive. L'addestramento di una rete artificiale è invece tipicamente <em>discreto e globale</em>: un'enorme fase di addestramento separata, seguita da un utilizzo con pesi congelati — la stessa distinzione già incontrata in Genealogia · 2.3 come "apprendimento continuo assente".</p>
     </div>
   </section>
 
@@ -620,7 +738,7 @@
   <section id="c4-sez-chalmers">
     <div class="wrap reveal">
       <div class="eyebrow">Prima porta · 1995</div>
-      <h2 class="title">Chalmers: il problema facile e il problema difficile</h2>
+      <h2 class="title">Chalmers: il problema facile e il <button class="termine-concetto" data-concetto="ProblemaDifficileCoscienza">problema difficile</button></h2>
       <p>David Chalmers, nel 1995, dà un nome che è rimasto: il <em>problema facile</em> della coscienza riguarda i meccanismi — come il cervello integra informazione, discrimina stimoli, produce comportamento. «Facile» qui non vuol dire semplice da risolvere (richiede decenni di neuroscienza), ma facile <em>in linea di principio</em>: è noto che tipo di spiegazione cercare, meccanismi fisici che producono funzioni.</p>
 
       <p>Il <em>problema difficile</em> è diverso di natura, non di grado: perché l'elaborazione dell'informazione sia accompagnata da un'esperienza soggettiva — il «che effetto fa» essere quel sistema, il <em>qualia</em> del rosso visto, del dolore provato — non è ovvio nemmeno che tipo di spiegazione risolverebbe la domanda. Anche una descrizione fisica completa del cervello, per Chalmers, lascerebbe questa domanda intatta.</p>
@@ -631,16 +749,16 @@
     <div class="wrap reveal">
       <div class="eyebrow">Seconda porta</div>
       <h2 class="title">Tre programmi di ricerca</h2>
-      <p>La <em>Integrated Information Theory</em> di Giulio Tononi propone una misura quantitativa, chiamata Φ (phi), della quantità di informazione integrata in un sistema — l'idea è che la coscienza corrisponda al grado in cui un sistema è più-della-somma-delle-sue-parti dal punto di vista informazionale. Il problema pratico: calcolare Φ esattamente per un sistema di dimensioni realistiche (un cervello, o un modello con miliardi di parametri) è oggi computazionalmente intrattabile.</p>
+      <p>La <em><button class="termine-concetto" data-concetto="IntegratedInformationTheory">Integrated Information Theory</button></em> di Giulio Tononi propone una misura quantitativa, chiamata Φ (phi), della quantità di informazione integrata in un sistema — l'idea è che la coscienza corrisponda al grado in cui un sistema è più-della-somma-delle-sue-parti dal punto di vista informazionale. Il problema pratico: calcolare Φ esattamente per un sistema di dimensioni realistiche (un cervello, o un modello con miliardi di parametri) è oggi computazionalmente intrattabile.</p>
 
-      <p>La <em>Global Workspace Theory</em> di Bernard Baars, sviluppata poi da Stanislas Dehaene, propone che la coscienza corrisponda alla trasmissione «globale» di un'informazione a molteplici sistemi cognitivi specializzati — un po' come un palco che rende visibile a tutto il teatro ciò che prima era confinato dietro le quinte.</p>
+      <p>La <em><button class="termine-concetto" data-concetto="GlobalWorkspaceTheory">Global Workspace Theory</button></em> di Bernard Baars, sviluppata poi da Stanislas Dehaene, propone che la coscienza corrisponda alla trasmissione «globale» di un'informazione a molteplici sistemi cognitivi specializzati — un po' come un palco che rende visibile a tutto il teatro ciò che prima era confinato dietro le quinte.</p>
 
       <div class="aside">
         <span class="label">Un'analogia da maneggiare con cura</span>
         <p>Il meccanismo di attention nei Transformer, che verrà spiegato in dettaglio in Meccanismo · 5, ha una somiglianza superficiale con questa idea — «portare in primo piano» certe informazioni rispetto ad altre. È un'analogia suggestiva, probabilmente fuorviante se presa alla lettera: l'attention è un meccanismo matematico di ponderazione, non è stato progettato con alcuna teoria della coscienza in mente, e nulla garantisce che risolva anche solo il problema facile, figuriamoci quello difficile.</p>
       </div>
 
-      <p>Le <em>Higher-Order Theories</em> propongono che uno stato mentale sia cosciente solo se esiste, nello stesso sistema, una rappresentazione <em>di secondo ordine</em> — una rappresentazione che ha come oggetto la prima rappresentazione stessa («so di vedere il rosso», non solo «vedo il rosso»). Domanda diretta per un LLM: un modello che genera testo <em>su</em> testo — che descrive, commenta, rielabora i propri output precedenti nella stessa conversazione — soddisfa questo criterio, anche solo nella forma? O la rappresentazione di secondo ordine richiesta dalla teoria è di natura diversa da una semplice elaborazione testuale ricorsiva?</p>
+      <p>Le <em><button class="termine-concetto" data-concetto="HigherOrderTheories">Higher-Order Theories</button></em> propongono che uno stato mentale sia cosciente solo se esiste, nello stesso sistema, una rappresentazione <em>di secondo ordine</em> — una rappresentazione che ha come oggetto la prima rappresentazione stessa («so di vedere il rosso», non solo «vedo il rosso»). Domanda diretta per un LLM: un modello che genera testo <em>su</em> testo — che descrive, commenta, rielabora i propri output precedenti nella stessa conversazione — soddisfa questo criterio, anche solo nella forma? O la rappresentazione di secondo ordine richiesta dalla teoria è di natura diversa da una semplice elaborazione testuale ricorsiva?</p>
     </div>
   </section>
 
@@ -783,6 +901,151 @@
     });
   }, { threshold: 0, rootMargin: '-45% 0px -45% 0px' });
   unitBlocksForSpy.forEach(b => localSpy2.observe(b));
+
+  // ============ termini collegati all'ontologia ============
+  // Dati trascritti a mano da ontologia/output/concetti/*.html (sola lettura, non
+  // generati da script): i concetti con :discussoInUnita verso Gen31..Gen34,
+  // trovati interrogando dati.ttl — non un elenco a occhio nel testo.
+  const CONCETTI = {
+    Grounding: {
+      label: "Grounding (symbol grounding problem)",
+      nota: "Assenza di riferimento dei simboli al mondo extralinguistico; i simboli si agganciano solo ad altri simboli (Harnad 1990).",
+      specifici: [],
+      relazioni: [["È esemplificato da","Stanza cinese"],["È collegato a","Gap sensorimotor"]],
+      teorici: ["Stevan Harnad"],
+      discussoIn: [["Genealogia · 2.3","Grounding, ragionamento causale, generalizzazione composizionale, cortocircuito dell'apprendimento"],["Genealogia · 3.1","Il problema del significato"]]
+    },
+    FilosofiaLinguaggioEMente: {
+      label: "Filosofia del linguaggio e della mente",
+      nota: "Genealogia · 3, nodi 1 e 4: significato e coscienza come territori che un LLM non risolve, solo attraversa.",
+      specifici: ["Global Workspace Theory","Higher-Order Theories","Integrated Information Theory (Φ)","Problema difficile della coscienza","Senso e riferimento","Significato come uso","Stanza cinese"],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Genealogia · 3.1","Il problema del significato"],["Genealogia · 3.4","Il problema della coscienza"]]
+    },
+    SensoRiferimento: {
+      label: "Senso e riferimento",
+      nota: "Distinzione di Frege fra l'oggetto reale a cui un'espressione punta e il modo in cui è presentato.",
+      specifici: [],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Genealogia · 3.1","Il problema del significato"]]
+    },
+    SignificatoComeUso: {
+      label: "Significato come uso",
+      nota: "Tesi del secondo Wittgenstein: il significato di una parola è il suo uso in pratiche sociali condivise («giochi linguistici»).",
+      specifici: [],
+      relazioni: [["È reso operativo da","Ipotesi distribuzionale"]],
+      teorici: ["Ludwig Wittgenstein (tardo)"],
+      discussoIn: [["Genealogia · 3.1","Il problema del significato"],["Meccanismo · 3.3","L'ipotesi distribuzionale"]]
+    },
+    StanzaCinese: {
+      label: "Stanza cinese",
+      nota: "Esperimento mentale di Searle (1980): manipolazione sintattica perfetta senza alcun contenuto semantico.",
+      specifici: [],
+      relazioni: [["Esemplifica","Grounding (symbol grounding problem)"]],
+      teorici: ["John Searle"],
+      discussoIn: [["Genealogia · 3.1","Il problema del significato"]]
+    },
+    RagionamentoCausale: {
+      label: "Ragionamento causale (scala di Pearl)",
+      nota: "Tre livelli — associazione, intervento, controfattuale; un LLM opera quasi solo al primo.",
+      specifici: [],
+      relazioni: [],
+      teorici: ["Judea Pearl"],
+      discussoIn: [["Genealogia · 2.3","Grounding, ragionamento causale, generalizzazione composizionale, cortocircuito dell'apprendimento"],["Genealogia · 3.2","Il problema della causalità"]]
+    },
+    ProblemaDifficileCoscienza: {
+      label: "Problema difficile della coscienza",
+      nota: "Perché l'elaborazione dell'informazione sia accompagnata da esperienza soggettiva, non solo da funzione (Chalmers 1995).",
+      specifici: [],
+      relazioni: [],
+      teorici: ["David Chalmers"],
+      discussoIn: [["Genealogia · 3.4","Il problema della coscienza"]]
+    },
+    IntegratedInformationTheory: {
+      label: "Integrated Information Theory (Φ)",
+      nota: "Misura quantitativa dell'informazione integrata, proposta come correlato della coscienza (Tononi); intrattabile a scala realistica.",
+      specifici: [],
+      relazioni: [],
+      teorici: ["Giulio Tononi"],
+      discussoIn: [["Genealogia · 3.4","Il problema della coscienza"]]
+    },
+    GlobalWorkspaceTheory: {
+      label: "Global Workspace Theory",
+      nota: "La coscienza come trasmissione «globale» di un'informazione a più sistemi cognitivi specializzati (Baars/Dehaene).",
+      specifici: [],
+      relazioni: [],
+      teorici: ["Bernard Baars","Stanislas Dehaene"],
+      discussoIn: [["Genealogia · 3.4","Il problema della coscienza"]]
+    },
+    HigherOrderTheories: {
+      label: "Higher-Order Theories",
+      nota: "Uno stato mentale è cosciente solo se esiste, nello stesso sistema, una rappresentazione di secondo ordine su di esso.",
+      specifici: [],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Genealogia · 3.4","Il problema della coscienza"]]
+    },
+    PlasticitaSinaptica: {
+      label: "Plasticità sinaptica",
+      nota: "Modifica continua e locale delle sinapsi biologiche, contrapposta all'addestramento discreto e globale artificiale.",
+      specifici: [],
+      relazioni: [["Si contrappone a","Backpropagation"]],
+      teorici: [],
+      discussoIn: [["Genealogia · 3.3","Il problema biologico"],["Meccanismo · 4.5","Il gradiente e la backpropagation"]]
+    }
+  };
+
+  const tendaEl = document.getElementById('tenda-concetto');
+  const scrimEl = document.getElementById('tenda-scrim');
+  const tendaTitolo = document.getElementById('tenda-titolo');
+  const tendaNota = document.getElementById('tenda-nota');
+  const tendaCorpo = document.getElementById('tenda-corpo');
+  const tendaLinkLente = document.getElementById('tenda-link-lente');
+  let ultimoTermineAperto = null;
+
+  function sezioneLista(titolo, voci, render){
+    if(!voci || !voci.length) return '';
+    return `<div class="tenda-sezione"><h3>${titolo}</h3><ul class="tenda-lista">${voci.map(render).join('')}</ul></div>`;
+  }
+
+  function apriTenda(id, triggerEl){
+    const c = CONCETTI[id];
+    if(!c) return;
+    if(ultimoTermineAperto) ultimoTermineAperto.classList.remove('aperto');
+    ultimoTermineAperto = triggerEl || null;
+    if(triggerEl) triggerEl.classList.add('aperto');
+
+    tendaTitolo.innerHTML = c.label + (c.tag ? `<span class="tag">${c.tag}</span>` : '');
+    tendaNota.textContent = c.nota;
+    tendaCorpo.innerHTML =
+      sezioneLista('Concetti più specifici', c.specifici, v => `<li>${v}</li>`) +
+      sezioneLista('Relazioni con altri concetti', c.relazioni, r => `<li><span class="rel-tipo">${r[0]}</span> ${r[1]}</li>`) +
+      sezioneLista('Teorici', c.teorici, t => `<li><span class="rel-tipo">Teorizzato da</span> ${t}</li>`) +
+      sezioneLista('Discusso in', c.discussoIn, d => `<li><span class="tenda-unita-cod">${d[0]}</span> — ${d[1]}</li>`);
+    tendaLinkLente.href = `../../../ontologia/lente-semantica/output/index.html#${id}`;
+
+    tendaEl.classList.add('visibile');
+    tendaEl.setAttribute('aria-hidden', 'false');
+    scrimEl.classList.add('visibile');
+  }
+
+  function chiudiTenda(){
+    tendaEl.classList.remove('visibile');
+    tendaEl.setAttribute('aria-hidden', 'true');
+    scrimEl.classList.remove('visibile');
+    if(ultimoTermineAperto) ultimoTermineAperto.classList.remove('aperto');
+    ultimoTermineAperto = null;
+  }
+
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.termine-concetto');
+    if(btn){ apriTenda(btn.dataset.concetto, btn); return; }
+    if(e.target === scrimEl){ chiudiTenda(); }
+  });
+  document.getElementById('tenda-chiudi').addEventListener('click', chiudiTenda);
+  document.addEventListener('keydown', (e) => { if(e.key === 'Escape') chiudiTenda(); });
 </script>
 
 </body>

@@ -4,110 +4,141 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dal bit alle entità semantiche — Presentazione</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+  @font-face {
+    font-family: 'EB Garamond';
+    src: url('fonts/EBGaramond-Variable.woff2') format('woff2-variations');
+    font-weight: 400 800;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'EB Garamond';
+    src: url('fonts/EBGaramond-Italic-Variable.woff2') format('woff2-variations');
+    font-weight: 400 800;
+    font-style: italic;
+    font-display: swap;
+  }
+
   :root{
-    --bg: #0F2A22;
-    --surface: #173B30;
-    --surface-2: #1E4A3C;
-    --copper: #C97D3D;
-    --copper-bright: #F0A85E;
-    --text: #F2ECE0;
-    --text-dim: #A9BFB6;
-    --line: rgba(242,236,224,0.12);
+    /* palette — vedi ../../../design-system/README.md */
+    --bianco:        #FFFFFF;
+    --brina:         #F6F8FB;
+    --inchiostro:    #1a1a1a;
+    --grigio-testo:  #4a4540;
+    --grigio-soft:   #8A8580;
+    --blu-scuro:     #1F2B6B;
+    --blu:           #2B3A8C;
+    --blu-chiaro:    #5A6FB8;
+    --arancio-scuro: #A85419;
+    --arancio:       #D4722A;
+    --arancio-chiaro:#E9A66B;
+    --verde-scuro:   #2A5628;
+    --verde:         #3D7A3A;
+    --verde-chiaro:  #7AAD76;
+
+    --serif: 'EB Garamond', Garamond, Georgia, 'Times New Roman', serif;
+    --mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+
+    --line: rgba(26,26,26,0.12);
     --rail-w: 300px;
   }
 
   *{ box-sizing: border-box; }
 
-  html{ scroll-behavior: smooth; }
+  html{ scroll-behavior: smooth; font-size: 120%; }
 
   body{
     margin:0;
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Source Serif 4', Georgia, serif;
+    background: var(--brina);
+    color: var(--inchiostro);
+    font-family: var(--serif);
     line-height: 1.65;
     -webkit-font-smoothing: antialiased;
   }
 
   h1,h2,h3, .display{
-    font-family: 'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
-    font-weight: 600;
-    letter-spacing: -0.01em;
+    font-family: var(--serif);
+    font-weight: 500;
     margin: 0;
   }
 
-  .mono{
-    font-family: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
-  }
+  .mono{ font-family: var(--mono); }
+  a{ color: var(--arancio-scuro); }
 
-  a{ color: var(--copper-bright); }
+  /* piccola utility per il ruolo "apparato": maiuscoletto spaziato sulla stessa
+     famiglia, non un cambio di font — stesso meccanismo di ontologia/output/style.css
+     e di ~/projects/portfolio/specimen.html (.apparato) */
+  .apparato{
+    font-variant: small-caps;
+    letter-spacing: .06em;
+    color: var(--grigio-soft);
+  }
 
   /* ---------- layout shell ---------- */
 
   .sidebar{
-    background: rgba(15,42,34,0.92);
+    background: var(--bianco);
     border-bottom: 1px solid var(--line);
     padding: 28px 24px 32px;
   }
   .sidebar-kicker{
-    font-family: 'IBM Plex Mono', monospace; font-size: .74rem; letter-spacing: .12em;
-    text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px;
+    font-variant: small-caps; letter-spacing: .06em; font-size: .74rem;
+    color: var(--grigio-soft); margin-bottom: 10px;
   }
   .sidebar-title{
-    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.02rem;
-    color: var(--text); margin-bottom: 22px;
+    font-family: var(--serif); font-weight: 500; font-size: 1.02rem;
+    color: var(--inchiostro); margin-bottom: 22px;
   }
   .sidebar .parte{ margin-top: 26px; }
   .sidebar .parte:first-of-type{ margin-top: 0; }
   .sidebar .parte-heading{
-    font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: .74rem;
-    letter-spacing: .1em; text-transform: uppercase; color: var(--copper-bright);
+    font-family: var(--serif); font-weight: 600; font-size: .74rem;
+    font-variant: small-caps; letter-spacing: .06em; color: var(--blu);
     padding-bottom: 10px; margin-bottom: 2px; border-bottom: 1px solid var(--line);
   }
   .sidebar .voce-semplice{
     display: block; padding: 10px 4px; border-bottom: 1px solid var(--line);
-    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem;
-    color: var(--text); text-decoration: none;
+    font-family: var(--serif); font-weight: 500; font-size: .9rem;
+    color: var(--inchiostro); text-decoration: none;
   }
-  .sidebar .voce-semplice:hover{ color: var(--copper-bright); }
-  .sidebar .voce-semplice.current{ color: var(--copper-bright); }
+  .sidebar .voce-semplice:hover{ color: var(--blu); }
+  .sidebar .voce-semplice.current{ color: var(--blu); }
   .sidebar details.modulo{ border-bottom: 1px solid var(--line); }
   .sidebar details.modulo summary{
     display: flex; align-items: center; gap: 8px; padding: 10px 4px; cursor: pointer;
-    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem; color: var(--text);
+    font-family: var(--serif); font-weight: 500; font-size: .9rem; color: var(--inchiostro);
     list-style: none;
   }
   .sidebar details.modulo summary::-webkit-details-marker{ display: none; }
   .sidebar details.modulo summary::before{
-    content: "›"; display: inline-block; font-family: 'IBM Plex Mono', monospace;
-    color: var(--text-dim); transition: transform .15s ease; flex-shrink: 0;
+    content: "›"; display: inline-block;
+    color: var(--grigio-soft); transition: transform .15s ease; flex-shrink: 0;
   }
-  .sidebar details.modulo[open] summary::before{ transform: rotate(90deg); color: var(--copper-bright); }
-  .sidebar details.modulo summary:hover{ color: var(--copper-bright); }
+  .sidebar details.modulo[open] summary::before{ transform: rotate(90deg); color: var(--blu); }
+  .sidebar details.modulo summary:hover{ color: var(--blu); }
   .sidebar .unita-list{ padding: 2px 0 12px 22px; display: flex; flex-direction: column; gap: 1px; }
   .sidebar .unita-list a{
-    display: block; padding: 6px 4px; font-size: .82rem; color: var(--text-dim); text-decoration: none;
+    display: block; padding: 6px 4px; font-size: .82rem; color: var(--grigio-testo); text-decoration: none;
   }
-  .sidebar .unita-list a:hover{ color: var(--copper-bright); }
-  .sidebar .unita-list a .num{ color: var(--copper); margin-right: 6px; font-family: 'IBM Plex Mono', monospace; font-size: .74rem; }
+  .sidebar .unita-list a:hover{ color: var(--blu); }
+  .sidebar .unita-list a .num{ color: var(--blu); margin-right: 6px; font-size: .74rem; }
 
-  /* pallini luminosi di scroll-spy, sulle voci di Parte 1/2/3 */
+  /* pallini luminosi di scroll-spy, sulle voci di Parte 1/2/3 — stesso accento blu
+     della sidebar, non arancio: il pallino segna "sei qui nella navigazione". */
   .sidebar .unita-list.scrollspy a{ position: relative; padding-left: 20px; }
   .sidebar .unita-list.scrollspy a::before{
     content: "";
     position: absolute; left: 2px; top: 50%;
     width: 7px; height: 7px; border-radius: 50%;
-    background: var(--surface-2); border: 1px solid var(--line);
+    background: var(--brina); border: 1px solid var(--line);
     transform: translateY(-50%);
     transition: background .25s, box-shadow .25s, transform .25s;
   }
-  .sidebar .unita-list.scrollspy a.active{ color: var(--copper-bright); }
+  .sidebar .unita-list.scrollspy a.active{ color: var(--blu); }
   .sidebar .unita-list.scrollspy a.active::before{
-    background: var(--copper-bright);
-    box-shadow: 0 0 0 4px rgba(240,168,94,0.18);
+    background: var(--blu);
+    box-shadow: 0 0 0 4px rgba(43,58,140,0.18);
     transform: translateY(-50%) scale(1.2);
   }
 
@@ -139,18 +170,16 @@
   section:last-of-type{ border-bottom:none; }
 
   .eyebrow{
-    font-family: 'IBM Plex Mono', monospace;
+    font-variant: small-caps; letter-spacing: .06em;
     font-size: 0.78rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--copper-bright);
+    color: var(--grigio-soft);
     margin-bottom: 14px;
     display:flex; align-items:center; gap:10px;
   }
   .eyebrow::before{
     content:"";
     width: 22px; height:1px;
-    background: var(--copper-bright);
+    background: var(--grigio-soft);
     display:inline-block;
   }
 
@@ -159,20 +188,20 @@
     margin-bottom: 22px;
   }
 
-  p{ margin: 0 0 18px; color: var(--text); font-size: 1.06rem; }
-  p.dim{ color: var(--text-dim); }
+  p{ margin: 0 0 18px; color: var(--inchiostro); font-size: 1.06rem; }
+  p.dim{ color: var(--grigio-testo); }
 
   .lede{
     font-size: 1.2rem;
-    color: var(--text);
+    color: var(--inchiostro);
   }
 
   .abstract{
     font-size: 1.06rem;
-    color: var(--text-dim);
+    color: var(--grigio-testo);
     padding: 22px 24px;
-    background: var(--surface);
-    border-left: 3px solid var(--copper);
+    background: var(--bianco);
+    border-left: 3px solid var(--arancio);
     border-radius: 2px;
   }
 
@@ -189,35 +218,6 @@
     *{ scroll-behavior: auto !important; }
   }
 
-  /* ---------- callouts ---------- */
-
-  .aside{
-    margin: 28px 0;
-    padding: 18px 20px;
-    background: var(--surface);
-    border-left: 3px solid var(--copper);
-    border-radius: 2px;
-  }
-  .aside .label{
-    font-family:'IBM Plex Mono', monospace;
-    font-size: 0.72rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--copper-bright);
-    margin-bottom: 8px;
-    display:block;
-  }
-  .aside p{ margin-bottom:0; font-size: 0.98rem; color: var(--text-dim); }
-
-  blockquote{
-    margin: 0;
-    padding-left: 22px;
-    border-left: 2px solid var(--copper);
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 1.15rem;
-    color: var(--text);
-  }
-
   /* ---------- hero ---------- */
 
   .hero{
@@ -225,11 +225,9 @@
     text-align:left;
   }
   .hero .kicker{
-    font-family:'IBM Plex Mono', monospace;
+    font-variant: small-caps; letter-spacing: .06em;
     font-size: 0.8rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--text-dim);
+    color: var(--grigio-soft);
     margin-bottom: 18px;
   }
   .hero h1{
@@ -238,47 +236,175 @@
     margin-bottom: 26px;
   }
   .hero h1 em{
-    font-style: normal;
-    color: var(--copper-bright);
+    font-style: italic;
+    color: var(--arancio-scuro);
   }
   .hero .sottotitolo{
     font-size: 1.15rem;
-    color: var(--text-dim);
+    color: var(--grigio-testo);
     max-width: 62ch;
     margin-bottom: 40px;
   }
 
-  .scrolldown{
-    margin-top: 56px;
-    font-family:'IBM Plex Mono', monospace;
-    font-size: 0.78rem;
-    color: var(--text-dim);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    display:flex; align-items:center; gap:8px;
-  }
-  .scrolldown::after{
-    content:"↓";
-    color: var(--copper-bright);
-    animation: nudge 1.8s infinite ease-in-out;
-  }
-  @media (prefers-reduced-motion: reduce){ .scrolldown::after{ animation:none; } }
-  @keyframes nudge{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(5px); } }
-
   /* ---------- chiusura ---------- */
 
   .chiusura{
-    background: linear-gradient(180deg, var(--bg), var(--surface));
+    background: linear-gradient(180deg, var(--brina), var(--bianco));
   }
   .footer-note{
     margin-top: 12px;
-    font-family:'IBM Plex Mono', monospace;
+    font-variant: small-caps;
+    letter-spacing: .06em;
     font-size: 0.78rem;
-    color: var(--text-dim);
+    color: var(--grigio-soft);
   }
+
+  /* ---------- termini collegati all'ontologia + tenda laterale ----------
+     Verde deliberatamente: è l'unico posto in questo capitolo dove il colore segnala
+     "stai per lasciare il saggio ed entrare nell'ontologia" — un registro diverso
+     dall'arancio (apparato del saggio stesso) e dal blu (navigazione del saggio).
+     Dati e link derivati SOLO da ciò che l'ontologia già espone (pagine
+     ontologia/output/concetti/*.html, sola lettura) — nessuna modifica ai .ttl o
+     agli script Python che li generano. */
+  .termine-concetto{
+    background: none; border: none; padding: 0; margin: 0; cursor: pointer;
+    font: inherit; color: var(--verde);
+    border-bottom: 1px dotted var(--verde);
+    transition: background .15s ease, border-bottom-style .15s ease;
+  }
+  .termine-concetto:hover, .termine-concetto:focus-visible{
+    background: rgba(61,122,58,0.14);
+    border-bottom-style: solid;
+    outline: none;
+  }
+  .termine-concetto.aperto{ background: rgba(61,122,58,0.22); border-bottom-style: solid; }
+
+  .tenda-scrim{
+    position: fixed; inset: 0; background: rgba(26,26,26,0.32);
+    opacity: 0; pointer-events: none; transition: opacity .25s ease; z-index: 90;
+  }
+  .tenda-scrim.visibile{ opacity: 1; pointer-events: auto; }
+
+  .tenda-concetto{
+    position: fixed; top: 0; right: 0; bottom: 0; width: min(420px, 92vw);
+    background: var(--bianco); z-index: 91;
+    box-shadow: -8px 0 28px rgba(26,26,26,0.18);
+    transform: translateX(100%); transition: transform .3s ease;
+    overflow-y: auto; padding: 28px 26px 40px;
+  }
+  .tenda-concetto.visibile{ transform: translateX(0); }
+  .tenda-testata{
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 14px;
+    border-bottom: 2px solid var(--verde); padding-bottom: 16px; margin-bottom: 18px;
+  }
+  .tenda-eyebrow{
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.86rem;
+    color: var(--verde); display: block; margin-bottom: 6px;
+  }
+  .tenda-titolo{ font-family: var(--serif); font-weight: 500; font-size: 1.5rem; color: var(--inchiostro); }
+  .tenda-titolo .tag{
+    font-variant: small-caps; letter-spacing: .04em; font-size: 0.8rem; color: var(--verde);
+    border: 1px solid var(--verde-chiaro); border-radius: 20px; padding: 1px 10px; margin-left: 8px;
+  }
+  .tenda-chiudi{
+    background: none; border: 1px solid var(--line); border-radius: 50%;
+    width: 32px; height: 32px; font-size: 1.1rem; line-height: 1; cursor: pointer;
+    color: var(--grigio-testo); flex-shrink: 0;
+  }
+  .tenda-chiudi:hover{ border-color: var(--verde); color: var(--verde-scuro); }
+  .tenda-nota{ font-size: 1.05rem; color: var(--inchiostro); margin: 0 0 22px; }
+  .tenda-sezione{ margin-bottom: 20px; }
+  .tenda-sezione h3{
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.86rem;
+    color: var(--grigio-soft); font-weight: 500; margin: 0 0 8px;
+  }
+  .tenda-lista{ list-style: none; margin: 0; padding: 0; font-size: 0.98rem; color: var(--grigio-testo); }
+  .tenda-lista li{ margin-bottom: 5px; }
+  .tenda-lista .rel-tipo{ color: var(--verde); font-size: 0.9em; }
+  .tenda-unita-cod{ font-variant: small-caps; color: var(--grigio-soft); font-size: 0.9em; }
+  .tenda-lente{
+    display: block; text-align: center; margin-top: 26px; padding: 12px 16px;
+    background: var(--verde); color: var(--bianco); border-radius: 8px;
+    text-decoration: none; font-variant: small-caps; letter-spacing: .04em; font-size: 0.98rem;
+  }
+  .tenda-lente:hover{ background: var(--verde-scuro); }
+
+  /* ---------- la cartografia per intero: poster statico del grafo ---------- */
+  .mappa-grafo{
+    margin: 34px 0; background: var(--bianco); border: 1px solid var(--line);
+    border-radius: 10px; padding: 24px 26px 28px;
+  }
+  .mappa-grafo .ptitle{
+    font-size: 0.72rem; letter-spacing: 0.1em;
+    font-variant: small-caps; color: var(--grigio-soft); margin-bottom: 16px; display: block;
+  }
+  .mappa-grafo img{ width: 100%; height: auto; display: block; }
+  .mappa-legenda{
+    display: flex; flex-wrap: wrap; gap: 10px 18px;
+    margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line);
+  }
+  .mappa-legenda span{
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 0.82rem; color: var(--grigio-testo);
+  }
+  .mappa-legenda i{
+    width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex-shrink: 0;
+  }
+  .mappa-caption{
+    margin-top: 16px; font-size: 0.92rem; color: var(--grigio-testo);
+  }
+  .mappa-grafo img{ cursor: zoom-in; transition: opacity .15s ease; }
+  .mappa-grafo img:hover{ opacity: 0.88; }
+
+  /* ---------- lightbox: ingrandimento della mappa del grafo ---------- */
+  .lightbox-scrim{
+    position: fixed; inset: 0; background: rgba(26,26,26,0.55);
+    opacity: 0; pointer-events: none; transition: opacity .25s ease; z-index: 120;
+  }
+  .lightbox-scrim.visibile{ opacity: 1; pointer-events: auto; }
+  .lightbox-box{
+    position: fixed; top: 50%; left: 50%; z-index: 121;
+    transform: translate(-50%, -50%) scale(0.96); opacity: 0; pointer-events: none;
+    transition: opacity .2s ease, transform .2s ease;
+    width: min(94vw, 1200px); max-height: 92vh;
+    background: var(--bianco); border-radius: 12px; padding: 20px;
+    box-shadow: 0 20px 60px rgba(26,26,26,0.35);
+  }
+  .lightbox-box.visibile{ opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: auto; }
+  .lightbox-box img{
+    display: block; width: 100%; height: auto; max-height: calc(92vh - 40px);
+    object-fit: contain; cursor: zoom-out;
+  }
+  .lightbox-chiudi{
+    position: absolute; top: -16px; right: -16px;
+    background: var(--inchiostro); border: 2px solid var(--bianco); border-radius: 50%;
+    width: 36px; height: 36px; font-size: 1.2rem; line-height: 1; cursor: pointer;
+    color: var(--bianco);
+  }
+  .lightbox-chiudi:hover{ background: var(--verde-scuro); }
 </style>
 </head>
 <body>
+
+<div class="tenda-scrim" id="tenda-scrim"></div>
+<aside class="tenda-concetto" id="tenda-concetto" aria-hidden="true">
+  <div class="tenda-testata">
+    <div>
+      <span class="tenda-eyebrow">Dal vocabolario dell'ontologia</span>
+      <span class="tenda-titolo" id="tenda-titolo"></span>
+    </div>
+    <button class="tenda-chiudi" id="tenda-chiudi" aria-label="Chiudi">×</button>
+  </div>
+  <p class="tenda-nota" id="tenda-nota"></p>
+  <div id="tenda-corpo"></div>
+  <a class="tenda-lente" id="tenda-link-lente" href="#" target="_blank" rel="noopener">Apri nella Lente semantica →</a>
+</aside>
+
+<div class="lightbox-scrim" id="lightbox-scrim"></div>
+<div class="lightbox-box" id="lightbox-box" aria-hidden="true">
+  <button class="lightbox-chiudi" id="lightbox-chiudi" aria-label="Chiudi">×</button>
+  <img id="lightbox-img" src="" alt="">
+</div>
 
 <nav class="sidebar" aria-label="Indice del saggio">
   <div class="sidebar-kicker">Indice</div>
@@ -489,7 +615,27 @@
 
       <p>Formalizzare un dominio come ontologia non è raccontarlo di nuovo in un linguaggio più rigido: è essere costretti a decidere cose che la prosa lascia sospese. Tre esempi bastano a mostrare la differenza. Cos'è un termine, e cosa non lo è? I teorici citati nel saggio non sono concetti nel dominio: sono agenti, autori di un'affermazione. Confonderli con i concetti che nominano avrebbe mescolato una gerarchia con una relazione di attribuzione. Dove finisce una gerarchia genere-specie, e comincia una relazione di tutt'altro tipo? Un generico «è collegato a» avrebbe appiattito «risolve un problema» e «è analogo a» sotto la stessa freccia. Quale incertezza va formalizzata, e quale resta solo descritta? Che un dataset sia reale o illustrativo non è una sfumatura da lasciare a un commento: è una classe che un reasoner può far rispettare, o violare visibilmente.</p>
 
-      <p>Il risultato non è un doppione del saggio in un altro formato: è una mappa che mostra, per ogni scelta fatta scrivendo, l'alternativa che è stata scartata — visibile solo a chi guarda attraverso questa lente. Una versione esplorabile di questa lente, termine per termine, è in preparazione: arriverà a editing del saggio concluso, quando anche il vocabolario e l'ontologia saranno aggiornati di conseguenza.</p>
+      <p>Questa mappa attraversa il saggio termine per termine. Ovunque il testo introduca un concetto che appartiene al vocabolario controllato — da «funzione booleana», in Fondamenti · 1, fino a «quantizzazione», nell'ultima unità di Meccanismo · 6 — quel termine è segnalato in verde e cliccabile. Il colore, in questo saggio, significa sempre la stessa cosa: si sta per lasciare la prosa ed entrare nell'ontologia. Un clic apre una tenda laterale con tutto ciò che il vocabolario sa di quel termine: la sua definizione, i concetti più specifici che lo raffinano, le relazioni dichiarate con altri termini, i teorici a cui è attribuito, e l'elenco esatto delle unità del saggio in cui ricompare.</p>
+
+      <p>Da lì, un ultimo collegamento porta dentro la Lente semantica vera e propria — il grafo esplorabile a uno o due gradi di vicinanza. Qui convivono due suddivisioni distinte, e vale la pena non confonderle. Nel menu a tendina della barra laterale i nodi sono raggruppati per cosa sono: un concetto, un teorico, un'unità del saggio, un capitolo, un dataset. Sette categorie di natura diversa, utili per trovare il nodo da cui partire. Una volta scelto un nodo, il grafo lo mette al centro e dispone i suoi vicini a raggiera. Qui entra in gioco la seconda suddivisione, quella che conta davvero per leggere il grafo. Ogni collegamento è colorato secondo uno di quattro gruppi che marcano il tipo di legame che unisce i nodi: una gerarchia più-specifico/più-generico, una relazione concettuale dichiarata nel testo (risolve, si contrappone a, è analogo a...), un'attribuzione a chi ha teorizzato quel concetto, o un semplice fatto di struttura del corpus (in quale unità il termine compare). Il glossario delle relazioni, in fondo al pannello, apre a tendina la definizione esatta di ciascun tipo di legame in ciascuno dei quattro gruppi — la stessa colonna vertebrale che tiene insieme le tende sparse in ogni capitolo del saggio.</p>
+
+      <p>Il meccanismo è raggiungibile anche da questa presentazione. Il termine «<button class="termine-concetto" data-concetto="Embedding">embedding</button>», lo stesso concetto dietro «re, donna, regina» in apertura, è lo stesso collegamento verde, la stessa tenda, la stessa lente semantica.</p>
+
+      <div class="mappa-grafo">
+        <span class="ptitle">La cartografia per intero — 258 nodi, 537 relazioni · clicchi per ingrandire</span>
+        <img id="mappa-grafo-img" src="immagini_presentazione/mappa_del_grafo.svg" alt="Grafo completo del vocabolario e dell'ontologia: concetti, teorici, unità, capitoli, parti e dataset come nodi colorati per tipo, collegati da relazioni colorate per categoria — gerarchia, relazione concettuale, attribuzione a un teorico, struttura del corpus.">
+        <div class="mappa-legenda">
+          <span><i style="background:#b1652f"></i> Concetto</span>
+          <span><i style="background:#327aae"></i> Teorico</span>
+          <span><i style="background:#5f8627"></i> Unità</span>
+          <span><i style="background:#6c3bb0"></i> Capitolo</span>
+          <span><i style="background:#298e53"></i> Parte</span>
+          <span><i style="background:#ae327a"></i> Dataset</span>
+          <span><i style="background:#463f38"></i> Altro</span>
+        </div>
+        <p class="mappa-caption">Questa è il layout calcolato da una simulazione a forze sugli stessi dati che alimentano la Lente semantica — nessun nodo o collegamento è stato disposto a mano. Le etichette segnano solo i concetti più connessi; il resto compone la densità della mappa, non va letto punto per punto. Valgono qui le stesse due suddivisioni appena descritte: i nodi sono colorati per le sette categorie del menu a tendina (legenda qui sotto), i collegamenti per le quattro categorie del glossario delle relazioni — troppo sottili, a questa scala, per distinguerli uno per uno, ma quel dettaglio si legge benissimo da vicino, un nodo alla volta, nella lente stessa.</p>
+        <a class="tenda-lente" href="../../../ontologia/lente-semantica/output/index.html" target="_blank" rel="noopener">Esplora il grafo completo nella Lente semantica →</a>
+      </div>
     </div>
   </section>
 
@@ -520,6 +666,92 @@
     });
   }, { threshold: 0.5 });
   spySections.forEach(s => spy.observe(s));
+
+  // ============ termini collegati all'ontologia + tenda laterale ============
+  const CONCETTI = {
+    Embedding: {
+      label: "Embedding",
+      nota: "Rappresentazione di una parola come vettore/punto in uno spazio continuo: vicinanza spaziale = somiglianza semantica.",
+      specifici: ["Embedding contestuale","Embedding statico"],
+      relazioni: [["Richiede come prerequisito","Tokenizzazione"],["Si contrappone a","Numerabilità"],["Rende operativo","Qualità primarie e secondarie"]],
+      teorici: [],
+      discussoIn: [["Meccanismo · 3.2","Le parole come vettori (embedding)"]]
+    }
+  };
+
+  const tendaEl = document.getElementById('tenda-concetto');
+  const scrimEl = document.getElementById('tenda-scrim');
+  const tendaTitolo = document.getElementById('tenda-titolo');
+  const tendaNota = document.getElementById('tenda-nota');
+  const tendaCorpo = document.getElementById('tenda-corpo');
+  const tendaLinkLente = document.getElementById('tenda-link-lente');
+  let ultimoTermineAperto = null;
+
+  function sezioneLista(titolo, voci, render){
+    if(!voci || !voci.length) return '';
+    return `<div class="tenda-sezione"><h3>${titolo}</h3><ul class="tenda-lista">${voci.map(render).join('')}</ul></div>`;
+  }
+
+  function apriTenda(id, triggerEl){
+    const c = CONCETTI[id];
+    if(!c) return;
+    if(ultimoTermineAperto) ultimoTermineAperto.classList.remove('aperto');
+    ultimoTermineAperto = triggerEl || null;
+    if(triggerEl) triggerEl.classList.add('aperto');
+
+    tendaTitolo.innerHTML = c.label + (c.tag ? `<span class="tag">${c.tag}</span>` : '');
+    tendaNota.textContent = c.nota;
+    tendaCorpo.innerHTML =
+      sezioneLista('Concetti più specifici', c.specifici, v => `<li>${v}</li>`) +
+      sezioneLista('Relazioni con altri concetti', c.relazioni, r => `<li><span class="rel-tipo">${r[0]}</span> ${r[1]}</li>`) +
+      sezioneLista('Teorici', c.teorici, t => `<li><span class="rel-tipo">Teorizzato da</span> ${t}</li>`) +
+      sezioneLista('Discusso in', c.discussoIn, d => `<li><span class="tenda-unita-cod">${d[0]}</span> — ${d[1]}</li>`);
+    tendaLinkLente.href = `../../../ontologia/lente-semantica/output/index.html#${id}`;
+
+    tendaEl.classList.add('visibile');
+    tendaEl.setAttribute('aria-hidden', 'false');
+    scrimEl.classList.add('visibile');
+  }
+
+  function chiudiTenda(){
+    tendaEl.classList.remove('visibile');
+    tendaEl.setAttribute('aria-hidden', 'true');
+    scrimEl.classList.remove('visibile');
+    if(ultimoTermineAperto) ultimoTermineAperto.classList.remove('aperto');
+    ultimoTermineAperto = null;
+  }
+
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.termine-concetto');
+    if(btn){ apriTenda(btn.dataset.concetto, btn); return; }
+    if(e.target === scrimEl){ chiudiTenda(); }
+  });
+  document.getElementById('tenda-chiudi').addEventListener('click', chiudiTenda);
+  document.addEventListener('keydown', (e) => { if(e.key === 'Escape') chiudiTenda(); });
+
+  // ============ lightbox: ingrandimento della mappa del grafo ============
+  const lightboxScrim = document.getElementById('lightbox-scrim');
+  const lightboxBox = document.getElementById('lightbox-box');
+  const lightboxImg = document.getElementById('lightbox-img');
+  const mappaImg = document.getElementById('mappa-grafo-img');
+
+  function apriLightbox(){
+    lightboxImg.src = mappaImg.currentSrc || mappaImg.src;
+    lightboxImg.alt = mappaImg.alt;
+    lightboxBox.classList.add('visibile');
+    lightboxBox.setAttribute('aria-hidden', 'false');
+    lightboxScrim.classList.add('visibile');
+  }
+  function chiudiLightbox(){
+    lightboxBox.classList.remove('visibile');
+    lightboxBox.setAttribute('aria-hidden', 'true');
+    lightboxScrim.classList.remove('visibile');
+  }
+  mappaImg.addEventListener('click', apriLightbox);
+  lightboxImg.addEventListener('click', chiudiLightbox);
+  lightboxScrim.addEventListener('click', chiudiLightbox);
+  document.getElementById('lightbox-chiudi').addEventListener('click', chiudiLightbox);
+  document.addEventListener('keydown', (e) => { if(e.key === 'Escape') chiudiLightbox(); });
 </script>
 
 </body>

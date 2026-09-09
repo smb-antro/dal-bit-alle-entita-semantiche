@@ -1,108 +1,135 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Meccanismo · 4 · Reti neurali</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+  @font-face {
+    font-family: 'EB Garamond';
+    src: url('fonts/EBGaramond-Variable.woff2') format('woff2-variations');
+    font-weight: 400 800;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'EB Garamond';
+    src: url('fonts/EBGaramond-Italic-Variable.woff2') format('woff2-variations');
+    font-weight: 400 800;
+    font-style: italic;
+    font-display: swap;
+  }
+
   :root{
-    --bg: #0F2A22;
-    --surface: #173B30;
-    --surface-2: #1E4A3C;
-    --copper: #C97D3D;
-    --copper-bright: #F0A85E;
-    --text: #F2ECE0;
-    --text-dim: #A9BFB6;
-    --line: rgba(242,236,224,0.12);
+    --bianco:        #FFFFFF;
+    --brina:         #F6F8FB;
+    --inchiostro:    #1a1a1a;
+    --grigio-testo:  #4a4540;
+    --grigio-soft:   #8A8580;
+    --blu-scuro:     #1F2B6B;
+    --blu:           #2B3A8C;
+    --blu-chiaro:    #5A6FB8;
+    --arancio-scuro: #A85419;
+    --arancio:       #D4722A;
+    --arancio-chiaro:#E9A66B;
+    --verde-scuro:   #2A5628;
+    --verde:         #3D7A3A;
+    --verde-chiaro:  #7AAD76;
+
+    --serif: 'EB Garamond', Garamond, Georgia, 'Times New Roman', serif;
+    --mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+
+    --line: rgba(26,26,26,0.12);
     --rail-w: 300px;
   }
 
   *{ box-sizing: border-box; }
-  html{ scroll-behavior: smooth; }
+  html{ scroll-behavior: smooth; font-size: 120%; }
 
   body{
     margin:0;
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Source Serif 4', Georgia, serif;
-    line-height: 1.65;
+    background: var(--brina);
+    color: var(--inchiostro);
+    font-family: var(--serif);
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
   }
 
   h1,h2,h3, .display{
-    font-family: 'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
-    font-weight: 600;
-    letter-spacing: -0.01em;
+    font-family: var(--serif);
+    font-weight: 500;
     margin: 0;
   }
-  .mono{ font-family: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace; }
-  a{ color: var(--copper-bright); }
+  .mono{ font-family: var(--mono); }
+  a{ color: var(--arancio-scuro); }
 
-  /* ---------- layout shell: sidebar fissa con indice del sito ---------- */
+  /* ---------- layout shell: sidebar fissa con indice del sito — solo blu, niente
+     arancio ---------- */
   .sidebar{
-    background: rgba(15,42,34,0.92);
+    background: var(--bianco);
     border-bottom: 1px solid var(--line);
     padding: 28px 24px 32px;
   }
   .sidebar-kicker{
-    font-family: 'IBM Plex Mono', monospace; font-size: .74rem; letter-spacing: .12em;
-    text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px;
+    font-variant: small-caps; letter-spacing: .06em; font-size: .8rem;
+    color: var(--grigio-soft); margin-bottom: 10px;
   }
   .sidebar-title{
-    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.02rem;
-    color: var(--text); margin-bottom: 22px;
+    font-family: var(--serif); font-weight: 500; font-size: 1.1rem;
+    color: var(--inchiostro); margin-bottom: 22px;
   }
   .sidebar .parte{ margin-top: 26px; }
   .sidebar .parte:first-of-type{ margin-top: 0; }
   .sidebar .parte-heading{
-    font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: .74rem;
-    letter-spacing: .1em; text-transform: uppercase; color: var(--copper-bright);
+    font-family: var(--serif); font-weight: 600; font-size: .82rem;
+    font-variant: small-caps; letter-spacing: .06em; color: var(--blu);
     padding-bottom: 10px; margin-bottom: 2px; border-bottom: 1px solid var(--line);
   }
   .sidebar .voce-semplice{
     display: block; padding: 10px 4px; border-bottom: 1px solid var(--line);
-    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem;
-    color: var(--text); text-decoration: none;
+    font-family: var(--serif); font-weight: 500; font-size: .98rem;
+    color: var(--inchiostro); text-decoration: none;
   }
-  .sidebar .voce-semplice:hover{ color: var(--copper-bright); }
-  .sidebar .voce-semplice.current{ color: var(--copper-bright); }
+  .sidebar .voce-semplice:hover{ color: var(--blu); }
+  .sidebar .voce-semplice.current{ color: var(--blu); }
   .sidebar details.modulo{ border-bottom: 1px solid var(--line); }
   .sidebar details.modulo summary{
     display: flex; align-items: center; gap: 8px; padding: 10px 4px; cursor: pointer;
-    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem; color: var(--text);
+    font-family: var(--serif); font-weight: 500; font-size: .98rem; color: var(--inchiostro);
     list-style: none;
   }
-  .sidebar details.modulo summary.current{ color: var(--copper-bright); }
+  .sidebar details.modulo summary.current{ color: var(--blu); }
   .sidebar details.modulo summary::-webkit-details-marker{ display: none; }
   .sidebar details.modulo summary::before{
-    content: "›"; display: inline-block; font-family: 'IBM Plex Mono', monospace;
-    color: var(--text-dim); transition: transform .15s ease; flex-shrink: 0;
+    content: "›"; display: inline-block;
+    color: var(--grigio-soft); transition: transform .15s ease; flex-shrink: 0;
   }
-  .sidebar details.modulo[open] summary::before{ transform: rotate(90deg); color: var(--copper-bright); }
-  .sidebar details.modulo summary:hover{ color: var(--copper-bright); }
+  .sidebar details.modulo[open] summary::before{ transform: rotate(90deg); color: var(--blu); }
+  .sidebar details.modulo summary:hover{ color: var(--blu); }
   .sidebar .unita-list{ padding: 2px 0 12px 22px; display: flex; flex-direction: column; gap: 1px; }
   .sidebar .unita-list a{
-    display: block; padding: 6px 4px; font-size: .82rem; color: var(--text-dim); text-decoration: none;
+    display: block; padding: 6px 4px; font-size: .9rem; color: var(--grigio-testo); text-decoration: none;
   }
-  .sidebar .unita-list a:hover{ color: var(--copper-bright); }
-  .sidebar .unita-list a .num{ color: var(--copper); margin-right: 6px; font-family: 'IBM Plex Mono', monospace; font-size: .74rem; }
+  .sidebar .unita-list a:hover{ color: var(--blu); }
+  .sidebar .unita-list a .num{ color: var(--blu); margin-right: 6px; font-size: .82rem; }
 
-  /* pallini luminosi di scroll-spy, sulle voci dell'unità corrente */
+  /* pallini di scroll-spy: blu, come tutta la sidebar */
   .sidebar .unita-list.scrollspy a{ position: relative; padding-left: 20px; }
   .sidebar .unita-list.scrollspy a::before{
     content: "";
     position: absolute; left: 2px; top: 50%;
     width: 7px; height: 7px; border-radius: 50%;
-    background: var(--surface-2); border: 1px solid var(--line);
+    background: var(--brina); border: 1px solid var(--line);
     transform: translateY(-50%);
     transition: background .25s, box-shadow .25s, transform .25s;
   }
-  .sidebar .unita-list.scrollspy a.active{ color: var(--copper-bright); }
+  .sidebar .unita-list.scrollspy a.active{ color: var(--blu); }
   .sidebar .unita-list.scrollspy a.active::before{
-    background: var(--copper-bright);
-    box-shadow: 0 0 0 4px rgba(240,168,94,0.18);
+    background: var(--blu);
+    box-shadow: 0 0 0 4px rgba(43,58,140,0.18);
     transform: translateY(-50%) scale(1.2);
   }
 
@@ -122,17 +149,17 @@
   .unit-block:last-child section:last-of-type{ border-bottom:none; }
 
   .eyebrow{
-    font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
-    letter-spacing: 0.12em; text-transform: uppercase; color: var(--copper-bright);
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.92rem;
+    color: var(--grigio-soft);
     margin-bottom: 14px; display:flex; align-items:center; gap:10px;
   }
-  .eyebrow::before{ content:""; width: 22px; height:1px; background: var(--copper-bright); display:inline-block; }
+  .eyebrow::before{ content:""; width: 22px; height:1px; background: var(--grigio-soft); display:inline-block; }
 
   h2.title{ font-size: clamp(1.6rem, 4vw, 2.3rem); margin-bottom: 20px; }
 
-  p{ margin: 0 0 18px; color: var(--text); font-size: 1.05rem; }
-  p.dim{ color: var(--text-dim); }
-  .lede{ font-size: 1.15rem; color: var(--text); }
+  p{ margin: 0 0 18px; color: var(--inchiostro); font-size: 1.1rem; }
+  p.dim{ color: var(--grigio-testo); }
+  .lede{ font-size: 1.2rem; color: var(--inchiostro); }
 
   .reveal{ opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
   .reveal.visible{ opacity:1; transform: translateY(0); }
@@ -142,125 +169,129 @@
   }
 
   .aside{
-    margin: 26px 0; padding: 18px 20px; background: var(--surface);
-    border-left: 3px solid var(--copper); border-radius: 2px;
+    margin: 26px 0; padding: 18px 20px; background: var(--bianco);
+    border-left: 3px solid var(--arancio); border-radius: 2px;
   }
   .aside .label{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--copper-bright); margin-bottom: 8px; display:block;
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.88rem;
+    color: var(--grigio-soft); margin-bottom: 8px; display:block;
   }
-  .aside p{ margin-bottom:0; font-size: 0.96rem; color: var(--text-dim); }
+  .aside p{ margin-bottom:0; font-size: 1rem; color: var(--grigio-testo); }
   .aside p + p{ margin-top: 12px; }
 
   .question{
     margin: 28px 0; padding: 20px 22px; border: 1px dashed var(--line); border-radius: 4px;
-    font-family: 'Space Grotesk', sans-serif; font-size: 1.0rem; color: var(--copper-bright);
+    font-family: var(--serif); font-size: 1.05rem; color: var(--arancio-scuro);
   }
 
   blockquote{
-    margin: 0; padding-left: 22px; border-left: 2px solid var(--copper);
-    font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; color: var(--text);
+    margin: 0; padding-left: 22px; border-left: 2px solid var(--arancio);
+    font-family: var(--serif); font-size: 1.15rem; color: var(--inchiostro);
   }
 
   /* ---------- hero ---------- */
   .hero{ padding-top: 62px; }
   .hero .kicker{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.8rem; letter-spacing: 0.14em;
-    text-transform: uppercase; color: var(--text-dim); margin-bottom: 18px;
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.92rem;
+    color: var(--grigio-soft); margin-bottom: 18px;
   }
-  .hero h1{ font-size: clamp(1.9rem, 5.6vw, 2.9rem); line-height:1.12; margin-bottom: 24px; }
-  .hero h1 em{ font-style: normal; color: var(--copper-bright); }
+  .hero h1{ font-size: clamp(1.9rem, 5.6vw, 2.9rem); line-height:1.18; margin-bottom: 24px; }
+  .hero h1 em{ font-style: italic; color: var(--arancio-scuro); }
   .scrolldown{
-    margin-top: 50px; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem;
-    color: var(--text-dim); letter-spacing: 0.08em; text-transform: uppercase;
+    margin-top: 50px; font-variant: small-caps; letter-spacing: .06em; font-size: 0.9rem;
+    color: var(--grigio-soft);
     display:flex; align-items:center; gap:8px;
   }
-  .scrolldown::after{ content:"↓"; color: var(--copper-bright); animation: nudge 1.8s infinite ease-in-out; }
+  .scrolldown::after{ content:"↓"; color: var(--arancio-scuro); animation: nudge 1.8s infinite ease-in-out; }
   @media (prefers-reduced-motion: reduce){ .scrolldown::after{ animation:none; } }
   @keyframes nudge{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(5px); } }
 
   /* ---------- widget: neurone singolo (4.1) ---------- */
   .neuron-box{
-    margin: 30px 0; background: var(--surface); border: 1px solid var(--line);
+    margin: 30px 0; background: var(--bianco); border: 1px solid var(--line);
     border-radius: 10px; padding: 24px 26px;
   }
   .neuron-box .ptitle{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--copper-bright); margin-bottom: 14px; display:block;
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.88rem;
+    color: var(--grigio-soft); margin-bottom: 14px; display:block;
   }
   .neuron-inputs{ display:flex; flex-wrap:wrap; gap: 22px 28px; margin-bottom: 18px; }
   .neuron-slider-group{ flex: 1 1 200px; min-width: 160px; }
   .glabel{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.08em;
-    text-transform: uppercase; color: var(--text-dim); display:block; margin-bottom: 6px;
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.86rem;
+    color: var(--grigio-soft); display:block; margin-bottom: 6px;
   }
-  .neuron-slider{ width:100%; accent-color: var(--copper-bright); }
-  .neuron-slider.weight{ accent-color: var(--copper); }
-  .val{ font-family:'IBM Plex Mono', monospace; font-size: 0.82rem; color: var(--text-dim); margin-top: 4px; }
-  .val b{ color: var(--copper-bright); }
+  .neuron-slider{ width:100%; accent-color: var(--arancio-scuro); }
+  .neuron-slider.weight{ accent-color: var(--arancio); }
+  .val{ font-family: var(--serif); font-size: 0.92rem; color: var(--grigio-testo); margin-top: 4px; }
+  .val b{ color: var(--arancio-scuro); }
   .neuron-formula{
-    font-size: 0.95rem; color: var(--text); background: var(--bg); border: 1px solid var(--line);
+    font-size: 1rem; color: var(--inchiostro); background: var(--brina); border: 1px solid var(--line);
     border-radius: 6px; padding: 12px 14px; margin: 18px 0;
   }
   .neuron-output{ margin-top: 20px; }
   .neuron-out-bar{
-    width:100%; height: 14px; background: var(--bg); border: 1px solid var(--line);
+    width:100%; height: 14px; background: var(--brina); border: 1px solid var(--line);
     border-radius: 8px; overflow:hidden; margin: 8px 0;
   }
   .neuron-out-fill{
-    height:100%; background: linear-gradient(90deg, var(--copper), var(--copper-bright));
+    height:100%; background: linear-gradient(90deg, var(--arancio), var(--arancio-scuro));
     width: 50%; transition: width .15s ease;
   }
-  .neuron-out-val{ font-family:'IBM Plex Mono', monospace; font-size: 0.95rem; color: var(--copper-bright); }
+  .neuron-out-val{ font-family: var(--serif); font-size: 1.05rem; color: var(--arancio-scuro); font-weight: 600; }
   .neuron-examples{ margin-top: 18px; display:flex; flex-wrap: wrap; gap: 8px; }
   .pg-example-btn{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.74rem; color: var(--copper-bright);
-    background: transparent; border: 1px solid var(--copper); border-radius: 20px;
+    font-variant: small-caps; letter-spacing: .04em; font-size: 0.86rem; color: var(--arancio-scuro);
+    background: transparent; border: 1px solid var(--arancio); border-radius: 20px;
     padding: 5px 12px; cursor: pointer; transition: background .2s;
   }
-  .pg-example-btn:hover{ background: var(--surface-2); }
+  .pg-example-btn:hover{ background: var(--brina); }
 
 
-  /* ---------- widget: XOR (4.2/4.3) ---------- */
+  /* ---------- widget: XOR (4.2/4.3) — stessa convenzione vero/falso delle tavole
+     di verità di Fondamenti · 1: atteso 1 = arancio-scuro, atteso 0 = grigio ---------- */
   .xor-widget{
-    margin: 30px 0; background: var(--surface); border: 1px solid var(--line);
+    margin: 30px 0; background: var(--bianco); border: 1px solid var(--line);
     border-radius: 10px; padding: 24px 26px;
   }
   .xor-widget .ptitle{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--copper-bright); margin-bottom: 14px; display:block;
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.88rem;
+    color: var(--grigio-soft); margin-bottom: 14px; display:block;
   }
   .xor-plot-frame{ max-width: 320px; margin: 0 auto; }
   .xor-plot{
-    width:100%; aspect-ratio: 1/1; background: var(--bg); border: 1px solid var(--line);
+    width:100%; aspect-ratio: 1/1; background: var(--brina); border: 1px solid var(--line);
     border-radius: 8px; display:block;
   }
-  .xor-line-fail{ stroke: var(--text-dim); stroke-width: 2; stroke-dasharray: 6 5; }
-  .xor-point{ stroke: var(--bg); stroke-width: 2; }
-  .xor-point.cls-0{ fill: var(--text-dim); }
-  .xor-point.cls-1{ fill: var(--copper-bright); }
+  .xor-line-fail{ stroke: var(--grigio-soft); stroke-width: 2; stroke-dasharray: 6 5; }
+  .xor-point{ stroke: var(--bianco); stroke-width: 2; }
+  .xor-point.cls-0{ fill: var(--grigio-soft); }
+  .xor-point.cls-1{ fill: var(--arancio-scuro); }
   .xor-legend{ display:flex; gap: 18px; justify-content:center; margin-top: 14px; flex-wrap: wrap; }
   .xor-legend-item{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.74rem; color: var(--text-dim);
+    font-variant: small-caps; letter-spacing: .04em; font-size: 0.86rem; color: var(--grigio-testo);
     display:flex; align-items:center; gap: 7px;
   }
   .xor-dot{ width: 11px; height: 11px; border-radius: 50%; display:inline-block; }
-  .xor-dot-0{ background: var(--text-dim); }
-  .xor-dot-1{ background: var(--copper-bright); }
-  .xor-note{ margin-top: 14px; font-size: 0.92rem; color: var(--text-dim); text-align:center; }
+  .xor-dot-0{ background: var(--grigio-soft); }
+  .xor-dot-1{ background: var(--arancio-scuro); }
+  .xor-note{ margin-top: 14px; font-size: 0.98rem; color: var(--grigio-testo); text-align:center; }
 
 
-  /* ---------- widget: paesaggio della perdita (4.4/4.5, shader GLSL/SDF) ---------- */
+  /* ---------- widget: paesaggio della perdita (4.4/4.5, shader GLSL/SDF) — la
+     palette del terreno 3D resta quella già scritta in LOSS_SHADER_PALETTE.light
+     nel JS (non toccata: era già pronta, va solo attivata via data-theme="light"
+     su <html>). Qui sotto solo il telaio CSS attorno al canvas. ---------- */
   .loss-widget{
-    margin: 30px 0; background: var(--surface); border: 1px solid var(--line);
+    margin: 30px 0; background: var(--bianco); border: 1px solid var(--line);
     border-radius: 10px; padding: 24px 26px;
   }
   .loss-widget .ptitle{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--copper-bright); margin-bottom: 14px; display:block;
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.88rem;
+    color: var(--grigio-soft); margin-bottom: 14px; display:block;
   }
   .loss-canvas{
-    width:100%; aspect-ratio: 16/10; background: var(--bg); border: 1px solid var(--line);
+    width:100%; aspect-ratio: 16/10; background: var(--brina); border: 1px solid var(--line);
     border-radius: 8px; display:block;
   }
   .loss-controls{
@@ -268,33 +299,117 @@
     gap: 10px; margin-top: 14px;
   }
   .loss-btn{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.78rem; color: var(--bg);
-    background: var(--copper-bright); border: none; border-radius: 6px;
+    font-variant: small-caps; letter-spacing: .04em; font-size: 0.86rem; color: var(--bianco);
+    background: var(--arancio-scuro); border: none; border-radius: 6px;
     padding: 8px 16px; cursor: pointer; font-weight: 600;
   }
-  .loss-btn:hover{ background: var(--copper); }
-  .loss-readout{ font-size: 0.85rem; color: var(--text-dim); }
+  .loss-btn:hover{ background: var(--arancio); }
+  .loss-readout{ font-size: 0.92rem; color: var(--grigio-testo); }
   .loss-minimap-wrap{ margin-top: 18px; display:flex; flex-direction:column; align-items:center; gap: 8px; }
   .loss-minimap{
-    background: var(--bg); border: 1px solid var(--line); border-radius: 8px; cursor: crosshair;
+    background: var(--brina); border: 1px solid var(--line); border-radius: 8px; cursor: crosshair;
     width: 200px; height: 200px;
   }
   .loss-minimap-label{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.7rem; letter-spacing: 0.04em;
-    color: var(--text-dim); text-align:center;
+    font-variant: small-caps; letter-spacing: .04em; font-size: 0.82rem;
+    color: var(--grigio-soft); text-align:center;
   }
   .loss-fallback-note{
-    margin-top: 10px; font-size: 0.82rem; color: var(--text-dim); font-style: italic;
+    margin-top: 10px; font-size: 0.88rem; color: var(--grigio-testo); font-style: italic;
   }
 
   /* ---------- chiusura ---------- */
-  .chiusura{ background: linear-gradient(180deg, var(--bg), var(--surface)); }
+  .chiusura{ background: linear-gradient(180deg, var(--brina), var(--bianco)); }
   .footer-note{
-    margin-top: 46px; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem; color: var(--text-dim);
+    margin-top: 46px; font-variant: small-caps; letter-spacing: .06em; font-size: 0.9rem; color: var(--grigio-soft);
   }
+
+  /* ---------- termini collegati all'ontologia + tenda laterale ----------
+     Verde deliberatamente: è l'unico posto in questo capitolo dove il colore segnala
+     "stai per lasciare il saggio ed entrare nell'ontologia" — un registro diverso
+     dall'arancio (apparato del saggio stesso) e dal blu (navigazione del saggio).
+     Dati e link derivati SOLO da ciò che l'ontologia già espone (pagine
+     ontologia/output/concetti/*.html, sola lettura) — nessuna modifica ai .ttl o
+     agli script Python che li generano. */
+  .termine-concetto{
+    background: none; border: none; padding: 0; margin: 0; cursor: pointer;
+    font: inherit; color: var(--verde);
+    border-bottom: 1px dotted var(--verde);
+    transition: background .15s ease, border-bottom-style .15s ease;
+  }
+  .termine-concetto:hover, .termine-concetto:focus-visible{
+    background: rgba(61,122,58,0.14);
+    border-bottom-style: solid;
+    outline: none;
+  }
+  .termine-concetto.aperto{ background: rgba(61,122,58,0.22); border-bottom-style: solid; }
+
+  .tenda-scrim{
+    position: fixed; inset: 0; background: rgba(26,26,26,0.32);
+    opacity: 0; pointer-events: none; transition: opacity .25s ease; z-index: 90;
+  }
+  .tenda-scrim.visibile{ opacity: 1; pointer-events: auto; }
+
+  .tenda-concetto{
+    position: fixed; top: 0; right: 0; bottom: 0; width: min(420px, 92vw);
+    background: var(--bianco); z-index: 91;
+    box-shadow: -8px 0 28px rgba(26,26,26,0.18);
+    transform: translateX(100%); transition: transform .3s ease;
+    overflow-y: auto; padding: 28px 26px 40px;
+  }
+  .tenda-concetto.visibile{ transform: translateX(0); }
+  .tenda-testata{
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 14px;
+    border-bottom: 2px solid var(--verde); padding-bottom: 16px; margin-bottom: 18px;
+  }
+  .tenda-eyebrow{
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.86rem;
+    color: var(--verde); display: block; margin-bottom: 6px;
+  }
+  .tenda-titolo{ font-family: var(--serif); font-weight: 500; font-size: 1.5rem; color: var(--inchiostro); }
+  .tenda-titolo .tag{
+    font-variant: small-caps; letter-spacing: .04em; font-size: 0.8rem; color: var(--verde);
+    border: 1px solid var(--verde-chiaro); border-radius: 20px; padding: 1px 10px; margin-left: 8px;
+  }
+  .tenda-chiudi{
+    background: none; border: 1px solid var(--line); border-radius: 50%;
+    width: 32px; height: 32px; font-size: 1.1rem; line-height: 1; cursor: pointer;
+    color: var(--grigio-testo); flex-shrink: 0;
+  }
+  .tenda-chiudi:hover{ border-color: var(--verde); color: var(--verde-scuro); }
+  .tenda-nota{ font-size: 1.05rem; color: var(--inchiostro); margin: 0 0 22px; }
+  .tenda-sezione{ margin-bottom: 20px; }
+  .tenda-sezione h3{
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.86rem;
+    color: var(--grigio-soft); font-weight: 500; margin: 0 0 8px;
+  }
+  .tenda-lista{ list-style: none; margin: 0; padding: 0; font-size: 0.98rem; color: var(--grigio-testo); }
+  .tenda-lista li{ margin-bottom: 5px; }
+  .tenda-lista .rel-tipo{ color: var(--verde); font-size: 0.9em; }
+  .tenda-unita-cod{ font-variant: small-caps; color: var(--grigio-soft); font-size: 0.9em; }
+  .tenda-lente{
+    display: block; text-align: center; margin-top: 26px; padding: 12px 16px;
+    background: var(--verde); color: var(--bianco); border-radius: 8px;
+    text-decoration: none; font-variant: small-caps; letter-spacing: .04em; font-size: 0.98rem;
+  }
+  .tenda-lente:hover{ background: var(--verde-scuro); }
 </style>
 </head>
 <body>
+
+<div class="tenda-scrim" id="tenda-scrim"></div>
+<aside class="tenda-concetto" id="tenda-concetto" aria-hidden="true">
+  <div class="tenda-testata">
+    <div>
+      <span class="tenda-eyebrow">Dal vocabolario dell'ontologia</span>
+      <span class="tenda-titolo" id="tenda-titolo"></span>
+    </div>
+    <button class="tenda-chiudi" id="tenda-chiudi" aria-label="Chiudi">×</button>
+  </div>
+  <p class="tenda-nota" id="tenda-nota"></p>
+  <div id="tenda-corpo"></div>
+  <a class="tenda-lente" id="tenda-link-lente" href="#" target="_blank" rel="noopener">Apri nella Lente semantica →</a>
+</aside>
 
 <nav class="sidebar" aria-label="Indice del saggio">
   <div class="sidebar-kicker">Indice</div>
@@ -456,9 +571,9 @@
   <section id="u1-apertura" class="hero">
     <div class="wrap">
       <div class="kicker">Meccanismo · 4 · Reti neurali · Unità 4.1</div>
-      <h1>Dal neurone biologico <em>al neurone artificiale</em></h1>
+      <h1>Dal neurone biologico <em><button class="termine-concetto" data-concetto="NeuroneArtificiale">al neurone artificiale</button></em></h1>
       <p class="lede dim">In Genealogia · 3.3 è già stata raccontata, dall'alto, la storia di McCulloch-Pitts e Hebb — un neurone che si accende o non si accende, e sinapsi che si rinforzano quando due neuroni si attivano insieme. Qui si scende nel meccanismo: che cosa fa, esattamente, un singolo neurone artificiale.</p>
-      <div class="scrolldown">quanto poco del biologico è stato davvero preso in prestito</div>
+      <div class="scrolldown"><button class="termine-concetto" data-concetto="BiologiaCognizioneETeoriaSistemi">quanto poco del biologico è stato davvero preso in prestito</button></div>
     </div>
   </section>
 
@@ -468,11 +583,11 @@
       <h2 class="title">Somma pesata, poi una soglia morbida</h2>
       <p>Nel 1943 Warren McCulloch e Walter Pitts propongono il primo modello matematico di un neurone: riceve più segnali di ingresso, li somma con pesi diversi (alcuni ingressi contano di più, altri di meno) e produce un'uscita solo se la somma supera una certa soglia. Nel 1949 Donald Hebb aggiunge la regola con cui queste connessioni si modificano: «neuroni che si attivano insieme, si collegano insieme» — la sinapsi si rinforza con l'uso, non per istruzione esplicita.</p>
 
-      <p>Il neurone artificiale di oggi è quasi identico nella struttura, con una differenza tecnica precisa. Invece di una soglia netta (acceso/spento, 0 o 1 — la stessa logica discreta vista in Fondamenti · 1), usa una <strong>funzione di attivazione continua</strong>: la più semplice e storicamente più usata è la <strong>sigmoide</strong>, che schiaccia qualunque numero reale in un valore tra 0 e 1, con una transizione morbida invece che uno scatto netto.</p>
+      <p>Il neurone artificiale di oggi è quasi identico nella struttura, con una differenza tecnica precisa. Invece di una soglia netta (acceso/spento, 0 o 1 — la stessa logica discreta vista in Fondamenti · 1), usa una <strong><button class="termine-concetto" data-concetto="FunzioneAttivazione">funzione di attivazione continua</button></strong>: la più semplice e storicamente più usata è la <strong>sigmoide</strong>, che schiaccia qualunque numero reale in un valore tra 0 e 1, con una transizione morbida invece che uno scatto netto.</p>
 
       <div class="aside">
         <span class="label">La formula, in una riga</span>
-        <p>Dati due ingressi x1, x2, i pesi w1, w2 e una soglia di base b (il «bias»), il neurone calcola prima <code>z = w1·x1 + w2·x2 + b</code> — una somma pesata, niente di più — e poi applica la sigmoide: <code>output = σ(z) = 1 / (1 + e<sup>−z</sup>)</code>. Nessun passaggio nascosto: un neurone è, meccanicamente, questo.</p>
+        <p>Dati due ingressi x1, x2, i pesi w1, w2 e una soglia di base b (il «<button class="termine-concetto" data-concetto="Bias">bias</button>»), il neurone calcola prima <code>z = w1·x1 + w2·x2 + b</code> — una somma pesata, niente di più — e poi applica la sigmoide: <code>output = σ(z) = 1 / (1 + e<sup>−z</sup>)</code>. Nessun passaggio nascosto: un neurone è, meccanicamente, questo.</p>
       </div>
     </div>
   </section>
@@ -539,7 +654,7 @@
     <div class="wrap reveal">
       <div class="eyebrow">Un secondo biologo, in contrappunto a Bateson</div>
       <h2 class="title">Che cosa «rappresentano», davvero, i pesi?</h2>
-      <p>In Genealogia · 2.2 è già stato osservato, a proposito dei pesi di una rete addestrata, che «non esiste un punto nella rete in cui sia scritto... quel fatto è disperso» — nessuna cella di memoria contiene un ricordo isolabile. Francisco Varela, con Humberto Maturana, dà un vocabolario più preciso a questa osservazione con due concetti: <strong>autopoiesi</strong> (un sistema vivente è una rete chiusa di processi che si automantiene, non una macchina che «elabora input in output» in senso rappresentazionale forte) e <strong>chiusura operazionale</strong> (il sistema è perturbato dall'ambiente — reagisce a ciò che accade fuori — ma non è «istruito» dall'esterno in modo trasparente: l'ambiente non scrive direttamente nel sistema, lo perturba soltanto, e il sistema risponde secondo la propria organizzazione interna).</p>
+      <p>In Genealogia · 2.2 è già stato osservato, a proposito dei pesi di una rete addestrata, che «non esiste un punto nella rete in cui sia scritto... quel fatto è disperso» — nessuna cella di memoria contiene un ricordo isolabile. Francisco Varela, con Humberto Maturana, dà un vocabolario più preciso a questa osservazione con due concetti: <strong><button class="termine-concetto" data-concetto="Autopoiesi">autopoiesi</button></strong> (un sistema vivente è una rete chiusa di processi che si automantiene, non una macchina che «elabora input in output» in senso rappresentazionale forte) e <strong><button class="termine-concetto" data-concetto="ChiusuraOperazionale">chiusura operazionale</button></strong> (il sistema è perturbato dall'ambiente — reagisce a ciò che accade fuori — ma non è «istruito» dall'esterno in modo trasparente: l'ambiente non scrive direttamente nel sistema, lo perturba soltanto, e il sistema risponde secondo la propria organizzazione interna).</p>
 
       <div class="aside">
         <span class="label">Perturbato, non istruito</span>
@@ -588,7 +703,7 @@
       <h2 class="title">Il perceptron di Rosenblatt</h2>
       <p>Nel 1958 — lo stesso anno in cui von Neumann pubblica <em>The Computer and the Brain</em>, coincidenza reale, non un errore di questo corso — Frank Rosenblatt propone il <strong>perceptron</strong>: un singolo neurone del tipo visto nell'unità precedente, ma con una regola per aggiustare da solo i propri pesi osservando esempi corretti, invece di riceverli già impostati a mano. È il primo modello della storia che «impara» nel senso moderno del termine: pesi regolati automaticamente a partire da dati.</p>
 
-      <p>Geometricamente, un singolo neurone di questo tipo divide lo spazio degli ingressi in due regioni con un confine che è sempre <strong>una retta</strong> (o, in più dimensioni, un iperpiano) — la somma pesata <code>w1·x1 + w2·x2 + b</code> è un'equazione lineare, e la soglia (o la sigmoide) si limita a marcare da che parte della retta un punto cade. Un solo neurone può quindi risolvere qualunque problema che sia <strong>linearmente separabile</strong>: due gruppi di punti che una retta può davvero dividere.</p>
+      <p>Geometricamente, un singolo neurone di questo tipo divide lo spazio degli ingressi in due regioni con un confine che è sempre <strong>una retta</strong> (o, in più dimensioni, un iperpiano) — la somma pesata <code>w1·x1 + w2·x2 + b</code> è un'equazione lineare, e la soglia (o la sigmoide) si limita a marcare da che parte della retta un punto cade. Un solo neurone può quindi risolvere qualunque problema che sia <strong><button class="termine-concetto" data-concetto="SeparabilitaLineare">linearmente separabile</button></strong>: due gruppi di punti che una retta può davvero dividere.</p>
     </div>
   </section>
 
@@ -657,7 +772,7 @@
     <div class="wrap reveal">
       <div class="eyebrow">Il multi-layer perceptron</div>
       <h2 class="title">Uno strato nascosto tra l'ingresso e l'uscita</h2>
-      <p>La soluzione non è un trucco diverso nella stessa architettura: è un'architettura diversa. Invece di un solo neurone che guarda direttamente gli ingressi, si inserisce uno <strong>strato nascosto</strong> di neuroni intermedi — ciascuno dei quali riceve gli stessi due ingressi e calcola la propria somma pesata e attivazione, esattamente come nell'unità 4.1 — e un neurone finale che combina le uscite dello strato nascosto. Per XOR bastano due neuroni nascosti: il minimo teorico.</p>
+      <p>La soluzione non è un trucco diverso nella stessa architettura: è un'architettura diversa. Invece di un solo neurone che guarda direttamente gli ingressi, si inserisce uno <strong><button class="termine-concetto" data-concetto="MultiLayerPerceptron">strato nascosto</button></strong> di neuroni intermedi — ciascuno dei quali riceve gli stessi due ingressi e calcola la propria somma pesata e attivazione, esattamente come nell'unità 4.1 — e un neurone finale che combina le uscite dello strato nascosto. Per XOR bastano due neuroni nascosti: il minimo teorico.</p>
 
       <p>La rete qui sotto è stata addestrata per davvero (backpropagation, non pesi scelti a mano) su tutti e quattro i casi XOR, fino a classificarli correttamente in tutti e quattro (4/4). Il confine di decisione che ne risulta non è più una retta: è una curva, perché ogni neurone dello strato nascosto contribuisce con la propria retta, e la loro combinazione può piegare lo spazio.</p>
 
@@ -673,7 +788,7 @@
           <span class="xor-legend-item"><span class="xor-dot xor-dot-0"></span> atteso 0</span>
           <span class="xor-legend-item"><span class="xor-dot xor-dot-1"></span> atteso 1</span>
         </div>
-        <div class="xor-note" id="xor-accuracy-note">La sfumatura di colore è l'output reale della rete su ogni punto del piano — non un disegno, un calcolo. Rame chiaro = output vicino a 1, verde scuro = output vicino a 0.</div>
+        <div class="xor-note" id="xor-accuracy-note">La sfumatura di colore è l'output reale della rete su ogni punto del piano — non un disegno, un calcolo. Arancio scuro = output vicino a 1, carta chiara = output vicino a 0.</div>
       </div>
     </div>
   </section>
@@ -689,7 +804,7 @@
   <section id="u3-sez-pleroma-creatura">
     <div class="wrap reveal">
       <div class="eyebrow">Una domanda che resta aperta</div>
-      <h2 class="title">Pleroma o creatura?</h2>
+      <h2 class="title"><button class="termine-concetto" data-concetto="PleromaCreatura">Pleroma o creatura?</button></h2>
       <p>Gregory Bateson, riprendendo una distinzione di Jung, separa due mondi: il <strong>pleroma</strong>, il mondo delle forze fisiche pure — masse, cariche, urti — dove non esiste alcuna informazione, solo causa ed effetto; e la <strong>creatura</strong>, il mondo della comunicazione e della forma, dove esiste «una differenza che fa la differenza» — la definizione di informazione proposta da Bateson stesso.</p>
 
       <div class="question">
@@ -736,7 +851,7 @@
     <div class="wrap reveal">
       <div class="eyebrow">Un solo numero per l'errore</div>
       <h2 class="title">La funzione di perdita</h2>
-      <p>Per ciascun esempio di addestramento, la rete produce un output e lo confronta con il valore atteso. La differenza tra i due — elevata al quadrato, per non lasciare che gli errori positivi e negativi si annullino a vicenda — è l'errore su quell'esempio. La media di questi errori su tutti gli esempi si chiama <strong>funzione di perdita</strong> (loss), spesso nella forma più semplice, l'errore quadratico medio (MSE, mean squared error).</p>
+      <p>Per ciascun esempio di addestramento, la rete produce un output e lo confronta con il valore atteso. La differenza tra i due — elevata al quadrato, per non lasciare che gli errori positivi e negativi si annullino a vicenda — è l'errore su quell'esempio. La media di questi errori su tutti gli esempi si chiama <strong><button class="termine-concetto" data-concetto="FunzionePerdita">funzione di perdita</button></strong> (loss), spesso nella forma più semplice, l'errore quadratico medio (MSE, mean squared error).</p>
 
       <p>Il punto centrale non è la formula in sé, ma ciò che essa diventa una volta scritta: una funzione che, dati i pesi correnti della rete, restituisce <em>un singolo numero</em> — quanto la rete sbaglia, oggi, con questi pesi. Cambiare i pesi cambia quel numero. Addestrare una rete significa, meccanicamente, cercare i pesi che rendono quel numero il più piccolo possibile.</p>
 
@@ -753,7 +868,7 @@
       <h2 class="title">Perché la loss deve essere continua</h2>
       <p>Questo modulo tocca qui il punto più esigente, tecnicamente, del filo che attraversa l'intero corso. Una funzione a scalini — che salta bruscamente da un valore all'altro, come un interruttore booleano di Fondamenti · 1 — non si può «scendere» nello stesso modo in cui si scende una collina: non ha una pendenza definita nel punto di salto, solo un vuoto. Serve una superficie continua, senza spigoli, perché esista qualcosa come una <em>direzione di discesa più ripida</em> in ogni punto — il gradiente, protagonista dell'unità successiva.</p>
 
-      <p class="dim">Non è la chiusura di questo filo — quella è riservata a Meccanismo · 6, dove il discorso tornerà, per altre ragioni, sulla discretizzazione. Qui basti notare: l'intero edificio dell'addestramento per gradiente poggia sulla continuità di questa superficie.</p>
+      <p class="dim">Non è la chiusura di questo filo — quella è riservata a Meccanismo · 6, dove il discorso tornerà, per altre ragioni, <button class="termine-concetto" data-concetto="Quantizzazione">sulla discretizzazione</button>. Qui basti notare: l'intero edificio dell'addestramento per gradiente poggia sulla continuità di questa superficie.</p>
     </div>
   </section>
 
@@ -794,9 +909,9 @@
     <div class="wrap reveal">
       <div class="eyebrow">La metafora, resa precisa</div>
       <h2 class="title">Il gradiente come direzione di massima discesa</h2>
-      <p>Il <strong>gradiente</strong> della funzione di perdita, calcolato nel punto in cui ci si trova, è esattamente questo: la direzione (in uno spazio con tanti assi quanti sono i pesi della rete) verso cui la perdita cresce più velocemente. Andare nella direzione opposta — <em>discesa del gradiente</em> — è quindi il modo più diretto per farla scendere. Non un passo enorme: un piccolo passo, proporzionale a un tasso di apprendimento scelto in anticipo, poi si ricalcola il gradiente da capo nel nuovo punto, e si ripete.</p>
+      <p>Il <strong><button class="termine-concetto" data-concetto="Gradiente">gradiente</button></strong> della funzione di perdita, calcolato nel punto in cui ci si trova, è esattamente questo: la direzione (in uno spazio con tanti assi quanti sono i pesi della rete) verso cui la perdita cresce più velocemente. Andare nella direzione opposta — <em><button class="termine-concetto" data-concetto="DiscesaDelGradiente">discesa del gradiente</button></em> — è quindi il modo più diretto per farla scendere. Non un passo enorme: un piccolo passo, proporzionale a un tasso di apprendimento scelto in anticipo, poi si ricalcola il gradiente da capo nel nuovo punto, e si ripete.</p>
 
-      <p>Il meccanismo che calcola, per ogni peso della rete, quanto quel peso abbia contribuito all'errore finale si chiama <strong>backpropagation</strong> (retropropagazione dell'errore): parte dall'errore in uscita e lo fa scorrere all'indietro, strato per strato, applicando la regola della catena del calcolo differenziale. Non ha nulla di misterioso — è calcolo, applicato in modo sistematico — ma è il pezzo tecnico che rende allenabile una rete profonda come quella che ha risolto XOR.</p>
+      <p>Il meccanismo che calcola, per ogni peso della rete, quanto quel peso abbia contribuito all'errore finale si chiama <strong><button class="termine-concetto" data-concetto="Backpropagation">backpropagation</button></strong> (retropropagazione dell'errore): parte dall'errore in uscita e lo fa scorrere all'indietro, strato per strato, applicando la regola della catena del calcolo differenziale. Non ha nulla di misterioso — è calcolo, applicato in modo sistematico — ma è il pezzo tecnico che rende allenabile una rete profonda come quella che ha risolto XOR.</p>
     </div>
   </section>
 
@@ -804,7 +919,7 @@
     <div class="wrap reveal">
       <div class="eyebrow">Il paesaggio, reso come superficie vera</div>
       <h2 class="title">Non un grafico che la simula: una superficie continua vera</h2>
-      <p>Il componente qui sotto non disegna un'illustrazione della perdita: la calcola, punto per punto, come superficie continua — coerente con quanto appena detto sulla continuità. Questa particolare superficie ha due avvallamenti: uno più profondo e ampio (il minimo globale, la soluzione migliore) e uno più superficiale e stretto (un minimo locale — una trappola in cui la discesa del gradiente può restare bloccata, convinta di aver finito perché, localmente, non c'è più una direzione che scenda).</p>
+      <p>Il componente qui sotto non disegna un'illustrazione della perdita: la calcola, punto per punto, come superficie continua — coerente con quanto appena detto sulla continuità. Questa particolare superficie ha due avvallamenti: uno più profondo e ampio (il <button class="termine-concetto" data-concetto="MinimoLocaleGlobale">minimo globale</button>, la soluzione migliore) e uno più superficiale e stretto (un minimo locale — una trappola in cui la discesa del gradiente può restare bloccata, convinta di aver finito perché, localmente, non c'è più una direzione che scenda).</p>
 
       <div class="loss-widget">
         <span class="ptitle">Discesa del gradiente sul paesaggio della perdita</span>
@@ -832,13 +947,13 @@
 
       <div class="aside">
         <span class="label">Schismogenesi e termostato, in contrappunto al backprop</span>
-        <p>Gregory Bateson, in <em>Naven</em> (1936), descrive la <strong>schismogenesi</strong>: un ciclo di retroazione che si autoalimenta durante l'interazione stessa, in tempo reale — come il feedback negativo di un termostato, che corregge la temperatura mentre l'ambiente cambia, non dopo. Sono entrambi cicli <em>continui</em>, che agiscono <em>durante</em> il comportamento in corso.</p>
+        <p>Gregory Bateson, in <em>Naven</em> (1936), descrive la <strong><button class="termine-concetto" data-concetto="Schismogenesi">schismogenesi</button></strong>: un ciclo di retroazione che si autoalimenta durante l'interazione stessa, in tempo reale — come il feedback negativo di un termostato, che corregge la temperatura mentre l'ambiente cambia, non dopo. Sono entrambi cicli <em>continui</em>, che agiscono <em>durante</em> il comportamento in corso.</p>
         <p>La backpropagation non funziona così: è una procedura offline, discreta, globale — calcola l'errore su un insieme di esempi, aggiusta tutti i pesi in blocco, e solo dopo la rete «agisce» di nuovo coi pesi aggiornati. Strutturalmente è più vicina a un processo selettivo — molte prove, poi una struttura fissata, come nell'evoluzione — che a un vero feedback omeostatico continuo. La stessa distinzione, in altre parole, già tracciata in Genealogia · 3 tra addestramento «discreto e globale» e plasticità biologica «continua e locale».</p>
       </div>
 
       <div class="aside">
         <span class="label">Un corrispettivo hardware, non solo un'osservazione teorica</span>
-        <p>La plasticità sinaptica continua e locale ha già un corrispettivo tecnologico reale, non speculativo: il <strong>memristor</strong> (teorizzato nel 1971, realizzato fisicamente solo nel 2008), un componente la cui resistenza elettrica cambia in base alla storia di corrente che lo ha attraversato — una forma di memoria fisica, locale, che si aggiorna mentre il segnale scorre. È il fondamento del <strong>neuromorphic computing</strong> (chip come Loihi o TrueNorth), che dà corpo concreto alle «reti neurali a impulsi» (spiking neural networks) già nominate in Genealogia · 3 come programma di ricerca attivo.</p>
+        <p>La <button class="termine-concetto" data-concetto="PlasticitaSinaptica">plasticità sinaptica</button> continua e locale ha già un corrispettivo tecnologico reale, non speculativo: il <strong>memristor</strong> (teorizzato nel 1971, realizzato fisicamente solo nel 2008), un componente la cui resistenza elettrica cambia in base alla storia di corrente che lo ha attraversato — una forma di memoria fisica, locale, che si aggiorna mentre il segnale scorre. È il fondamento del <strong>neuromorphic computing</strong> (chip come Loihi o TrueNorth), che dà corpo concreto alle «reti neurali a impulsi» (spiking neural networks) già nominate in Genealogia · 3 come programma di ricerca attivo.</p>
         <p>Da tenere distinto: le tecnologie EEG/BCI (elettroencefalografia, interfacce cervello-computer) non replicano affatto questa plasticità — si limitano a leggere e decodificare segnali neurali già esistenti. Restano comunque un'istanza pratica e attuale del filo discreto/continuo di questo corso: un segnale elettrico continuo che va campionato e discretizzato per essere elaborato digitalmente.</p>
       </div>
     </div>
@@ -847,7 +962,7 @@
   <section id="u5-quadro">
     <div class="wrap reveal">
       <div class="eyebrow">Il quadro — e la domanda di chiusura del Meccanismo · 4</div>
-      <h2 class="title">Un solo meccanismo, tre facoltà</h2>
+      <h2 class="title"><button class="termine-concetto" data-concetto="ReteNeuraleEApprendimento">Un solo meccanismo, tre facoltà</button></h2>
       <p>In Genealogia · 2.2 si era chiuso con un'osservazione («Il quadro»): ragionamento apparente e allucinazione condivisa, in un LLM, «lo stesso meccanismo, lo stesso punto cieco». Ora quel meccanismo ha un nome tecnico preciso, visto da vicino in questo modulo: un'unica funzione di perdita, minimizzata per discesa del gradiente, via backpropagation.</p>
 
       <div class="question">
@@ -996,7 +1111,7 @@
     off.width = risoluzione; off.height = risoluzione;
     const ctx = off.getContext('2d');
     const img = ctx.createImageData(risoluzione, risoluzione);
-    const bg = hexToRgbArr(themeVarHex('--bg')), bright = hexToRgbArr(themeVarHex('--copper-bright'));
+    const bg = hexToRgbArr(themeVarHex('--brina')), bright = hexToRgbArr(themeVarHex('--arancio-scuro'));
     for(let pixelRow = 0; pixelRow < risoluzione; pixelRow++){
       const dataRow = risoluzione - 1 - pixelRow; // riga 0 dati = y_range[0] (basso) -> in cima all'immagine va y alto
       for(let col = 0; col < risoluzione; col++){
@@ -1250,7 +1365,7 @@
     c.width = res; c.height = res;
     const ctx = c.getContext('2d');
     const img = ctx.createImageData(res, res);
-    const bg = hexToRgbArr(themeVarHex('--bg')), bright = hexToRgbArr(themeVarHex('--copper-bright'));
+    const bg = hexToRgbArr(themeVarHex('--brina')), bright = hexToRgbArr(themeVarHex('--arancio-scuro'));
     for(let pixelRow = 0; pixelRow < res; pixelRow++){
       const dataY = LOSS_MINI_RANGE - (pixelRow/(res-1)) * 2 * LOSS_MINI_RANGE;
       for(let col = 0; col < res; col++){
@@ -1300,11 +1415,11 @@
       const [px, py] = lossDataToMinimapPixel(lossBallPos[0], lossBallPos[1]);
       lossMinimapCtx.beginPath();
       lossMinimapCtx.arc(px, py, 5, 0, Math.PI*2);
-      lossMinimapCtx.fillStyle = themeVarHex('--bg');
+      lossMinimapCtx.fillStyle = themeVarHex('--brina');
       lossMinimapCtx.fill();
       lossMinimapCtx.beginPath();
       lossMinimapCtx.arc(px, py, 4, 0, Math.PI*2);
-      lossMinimapCtx.fillStyle = themeVarHex('--copper-bright');
+      lossMinimapCtx.fillStyle = themeVarHex('--arancio-scuro');
       lossMinimapCtx.fill();
     }
 
@@ -1355,6 +1470,206 @@
     lossRenderLoop();
   }
 
+  // ============ termini collegati all'ontologia + tenda laterale ============
+  const CONCETTI = {
+    ReteNeuraleEApprendimento: {
+      label: "Reti neurali e apprendimento",
+      nota: "Il Modulo 4: dal neurone singolo alla discesa del gradiente su una rete profonda.",
+      specifici: ["Backpropagation","Discesa del gradiente","Funzione di perdita (loss)","Multi-layer perceptron / strato nascosto","Neurone artificiale","Separabilità lineare"],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Meccanismo · 4.1","Dal neurone biologico al neurone artificiale"],["Meccanismo · 4.2","Il perceptron e XOR"],["Meccanismo · 4.3","Strati e profondità"],["Meccanismo · 4.4","La funzione di perdita"],["Meccanismo · 4.5","Il gradiente e la backpropagation"]]
+    },
+    NeuroneArtificiale: {
+      label: "Neurone artificiale",
+      nota: "Unità che somma ingressi pesati (più bias) e applica una funzione di attivazione continua.",
+      specifici: ["Bias (del neurone)","Funzione di attivazione (sigmoide)"],
+      relazioni: [],
+      teorici: ["Walter Pitts","Warren McCulloch"],
+      discussoIn: [["Meccanismo · 4.1","Dal neurone biologico al neurone artificiale"]]
+    },
+    FunzioneAttivazione: {
+      label: "Funzione di attivazione (sigmoide)",
+      nota: "Funzione continua che schiaccia un numero reale in [0,1], sostituendo la soglia netta booleana.",
+      specifici: [],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Meccanismo · 4.1","Dal neurone biologico al neurone artificiale"]]
+    },
+    Bias: {
+      label: "Bias (del neurone)",
+      nota: "Soglia di base sommata nella combinazione lineare pesata del neurone.",
+      specifici: [],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Meccanismo · 4.1","Dal neurone biologico al neurone artificiale"]]
+    },
+    SeparabilitaLineare: {
+      label: "Separabilità lineare",
+      nota: "Proprietà di due insiemi di punti divisibili da una retta/iperpiano; XOR non la possiede.",
+      specifici: [],
+      relazioni: [["È risolto da","Multi-layer perceptron / strato nascosto"]],
+      teorici: ["Marvin Minsky","Seymour Papert"],
+      discussoIn: [["Genealogia · 1.3","Il perceptron e la disgiunzione esclusiva (XOR)"],["Meccanismo · 4.2","Il perceptron e XOR"]]
+    },
+    MultiLayerPerceptron: {
+      label: "Multi-layer perceptron / strato nascosto",
+      nota: "Rete con uno o più strati intermedi che ricodifica lo spazio degli ingressi rendendolo separabile.",
+      specifici: [],
+      relazioni: [["Risolve","Separabilità lineare"]],
+      teorici: [],
+      discussoIn: [["Meccanismo · 4.3","Strati e profondità"]]
+    },
+    Backpropagation: {
+      label: "Backpropagation",
+      tag: "Tecnica",
+      nota: "Algoritmo che calcola il contributo di ogni peso all'errore finale, propagandolo all'indietro strato per strato (Rumelhart, Hinton, Williams 1986).",
+      specifici: [],
+      relazioni: [["È prerequisito di","Discesa del gradiente"],["Si contrappone a","Plasticità sinaptica, Schismogenesi"]],
+      teorici: ["David Rumelhart","Geoffrey Hinton","Ronald Williams"],
+      discussoIn: [["Genealogia · 1.5","Re, donna, regina"],["Meccanismo · 4.5","Il gradiente e la backpropagation"]]
+    },
+    FunzionePerdita: {
+      label: "Funzione di perdita (loss)",
+      nota: "Numero singolo che misura quanto una rete sbaglia, dati i pesi correnti; l'oggetto da minimizzare.",
+      specifici: ["Gradiente","Minimo locale / minimo globale"],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Meccanismo · 4.4","La funzione di perdita"]]
+    },
+    Gradiente: {
+      label: "Gradiente",
+      nota: "Direzione di massima crescita della perdita in un punto dello spazio dei pesi — una proprietà matematica intrinseca della funzione di perdita.",
+      specifici: [],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Meccanismo · 4.5","Il gradiente e la backpropagation"]]
+    },
+    MinimoLocaleGlobale: {
+      label: "Minimo locale / minimo globale",
+      nota: "Punti di una superficie di perdita in cui la discesa può bloccarsi (locale) o la soluzione migliore (globale) — una proprietà geometrica della superficie stessa.",
+      specifici: [],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Meccanismo · 4.5","Il gradiente e la backpropagation"]]
+    },
+    DiscesaDelGradiente: {
+      label: "Discesa del gradiente",
+      tag: "Tecnica",
+      nota: "Procedura iterativa che aggiorna i pesi nella direzione opposta al gradiente per minimizzare la perdita.",
+      specifici: [],
+      relazioni: [["Richiede come prerequisito","Backpropagation"],["Si contrappone a","Quantizzazione"]],
+      teorici: [],
+      discussoIn: [["Meccanismo · 4.5","Il gradiente e la backpropagation"]]
+    },
+    BiologiaCognizioneETeoriaSistemi: {
+      label: "Biologia della cognizione e teoria dei sistemi",
+      nota: "Il «terzo filo» del corso: sistemi viventi, comunicazione e apprendimento biologico messi a confronto con le reti artificiali.",
+      specifici: ["Autopoiesi","Plasticità sinaptica","Pleroma e creatura","Schismogenesi"],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Meccanismo · 4.1","Dal neurone biologico al neurone artificiale"],["Meccanismo · 4.3","Strati e profondità"],["Meccanismo · 4.5","Il gradiente e la backpropagation"]]
+    },
+    Autopoiesi: {
+      label: "Autopoiesi",
+      nota: "Un sistema vivente come rete chiusa di processi che si automantiene, non un «elaboratore» di input in output (Varela/Maturana).",
+      specifici: ["Chiusura operazionale"],
+      relazioni: [],
+      teorici: ["Francisco Varela","Humberto Maturana"],
+      discussoIn: [["Meccanismo · 4.1","Dal neurone biologico al neurone artificiale"]]
+    },
+    ChiusuraOperazionale: {
+      label: "Chiusura operazionale",
+      nota: "Un sistema è perturbato dall'ambiente ma non «istruito» in modo trasparente da esso — proprietà costitutiva dell'autopoiesi.",
+      specifici: [],
+      relazioni: [],
+      teorici: ["Francisco Varela"],
+      discussoIn: [["Meccanismo · 4.1","Dal neurone biologico al neurone artificiale"]]
+    },
+    PleromaCreatura: {
+      label: "Pleroma e creatura",
+      nota: "Distinzione di Bateson (via Jung) fra mondo fisico senza informazione e mondo della comunicazione/forma.",
+      specifici: [],
+      relazioni: [],
+      teorici: ["Gregory Bateson"],
+      discussoIn: [["Meccanismo · 4.3","Strati e profondità"]]
+    },
+    Schismogenesi: {
+      label: "Schismogenesi",
+      nota: "Ciclo di retroazione continuo che si autoalimenta durante l'interazione stessa (Bateson, Naven, 1936); contrapposto al backpropagation offline.",
+      specifici: [],
+      relazioni: [["Si contrappone a","Backpropagation"]],
+      teorici: ["Gregory Bateson"],
+      discussoIn: [["Meccanismo · 4.5","Il gradiente e la backpropagation"]]
+    },
+    PlasticitaSinaptica: {
+      label: "Plasticità sinaptica",
+      nota: "Modifica continua e locale delle sinapsi biologiche, contrapposta all'addestramento discreto e globale artificiale.",
+      specifici: [],
+      relazioni: [["Si contrappone a","Backpropagation"]],
+      teorici: [],
+      discussoIn: [["Genealogia · 3.3","Il problema biologico"],["Meccanismo · 4.5","Il gradiente e la backpropagation"]]
+    },
+    Quantizzazione: {
+      label: "Quantizzazione",
+      tag: "Tecnica",
+      nota: "Riduzione deliberata della precisione numerica dei pesi (FP32→FP16/BF16→INT8→INT4) per il deployment, dopo un addestramento a precisione continua.",
+      specifici: [],
+      relazioni: [["Si contrappone a","Discesa del gradiente"]],
+      teorici: [],
+      discussoIn: [["Meccanismo · 4.4","La funzione di perdita"],["Meccanismo · 6.6","Quantizzazione (chiusura dell'arco tecnico)"]]
+    }
+  };
+
+  const tendaEl = document.getElementById('tenda-concetto');
+  const scrimEl = document.getElementById('tenda-scrim');
+  const tendaTitolo = document.getElementById('tenda-titolo');
+  const tendaNota = document.getElementById('tenda-nota');
+  const tendaCorpo = document.getElementById('tenda-corpo');
+  const tendaLinkLente = document.getElementById('tenda-link-lente');
+  let ultimoTermineAperto = null;
+
+  function sezioneLista(titolo, voci, render){
+    if(!voci || !voci.length) return '';
+    return `<div class="tenda-sezione"><h3>${titolo}</h3><ul class="tenda-lista">${voci.map(render).join('')}</ul></div>`;
+  }
+
+  function apriTenda(id, triggerEl){
+    const c = CONCETTI[id];
+    if(!c) return;
+    if(ultimoTermineAperto) ultimoTermineAperto.classList.remove('aperto');
+    ultimoTermineAperto = triggerEl || null;
+    if(triggerEl) triggerEl.classList.add('aperto');
+
+    tendaTitolo.innerHTML = c.label + (c.tag ? `<span class="tag">${c.tag}</span>` : '');
+    tendaNota.textContent = c.nota;
+    tendaCorpo.innerHTML =
+      sezioneLista('Concetti più specifici', c.specifici, v => `<li>${v}</li>`) +
+      sezioneLista('Relazioni con altri concetti', c.relazioni, r => `<li><span class="rel-tipo">${r[0]}</span> ${r[1]}</li>`) +
+      sezioneLista('Teorici', c.teorici, t => `<li><span class="rel-tipo">Teorizzato da</span> ${t}</li>`) +
+      sezioneLista('Discusso in', c.discussoIn, d => `<li><span class="tenda-unita-cod">${d[0]}</span> — ${d[1]}</li>`);
+    tendaLinkLente.href = `../../../ontologia/lente-semantica/output/index.html#${id}`;
+
+    tendaEl.classList.add('visibile');
+    tendaEl.setAttribute('aria-hidden', 'false');
+    scrimEl.classList.add('visibile');
+  }
+
+  function chiudiTenda(){
+    tendaEl.classList.remove('visibile');
+    tendaEl.setAttribute('aria-hidden', 'true');
+    scrimEl.classList.remove('visibile');
+    if(ultimoTermineAperto) ultimoTermineAperto.classList.remove('aperto');
+    ultimoTermineAperto = null;
+  }
+
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.termine-concetto');
+    if(btn){ apriTenda(btn.dataset.concetto, btn); return; }
+    if(e.target === scrimEl){ chiudiTenda(); }
+  });
+  document.getElementById('tenda-chiudi').addEventListener('click', chiudiTenda);
+  document.addEventListener('keydown', (e) => { if(e.key === 'Escape') chiudiTenda(); });
 </script>
 
 </body>

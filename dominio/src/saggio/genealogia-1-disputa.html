@@ -5,104 +5,133 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Genealogia · 1 — La storia come sequenza di problemi irrisolti</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+  @font-face {
+    font-family: 'EB Garamond';
+    src: url('fonts/EBGaramond-Variable.woff2') format('woff2-variations');
+    font-weight: 400 800;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'EB Garamond';
+    src: url('fonts/EBGaramond-Italic-Variable.woff2') format('woff2-variations');
+    font-weight: 400 800;
+    font-style: italic;
+    font-display: swap;
+  }
+
   :root{
-    --bg: #0F2A22;
-    --surface: #173B30;
-    --surface-2: #1E4A3C;
-    --copper: #C97D3D;
-    --copper-bright: #F0A85E;
-    --text: #F2ECE0;
-    --text-dim: #A9BFB6;
-    --line: rgba(242,236,224,0.12);
+    --bianco:        #FFFFFF;
+    --brina:         #F6F8FB;
+    --inchiostro:    #1a1a1a;
+    --grigio-testo:  #4a4540;
+    --grigio-soft:   #8A8580;
+    --blu-scuro:     #1F2B6B;
+    --blu:           #2B3A8C;
+    --blu-chiaro:    #5A6FB8;
+    --arancio-scuro: #A85419;
+    --arancio:       #D4722A;
+    --arancio-chiaro:#E9A66B;
+    --verde-scuro:   #2A5628;
+    --verde:         #3D7A3A;
+    --verde-chiaro:  #7AAD76;
+
+    --serif: 'EB Garamond', Garamond, Georgia, 'Times New Roman', serif;
+    --mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+
+    --line: rgba(26,26,26,0.12);
     --rail-w: 300px;
   }
 
   *{ box-sizing: border-box; }
-  html{ scroll-behavior: smooth; }
+  html{ scroll-behavior: smooth; font-size: 120%; }
 
   body{
     margin:0;
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Source Serif 4', Georgia, serif;
-    line-height: 1.65;
+    background: var(--brina);
+    color: var(--inchiostro);
+    font-family: var(--serif);
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
   }
 
   h1,h2,h3, .display{
-    font-family: 'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
-    font-weight: 600;
-    letter-spacing: -0.01em;
+    font-family: var(--serif);
+    font-weight: 500;
     margin: 0;
   }
-  .mono{ font-family: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace; }
-  a{ color: var(--copper-bright); }
+  .mono{ font-family: var(--mono); }
+  a{ color: var(--arancio-scuro); }
 
   /* ---------- layout shell: sidebar fissa con indice del sito ---------- */
   .sidebar{
-    background: rgba(15,42,34,0.92);
+    background: var(--bianco);
     border-bottom: 1px solid var(--line);
     padding: 28px 24px 32px;
   }
   .sidebar-kicker{
-    font-family: 'IBM Plex Mono', monospace; font-size: .74rem; letter-spacing: .12em;
-    text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px;
+    font-variant: small-caps; letter-spacing: .06em; font-size: .8rem;
+    color: var(--grigio-soft); margin-bottom: 10px;
   }
   .sidebar-title{
-    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.02rem;
-    color: var(--text); margin-bottom: 22px;
+    font-family: var(--serif); font-weight: 500; font-size: 1.1rem;
+    color: var(--inchiostro); margin-bottom: 22px;
   }
   .sidebar .parte{ margin-top: 26px; }
   .sidebar .parte:first-of-type{ margin-top: 0; }
   .sidebar .parte-heading{
-    font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: .74rem;
-    letter-spacing: .1em; text-transform: uppercase; color: var(--copper-bright);
+    font-family: var(--serif); font-weight: 600; font-size: .82rem;
+    font-variant: small-caps; letter-spacing: .06em; color: var(--blu);
     padding-bottom: 10px; margin-bottom: 2px; border-bottom: 1px solid var(--line);
   }
   .sidebar .voce-semplice{
     display: block; padding: 10px 4px; border-bottom: 1px solid var(--line);
-    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem;
-    color: var(--text); text-decoration: none;
+    font-family: var(--serif); font-weight: 500; font-size: .98rem;
+    color: var(--inchiostro); text-decoration: none;
   }
-  .sidebar .voce-semplice:hover{ color: var(--copper-bright); }
-  .sidebar .voce-semplice.current{ color: var(--copper-bright); }
+  .sidebar .voce-semplice:hover{ color: var(--blu); }
+  .sidebar .voce-semplice.current{ color: var(--blu); }
   .sidebar details.modulo{ border-bottom: 1px solid var(--line); }
   .sidebar details.modulo summary{
     display: flex; align-items: center; gap: 8px; padding: 10px 4px; cursor: pointer;
-    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem; color: var(--text);
+    font-family: var(--serif); font-weight: 500; font-size: .98rem; color: var(--inchiostro);
     list-style: none;
   }
-  .sidebar details.modulo summary.current{ color: var(--copper-bright); }
+  .sidebar details.modulo summary.current{ color: var(--blu); }
   .sidebar details.modulo summary::-webkit-details-marker{ display: none; }
   .sidebar details.modulo summary::before{
-    content: "›"; display: inline-block; font-family: 'IBM Plex Mono', monospace;
-    color: var(--text-dim); transition: transform .15s ease; flex-shrink: 0;
+    content: "›"; display: inline-block;
+    color: var(--grigio-soft); transition: transform .15s ease; flex-shrink: 0;
   }
-  .sidebar details.modulo[open] summary::before{ transform: rotate(90deg); color: var(--copper-bright); }
-  .sidebar details.modulo summary:hover{ color: var(--copper-bright); }
+  .sidebar details.modulo[open] summary::before{ transform: rotate(90deg); color: var(--blu); }
+  .sidebar details.modulo summary:hover{ color: var(--blu); }
   .sidebar .unita-list{ padding: 2px 0 12px 22px; display: flex; flex-direction: column; gap: 1px; }
   .sidebar .unita-list a{
-    display: block; padding: 6px 4px; font-size: .82rem; color: var(--text-dim); text-decoration: none;
+    display: block; padding: 6px 4px; font-size: .9rem; color: var(--grigio-testo); text-decoration: none;
   }
-  .sidebar .unita-list a:hover{ color: var(--copper-bright); }
-  .sidebar .unita-list a .num{ color: var(--copper); margin-right: 6px; font-family: 'IBM Plex Mono', monospace; font-size: .74rem; }
+  .sidebar .unita-list a:hover{ color: var(--blu); }
+  .sidebar .unita-list a .num{ color: var(--blu); margin-right: 6px; font-size: .82rem; }
 
-  /* pallini luminosi di scroll-spy, sulle voci dell'unità corrente */
+  /* pallini di scroll-spy: blu, come tutta la sidebar (vedi sotto — su richiesta
+     esplicita, niente arancio nella sidebar). Diverso dai pallini della timeline più
+     sotto, che restano arancio (segnano un punto notevole nella narrazione, non un
+     luogo nella struttura del sito — ruoli diversi, colori diversi). */
   .sidebar .unita-list.scrollspy a{ position: relative; padding-left: 20px; }
   .sidebar .unita-list.scrollspy a::before{
     content: "";
     position: absolute; left: 2px; top: 50%;
     width: 7px; height: 7px; border-radius: 50%;
-    background: var(--surface-2); border: 1px solid var(--line);
+    background: var(--brina); border: 1px solid var(--line);
     transform: translateY(-50%);
     transition: background .25s, box-shadow .25s, transform .25s;
   }
-  .sidebar .unita-list.scrollspy a.active{ color: var(--copper-bright); }
+  .sidebar .unita-list.scrollspy a.active{ color: var(--blu); }
   .sidebar .unita-list.scrollspy a.active::before{
-    background: var(--copper-bright);
-    box-shadow: 0 0 0 4px rgba(240,168,94,0.18);
+    background: var(--blu);
+    box-shadow: 0 0 0 4px rgba(43,58,140,0.18);
     transform: translateY(-50%) scale(1.2);
   }
 
@@ -122,17 +151,17 @@
   .unit-block:last-child section:last-of-type{ border-bottom:none; }
 
   .eyebrow{
-    font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
-    letter-spacing: 0.12em; text-transform: uppercase; color: var(--copper-bright);
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.92rem;
+    color: var(--grigio-soft);
     margin-bottom: 14px; display:flex; align-items:center; gap:10px;
   }
-  .eyebrow::before{ content:""; width: 22px; height:1px; background: var(--copper-bright); display:inline-block; }
+  .eyebrow::before{ content:""; width: 22px; height:1px; background: var(--grigio-soft); display:inline-block; }
 
   h2.title{ font-size: clamp(1.6rem, 4vw, 2.3rem); margin-bottom: 20px; }
 
-  p{ margin: 0 0 18px; color: var(--text); font-size: 1.05rem; }
-  p.dim{ color: var(--text-dim); }
-  .lede{ font-size: 1.15rem; color: var(--text); }
+  p{ margin: 0 0 18px; color: var(--inchiostro); font-size: 1.1rem; }
+  p.dim{ color: var(--grigio-testo); }
+  .lede{ font-size: 1.2rem; color: var(--inchiostro); }
 
   .reveal{ opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
   .reveal.visible{ opacity:1; transform: translateY(0); }
@@ -142,68 +171,70 @@
   }
 
   .aside{
-    margin: 26px 0; padding: 18px 20px; background: var(--surface);
-    border-left: 3px solid var(--copper); border-radius: 2px;
+    margin: 26px 0; padding: 18px 20px; background: var(--bianco);
+    border-left: 3px solid var(--arancio); border-radius: 2px;
   }
   .aside .label{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--copper-bright); margin-bottom: 8px; display:block;
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.88rem;
+    color: var(--grigio-soft); margin-bottom: 8px; display:block;
   }
-  .aside p{ margin-bottom:0; font-size: 0.96rem; color: var(--text-dim); }
+  .aside p{ margin-bottom:0; font-size: 1rem; color: var(--grigio-testo); }
 
   .question{
     margin: 28px 0; padding: 20px 22px; border: 1px dashed var(--line); border-radius: 4px;
-    font-family: 'Space Grotesk', sans-serif; font-size: 1.0rem; color: var(--copper-bright);
+    font-family: var(--serif); font-size: 1.05rem; color: var(--arancio-scuro);
   }
 
   blockquote{
-    margin: 0; padding-left: 22px; border-left: 2px solid var(--copper);
-    font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; color: var(--text);
+    margin: 0; padding-left: 22px; border-left: 2px solid var(--arancio);
+    font-family: var(--serif); font-size: 1.15rem; color: var(--inchiostro);
   }
 
   /* ---------- hero ---------- */
   .hero{ padding-top: 62px; }
   .hero .kicker{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.8rem; letter-spacing: 0.14em;
-    text-transform: uppercase; color: var(--text-dim); margin-bottom: 18px;
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.92rem;
+    color: var(--grigio-soft); margin-bottom: 18px;
   }
-  .hero h1{ font-size: clamp(1.9rem, 5.6vw, 2.9rem); line-height:1.12; margin-bottom: 24px; }
-  .hero h1 em{ font-style: normal; color: var(--copper-bright); }
+  .hero h1{ font-size: clamp(1.9rem, 5.6vw, 2.9rem); line-height:1.18; margin-bottom: 24px; }
+  .hero h1 em{ font-style: italic; color: var(--arancio-scuro); }
 
+  /* ---------- motto (citazione d'apertura, Unità 1.1) ---------- */
   .motto{
     display:inline-block; margin-top: 36px; padding: 20px 26px;
-    background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+    background: var(--bianco); border: 1px solid var(--line); border-radius: 8px;
   }
   .motto .latin{
-    font-family:'Space Grotesk', sans-serif; font-size: 1.35rem; color: var(--copper-bright); margin-bottom: 6px;
+    font-family: var(--serif); font-style: italic; font-size: 1.4rem; color: var(--arancio-scuro); margin-bottom: 6px;
   }
   .motto .transl{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.76rem; color: var(--text-dim);
-    text-transform: uppercase; letter-spacing: 0.08em;
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.86rem; color: var(--grigio-soft);
   }
 
   .scrolldown{
-    margin-top: 50px; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem;
-    color: var(--text-dim); letter-spacing: 0.08em; text-transform: uppercase;
+    margin-top: 50px; font-variant: small-caps; letter-spacing: .06em; font-size: 0.9rem;
+    color: var(--grigio-soft);
     display:flex; align-items:center; gap:8px;
   }
-  .scrolldown::after{ content:"↓"; color: var(--copper-bright); animation: nudge 1.8s infinite ease-in-out; }
+  .scrolldown::after{ content:"↓"; color: var(--arancio-scuro); animation: nudge 1.8s infinite ease-in-out; }
   @media (prefers-reduced-motion: reduce){ .scrolldown::after{ animation:none; } }
   @keyframes nudge{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(5px); } }
 
   /* ---------- self-reference callout (Unità 2) ---------- */
   .selfref{
-    background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
-    padding: 26px 28px; margin: 30px 0; font-family:'IBM Plex Mono', monospace;
+    background: var(--bianco); border: 1px solid var(--line); border-radius: 10px;
+    padding: 26px 28px; margin: 30px 0; font-family: var(--serif);
   }
   .selfref .line{
-    font-size: 0.98rem; color: var(--text); margin-bottom: 10px; padding-left: 18px;
-    border-left: 2px solid var(--surface-2); position: relative;
+    font-size: 1.05rem; color: var(--inchiostro); margin-bottom: 10px; padding-left: 18px;
+    border-left: 2px solid var(--line); position: relative;
   }
   .selfref .line:last-child{ margin-bottom:0; }
-  .selfref .line.hi{ color: var(--copper-bright); border-left-color: var(--copper-bright); }
+  .selfref .line.hi{ color: var(--arancio-scuro); border-left-color: var(--arancio-scuro); }
 
-  /* ---------- timeline (motivo ricorrente di Genealogia · 1) ---------- */
+  /* ---------- timeline (motivo ricorrente di Genealogia · 1) — pallini arancio:
+     segnano un punto notevole nella narrazione, non "dove sei nel sito" (quello è
+     il ruolo del blu, riservato ai pallini della sidebar qui sopra) ---------- */
   .timeline{
     position: relative; margin: 32px 0 8px; padding-left: 30px;
     border-left: 2px solid var(--line);
@@ -213,35 +244,119 @@
   .tl-node::before{
     content:""; position:absolute; left:-37px; top:3px;
     width: 12px; height:12px; border-radius:50%;
-    background: var(--copper-bright);
-    box-shadow: 0 0 0 3px var(--bg), 0 0 0 4px var(--line);
+    background: var(--arancio-scuro);
+    box-shadow: 0 0 0 3px var(--brina), 0 0 0 4px var(--line);
   }
   .tl-node.tl-break::before{
-    background: var(--bg);
-    border: 2px solid var(--copper-bright);
+    background: var(--brina);
+    border: 2px solid var(--arancio-scuro);
   }
   .tl-tag{
-    display:inline-block; font-family:'IBM Plex Mono', monospace; font-size: 0.66rem;
-    letter-spacing: 0.08em; text-transform: uppercase; color: var(--copper-bright);
-    border: 1px solid var(--copper); border-radius: 3px; padding: 2px 8px; margin-bottom: 8px;
+    display:inline-block; font-variant: small-caps; letter-spacing: .06em; font-size: 0.82rem;
+    color: var(--arancio-scuro);
+    border: 1px solid var(--arancio); border-radius: 3px; padding: 2px 8px; margin-bottom: 8px;
   }
   .tl-date{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.76rem; letter-spacing:0.06em;
-    text-transform: uppercase; color: var(--copper-bright); margin-bottom: 6px;
+    font-variant: small-caps; letter-spacing: .04em; font-size: 0.88rem;
+    color: var(--grigio-soft); margin-bottom: 6px;
   }
   .tl-title{
-    font-family:'Space Grotesk', sans-serif; font-size: 1.02rem; color: var(--text); margin-bottom: 6px;
+    font-family: var(--serif); font-weight: 500; font-size: 1.08rem; color: var(--inchiostro); margin-bottom: 6px;
   }
-  .tl-desc{ font-size: 0.94rem; color: var(--text-dim); margin: 0; }
+  .tl-desc{ font-size: 1rem; color: var(--grigio-testo); margin: 0; }
 
   /* ---------- chiusura ---------- */
-  .chiusura{ background: linear-gradient(180deg, var(--bg), var(--surface)); }
+  .chiusura{ background: linear-gradient(180deg, var(--brina), var(--bianco)); }
   .footer-note{
-    margin-top: 46px; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem; color: var(--text-dim);
+    margin-top: 46px; font-variant: small-caps; letter-spacing: .06em; font-size: 0.9rem; color: var(--grigio-soft);
   }
+
+  /* ---------- termini collegati all'ontologia + tenda laterale ----------
+     Verde deliberatamente: è l'unico posto in questo capitolo dove il colore segnala
+     "stai per lasciare il saggio ed entrare nell'ontologia" — un registro diverso
+     dall'arancio (apparato del saggio stesso) e dal blu (navigazione del saggio).
+     Dati e link derivati SOLO da ciò che l'ontologia già espone (pagine
+     ontologia/output/concetti/*.html, sola lettura) — nessuna modifica ai .ttl o
+     agli script Python che li generano. */
+  .termine-concetto{
+    background: none; border: none; padding: 0; margin: 0; cursor: pointer;
+    font: inherit; color: var(--verde);
+    border-bottom: 1px dotted var(--verde);
+    transition: background .15s ease, border-bottom-style .15s ease;
+  }
+  .termine-concetto:hover, .termine-concetto:focus-visible{
+    background: rgba(61,122,58,0.14);
+    border-bottom-style: solid;
+    outline: none;
+  }
+  .termine-concetto.aperto{ background: rgba(61,122,58,0.22); border-bottom-style: solid; }
+
+  .tenda-scrim{
+    position: fixed; inset: 0; background: rgba(26,26,26,0.32);
+    opacity: 0; pointer-events: none; transition: opacity .25s ease; z-index: 90;
+  }
+  .tenda-scrim.visibile{ opacity: 1; pointer-events: auto; }
+
+  .tenda-concetto{
+    position: fixed; top: 0; right: 0; bottom: 0; width: min(420px, 92vw);
+    background: var(--bianco); z-index: 91;
+    box-shadow: -8px 0 28px rgba(26,26,26,0.18);
+    transform: translateX(100%); transition: transform .3s ease;
+    overflow-y: auto; padding: 28px 26px 40px;
+  }
+  .tenda-concetto.visibile{ transform: translateX(0); }
+  .tenda-testata{
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 14px;
+    border-bottom: 2px solid var(--verde); padding-bottom: 16px; margin-bottom: 18px;
+  }
+  .tenda-eyebrow{
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.86rem;
+    color: var(--verde); display: block; margin-bottom: 6px;
+  }
+  .tenda-titolo{ font-family: var(--serif); font-weight: 500; font-size: 1.5rem; color: var(--inchiostro); }
+  .tenda-titolo .tag{
+    font-variant: small-caps; letter-spacing: .04em; font-size: 0.8rem; color: var(--verde);
+    border: 1px solid var(--verde-chiaro); border-radius: 20px; padding: 1px 10px; margin-left: 8px;
+  }
+  .tenda-chiudi{
+    background: none; border: 1px solid var(--line); border-radius: 50%;
+    width: 32px; height: 32px; font-size: 1.1rem; line-height: 1; cursor: pointer;
+    color: var(--grigio-testo); flex-shrink: 0;
+  }
+  .tenda-chiudi:hover{ border-color: var(--verde); color: var(--verde-scuro); }
+  .tenda-nota{ font-size: 1.05rem; color: var(--inchiostro); margin: 0 0 22px; }
+  .tenda-sezione{ margin-bottom: 20px; }
+  .tenda-sezione h3{
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.86rem;
+    color: var(--grigio-soft); font-weight: 500; margin: 0 0 8px;
+  }
+  .tenda-lista{ list-style: none; margin: 0; padding: 0; font-size: 0.98rem; color: var(--grigio-testo); }
+  .tenda-lista li{ margin-bottom: 5px; }
+  .tenda-lista .rel-tipo{ color: var(--verde); font-size: 0.9em; }
+  .tenda-unita-cod{ font-variant: small-caps; color: var(--grigio-soft); font-size: 0.9em; }
+  .tenda-lente{
+    display: block; text-align: center; margin-top: 26px; padding: 12px 16px;
+    background: var(--verde); color: var(--bianco); border-radius: 8px;
+    text-decoration: none; font-variant: small-caps; letter-spacing: .04em; font-size: 0.98rem;
+  }
+  .tenda-lente:hover{ background: var(--verde-scuro); }
 </style>
 </head>
 <body>
+
+<div class="tenda-scrim" id="tenda-scrim"></div>
+<aside class="tenda-concetto" id="tenda-concetto" aria-hidden="true">
+  <div class="tenda-testata">
+    <div>
+      <span class="tenda-eyebrow">Dal vocabolario dell'ontologia</span>
+      <span class="tenda-titolo" id="tenda-titolo"></span>
+    </div>
+    <button class="tenda-chiudi" id="tenda-chiudi" aria-label="Chiudi">×</button>
+  </div>
+  <p class="tenda-nota" id="tenda-nota"></p>
+  <div id="tenda-corpo"></div>
+  <a class="tenda-lente" id="tenda-link-lente" href="#" target="_blank" rel="noopener">Apri nella Lente semantica →</a>
+</aside>
 
 <nav class="sidebar" aria-label="Indice del saggio">
   <div class="sidebar-kicker">Indice</div>
@@ -453,7 +568,7 @@
 
       <p>Nel 1902, mentre il secondo volume dei <em>Grundgesetze der Arithmetik</em> è già in stampa, Frege riceve una lettera da un giovane matematico inglese, Bertrand Russell. Contiene una contraddizione al cuore stesso del sistema: l'insieme di tutti gli insiemi che non contengono se stessi — contiene se stesso o no? Entrambe le risposte producono una contraddizione. Frege fa in tempo ad aggiungere, in extremis, una nota al secondo volume: riconosce che il fondamento del suo lavoro è appena stato scosso da una lettera. Una delle ammissioni più contenute nella storia della matematica.</p>
 
-      <p>Invece di abbandonare il progetto, Russell — con Alfred North Whitehead — tenta di ripararlo. Il risultato: <em>Principia Mathematica</em> (1910–1913), tre volumi, oltre 1900 pagine, una teoria dei tipi costruita apposta per vietare il paradosso per costruzione. Nell'edizione originale, la dimostrazione che 1+1=2 arriva dopo circa 360 pagine di apparato formale, accompagnata da un commento che resta il vertice dell'understatement matematico: la proposizione, si legge, è <span class="mono">"occasionally useful."</span></p>
+      <p>Invece di abbandonare il progetto, Russell — con Alfred North Whitehead — tenta di ripararlo. Il risultato: <em>Principia Mathematica</em> (1910–1913), tre volumi, oltre 1900 pagine, una teoria dei tipi costruita apposta per vietare il paradosso per costruzione. Nell'edizione originale, la dimostrazione che 1+1=2 arriva dopo circa 360 pagine di apparato formale, accompagnata da un commento che resta il vertice dell'understatement matematico: la proposizione, si legge, è <em>"occasionally useful."</em></p>
 
       <div class="aside">
         <span class="label">Perché vale la pena saperlo</span>
@@ -503,7 +618,7 @@
   <section id="a1-chiusura" class="chiusura">
     <div class="wrap reveal">
       <div class="eyebrow">Chiusura</div>
-      <h2 class="title">Il sogno è completo. O sembra esserlo.</h2>
+      <h2 class="title"><button class="termine-concetto" data-concetto="FondamentiLogicoMatematici">Il sogno</button> è completo. O sembra esserlo.</h2>
 
       <blockquote>
         Nel 1913 la logica formale sembra aver inghiottito l'intera matematica. Tre volumi enormi dimostrano, passo dopo passo, che persino il fatto più banale dell'aritmetica poggia su un fondamento non solo accettato, ma dimostrato.
@@ -525,7 +640,7 @@
     <div class="wrap">
       <div class="kicker">Genealogia · 1.2</div>
       <h1>Diciotto anni. <em>È quanto è durata la cerimonia.</em></h1>
-      <p class="lede dim">Si immagini un sistema di regole abbastanza potente da dimostrare, in linea di principio, ogni verità aritmetica — quello che Whitehead e Russell avevano appena speso tre volumi a costruire. E si immagini poi che qualcuno dimostri, con quelle stesse regole, che un sistema del genere non può esistere.</p>
+      <p class="lede dim">Si immagini un <button class="termine-concetto" data-concetto="SistemaFormale">sistema di regole</button> abbastanza potente da dimostrare, in linea di principio, ogni verità aritmetica — quello che Whitehead e Russell avevano appena speso tre volumi a costruire. E si immagini poi che qualcuno dimostri, con quelle stesse regole, che un sistema del genere non può esistere.</p>
       <p class="dim">Non è accaduto per caso, né lentamente: è accaduto nel 1931, con un unico articolo.</p>
 
       <div class="scrolldown">il primo inverno, prima ancora che esista un computer</div>
@@ -538,11 +653,11 @@
       <h2 class="title">Gödel rompe tutto</h2>
       <p>Kurt Gödel, venticinquenne, pubblica due teoremi che demoliscono — con gli strumenti stessi della logica formale — il progetto che aveva appena riempito <em>Principia Mathematica</em>. Detto senza formule: per qualsiasi sistema di regole coerente e abbastanza potente da parlare di aritmetica, esistono affermazioni vere che il sistema non può dimostrare al proprio interno. E — secondo colpo — il sistema non può nemmeno dimostrare la propria coerenza usando solo le proprie regole.</p>
 
-      <p>Il trucco — se si può chiamare così un lavoro di questa portata — è l'autoriferimento reso rigoroso. Gödel trova un modo per far sì che il sistema formale possa parlare di se stesso: ogni affermazione sul sistema viene tradotta in un numero, secondo una codifica precisa, così che una frase come «questa affermazione non è dimostrabile in questo sistema» smette di essere un gioco di parole alla Liar Paradox e diventa un enunciato matematico vero e proprio, costruibile dentro il sistema.</p>
+      <p>Il trucco — se si può chiamare così un lavoro di questa portata — è l'autoriferimento reso rigoroso. Gödel trova un modo per far sì che il sistema formale possa parlare di se stesso: ogni affermazione sul sistema viene <button class="termine-concetto" data-concetto="Aritmetizzazione">tradotta in un numero</button>, secondo una codifica precisa, così che una frase come «questa affermazione non è dimostrabile in questo sistema» smette di essere un gioco di parole alla Liar Paradox e diventa un enunciato matematico vero e proprio, costruibile dentro il sistema.</p>
 
       <div class="selfref">
         <div class="line">Il sistema può esprimere l'enunciato G</div>
-        <div class="line">G dice, in sostanza: <span class="mono">"G non è dimostrabile in questo sistema"</span></div>
+        <div class="line">G dice, in sostanza: <em>"G non è dimostrabile in questo sistema"</em></div>
         <div class="line hi">Se il sistema dimostrasse G, G sarebbe falso → contraddizione</div>
         <div class="line hi">Quindi G è vero, ma il sistema non può dimostrarlo</div>
       </div>
@@ -564,7 +679,7 @@
       <h2 class="title">Turing reincornicia la domanda</h2>
       <p>Cinque anni dopo Gödel, Alan Turing affronta un problema imparentato — l'<em>Entscheidungsproblem</em> di Hilbert, se esista un procedimento meccanico per stabilire la verità di qualunque enunciato matematico — e per rispondere (no) inventa un oggetto che sopravvivrà al problema che doveva risolvere: la macchina universale, l'antenato astratto di ogni computer che userà mai.</p>
 
-      <p>Ma il contributo che conta di più per questo corso arriva nel 1950, con un articolo che non prova un teorema: pone una domanda diversa. Non «una macchina può pensare?» — Turing liquida la domanda come mal posta, troppo legata a definizioni intuitive di «pensare» su cui nessuno concorda — ma «una macchina può ingannare un osservatore abbastanza a lungo da sembrare indistinguibile da un umano?». Lo <em>Imitation Game</em>, oggi noto come test di Turing.</p>
+      <p>Ma il contributo che conta di più per questo corso arriva nel 1950, con un articolo che non prova un teorema: pone una domanda diversa. Non «una macchina può pensare?» — Turing liquida la domanda come mal posta, troppo legata a definizioni intuitive di «pensare» su cui nessuno concorda — ma «una macchina può ingannare un osservatore abbastanza a lungo da sembrare indistinguibile da un umano?». Lo <em>Imitation Game</em>, oggi noto come <button class="termine-concetto" data-concetto="TestDiTuring">test di Turing</button>.</p>
 
       <div class="question">Lo spostamento è la mossa: Turing non risolve il problema filosofico, lo sostituisce con uno empiricamente verificabile. È esattamente lo stesso tipo di mossa che ricorre, molto più avanti nel corso, ogni volta che un problema difficile di «comprensione» viene silenziosamente sostituito da un problema più facile di «prestazione osservabile».</div>
 
@@ -599,7 +714,7 @@
         <div class="tl-node tl-break">
           <span class="tl-tag">primo inverno</span>
           <div class="tl-date">1931</div>
-          <div class="tl-title">Gödel — Teoremi di incompletezza</div>
+          <div class="tl-title">Gödel — <button class="termine-concetto" data-concetto="TeoremaIncompletezzaGodel">Teoremi di incompletezza</button></div>
           <p class="tl-desc">Nessun sistema formale abbastanza potente può dimostrare tutte le proprie verità.</p>
         </div>
         <div class="tl-node">
@@ -660,7 +775,7 @@
     <div class="wrap reveal">
       <div class="eyebrow">Tappa 1 · 1956</div>
       <h2 class="title">Dartmouth: nasce un nome, non ancora un campo</h2>
-      <p>John McCarthy, insieme a Marvin Minsky, Claude Shannon e Nathaniel Rochester, firma la proposta che convoca l'incontro — ed è McCarthy a coniare, in quella proposta, l'espressione «intelligenza artificiale». La tesi di fondo, parafrasata: ogni aspetto dell'apprendimento e ogni altro tratto dell'intelligenza può, in linea di principio, essere descritto con tale precisione da permettere a una macchina di simularlo.</p>
+      <p>John McCarthy, insieme a Marvin Minsky, Claude Shannon e Nathaniel Rochester, firma la proposta che convoca l'incontro — ed è McCarthy a coniare, in quella proposta, l'espressione «<button class="termine-concetto" data-concetto="StoriaIntelligenzaArtificiale">intelligenza artificiale</button>». La tesi di fondo, parafrasata: ogni aspetto dell'apprendimento e ogni altro tratto dell'intelligenza può, in linea di principio, essere descritto con tale precisione da permettere a una macchina di simularlo.</p>
 
       <p>Vale la pena leggerla due volte: non dice «forse», dice «può» — con la sicurezza di chi descrive un problema di ingegneria, non un mistero aperto.</p>
 
@@ -677,11 +792,11 @@
       <h2 class="title">Il Perceptron: la macchina che impara guardando</h2>
       <p>Frank Rosenblatt costruisce il Perceptron, ispirandosi al modello matematico del neurone di McCulloch e Pitts (1943) — un dispositivo capace di <em>imparare</em> a classificare pattern semplici regolando i propri pesi in base agli esempi che riceve, invece di eseguire regole scritte a mano. È la prima incarnazione pratica e visibile di un'idea che tornerà, sotto altro nome e con altra scala, in ogni rete neurale di questo corso.</p>
 
-      <p>La stampa dell'epoca non si trattiene. Il New York Times, nel 1958, riporta che secondo la Marina degli Stati Uniti il dispositivo sarebbe diventato capace di <span class="mono">"walk, talk, see, write, reproduce itself and be conscious of its existence"</span> — camminare, parlare, vedere, scrivere, riprodursi ed essere cosciente della propria esistenza.</p>
+      <p>La stampa dell'epoca non si trattiene. Il New York Times, nel 1958, riporta che secondo la Marina degli Stati Uniti il dispositivo sarebbe diventato capace di <em>"walk, talk, see, write, reproduce itself and be conscious of its existence"</em> — camminare, parlare, vedere, scrivere, riprodursi ed essere cosciente della propria esistenza.</p>
 
       <div class="aside">
         <span class="label">Da tenere a mente</span>
-        <p>Il Perceptron di Rosenblatt, nella sua forma del 1958, è a un solo strato. Sa separare solo pattern che si possono dividere con una linea retta — la nozione tecnica è «separabilità lineare». Questo dettaglio, nella tappa successiva, diventa l'intera storia.</p>
+        <p>Il Perceptron di Rosenblatt, nella sua forma del 1958, è a un solo strato. Sa separare solo pattern che si possono dividere con una linea retta — la nozione tecnica è «<button class="termine-concetto" data-concetto="SeparabilitaLineare">separabilità lineare</button>». Questo dettaglio, nella tappa successiva, diventa l'intera storia.</p>
       </div>
     </div>
   </section>
@@ -768,7 +883,7 @@
     <div class="wrap reveal">
       <div class="eyebrow">Tappa 1 · Anni '70-'80</div>
       <h2 class="title">I sistemi esperti: l'intelligenza come elenco di regole</h2>
-      <p>L'approccio si chiama, con qualche variazione, «sistema esperto»: un motore di regole logiche del tipo «se-allora», scritte a mano da un umano esperto del dominio insieme a un «ingegnere della conoscenza» che le traduce in codice. MYCIN, sviluppato a Stanford, suggerisce terapie antibatteriche con un'accuratezza che regge il confronto con specialisti umani, in un dominio ristretto. XCON (noto anche come R1), alla Digital Equipment Corporation, configura ordini complessi di computer VAX e fa risparmiare all'azienda decine di milioni di dollari l'anno.</p>
+      <p>L'approccio si chiama, con qualche variazione, «<button class="termine-concetto" data-concetto="SistemaEsperto">sistema esperto</button>»: un motore di regole logiche del tipo «se-allora», scritte a mano da un umano esperto del dominio insieme a un «ingegnere della conoscenza» che le traduce in codice. MYCIN, sviluppato a Stanford, suggerisce terapie antibatteriche con un'accuratezza che regge il confronto con specialisti umani, in un dominio ristretto. XCON (noto anche come R1), alla Digital Equipment Corporation, configura ordini complessi di computer VAX e fa risparmiare all'azienda decine di milioni di dollari l'anno.</p>
 
       <p>Intorno a questi sistemi cresce un'industria vera: macchine specializzate — le «macchine LISP», costruite apposta per eseguire questo tipo di software — vendute da aziende come Symbolics a prezzi molto superiori a un computer generico, giustificati dalle prestazioni superiori su questo carico di lavoro specifico.</p>
 
@@ -783,7 +898,7 @@
     <div class="wrap reveal">
       <div class="eyebrow">Tappa 2 · 1987–1993</div>
       <h2 class="title">Il secondo inverno: quando la lista non basta più</h2>
-      <p>Il problema si chiama, nel gergo del campo, <em>brittleness</em> — fragilità: un sistema esperto non degrada con eleganza fuori dal proprio dominio, si rompe di colpo. Non «non lo so» — semplicemente non ha una regola per quel caso, e non ha modo di accorgersi che gli manca. Ogni cambiamento nel dominio richiede che un ingegnere della conoscenza, costoso e specializzato, aggiorni a mano centinaia di regole. Il sistema non impara da un caso nuovo: va riscritto.</p>
+      <p>Il problema si chiama, nel gergo del campo, <em><button class="termine-concetto" data-concetto="Brittleness">brittleness</button></em> — fragilità: un sistema esperto non degrada con eleganza fuori dal proprio dominio, si rompe di colpo. Non «non lo so» — semplicemente non ha una regola per quel caso, e non ha modo di accorgersi che gli manca. Ogni cambiamento nel dominio richiede che un ingegnere della conoscenza, costoso e specializzato, aggiorni a mano centinaia di regole. Il sistema non impara da un caso nuovo: va riscritto.</p>
 
       <p>Nel 1987 il mercato delle macchine LISP collassa: workstation generiche di Apple e Sun, sempre più potenti per la legge di Moore, raggiungono le stesse prestazioni a una frazione del costo — e nessuno ha più motivo di comprare hardware specializzato per eseguire regole scritte a mano. Nel 1991 la Strategic Computing Initiative della DARPA valuta deludenti i propri progetti di AI e ritira i finanziamenti. Il progetto giapponese di «quinta generazione», basato sullo stesso paradigma, viene abbandonato senza aver raggiunto i propri obiettivi originali.</p>
 
@@ -798,7 +913,7 @@
     <div class="wrap reveal">
       <div class="eyebrow">Tappa 3 · Anni '90</div>
       <h2 class="title">La rivincita statistica: lasciar parlare i dati</h2>
-      <p>Mentre i sistemi a regole collassano sotto il proprio peso, un approccio diverso guadagna terreno — non nuove regole scritte meglio, ma modelli statistici che estraggono pattern direttamente dai dati, senza che nessun umano codifichi esplicitamente la conoscenza. Gli Hidden Markov Model permettono progressi concreti nel riconoscimento vocale. Le Support Vector Machines, formalizzate da Vladimir Vapnik, offrono un metodo matematicamente elegante per classificare dati complessi.</p>
+      <p>Mentre i sistemi a regole collassano sotto il proprio peso, un approccio diverso guadagna terreno — non nuove regole scritte meglio, ma modelli statistici che estraggono pattern direttamente dai dati, senza che nessun umano codifichi esplicitamente la conoscenza. Gli <button class="termine-concetto" data-concetto="HiddenMarkovModel">Hidden Markov Model</button> permettono progressi concreti nel riconoscimento vocale. Le <button class="termine-concetto" data-concetto="SupportVectorMachine">Support Vector Machines</button>, formalizzate da Vladimir Vapnik, offrono un metodo matematicamente elegante per classificare dati complessi.</p>
 
       <p>Il cambio di filosofia è più importante del singolo strumento: invece di chiedere «che cosa sa l'esperto, e come scriverlo come regola», la domanda diventa «quali pattern sono già nei dati, e come estrarli automaticamente». È la prima comparsa, in forma ancora acerba, dell'idea che guiderà tutto il resto di questo corso.</p>
 
@@ -866,7 +981,7 @@
     <div class="wrap reveal">
       <div class="eyebrow">Tappa 1 · Anni '80</div>
       <h2 class="title">Backpropagation: il problema del 1969, risolto</h2>
-      <p>Un algoritmo chiamato <em>backpropagation</em> — la cui origine tecnica risale addirittura ai primi anni '70, ma che diventa noto alla comunità scientifica soprattutto grazie a un articolo di David Rumelhart, Geoffrey Hinton e Ronald Williams nel 1986 — permette finalmente di addestrare reti neurali a più strati, non solo il singolo strato del Perceptron originale.</p>
+      <p>Un algoritmo chiamato <em><button class="termine-concetto" data-concetto="Backpropagation">backpropagation</button></em> — la cui origine tecnica risale addirittura ai primi anni '70, ma che diventa noto alla comunità scientifica soprattutto grazie a un articolo di David Rumelhart, Geoffrey Hinton e Ronald Williams nel 1986 — permette finalmente di addestrare reti neurali a più strati, non solo il singolo strato del Perceptron originale.</p>
 
       <p>Il dettaglio che chiude un cerchio aperto in questo blocco: una rete neurale a più strati <strong>risolve</strong> XOR. Il limite geometrico che Minsky e Papert avevano dimostrato riguardava specificamente i modelli a un solo strato — loro stessi lo sapevano, come già notato nell'Unità 3. Mancava solo un metodo per addestrare più strati insieme. Ora c'è.</p>
 
@@ -881,7 +996,7 @@
     <div class="wrap reveal">
       <div class="eyebrow">Tappa 2 · 2006</div>
       <h2 class="title">Hinton: il "deep learning" prende un nome</h2>
-      <p>Geoffrey Hinton, insieme a Simon Osindero e Yee-Whye Teh, pubblica un metodo per addestrare reti profonde strato per strato, dimostrando che l'addestramento di reti realmente profonde è possibile. Il termine «deep learning» comincia a diffondersi da questo momento come etichetta per l'intero approccio.</p>
+      <p>Geoffrey Hinton, insieme a Simon Osindero e Yee-Whye Teh, pubblica un metodo per addestrare reti profonde strato per strato, dimostrando che l'addestramento di reti realmente profonde è possibile. Il termine «<button class="termine-concetto" data-concetto="DeepLearning">deep learning</button>» comincia a diffondersi da questo momento come etichetta per l'intero approccio.</p>
 
       <p>Vale la pena essere onesti su che cosa sia davvero nuovo qui, e che cosa no: l'idea di base — strati di neuroni artificiali, pesi aggiustati tramite backpropagation — è la stessa degli anni '80. Quello che cambia, nel decennio successivo, è tutt'altro: la disponibilità di dataset molto più grandi, e — aggancio diretto alla lezione sull'hardware già trattata in questo corso — la scoperta che le GPU, nate per i videogiochi, sono perfette per addestrare reti neurali su scala molto maggiore di prima.</p>
 
@@ -963,7 +1078,7 @@
     <div class="wrap reveal">
       <div class="eyebrow">Tappa 1</div>
       <h2 class="title">Il limite delle reti ricorrenti</h2>
-      <p>Le reti ricorrenti (e le loro varianti più sofisticate, le LSTM) processano una sequenza — una frase, un testo — un elemento alla volta, mantenendo uno stato interno che riassume tutto ciò che hanno visto fino a quel punto. Due problemi strutturali: primo, le dipendenze a lungo raggio si degradano — informazione rilevante all'inizio di una frase lunga tende a "svanire" prima che la rete raggiunga la fine. Secondo, e forse più limitante nella pratica: il processamento è intrinsecamente sequenziale — non si può calcolare l'elemento numero 50 prima di aver calcolato il numero 49. Questo rende l'addestramento su grandi quantità di testo molto più lento di quanto potrebbe essere.</p>
+      <p><button class="termine-concetto" data-concetto="RetiRicorrentiLstm">Le reti ricorrenti</button> (e le loro varianti più sofisticate, le LSTM) processano una sequenza — una frase, un testo — un elemento alla volta, mantenendo uno stato interno che riassume tutto ciò che hanno visto fino a quel punto. Due problemi strutturali: primo, le dipendenze a lungo raggio si degradano — informazione rilevante all'inizio di una frase lunga tende a "svanire" prima che la rete raggiunga la fine. Secondo, e forse più limitante nella pratica: il processamento è intrinsecamente sequenziale — non si può calcolare l'elemento numero 50 prima di aver calcolato il numero 49. Questo rende l'addestramento su grandi quantità di testo molto più lento di quanto potrebbe essere.</p>
     </div>
   </section>
 
@@ -1142,6 +1257,179 @@
     });
   }, { threshold: 0, rootMargin: '-45% 0px -45% 0px' });
   unitBlocksForSpy.forEach(b => localSpy2.observe(b));
+
+  // ============ termini collegati all'ontologia ============
+  // Dati trascritti a mano da ontologia/output/concetti/*.html (sola lettura, non
+  // generati da script): i concetti con :discussoInUnita verso :Genealogia1 o le sue
+  // unità Gen11..Gen16, trovati interrogando dati.ttl — non un elenco a occhio nel testo.
+  const CONCETTI = {
+    FondamentiLogicoMatematici: {
+      label: "Fondamenti logico-matematici",
+      nota: "L'arco 1.1–1.2/Meccanismo · 1.5 del corso: dal sogno del pensiero come calcolo ai limiti dimostrati dei sistemi formali.",
+      specifici: ["Diagonale di Cantor","Numerabilità","Sistema formale","Teorema di incompletezza di Gödel","Test di Turing"],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Genealogia · 1.1","Dalla characteristica universalis alla pura ideografia"],["Genealogia · 1.2","Gödel, Turing, Lucas"],["Meccanismo · 1.5","Gödel"]]
+    },
+    SistemaFormale: {
+      label: "Sistema formale",
+      nota: "Alfabeto finito di simboli e regole finite per combinarli in dimostrazioni; oggetto discreto ed enumerabile.",
+      specifici: [],
+      relazioni: [["È prerequisito di","Teorema di incompletezza di Gödel"]],
+      teorici: [],
+      discussoIn: [["Genealogia · 1.2","Gödel, Turing, Lucas"],["Genealogia · 1.6","L'attenzione sostituisce la memoria"],["Meccanismo · 1.5","Gödel"]]
+    },
+    TeoremaIncompletezzaGodel: {
+      label: "Teorema di incompletezza di Gödel",
+      nota: "Nessun sistema formale coerente abbastanza potente può dimostrare tutte le proprie verità aritmetiche (1931).",
+      specifici: ["Aritmetizzazione"],
+      relazioni: [["Richiede come prerequisito","Sistema formale"]],
+      teorici: ["Kurt Gödel"],
+      discussoIn: [["Genealogia · 1.2","Gödel, Turing, Lucas"],["Meccanismo · 1.5","Gödel"]]
+    },
+    Aritmetizzazione: {
+      label: "Aritmetizzazione",
+      nota: "La mossa tecnica di Gödel: codificare simboli, formule e dimostrazioni come numeri, per rendere un sistema autoreferenziale.",
+      specifici: [],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Genealogia · 1.2","Gödel, Turing, Lucas"],["Meccanismo · 1.5","Gödel"]]
+    },
+    TestDiTuring: {
+      label: "Test di Turing",
+      nota: "Sostituzione della domanda «può pensare?» con «può ingannare un osservatore abbastanza a lungo?».",
+      specifici: [],
+      relazioni: [],
+      teorici: ["Alan Turing"],
+      discussoIn: [["Genealogia · 1.2","Gödel, Turing, Lucas"]]
+    },
+    StoriaIntelligenzaArtificiale: {
+      label: "Storia dell'intelligenza artificiale",
+      nota: "L'arco narrativo di Genealogia · 1: dai sistemi simbolici ai loro limiti, alla «rivincita statistica».",
+      specifici: ["Brittleness (fragilità)","Deep learning","Hidden Markov Model","Reti ricorrenti / LSTM","Sistema esperto","Support Vector Machine"],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Genealogia · 1.1","Dalla characteristica universalis alla pura ideografia"],["Genealogia · 1.2","Gödel, Turing, Lucas"],["Genealogia · 1.3","Il perceptron e la disgiunzione esclusiva (XOR)"],["Genealogia · 1.4","Dai sistemi esperti alle macchine statistiche"],["Genealogia · 1.5","Re, donna, regina"],["Genealogia · 1.6","L'attenzione sostituisce la memoria"]]
+    },
+    SistemaEsperto: {
+      label: "Sistema esperto",
+      nota: "Motore di regole se-allora scritte a mano da un esperto umano; funziona in domini chiusi, fragile fuori (MYCIN, XCON).",
+      specifici: [],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Genealogia · 1.4","Dai sistemi esperti alle macchine statistiche"]]
+    },
+    Brittleness: {
+      label: "Brittleness (fragilità)",
+      nota: "Collasso improvviso, non graduale, di un sistema esperto fuori dal proprio dominio ristretto.",
+      specifici: [],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Genealogia · 1.4","Dai sistemi esperti alle macchine statistiche"]]
+    },
+    DeepLearning: {
+      label: "Deep learning",
+      nota: "Addestramento praticabile di reti profonde, reso possibile da dati e hardware sufficienti — non da un'idea nuova (2006).",
+      specifici: [],
+      relazioni: [],
+      teorici: ["Geoffrey Hinton","Simon Osindero","Yee-Whye Teh"],
+      discussoIn: [["Genealogia · 1.5","Re, donna, regina"]]
+    },
+    HiddenMarkovModel: {
+      label: "Hidden Markov Model",
+      tag: "Tecnica",
+      nota: "Modello statistico che porta progressi nel riconoscimento vocale, esempio della «rivincita statistica».",
+      specifici: [],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Genealogia · 1.4","Dai sistemi esperti alle macchine statistiche"]]
+    },
+    SupportVectorMachine: {
+      label: "Support Vector Machine",
+      tag: "Tecnica",
+      nota: "Metodo di classificazione formalizzato da Vladimir Vapnik, altro esempio della fase statistica.",
+      specifici: [],
+      relazioni: [],
+      teorici: ["Vladimir Vapnik"],
+      discussoIn: [["Genealogia · 1.4","Dai sistemi esperti alle macchine statistiche"]]
+    },
+    RetiRicorrentiLstm: {
+      label: "Reti ricorrenti / LSTM",
+      tag: "Tecnica",
+      nota: "Elaborazione sequenziale con stato che riassume il passato; tentativo pre-Transformer, limitato su distanze lunghe.",
+      specifici: [],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Genealogia · 1.6","L'attenzione sostituisce la memoria"]]
+    },
+    SeparabilitaLineare: {
+      label: "Separabilità lineare",
+      nota: "Proprietà di due insiemi di punti divisibili da una retta/iperpiano; XOR non la possiede.",
+      specifici: [],
+      relazioni: [["È risolto da","Multi-layer perceptron / strato nascosto"]],
+      teorici: ["Marvin Minsky","Seymour Papert"],
+      discussoIn: [["Genealogia · 1.3","Il perceptron e la disgiunzione esclusiva (XOR)"],["Meccanismo · 4.2","Il perceptron e XOR"]]
+    },
+    Backpropagation: {
+      label: "Backpropagation",
+      tag: "Tecnica",
+      nota: "Algoritmo che calcola il contributo di ogni peso all'errore finale, propagandolo all'indietro strato per strato (Rumelhart, Hinton, Williams 1986).",
+      specifici: [],
+      relazioni: [["È prerequisito di","Discesa del gradiente"],["Si contrappone a","Plasticità sinaptica, Schismogenesi"]],
+      teorici: ["David Rumelhart","Geoffrey Hinton","Ronald Williams"],
+      discussoIn: [["Genealogia · 1.5","Re, donna, regina"],["Meccanismo · 4.5","Il gradiente e la backpropagation"]]
+    }
+  };
+
+  const tendaEl = document.getElementById('tenda-concetto');
+  const scrimEl = document.getElementById('tenda-scrim');
+  const tendaTitolo = document.getElementById('tenda-titolo');
+  const tendaNota = document.getElementById('tenda-nota');
+  const tendaCorpo = document.getElementById('tenda-corpo');
+  const tendaLinkLente = document.getElementById('tenda-link-lente');
+  let ultimoTermineAperto = null;
+
+  function sezioneLista(titolo, voci, render){
+    if(!voci || !voci.length) return '';
+    return `<div class="tenda-sezione"><h3>${titolo}</h3><ul class="tenda-lista">${voci.map(render).join('')}</ul></div>`;
+  }
+
+  function apriTenda(id, triggerEl){
+    const c = CONCETTI[id];
+    if(!c) return;
+    if(ultimoTermineAperto) ultimoTermineAperto.classList.remove('aperto');
+    ultimoTermineAperto = triggerEl || null;
+    if(triggerEl) triggerEl.classList.add('aperto');
+
+    tendaTitolo.innerHTML = c.label + (c.tag ? `<span class="tag">${c.tag}</span>` : '');
+    tendaNota.textContent = c.nota;
+    tendaCorpo.innerHTML =
+      sezioneLista('Concetti più specifici', c.specifici, v => `<li>${v}</li>`) +
+      sezioneLista('Relazioni con altri concetti', c.relazioni, r => `<li><span class="rel-tipo">${r[0]}</span> ${r[1]}</li>`) +
+      sezioneLista('Teorici', c.teorici, t => `<li><span class="rel-tipo">Teorizzato da</span> ${t}</li>`) +
+      sezioneLista('Discusso in', c.discussoIn, d => `<li><span class="tenda-unita-cod">${d[0]}</span> — ${d[1]}</li>`);
+    tendaLinkLente.href = `../../../ontologia/lente-semantica/output/index.html#${id}`;
+
+    tendaEl.classList.add('visibile');
+    tendaEl.setAttribute('aria-hidden', 'false');
+    scrimEl.classList.add('visibile');
+  }
+
+  function chiudiTenda(){
+    tendaEl.classList.remove('visibile');
+    tendaEl.setAttribute('aria-hidden', 'true');
+    scrimEl.classList.remove('visibile');
+    if(ultimoTermineAperto) ultimoTermineAperto.classList.remove('aperto');
+    ultimoTermineAperto = null;
+  }
+
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.termine-concetto');
+    if(btn){ apriTenda(btn.dataset.concetto, btn); return; }
+    if(e.target === scrimEl){ chiudiTenda(); }
+  });
+  document.getElementById('tenda-chiudi').addEventListener('click', chiudiTenda);
+  document.addEventListener('keydown', (e) => { if(e.key === 'Escape') chiudiTenda(); });
 </script>
 
 </body>

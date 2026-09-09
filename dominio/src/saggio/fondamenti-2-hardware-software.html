@@ -4,113 +4,126 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Fondamenti · 2 — Hardware e software</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+  @font-face {
+    font-family: 'EB Garamond';
+    src: url('fonts/EBGaramond-Variable.woff2') format('woff2-variations');
+    font-weight: 400 800;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'EB Garamond';
+    src: url('fonts/EBGaramond-Italic-Variable.woff2') format('woff2-variations');
+    font-weight: 400 800;
+    font-style: italic;
+    font-display: swap;
+  }
+
   :root{
-    --bg: #0F2A22;
-    --surface: #173B30;
-    --surface-2: #1E4A3C;
-    --copper: #C97D3D;
-    --copper-bright: #F0A85E;
-    --text: #F2ECE0;
-    --text-dim: #A9BFB6;
-    --line: rgba(242,236,224,0.12);
+    /* palette — vedi ../../../design-system/README.md */
+    --bianco:        #FFFFFF;
+    --brina:         #F6F8FB;
+    --inchiostro:    #1a1a1a;
+    --grigio-testo:  #4a4540;
+    --grigio-soft:   #8A8580;
+    --blu-scuro:     #1F2B6B;
+    --blu:           #2B3A8C;
+    --blu-chiaro:    #5A6FB8;
+    --arancio-scuro: #A85419;
+    --arancio:       #D4722A;
+    --arancio-chiaro:#E9A66B;
+    --verde-scuro:   #2A5628;
+    --verde:         #3D7A3A;
+    --verde-chiaro:  #7AAD76;
+
+    --serif: 'EB Garamond', Garamond, Georgia, 'Times New Roman', serif;
+    --mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+
+    --line: rgba(26,26,26,0.12);
     --rail-w: 300px;
   }
 
   *{ box-sizing: border-box; }
 
-  html{ scroll-behavior: smooth; }
+  html{ scroll-behavior: smooth; font-size: 120%; }
 
   body{
     margin:0;
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Source Serif 4', Georgia, serif;
+    background: var(--brina);
+    color: var(--inchiostro);
+    font-family: var(--serif);
     line-height: 1.65;
     -webkit-font-smoothing: antialiased;
   }
 
   h1,h2,h3, .display{
-    font-family: 'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
-    font-weight: 600;
-    letter-spacing: -0.01em;
+    font-family: var(--serif);
+    font-weight: 500;
     margin: 0;
   }
 
-  .mono{
-    font-family: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
-  }
+  .mono{ font-family: var(--mono); }
+  a{ color: var(--arancio-scuro); }
 
-  a{ color: var(--copper-bright); }
+  /* piccola utility per il ruolo "apparato": maiuscoletto spaziato sulla stessa
+     famiglia, non un cambio di font — stesso meccanismo di ontologia/output/style.css
+     e di ~/projects/portfolio/specimen.html (.apparato) */
+  .apparato{
+    font-variant: small-caps;
+    letter-spacing: .06em;
+    color: var(--grigio-soft);
+  }
 
   /* ---------- layout shell: sidebar fissa con indice del sito ---------- */
 
   .sidebar{
-    background: rgba(15,42,34,0.92);
+    background: var(--bianco);
     border-bottom: 1px solid var(--line);
     padding: 28px 24px 32px;
   }
   .sidebar-kicker{
-    font-family: 'IBM Plex Mono', monospace; font-size: .74rem; letter-spacing: .12em;
-    text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px;
+    font-variant: small-caps; letter-spacing: .06em; font-size: .74rem;
+    color: var(--grigio-soft); margin-bottom: 10px;
   }
   .sidebar-title{
-    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.02rem;
-    color: var(--text); margin-bottom: 22px;
+    font-family: var(--serif); font-weight: 500; font-size: 1.02rem;
+    color: var(--inchiostro); margin-bottom: 22px;
   }
   .sidebar .parte{ margin-top: 26px; }
   .sidebar .parte:first-of-type{ margin-top: 0; }
   .sidebar .parte-heading{
-    font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: .74rem;
-    letter-spacing: .1em; text-transform: uppercase; color: var(--copper-bright);
+    font-family: var(--serif); font-weight: 600; font-size: .74rem;
+    font-variant: small-caps; letter-spacing: .06em; color: var(--blu);
     padding-bottom: 10px; margin-bottom: 2px; border-bottom: 1px solid var(--line);
   }
   .sidebar .voce-semplice{
     display: block; padding: 10px 4px; border-bottom: 1px solid var(--line);
-    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem;
-    color: var(--text); text-decoration: none;
+    font-family: var(--serif); font-weight: 500; font-size: .9rem;
+    color: var(--inchiostro); text-decoration: none;
   }
-  .sidebar .voce-semplice:hover{ color: var(--copper-bright); }
-  .sidebar .voce-semplice.current{ color: var(--copper-bright); }
+  .sidebar .voce-semplice:hover{ color: var(--blu); }
+  .sidebar .voce-semplice.current{ color: var(--blu); }
   .sidebar details.modulo{ border-bottom: 1px solid var(--line); }
   .sidebar details.modulo summary{
     display: flex; align-items: center; gap: 8px; padding: 10px 4px; cursor: pointer;
-    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem; color: var(--text);
+    font-family: var(--serif); font-weight: 500; font-size: .9rem; color: var(--inchiostro);
     list-style: none;
   }
-  .sidebar details.modulo summary.current{ color: var(--copper-bright); }
+  .sidebar details.modulo summary.current{ color: var(--blu); }
   .sidebar details.modulo summary::-webkit-details-marker{ display: none; }
   .sidebar details.modulo summary::before{
-    content: "›"; display: inline-block; font-family: 'IBM Plex Mono', monospace;
-    color: var(--text-dim); transition: transform .15s ease; flex-shrink: 0;
+    content: "›"; display: inline-block;
+    color: var(--grigio-soft); transition: transform .15s ease; flex-shrink: 0;
   }
-  .sidebar details.modulo[open] summary::before{ transform: rotate(90deg); color: var(--copper-bright); }
-  .sidebar details.modulo summary:hover{ color: var(--copper-bright); }
+  .sidebar details.modulo[open] summary::before{ transform: rotate(90deg); color: var(--blu); }
+  .sidebar details.modulo summary:hover{ color: var(--blu); }
   .sidebar .unita-list{ padding: 2px 0 12px 22px; display: flex; flex-direction: column; gap: 1px; }
   .sidebar .unita-list a{
-    display: block; padding: 6px 4px; font-size: .82rem; color: var(--text-dim); text-decoration: none;
+    display: block; padding: 6px 4px; font-size: .82rem; color: var(--grigio-testo); text-decoration: none;
   }
-  .sidebar .unita-list a:hover{ color: var(--copper-bright); }
-  .sidebar .unita-list a .num{ color: var(--copper); margin-right: 6px; font-family: 'IBM Plex Mono', monospace; font-size: .74rem; }
-
-  /* pallini luminosi di scroll-spy, sulle voci dell'unità corrente */
-  .sidebar .unita-list.scrollspy a{ position: relative; padding-left: 20px; }
-  .sidebar .unita-list.scrollspy a::before{
-    content: "";
-    position: absolute; left: 2px; top: 50%;
-    width: 7px; height: 7px; border-radius: 50%;
-    background: var(--surface-2); border: 1px solid var(--line);
-    transform: translateY(-50%);
-    transition: background .25s, box-shadow .25s, transform .25s;
-  }
-  .sidebar .unita-list.scrollspy a.active{ color: var(--copper-bright); }
-  .sidebar .unita-list.scrollspy a.active::before{
-    background: var(--copper-bright);
-    box-shadow: 0 0 0 4px rgba(240,168,94,0.18);
-    transform: translateY(-50%) scale(1.2);
-  }
+  .sidebar .unita-list a:hover{ color: var(--blu); }
+  .sidebar .unita-list a .num{ color: var(--blu); margin-right: 6px; font-size: .74rem; }
 
   main{ padding-top: 0; }
 
@@ -135,18 +148,16 @@
   section:last-of-type{ border-bottom:none; }
 
   .eyebrow{
-    font-family: 'IBM Plex Mono', monospace;
+    font-variant: small-caps; letter-spacing: .06em;
     font-size: 0.78rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--copper-bright);
+    color: var(--grigio-soft);
     margin-bottom: 14px;
     display:flex; align-items:center; gap:10px;
   }
   .eyebrow::before{
     content:"";
     width: 22px; height:1px;
-    background: var(--copper-bright);
+    background: var(--grigio-soft);
     display:inline-block;
   }
 
@@ -155,12 +166,12 @@
     margin-bottom: 22px;
   }
 
-  p{ margin: 0 0 18px; color: var(--text); font-size: 1.06rem; }
-  p.dim{ color: var(--text-dim); }
+  p{ margin: 0 0 18px; color: var(--inchiostro); font-size: 1.06rem; }
+  p.dim{ color: var(--grigio-testo); }
 
   .lede{
     font-size: 1.2rem;
-    color: var(--text);
+    color: var(--inchiostro);
   }
 
   /* reveal-on-scroll */
@@ -181,38 +192,37 @@
   .aside{
     margin: 28px 0;
     padding: 18px 20px;
-    background: var(--surface);
-    border-left: 3px solid var(--copper);
+    background: var(--bianco);
+    border-left: 3px solid var(--arancio);
     border-radius: 2px;
   }
   .aside .label{
-    font-family:'IBM Plex Mono', monospace;
+    font-variant: small-caps;
+    letter-spacing: .06em;
     font-size: 0.72rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--copper-bright);
+    color: var(--grigio-soft);
     margin-bottom: 8px;
     display:block;
   }
-  .aside p{ margin-bottom:0; font-size: 0.98rem; color: var(--text-dim); }
+  .aside p{ margin-bottom:0; font-size: 0.98rem; color: var(--grigio-testo); }
 
   .question{
     margin: 30px 0;
     padding: 20px 22px;
     border: 1px dashed var(--line);
     border-radius: 4px;
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: var(--serif);
     font-size: 1.02rem;
-    color: var(--copper-bright);
+    color: var(--arancio-scuro);
   }
 
   blockquote{
     margin: 0;
     padding-left: 22px;
-    border-left: 2px solid var(--copper);
-    font-family: 'Space Grotesk', sans-serif;
+    border-left: 2px solid var(--arancio);
+    font-family: var(--serif);
     font-size: 1.15rem;
-    color: var(--text);
+    color: var(--inchiostro);
   }
 
   /* ---------- hero ---------- */
@@ -222,11 +232,9 @@
     text-align:left;
   }
   .hero .kicker{
-    font-family:'IBM Plex Mono', monospace;
+    font-variant: small-caps; letter-spacing: .06em;
     font-size: 0.8rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--text-dim);
+    color: var(--grigio-soft);
     margin-bottom: 18px;
   }
   .hero h1{
@@ -235,13 +243,13 @@
     margin-bottom: 26px;
   }
   .hero h1 em{
-    font-style: normal;
-    color: var(--copper-bright);
+    font-style: italic;
+    color: var(--arancio-scuro);
   }
 
   .chatmock{
     margin-top: 44px;
-    background: var(--surface);
+    background: var(--bianco);
     border: 1px solid var(--line);
     border-radius: 10px;
     padding: 22px;
@@ -251,13 +259,13 @@
     display:inline-block;
     padding: 10px 14px;
     border-radius: 14px;
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: var(--serif);
     font-size: 0.94rem;
     margin-bottom: 10px;
   }
   .bubble.user{
-    background: var(--surface-2);
-    color: var(--text);
+    background: var(--brina);
+    color: var(--inchiostro);
     border-bottom-right-radius: 4px;
   }
   .bubble-row{ display:flex; justify-content:flex-end; }
@@ -269,7 +277,7 @@
   }
   .typing span{
     width:6px; height:6px; border-radius:50%;
-    background: var(--copper-bright);
+    background: var(--arancio-scuro);
     opacity: .35;
     animation: blink 1.2s infinite ease-in-out;
   }
@@ -279,24 +287,23 @@
 
   .timer{
     margin-top: 12px;
-    font-family:'IBM Plex Mono', monospace;
+    font-family: var(--serif);
     font-size: 0.8rem;
-    color: var(--text-dim);
+    color: var(--grigio-testo);
   }
-  .timer b{ color: var(--copper-bright); }
+  .timer b{ color: var(--arancio-scuro); }
 
   .scrolldown{
     margin-top: 56px;
-    font-family:'IBM Plex Mono', monospace;
+    font-variant: small-caps;
     font-size: 0.78rem;
-    color: var(--text-dim);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    color: var(--grigio-soft);
+    letter-spacing: 0.06em;
     display:flex; align-items:center; gap:8px;
   }
   .scrolldown::after{
     content:"↓";
-    color: var(--copper-bright);
+    color: var(--arancio-scuro);
     animation: nudge 1.8s infinite ease-in-out;
   }
   @media (prefers-reduced-motion: reduce){ .scrolldown::after{ animation:none; } }
@@ -310,21 +317,21 @@
     gap: 16px;
     flex-wrap: wrap;
     margin: 30px 0;
-    font-family:'IBM Plex Mono', monospace;
+    font-family: var(--serif);
   }
   .fnbox .node{
     padding: 14px 18px;
-    background: var(--surface);
+    background: var(--bianco);
     border: 1px solid var(--line);
     border-radius: 6px;
     font-size: 0.92rem;
   }
   .fnbox .node.blackbox{
     border-style: dashed;
-    border-color: var(--copper);
-    color: var(--copper-bright);
+    border-color: var(--arancio);
+    color: var(--arancio-scuro);
   }
-  .fnbox .arrow{ color: var(--text-dim); }
+  .fnbox .arrow{ color: var(--grigio-soft); }
 
   /* ---------- strato 2: data center ---------- */
 
@@ -337,7 +344,7 @@
   }
   .rack{
     aspect-ratio: 1 / 2.4;
-    background: var(--surface);
+    background: var(--bianco);
     border: 1px solid var(--line);
     border-radius: 3px;
     display:flex;
@@ -348,7 +355,7 @@
   }
   .rack .led{
     width: 4px; height:4px; border-radius:50%;
-    background: var(--copper-bright);
+    background: var(--arancio-scuro);
     opacity: .25;
     animation: glow 3s infinite ease-in-out;
   }
@@ -367,17 +374,16 @@
     flex: 1 1 160px;
   }
   .stat .num{
-    font-family:'Space Grotesk', sans-serif;
+    font-family: var(--serif);
     font-size: 2.1rem;
-    color: var(--copper-bright);
+    color: var(--arancio-scuro);
     line-height:1;
   }
   .stat .lbl{
-    font-family:'IBM Plex Mono', monospace;
+    font-variant: small-caps;
     font-size: 0.74rem;
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    color: var(--text-dim);
+    letter-spacing: 0.06em;
+    color: var(--grigio-soft);
     margin-top: 6px;
   }
 
@@ -392,21 +398,20 @@
   @media (min-width: 640px){ .compare{ grid-template-columns: 1fr 1fr; } }
 
   .compare-card{
-    background: var(--surface);
+    background: var(--bianco);
     border: 1px solid var(--line);
     border-radius: 8px;
     padding: 20px;
   }
   .compare-card h3{
     font-size: 1rem;
-    color: var(--text);
+    color: var(--inchiostro);
     margin-bottom: 4px;
   }
   .compare-card .role{
-    font-family:'IBM Plex Mono', monospace;
+    font-variant: small-caps;
     font-size: 0.74rem;
-    color: var(--copper-bright);
-    text-transform: uppercase;
+    color: var(--arancio-scuro);
     letter-spacing: 0.06em;
     margin-bottom: 16px;
     display:block;
@@ -416,18 +421,18 @@
   .cpu-block{
     width: 38px; height:38px;
     border-radius: 4px;
-    background: var(--surface-2);
+    background: var(--brina);
     border: 1px solid var(--line);
   }
   .cpu-block.on{
-    background: var(--copper);
+    background: var(--arancio);
     animation: cpu-seq 2.4s infinite;
   }
   .cpu-block:nth-child(1){ animation-delay: 0s; }
   .cpu-block:nth-child(2){ animation-delay: .6s; }
   .cpu-block:nth-child(3){ animation-delay: 1.2s; }
   .cpu-block:nth-child(4){ animation-delay: 1.8s; }
-  @keyframes cpu-seq{ 0%,15%{ background: var(--copper); } 25%,100%{ background: var(--surface-2); } }
+  @keyframes cpu-seq{ 0%,15%{ background: var(--arancio); } 25%,100%{ background: var(--brina); } }
 
   .gpu-viz{
     display:grid;
@@ -438,21 +443,21 @@
   .gpu-cell{
     width: 100%; aspect-ratio:1;
     border-radius:2px;
-    background: var(--surface-2);
+    background: var(--brina);
     border: 1px solid var(--line);
     animation: gpu-pulse 2.4s infinite;
   }
-  @keyframes gpu-pulse{ 0%,100%{ background: var(--surface-2); } 50%{ background: var(--copper); } }
+  @keyframes gpu-pulse{ 0%,100%{ background: var(--brina); } 50%{ background: var(--arancio); } }
   @media (prefers-reduced-motion: reduce){
     .cpu-block.on, .gpu-cell{ animation:none; }
-    .cpu-block.on{ background: var(--copper); }
-    .gpu-cell:nth-child(odd){ background: var(--copper); }
+    .cpu-block.on{ background: var(--arancio); }
+    .gpu-cell:nth-child(odd){ background: var(--arancio); }
   }
 
   /* ---------- strato 4: transistor + ladder ---------- */
 
   .transistor-panel{
-    background: var(--surface);
+    background: var(--bianco);
     border: 1px solid var(--line);
     border-radius: 10px;
     padding: 28px;
@@ -461,7 +466,7 @@
   }
   .switch{
     width: 90px; height: 44px;
-    background: var(--surface-2);
+    background: var(--brina);
     border: 1px solid var(--line);
     border-radius: 24px;
     position: relative;
@@ -474,22 +479,22 @@
     top:3px; left:3px;
     width: 36px; height:36px;
     border-radius:50%;
-    background: var(--text-dim);
+    background: var(--grigio-soft);
     transition: transform .25s ease, background .25s ease;
   }
   .switch.on .knob{
     transform: translateX(44px);
-    background: var(--copper-bright);
+    background: var(--arancio-scuro);
   }
-  .switch:focus-visible{ outline: 2px solid var(--copper-bright); outline-offset:4px; }
+  .switch:focus-visible{ outline: 2px solid var(--arancio-scuro); outline-offset:4px; }
 
   .switch-state{
-    font-family:'IBM Plex Mono', monospace;
+    font-family: var(--serif);
     font-size: 0.85rem;
-    color: var(--text-dim);
+    color: var(--grigio-testo);
     margin-bottom: 30px;
   }
-  .switch-state b{ color: var(--copper-bright); font-size: 1.1rem; }
+  .switch-state b{ color: var(--arancio-scuro); font-size: 1.1rem; }
 
   .ladder{
     display:flex;
@@ -500,30 +505,30 @@
     margin: 0 auto;
   }
   .ladder-item{
-    font-family:'IBM Plex Mono', monospace;
+    font-family: var(--serif);
     font-size: 0.86rem;
     padding: 9px 12px;
     border-radius: 4px;
-    background: var(--surface-2);
-    color: var(--text-dim);
+    background: var(--brina);
+    color: var(--grigio-testo);
     border-left: 2px solid transparent;
     transition: background .3s, color .3s, border-color .3s;
   }
   .ladder-item.lit{
-    background: rgba(201,125,61,0.18);
-    color: var(--copper-bright);
-    border-left-color: var(--copper-bright);
+    background: rgba(168,84,25,0.1);
+    color: var(--arancio-scuro);
+    border-left-color: var(--arancio-scuro);
   }
 
   .truth-table{
     margin: 28px 0;
     border-collapse: collapse;
-    font-family:'IBM Plex Mono', monospace;
+    font-family: var(--serif);
     font-size: 0.92rem;
   }
   .truth-table caption{
     text-align:left;
-    color: var(--text-dim);
+    color: var(--grigio-soft);
     font-size: 0.8rem;
     margin-bottom: 10px;
     caption-side: top;
@@ -533,9 +538,9 @@
     padding: 8px 16px;
     text-align:center;
   }
-  .truth-table th{ color: var(--copper-bright); background: var(--surface); }
-  .truth-table td.true{ color: var(--copper-bright); }
-  .truth-table td.false{ color: var(--text-dim); }
+  .truth-table th{ color: var(--grigio-soft); background: var(--bianco); font-variant: small-caps; letter-spacing: .04em; }
+  .truth-table td.true{ color: var(--arancio-scuro); font-weight:600; }
+  .truth-table td.false{ color: var(--grigio-soft); }
 
   /* ---------- strato 5: hw/sw cards ---------- */
 
@@ -547,29 +552,114 @@
   }
   @media (min-width: 640px){ .hwsw{ grid-template-columns: 1fr 1fr; } }
   .hwsw-card{
-    background: var(--surface);
+    background: var(--bianco);
     border-radius: 8px;
     padding: 22px;
-    border-top: 3px solid var(--copper);
+    border-top: 3px solid var(--arancio);
   }
   .hwsw-card h3{ margin-bottom:10px; font-size: 1.05rem; }
-  .hwsw-card p{ font-size: 0.96rem; color: var(--text-dim); margin-bottom:0; }
+  .hwsw-card p{ font-size: 0.96rem; color: var(--grigio-testo); margin-bottom:0; }
 
   /* ---------- chiusura ---------- */
 
   .chiusura{
-    background: linear-gradient(180deg, var(--bg), var(--surface));
+    background: linear-gradient(180deg, var(--brina), var(--bianco));
   }
   .chiusura blockquote{ font-size: 1.3rem; }
   .footer-note{
     margin-top: 50px;
-    font-family:'IBM Plex Mono', monospace;
+    font-variant: small-caps;
+    letter-spacing: .06em;
     font-size: 0.78rem;
-    color: var(--text-dim);
+    color: var(--grigio-soft);
   }
+
+  /* ---------- termini collegati all'ontologia + tenda laterale ----------
+     Verde deliberatamente: è l'unico posto in questo capitolo dove il colore segnala
+     "stai per lasciare il saggio ed entrare nell'ontologia" — un registro diverso
+     dall'arancio (apparato del saggio stesso) e dal blu (navigazione del saggio).
+     Dati e link derivati SOLO da ciò che l'ontologia già espone (pagine
+     ontologia/output/concetti/*.html, sola lettura) — nessuna modifica ai .ttl o
+     agli script Python che li generano. */
+  .termine-concetto{
+    background: none; border: none; padding: 0; margin: 0; cursor: pointer;
+    font: inherit; color: var(--verde);
+    border-bottom: 1px dotted var(--verde);
+    transition: background .15s ease, border-bottom-style .15s ease;
+  }
+  .termine-concetto:hover, .termine-concetto:focus-visible{
+    background: rgba(61,122,58,0.14);
+    border-bottom-style: solid;
+    outline: none;
+  }
+  .termine-concetto.aperto{ background: rgba(61,122,58,0.22); border-bottom-style: solid; }
+
+  .tenda-scrim{
+    position: fixed; inset: 0; background: rgba(26,26,26,0.32);
+    opacity: 0; pointer-events: none; transition: opacity .25s ease; z-index: 90;
+  }
+  .tenda-scrim.visibile{ opacity: 1; pointer-events: auto; }
+
+  .tenda-concetto{
+    position: fixed; top: 0; right: 0; bottom: 0; width: min(420px, 92vw);
+    background: var(--bianco); z-index: 91;
+    box-shadow: -8px 0 28px rgba(26,26,26,0.18);
+    transform: translateX(100%); transition: transform .3s ease;
+    overflow-y: auto; padding: 28px 26px 40px;
+  }
+  .tenda-concetto.visibile{ transform: translateX(0); }
+  .tenda-testata{
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 14px;
+    border-bottom: 2px solid var(--verde); padding-bottom: 16px; margin-bottom: 18px;
+  }
+  .tenda-eyebrow{
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.86rem;
+    color: var(--verde); display: block; margin-bottom: 6px;
+  }
+  .tenda-titolo{ font-family: var(--serif); font-weight: 500; font-size: 1.5rem; color: var(--inchiostro); }
+  .tenda-titolo .tag{
+    font-variant: small-caps; letter-spacing: .04em; font-size: 0.8rem; color: var(--verde);
+    border: 1px solid var(--verde-chiaro); border-radius: 20px; padding: 1px 10px; margin-left: 8px;
+  }
+  .tenda-chiudi{
+    background: none; border: 1px solid var(--line); border-radius: 50%;
+    width: 32px; height: 32px; font-size: 1.1rem; line-height: 1; cursor: pointer;
+    color: var(--grigio-testo); flex-shrink: 0;
+  }
+  .tenda-chiudi:hover{ border-color: var(--verde); color: var(--verde-scuro); }
+  .tenda-nota{ font-size: 1.05rem; color: var(--inchiostro); margin: 0 0 22px; }
+  .tenda-sezione{ margin-bottom: 20px; }
+  .tenda-sezione h3{
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.86rem;
+    color: var(--grigio-soft); font-weight: 500; margin: 0 0 8px;
+  }
+  .tenda-lista{ list-style: none; margin: 0; padding: 0; font-size: 0.98rem; color: var(--grigio-testo); }
+  .tenda-lista li{ margin-bottom: 5px; }
+  .tenda-lista .rel-tipo{ color: var(--verde); font-size: 0.9em; }
+  .tenda-unita-cod{ font-variant: small-caps; color: var(--grigio-soft); font-size: 0.9em; }
+  .tenda-lente{
+    display: block; text-align: center; margin-top: 26px; padding: 12px 16px;
+    background: var(--verde); color: var(--bianco); border-radius: 8px;
+    text-decoration: none; font-variant: small-caps; letter-spacing: .04em; font-size: 0.98rem;
+  }
+  .tenda-lente:hover{ background: var(--verde-scuro); }
 </style>
 </head>
 <body>
+
+<div class="tenda-scrim" id="tenda-scrim"></div>
+<aside class="tenda-concetto" id="tenda-concetto" aria-hidden="true">
+  <div class="tenda-testata">
+    <div>
+      <span class="tenda-eyebrow">Dal vocabolario dell'ontologia</span>
+      <span class="tenda-titolo" id="tenda-titolo"></span>
+    </div>
+    <button class="tenda-chiudi" id="tenda-chiudi" aria-label="Chiudi">×</button>
+  </div>
+  <p class="tenda-nota" id="tenda-nota"></p>
+  <div id="tenda-corpo"></div>
+  <a class="tenda-lente" id="tenda-link-lente" href="#" target="_blank" rel="noopener">Apri nella Lente semantica →</a>
+</aside>
 
 <nav class="sidebar" aria-label="Indice del saggio">
   <div class="sidebar-kicker">Indice</div>
@@ -763,7 +853,7 @@
       </div>
 
       <p class="dim">Il centro resta una scatola nera — i moduli successivi la riempiranno. Per ora va fissato un solo punto:</p>
-      <div class="question">Claude è software che gira su hardware. Si parte dall'hardware, perché è la base più concreta — quella che, in un certo senso, si può toccare.</div>
+      <div class="question">Claude è software che gira su <button class="termine-concetto" data-concetto="HardwareEFondamentaComputazionali">hardware</button>. Si parte dall'hardware, perché è la base più concreta — quella che, in un certo senso, si può toccare.</div>
     </div>
   </section>
 
@@ -849,7 +939,7 @@
     <div class="wrap reveal">
       <div class="eyebrow">Strato 04</div>
       <h2 class="title">Cosa fa l'hardware, fisicamente?</h2>
-      <p>Qui si chiude il cerchio con la lezione sulle funzioni booleane. Un <strong>transistor</strong> è, alla base, un interruttore: passa corrente, o non passa. <span class="mono">1</span> o <span class="mono">0</span>.</p>
+      <p>Qui si chiude il cerchio con la lezione sulle funzioni booleane. Un <strong><button class="termine-concetto" data-concetto="Transistor">transistor</button></strong> è, alla base, un interruttore: passa corrente, o non passa. <em>1</em> o <em>0</em>.</p>
 
       <div class="transistor-panel">
         <button class="switch" id="transistorSwitch" aria-pressed="false" aria-label="Accendi o spegni il transistor">
@@ -869,7 +959,7 @@
         </div>
       </div>
 
-      <p>Una GPU moderna contiene decine di miliardi di transistor. Combinati in gruppi, implementano i <strong>gate logici</strong> — la realizzazione fisica delle tavole di verità già costruite a mano nella lezione precedente.</p>
+      <p>Una GPU moderna contiene decine di miliardi di transistor. Combinati in gruppi, implementano i <strong><button class="termine-concetto" data-concetto="GateLogico">gate logici</button></strong> — la realizzazione fisica delle tavole di verità già costruite a mano nella lezione precedente.</p>
 
       <table class="truth-table">
         <caption>F = (A E B) O (NON A) — la stessa funzione, cablata in un chip</caption>
@@ -887,7 +977,7 @@
   <section id="strato-5">
     <div class="wrap reveal">
       <div class="eyebrow">Strato 05</div>
-      <h2 class="title">Hardware contro software: la distinzione finale</h2>
+      <h2 class="title"><button class="termine-concetto" data-concetto="HardwareSoftware">Hardware contro software</button>: la distinzione finale</h2>
 
       <div class="hwsw">
         <div class="hwsw-card">
@@ -896,7 +986,7 @@
         </div>
         <div class="hwsw-card">
           <h3>Software</h3>
-          <p>Le istruzioni: sequenze di 0 e 1 che dicono all'hardware che cosa fare. Si copia a costo quasi zero, non ha peso — ma esiste solo perché qualche hardware, da qualche parte, lo esegue.</p>
+          <p>Le istruzioni: <button class="termine-concetto" data-concetto="Discretizzazione">sequenze di 0 e 1</button> che dicono all'hardware che cosa fare. Si copia a costo quasi zero, non ha peso — ma esiste solo perché qualche hardware, da qualche parte, lo esegue.</p>
         </div>
       </div>
 
@@ -965,6 +1055,103 @@
     entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
   }, { threshold: 0.12 });
   reveals.forEach(el => io.observe(el));
+
+  // ============ termini collegati all'ontologia ============
+  // Dati trascritti a mano da ontologia/output/concetti/*.html (sola lettura, non
+  // generati da script): i concetti con :discussoInUnita verso :Fondamenti2,
+  // trovati interrogando dati.ttl — non un elenco a occhio nel testo.
+  const CONCETTI = {
+    Discretizzazione: {
+      label: "Discretizzazione",
+      nota: "Trasformazione di un continuo in simboli finiti ricombinabili; tesi d'apertura del corso: nasce con la scrittura/l'alfabeto, non con il computer.",
+      specifici: ["Encoding","ID numerico (token ID)","Problema del vocabolario","Token","Tokenizzazione"],
+      relazioni: [],
+      teorici: ["John von Neumann"],
+      discussoIn: [["Fondamenti · 2","Hardware e software"],["Meccanismo · 1.1","Encoding"],["Meccanismo · 6.3","I dati"]]
+    },
+    HardwareEFondamentaComputazionali: {
+      label: "Hardware e fondamenta computazionali",
+      nota: "Il livello più basso del corso: dalla logica booleana ai transistor, fino alla distinzione hardware/software.",
+      specifici: ["Funzione booleana","Gate logico","Hardware / software","Tavola di verità","Transistor"],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Fondamenti · 1","Funzioni booleane"],["Fondamenti · 2","Hardware e software"]]
+    },
+    Transistor: {
+      label: "Transistor",
+      nota: "Interruttore fisico (passa/non passa corrente) alla base di ogni circuito digitale.",
+      specifici: [],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Fondamenti · 1","Funzioni booleane"],["Fondamenti · 2","Hardware e software"]]
+    },
+    GateLogico: {
+      label: "Gate logico",
+      nota: "Realizzazione fisica degli operatori booleani (AND/OR/NOT) tramite gruppi di transistor.",
+      specifici: [],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Fondamenti · 2","Hardware e software"]]
+    },
+    HardwareSoftware: {
+      label: "Hardware / software",
+      nota: "Distinzione fra il fisico che esegue (lento, massa, energia) e le istruzioni eseguite (copiabili a costo zero).",
+      specifici: [],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Fondamenti · 2","Hardware e software"]]
+    }
+  };
+
+  const tendaEl = document.getElementById('tenda-concetto');
+  const scrimEl = document.getElementById('tenda-scrim');
+  const tendaTitolo = document.getElementById('tenda-titolo');
+  const tendaNota = document.getElementById('tenda-nota');
+  const tendaCorpo = document.getElementById('tenda-corpo');
+  const tendaLinkLente = document.getElementById('tenda-link-lente');
+  let ultimoTermineAperto = null;
+
+  function sezioneLista(titolo, voci, render){
+    if(!voci || !voci.length) return '';
+    return `<div class="tenda-sezione"><h3>${titolo}</h3><ul class="tenda-lista">${voci.map(render).join('')}</ul></div>`;
+  }
+
+  function apriTenda(id, triggerEl){
+    const c = CONCETTI[id];
+    if(!c) return;
+    if(ultimoTermineAperto) ultimoTermineAperto.classList.remove('aperto');
+    ultimoTermineAperto = triggerEl || null;
+    if(triggerEl) triggerEl.classList.add('aperto');
+
+    tendaTitolo.innerHTML = c.label + (c.tag ? `<span class="tag">${c.tag}</span>` : '');
+    tendaNota.textContent = c.nota;
+    tendaCorpo.innerHTML =
+      sezioneLista('Concetti più specifici', c.specifici, v => `<li>${v}</li>`) +
+      sezioneLista('Relazioni con altri concetti', c.relazioni, r => `<li><span class="rel-tipo">${r[0]}</span> ${r[1]}</li>`) +
+      sezioneLista('Teorici', c.teorici, t => `<li><span class="rel-tipo">Teorizzato da</span> ${t}</li>`) +
+      sezioneLista('Discusso in', c.discussoIn, d => `<li><span class="tenda-unita-cod">${d[0]}</span> — ${d[1]}</li>`);
+    tendaLinkLente.href = `../../../ontologia/lente-semantica/output/index.html#${id}`;
+
+    tendaEl.classList.add('visibile');
+    tendaEl.setAttribute('aria-hidden', 'false');
+    scrimEl.classList.add('visibile');
+  }
+
+  function chiudiTenda(){
+    tendaEl.classList.remove('visibile');
+    tendaEl.setAttribute('aria-hidden', 'true');
+    scrimEl.classList.remove('visibile');
+    if(ultimoTermineAperto) ultimoTermineAperto.classList.remove('aperto');
+    ultimoTermineAperto = null;
+  }
+
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.termine-concetto');
+    if(btn){ apriTenda(btn.dataset.concetto, btn); return; }
+    if(e.target === scrimEl){ chiudiTenda(); }
+  });
+  document.getElementById('tenda-chiudi').addEventListener('click', chiudiTenda);
+  document.addEventListener('keydown', (e) => { if(e.key === 'Escape') chiudiTenda(); });
 </script>
 
 </body>

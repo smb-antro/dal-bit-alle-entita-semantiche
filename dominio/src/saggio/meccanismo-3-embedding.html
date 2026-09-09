@@ -5,104 +5,131 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Meccanismo · 3 · Parole come punti nello spazio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+  @font-face {
+    font-family: 'EB Garamond';
+    src: url('fonts/EBGaramond-Variable.woff2') format('woff2-variations');
+    font-weight: 400 800;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'EB Garamond';
+    src: url('fonts/EBGaramond-Italic-Variable.woff2') format('woff2-variations');
+    font-weight: 400 800;
+    font-style: italic;
+    font-display: swap;
+  }
+
   :root{
-    --bg: #0F2A22;
-    --surface: #173B30;
-    --surface-2: #1E4A3C;
-    --copper: #C97D3D;
-    --copper-bright: #F0A85E;
-    --text: #F2ECE0;
-    --text-dim: #A9BFB6;
-    --line: rgba(242,236,224,0.12);
+    --bianco:        #FFFFFF;
+    --brina:         #F6F8FB;
+    --inchiostro:    #1a1a1a;
+    --grigio-testo:  #4a4540;
+    --grigio-soft:   #8A8580;
+    --blu-scuro:     #1F2B6B;
+    --blu:           #2B3A8C;
+    --blu-chiaro:    #5A6FB8;
+    --arancio-scuro: #A85419;
+    --arancio:       #D4722A;
+    --arancio-chiaro:#E9A66B;
+    --verde-scuro:   #2A5628;
+    --verde:         #3D7A3A;
+    --verde-chiaro:  #7AAD76;
+
+    --serif: 'EB Garamond', Garamond, Georgia, 'Times New Roman', serif;
+    --mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+
+    --line: rgba(26,26,26,0.12);
     --rail-w: 300px;
   }
 
   *{ box-sizing: border-box; }
-  html{ scroll-behavior: smooth; }
+  html{ scroll-behavior: smooth; font-size: 120%; }
 
   body{
     margin:0;
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Source Serif 4', Georgia, serif;
-    line-height: 1.65;
+    background: var(--brina);
+    color: var(--inchiostro);
+    font-family: var(--serif);
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
   }
 
   h1,h2,h3, .display{
-    font-family: 'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
-    font-weight: 600;
-    letter-spacing: -0.01em;
+    font-family: var(--serif);
+    font-weight: 500;
     margin: 0;
   }
-  .mono{ font-family: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace; }
-  a{ color: var(--copper-bright); }
+  .mono{ font-family: var(--mono); }
+  a{ color: var(--arancio-scuro); }
 
-  /* ---------- layout shell: sidebar fissa con indice del sito ---------- */
+  /* ---------- layout shell: sidebar fissa con indice del sito — solo blu, niente
+     arancio ---------- */
   .sidebar{
-    background: rgba(15,42,34,0.92);
+    background: var(--bianco);
     border-bottom: 1px solid var(--line);
     padding: 28px 24px 32px;
   }
   .sidebar-kicker{
-    font-family: 'IBM Plex Mono', monospace; font-size: .74rem; letter-spacing: .12em;
-    text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px;
+    font-variant: small-caps; letter-spacing: .06em; font-size: .8rem;
+    color: var(--grigio-soft); margin-bottom: 10px;
   }
   .sidebar-title{
-    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.02rem;
-    color: var(--text); margin-bottom: 22px;
+    font-family: var(--serif); font-weight: 500; font-size: 1.1rem;
+    color: var(--inchiostro); margin-bottom: 22px;
   }
   .sidebar .parte{ margin-top: 26px; }
   .sidebar .parte:first-of-type{ margin-top: 0; }
   .sidebar .parte-heading{
-    font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: .74rem;
-    letter-spacing: .1em; text-transform: uppercase; color: var(--copper-bright);
+    font-family: var(--serif); font-weight: 600; font-size: .82rem;
+    font-variant: small-caps; letter-spacing: .06em; color: var(--blu);
     padding-bottom: 10px; margin-bottom: 2px; border-bottom: 1px solid var(--line);
   }
   .sidebar .voce-semplice{
     display: block; padding: 10px 4px; border-bottom: 1px solid var(--line);
-    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem;
-    color: var(--text); text-decoration: none;
+    font-family: var(--serif); font-weight: 500; font-size: .98rem;
+    color: var(--inchiostro); text-decoration: none;
   }
-  .sidebar .voce-semplice:hover{ color: var(--copper-bright); }
-  .sidebar .voce-semplice.current{ color: var(--copper-bright); }
+  .sidebar .voce-semplice:hover{ color: var(--blu); }
+  .sidebar .voce-semplice.current{ color: var(--blu); }
   .sidebar details.modulo{ border-bottom: 1px solid var(--line); }
   .sidebar details.modulo summary{
     display: flex; align-items: center; gap: 8px; padding: 10px 4px; cursor: pointer;
-    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem; color: var(--text);
+    font-family: var(--serif); font-weight: 500; font-size: .98rem; color: var(--inchiostro);
     list-style: none;
   }
-  .sidebar details.modulo summary.current{ color: var(--copper-bright); }
+  .sidebar details.modulo summary.current{ color: var(--blu); }
   .sidebar details.modulo summary::-webkit-details-marker{ display: none; }
   .sidebar details.modulo summary::before{
-    content: "›"; display: inline-block; font-family: 'IBM Plex Mono', monospace;
-    color: var(--text-dim); transition: transform .15s ease; flex-shrink: 0;
+    content: "›"; display: inline-block;
+    color: var(--grigio-soft); transition: transform .15s ease; flex-shrink: 0;
   }
-  .sidebar details.modulo[open] summary::before{ transform: rotate(90deg); color: var(--copper-bright); }
-  .sidebar details.modulo summary:hover{ color: var(--copper-bright); }
+  .sidebar details.modulo[open] summary::before{ transform: rotate(90deg); color: var(--blu); }
+  .sidebar details.modulo summary:hover{ color: var(--blu); }
   .sidebar .unita-list{ padding: 2px 0 12px 22px; display: flex; flex-direction: column; gap: 1px; }
   .sidebar .unita-list a{
-    display: block; padding: 6px 4px; font-size: .82rem; color: var(--text-dim); text-decoration: none;
+    display: block; padding: 6px 4px; font-size: .9rem; color: var(--grigio-testo); text-decoration: none;
   }
-  .sidebar .unita-list a:hover{ color: var(--copper-bright); }
-  .sidebar .unita-list a .num{ color: var(--copper); margin-right: 6px; font-family: 'IBM Plex Mono', monospace; font-size: .74rem; }
+  .sidebar .unita-list a:hover{ color: var(--blu); }
+  .sidebar .unita-list a .num{ color: var(--blu); margin-right: 6px; font-size: .82rem; }
 
-  /* pallini luminosi di scroll-spy, sulle voci dell'unità corrente */
+  /* pallini di scroll-spy: blu, come tutta la sidebar */
   .sidebar .unita-list.scrollspy a{ position: relative; padding-left: 20px; }
   .sidebar .unita-list.scrollspy a::before{
     content: "";
     position: absolute; left: 2px; top: 50%;
     width: 7px; height: 7px; border-radius: 50%;
-    background: var(--surface-2); border: 1px solid var(--line);
+    background: var(--brina); border: 1px solid var(--line);
     transform: translateY(-50%);
     transition: background .25s, box-shadow .25s, transform .25s;
   }
-  .sidebar .unita-list.scrollspy a.active{ color: var(--copper-bright); }
+  .sidebar .unita-list.scrollspy a.active{ color: var(--blu); }
   .sidebar .unita-list.scrollspy a.active::before{
-    background: var(--copper-bright);
-    box-shadow: 0 0 0 4px rgba(240,168,94,0.18);
+    background: var(--blu);
+    box-shadow: 0 0 0 4px rgba(43,58,140,0.18);
     transform: translateY(-50%) scale(1.2);
   }
 
@@ -122,17 +149,17 @@
   .unit-block:last-child section:last-of-type{ border-bottom:none; }
 
   .eyebrow{
-    font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
-    letter-spacing: 0.12em; text-transform: uppercase; color: var(--copper-bright);
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.92rem;
+    color: var(--grigio-soft);
     margin-bottom: 14px; display:flex; align-items:center; gap:10px;
   }
-  .eyebrow::before{ content:""; width: 22px; height:1px; background: var(--copper-bright); display:inline-block; }
+  .eyebrow::before{ content:""; width: 22px; height:1px; background: var(--grigio-soft); display:inline-block; }
 
   h2.title{ font-size: clamp(1.6rem, 4vw, 2.3rem); margin-bottom: 20px; }
 
-  p{ margin: 0 0 18px; color: var(--text); font-size: 1.05rem; }
-  p.dim{ color: var(--text-dim); }
-  .lede{ font-size: 1.15rem; color: var(--text); }
+  p{ margin: 0 0 18px; color: var(--inchiostro); font-size: 1.1rem; }
+  p.dim{ color: var(--grigio-testo); }
+  .lede{ font-size: 1.2rem; color: var(--inchiostro); }
 
   .reveal{ opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
   .reveal.visible{ opacity:1; transform: translateY(0); }
@@ -142,112 +169,197 @@
   }
 
   .aside{
-    margin: 26px 0; padding: 18px 20px; background: var(--surface);
-    border-left: 3px solid var(--copper); border-radius: 2px;
+    margin: 26px 0; padding: 18px 20px; background: var(--bianco);
+    border-left: 3px solid var(--arancio); border-radius: 2px;
   }
   .aside .label{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--copper-bright); margin-bottom: 8px; display:block;
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.88rem;
+    color: var(--grigio-soft); margin-bottom: 8px; display:block;
   }
-  .aside p{ margin-bottom:0; font-size: 0.96rem; color: var(--text-dim); }
+  .aside p{ margin-bottom:0; font-size: 1rem; color: var(--grigio-testo); }
 
   .question{
     margin: 28px 0; padding: 20px 22px; border: 1px dashed var(--line); border-radius: 4px;
-    font-family: 'Space Grotesk', sans-serif; font-size: 1.0rem; color: var(--copper-bright);
+    font-family: var(--serif); font-size: 1.05rem; color: var(--arancio-scuro);
   }
 
   blockquote{
-    margin: 0; padding-left: 22px; border-left: 2px solid var(--copper);
-    font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; color: var(--text);
+    margin: 0; padding-left: 22px; border-left: 2px solid var(--arancio);
+    font-family: var(--serif); font-size: 1.15rem; color: var(--inchiostro);
   }
 
   /* ---------- hero ---------- */
   .hero{ padding-top: 62px; }
   .hero .kicker{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.8rem; letter-spacing: 0.14em;
-    text-transform: uppercase; color: var(--text-dim); margin-bottom: 18px;
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.92rem;
+    color: var(--grigio-soft); margin-bottom: 18px;
   }
-  .hero h1{ font-size: clamp(1.9rem, 5.6vw, 2.9rem); line-height:1.12; margin-bottom: 24px; }
-  .hero h1 em{ font-style: normal; color: var(--copper-bright); }
+  .hero h1{ font-size: clamp(1.9rem, 5.6vw, 2.9rem); line-height:1.18; margin-bottom: 24px; }
+  .hero h1 em{ font-style: italic; color: var(--arancio-scuro); }
   .scrolldown{
-    margin-top: 50px; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem;
-    color: var(--text-dim); letter-spacing: 0.08em; text-transform: uppercase;
+    margin-top: 50px; font-variant: small-caps; letter-spacing: .06em; font-size: 0.9rem;
+    color: var(--grigio-soft);
     display:flex; align-items:center; gap:8px;
   }
-  .scrolldown::after{ content:"↓"; color: var(--copper-bright); animation: nudge 1.8s infinite ease-in-out; }
+  .scrolldown::after{ content:"↓"; color: var(--arancio-scuro); animation: nudge 1.8s infinite ease-in-out; }
   @media (prefers-reduced-motion: reduce){ .scrolldown::after{ animation:none; } }
   @keyframes nudge{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(5px); } }
 
   /* ---------- contenitore generico dei widget ---------- */
   .playground{
-    margin: 30px 0; background: var(--surface); border: 1px solid var(--line);
+    margin: 30px 0; background: var(--bianco); border: 1px solid var(--line);
     border-radius: 10px; padding: 24px 26px;
   }
   .playground .ptitle{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--copper-bright); margin-bottom: 14px; display:block;
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.88rem;
+    color: var(--grigio-soft); margin-bottom: 14px; display:block;
   }
 
-  /* ---------- widget: mappa degli embedding ---------- */
+  /* ---------- widget: mappa degli embedding — eccezione colori riarmonizzata:
+     vedi commento su GROUP_COLORS nel JS ---------- */
   .em-wrap{ position: relative; }
   .em-legend{ display:flex; flex-wrap:wrap; gap: 8px; margin: 0 0 14px; }
   .em-legend-item{
     display:flex; align-items:center; gap: 7px;
-    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.04em;
-    color: var(--text-dim); background: transparent;
+    font-variant: small-caps; letter-spacing: .04em; font-size: 0.88rem;
+    color: var(--grigio-soft); background: transparent;
     border: 1px solid var(--line); border-radius: 20px; padding: 5px 12px;
     cursor: pointer; transition: opacity .2s, border-color .2s;
   }
-  .em-legend-item:hover{ border-color: var(--copper); }
-  .em-legend-item.off{ opacity: 0.35; text-decoration: line-through; }
+  .em-legend-item:hover{ border-color: var(--arancio); }
+  .em-legend-item.off{ opacity: 0.45; text-decoration: line-through; }
   .em-swatch{ width: 10px; height: 10px; border-radius: 50%; flex-shrink:0; }
   .em-svg{
     display:block; width:100%; height:auto;
-    background: var(--bg); border: 1px solid var(--line); border-radius: 8px;
+    background: var(--bianco); border: 1px solid var(--line); border-radius: 8px;
   }
   .em-pt{ transition: opacity .2s; }
   .em-svg.has-hover .em-pt{ opacity: 0.25; }
   .em-svg.has-hover .em-pt.hover{ opacity: 1; }
-  .em-label{ font-family:'IBM Plex Mono', monospace; font-size: 10px; fill: var(--text-dim); }
-  .em-label.accent{ fill: var(--copper-bright); }
+  .em-label{ font-family: var(--serif); font-size: 11px; fill: var(--grigio-testo); }
+  .em-label.accent{ fill: var(--arancio-scuro); font-weight: 600; }
   .em-tooltip{
     position:absolute; z-index: 5; pointer-events: none; display:none;
-    background: var(--surface-2); border: 1px solid var(--copper); border-radius: 6px;
-    padding: 6px 10px; font-family:'IBM Plex Mono', monospace; font-size: 0.72rem;
-    color: var(--text); white-space: nowrap; transform: translate(-50%, -135%);
+    background: var(--bianco); border: 1px solid var(--arancio); border-radius: 6px;
+    padding: 6px 10px; font-family: var(--serif); font-size: 0.86rem;
+    color: var(--inchiostro); white-space: nowrap; transform: translate(-50%, -135%);
   }
   .em-controls{ display:flex; flex-wrap:wrap; gap: 14px; margin-bottom: 16px; }
   .em-control{ display:flex; flex-direction:column; gap: 5px; }
   .em-control label{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em;
-    text-transform: uppercase; color: var(--text-dim);
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.82rem;
+    color: var(--grigio-soft);
   }
   .em-select{
-    background: var(--bg); color: var(--text); border: 1px solid var(--line); border-radius: 6px;
-    font-family:'IBM Plex Mono', monospace; font-size: 0.85rem; padding: 7px 10px; outline:none;
+    background: var(--brina); color: var(--inchiostro); border: 1px solid var(--line); border-radius: 6px;
+    font-family: var(--serif); font-size: 0.98rem; padding: 7px 10px; outline:none;
     cursor: pointer;
   }
-  .em-select:focus{ border-color: var(--copper-bright); }
+  .em-select:focus{ border-color: var(--arancio-scuro); }
   .em-nearest{
     margin: 16px 0 0; padding-left: 24px;
-    font-family:'IBM Plex Mono', monospace; font-size: 0.85rem; color: var(--text);
+    font-family: var(--serif); font-size: 1rem; color: var(--inchiostro);
   }
   .em-nearest li{ margin-bottom: 4px; }
-  .em-nearest .dist{ color: var(--copper-bright); }
+  .em-nearest .dist{ color: var(--arancio-scuro); font-weight: 600; }
   .em-nearest-label{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em;
-    text-transform: uppercase; color: var(--text-dim); margin: 18px 0 6px;
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.82rem;
+    color: var(--grigio-soft); margin: 18px 0 6px;
   }
-  .em-caption{ margin-top: 16px; font-size: 0.92rem; color: var(--text-dim); }
+  .em-caption{ margin-top: 16px; font-size: 0.98rem; color: var(--grigio-testo); }
 
   /* ---------- chiusura ---------- */
-  .chiusura{ background: linear-gradient(180deg, var(--bg), var(--surface)); }
+  .chiusura{ background: linear-gradient(180deg, var(--brina), var(--bianco)); }
   .footer-note{
-    margin-top: 46px; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem; color: var(--text-dim);
+    margin-top: 46px; font-variant: small-caps; letter-spacing: .06em; font-size: 0.9rem; color: var(--grigio-soft);
   }
+
+  /* ---------- PILOTA: termini collegati all'ontologia + tenda laterale ----------
+     Verde deliberatamente: è l'unico posto in questo capitolo dove il colore segnala
+     "stai per lasciare il saggio ed entrare nell'ontologia" — un registro diverso
+     dall'arancio (apparato del saggio stesso) e dal blu (navigazione del saggio).
+     Dati e link derivati SOLO da ciò che l'ontologia già espone (pagine
+     ontologia/output/concetti/*.html, sola lettura) — nessuna modifica ai .ttl o
+     agli script Python che li generano. */
+  .termine-concetto{
+    background: none; border: none; padding: 0; margin: 0; cursor: pointer;
+    font: inherit; color: var(--verde);
+    border-bottom: 1px dotted var(--verde);
+    transition: background .15s ease, border-bottom-style .15s ease;
+  }
+  .termine-concetto:hover, .termine-concetto:focus-visible{
+    background: rgba(61,122,58,0.14);
+    border-bottom-style: solid;
+    outline: none;
+  }
+  .termine-concetto.aperto{ background: rgba(61,122,58,0.22); border-bottom-style: solid; }
+
+  .tenda-scrim{
+    position: fixed; inset: 0; background: rgba(26,26,26,0.32);
+    opacity: 0; pointer-events: none; transition: opacity .25s ease; z-index: 90;
+  }
+  .tenda-scrim.visibile{ opacity: 1; pointer-events: auto; }
+
+  .tenda-concetto{
+    position: fixed; top: 0; right: 0; bottom: 0; width: min(420px, 92vw);
+    background: var(--bianco); z-index: 91;
+    box-shadow: -8px 0 28px rgba(26,26,26,0.18);
+    transform: translateX(100%); transition: transform .3s ease;
+    overflow-y: auto; padding: 28px 26px 40px;
+  }
+  .tenda-concetto.visibile{ transform: translateX(0); }
+  .tenda-testata{
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 14px;
+    border-bottom: 2px solid var(--verde); padding-bottom: 16px; margin-bottom: 18px;
+  }
+  .tenda-eyebrow{
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.86rem;
+    color: var(--verde); display: block; margin-bottom: 6px;
+  }
+  .tenda-titolo{ font-family: var(--serif); font-weight: 500; font-size: 1.5rem; color: var(--inchiostro); }
+  .tenda-titolo .tag{
+    font-variant: small-caps; letter-spacing: .04em; font-size: 0.8rem; color: var(--verde);
+    border: 1px solid var(--verde-chiaro); border-radius: 20px; padding: 1px 10px; margin-left: 8px;
+  }
+  .tenda-chiudi{
+    background: none; border: 1px solid var(--line); border-radius: 50%;
+    width: 32px; height: 32px; font-size: 1.1rem; line-height: 1; cursor: pointer;
+    color: var(--grigio-testo); flex-shrink: 0;
+  }
+  .tenda-chiudi:hover{ border-color: var(--verde); color: var(--verde-scuro); }
+  .tenda-nota{ font-size: 1.05rem; color: var(--inchiostro); margin: 0 0 22px; }
+  .tenda-sezione{ margin-bottom: 20px; }
+  .tenda-sezione h3{
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.86rem;
+    color: var(--grigio-soft); font-weight: 500; margin: 0 0 8px;
+  }
+  .tenda-lista{ list-style: none; margin: 0; padding: 0; font-size: 0.98rem; color: var(--grigio-testo); }
+  .tenda-lista li{ margin-bottom: 5px; }
+  .tenda-lista .rel-tipo{ color: var(--verde); font-size: 0.9em; }
+  .tenda-unita-cod{ font-variant: small-caps; color: var(--grigio-soft); font-size: 0.9em; }
+  .tenda-lente{
+    display: block; text-align: center; margin-top: 26px; padding: 12px 16px;
+    background: var(--verde); color: var(--bianco); border-radius: 8px;
+    text-decoration: none; font-variant: small-caps; letter-spacing: .04em; font-size: 0.98rem;
+  }
+  .tenda-lente:hover{ background: var(--verde-scuro); }
 </style>
 </head>
 <body>
+
+<div class="tenda-scrim" id="tenda-scrim"></div>
+<aside class="tenda-concetto" id="tenda-concetto" aria-hidden="true">
+  <div class="tenda-testata">
+    <div>
+      <span class="tenda-eyebrow">Dal vocabolario dell'ontologia</span>
+      <span class="tenda-titolo" id="tenda-titolo"></span>
+    </div>
+    <button class="tenda-chiudi" id="tenda-chiudi" aria-label="Chiudi">×</button>
+  </div>
+  <p class="tenda-nota" id="tenda-nota"></p>
+  <div id="tenda-corpo"></div>
+  <a class="tenda-lente" id="tenda-link-lente" href="#" target="_blank" rel="noopener">Apri nella Lente semantica →</a>
+</aside>
 
 <nav class="sidebar" aria-label="Indice del saggio">
   <div class="sidebar-kicker">Indice</div>
@@ -464,7 +576,7 @@
   <section id="m3-u2-apertura" class="hero">
     <div class="wrap">
       <div class="kicker">Meccanismo · 3 · Parole come punti nello spazio · Unità 3.2</div>
-      <h1>E se una parola fosse <em>un punto nello spazio?</em></h1>
+      <h1>E se una parola fosse <em>un punto nello <button class="termine-concetto" data-concetto="SpazioSemanticoEEmbedding">spazio</button>?</em></h1>
       <p class="lede dim">Un punto su un piano è descritto da due numeri: quanto a destra, quanto in alto. Un punto in uno spazio a trecento dimensioni è descritto da trecento numeri — impossibile da visualizzare, ma matematicamente identico. L'idea di questa unità è tutta qui: assegnare a ogni parola non un ID arbitrario, ma una lista di coordinate. E con le coordinate, all'improvviso, esistono le distanze.</p>
       <div class="scrolldown">vicinanza spaziale come somiglianza di significato</div>
     </div>
@@ -475,7 +587,7 @@
       <div class="eyebrow">Il vocabolario si fissa</div>
       <h2 class="title">Embedding: la parola tecnica, da qui in avanti</h2>
       <p>Un vettore, nel senso minimo che serve qui, è una lista ordinata di numeri: le coordinate di un punto. Rappresentare una parola come vettore significa piazzarla in uno spazio geometrico, e la scommessa è che la geometria possa svolgere il lavoro che i simboli non sapevano fare: <strong>vicinanza spaziale = somiglianza semantica</strong>. «Gatto» e «cane» vicini tra loro, entrambi lontani da «ossigeno».</p>
-      <p>Questa rappresentazione ha un nome tecnico preciso, che da questa unità in poi il corso userà senza più reintrodurlo: <strong>embedding</strong>. Letteralmente, «incastonamento»: la parola viene incastonata in uno spazio continuo. Non «vettore» generico, non «rappresentazione vettoriale» — <em>embedding</em> è il termine che i Moduli 4, 5 e 6 daranno per acquisito, ed è il momento giusto per fissarlo.</p>
+      <p>Questa rappresentazione ha un nome tecnico preciso, che da questa unità in poi il corso userà senza più reintrodurlo: <strong>embedding</strong>. Letteralmente, «incastonamento»: la parola viene incastonata in uno spazio continuo. Non «vettore» generico, non «rappresentazione vettoriale» — <em><button class="termine-concetto" data-concetto="Embedding">embedding</button></em> è il termine che i Moduli 4, 5 e 6 daranno per acquisito, ed è il momento giusto per fissarlo.</p>
       <div class="aside">
         <span class="label">Leibniz, seconda apparizione</span>
         <p>In Genealogia · 1.1 ci si era aperti con Leibniz e il sogno del pensiero come calcolo su simboli discreti. Lo stesso Leibniz è anche, con Newton, tra gli inventori del calcolo infinitesimale — lo strumento matematico per trattare il continuo. Le due metà del suo lascito, il discreto e il continuo, sono esattamente i due poli tra cui questo corso continua a muoversi. Qui il pendolo passa dal primo al secondo.</p>
@@ -487,7 +599,7 @@
     <div class="wrap reveal">
       <div class="eyebrow">La mappa</div>
       <h2 class="title">Ventitré parole italiane, viste dall'alto</h2>
-      <p>Qui sotto figurano ventitré parole italiane come punti in un piano. Le coordinate non sono inventate: provengono da vettori reali a 300 dimensioni (fastText, addestrato su testo italiano reale), proiettati in due dimensioni per poterli disegnare. Passi il mouse sui punti; clicchi le voci della legenda per nascondere o mostrare un gruppo.</p>
+      <p>Qui sotto figurano ventitré parole italiane come punti in un piano. Le coordinate non sono inventate: provengono da vettori reali a 300 dimensioni (<button class="termine-concetto" data-concetto="FastText">fastText</button>, addestrato su testo italiano reale), proiettati in due dimensioni per poterli disegnare. Passi il mouse sui punti; clicchi le voci della legenda per nascondere o mostrare un gruppo.</p>
       <div class="playground">
         <span class="ptitle">Mappa — lo spazio degli embedding, proiettato in 2D</span>
         <div id="m3-mappa-esplorazione"></div>
@@ -501,7 +613,7 @@
     <div class="wrap reveal">
       <div class="eyebrow">Un filo lungo quattro secoli</div>
       <h2 class="title">La mossa che Galileo aveva escluso</h2>
-      <p>Galileo fondò la scienza moderna con una separazione netta: da un lato le qualità <em>primarie</em> — forma, posizione, numero, ciò che si può misurare e resta identico per qualunque osservatore — dall'altro le qualità <em>secondarie</em> — colore, sapore, odore, tutto ciò che sembra soggettivo e relazionale. La scienza, decise, si sarebbe occupata solo delle prime. Il significato di una parola era il caso limite della qualità secondaria: relazionale per eccellenza, dipendente dall'uso, apparentemente impossibile da mettere su una bilancia.</p>
+      <p>Galileo fondò la scienza moderna con una separazione netta: da un lato le qualità <em>primarie</em> — forma, posizione, numero, ciò che si può misurare e resta identico per qualunque osservatore — dall'altro le qualità <em>secondarie</em> — colore, sapore, odore, tutto ciò che sembra soggettivo e relazionale. La scienza, decise, si sarebbe occupata solo delle prime. Il significato di una parola era il caso limite della <button class="termine-concetto" data-concetto="QualitaPrimarieSecondarie">qualità secondaria</button>: relazionale per eccellenza, dipendente dall'uso, apparentemente impossibile da mettere su una bilancia.</p>
       <p>La mappa che ha appena esplorato fa esattamente la mossa che Galileo escludeva: trasforma il significato in coordinate quantificabili. Non è solo un trucco statistico riuscito — è un'estensione radicale, quattro secoli dopo, dello stesso programma galileiano a un territorio che Galileo aveva dichiarato fuori portata. Vale la pena tenerlo a mente non come curiosità storica, ma come un punto su cui il corso tornerà: nell'unità 5.4 questa stessa distinzione tra primario e secondario comincerà a incrinarsi, e non per ragioni filosofiche — per ragioni tecniche.</p>
       <div class="question">Misurare il significato: la frase avrebbe fatto sorridere Galileo. Eppure la mappa è lì. Che cosa, esattamente, è stato misurato?</div>
     </div>
@@ -543,7 +655,7 @@
     <div class="wrap reveal">
       <div class="eyebrow">L'ipotesi distribuzionale</div>
       <h2 class="title">Il contesto come definizione</h2>
-      <p>Si considerino le frasi in cui compare «gatto»: «il ___ dorme sul divano», «ho dato da mangiare al ___», «il ___ miagola». Ora quelle in cui compare «cane»: in gran parte, le stesse — tranne l'ultima. L'ipotesi distribuzionale dice che questa sovrapposizione di contesti <em>è</em> la somiglianza di significato, o almeno ne è una misura fedele. Non serve sapere che cosa sia un gatto: basta osservare dove la parola compare, su una quantità di testo sufficiente.</p>
+      <p>Si considerino le frasi in cui compare «gatto»: «il ___ dorme sul divano», «ho dato da mangiare al ___», «il ___ miagola». Ora quelle in cui compare «cane»: in gran parte, le stesse — tranne l'ultima. <button class="termine-concetto" data-concetto="IpotesiDistribuzionale">L'ipotesi distribuzionale</button> dice che questa sovrapposizione di contesti <em>è</em> la somiglianza di significato, o almeno ne è una misura fedele. Non serve sapere che cosa sia un gatto: basta osservare dove la parola compare, su una quantità di testo sufficiente.</p>
       <p>Se questa idea suona familiare, è perché il corso l'ha già incontrata in forma filosofica. In Genealogia · 3.1, il primo nodo era Wittgenstein e il significato come uso: non chiedersi che cosa una parola <em>denoti</em>, ma come venga <em>usata</em> — il significato non sta dietro la parola, sta nella sua pratica. Firth (contemporaneo di Wittgenstein) trasforma quell'intuizione filosofica in un programma operativo: se il significato è l'uso, allora l'uso si può contare, e ciò che si può contare si può trasformare in coordinate. L'ipotesi distribuzionale è Wittgenstein reso misurabile.</p>
       <div class="aside">
         <span class="label">Callback esplicito</span>
@@ -637,10 +749,10 @@
       <div class="eyebrow">Che tipo di ragionamento è?</div>
       <h2 class="title">Il sillogismo dell'erba</h2>
       <p>Gregory Bateson distingueva due modi di ragionare. Il primo è il sillogismo classico, «in Barbara»: gli uomini muoiono, Socrate è un uomo, dunque Socrate muore. Valido per struttura di classe: Socrate <em>appartiene</em> alla classe degli uomini, e ne eredita le proprietà. Il secondo lo chiamava il <em>sillogismo dell'erba</em>: l'erba muore, gli uomini muoiono, dunque gli uomini sono erba. Formalmente invalido — eppure, notava Bateson, è la logica reale della metafora, della poesia, e di buona parte del pensiero vivente: ragiona per <em>predicato condiviso</em>, non per appartenenza di classe.</p>
-      <p>L'aritmetica vettoriale è, strutturalmente, un sillogismo dell'erba. «Re sta a regina come uomo sta a donna» non afferma che regina appartenga a una classe da cui la conclusione discende con necessità: afferma che due coppie condividono un predicato — una direzione nello spazio — e scommette che la condivisione regga. In termini classici non è una deduzione, e non è nemmeno la semplice induzione per conteggio già vista in 2.2: è un caso di <strong>abduzione</strong> — l'inferenza all'analogia più plausibile. Questo spiega con precisione entrambe le facce del fenomeno: perché funziona (la metafora geometrica è reale, le direzioni sono davvero consistenti) e perché a volte fallisce (la logica del predicato condiviso non è mai truth-preserving come Barbara — nessuna metafora lo è).</p>
+      <p><button class="termine-concetto" data-concetto="AritmeticaVettoriale">L'aritmetica vettoriale</button> è, strutturalmente, un <button class="termine-concetto" data-concetto="SillogismoDellErba">sillogismo dell'erba</button>. «Re sta a regina come uomo sta a donna» non afferma che regina appartenga a una classe da cui la conclusione discende con necessità: afferma che due coppie condividono un predicato — una direzione nello spazio — e scommette che la condivisione regga. In termini classici non è una deduzione, e non è nemmeno la semplice induzione per conteggio già vista in 2.2: è un caso di <strong><button class="termine-concetto" data-concetto="Abduzione">abduzione</button></strong> — l'inferenza all'analogia più plausibile. Questo spiega con precisione entrambe le facce del fenomeno: perché funziona (la metafora geometrica è reale, le direzioni sono davvero consistenti) e perché a volte fallisce (la logica del predicato condiviso non è mai truth-preserving come Barbara — nessuna metafora lo è).</p>
       <div class="aside">
         <span class="label">Wigner, di passaggio</span>
-        <p>Il fisico Eugene Wigner parlò di «irragionevole efficacia della matematica» nel descrivere il mondo fisico. Che una manciata di operazioni lineari su coordinate catturi relazioni come il genere o la regalità è un piccolo caso dello stesso enigma — e perché l'aritmetica vettoriale funzioni <em>così</em> bene resta, in un senso preciso, non del tutto spiegato.</p>
+        <p>Il fisico Eugene Wigner parlò di «<button class="termine-concetto" data-concetto="IrragionevoleEfficaciaMatematica">irragionevole efficacia della matematica</button>» nel descrivere il mondo fisico. Che una manciata di operazioni lineari su coordinate catturi relazioni come il genere o la regalità è un piccolo caso dello stesso enigma — e perché l'aritmetica vettoriale funzioni <em>così</em> bene resta, in un senso preciso, non del tutto spiegato.</p>
       </div>
       <div class="question">Domanda da lasciare aperta, deliberatamente: la geometria di questo spazio <em>descrive</em> qualcosa di reale sul significato — che esisteva anche prima, e il modello ha solo trovato — o lo <em>costruisce</em>, artefatto statistico utile senza nulla di «reale» dietro? È la stessa domanda che si pone da secoli su che cosa siano davvero i numeri.</div>
     </div>
@@ -700,7 +812,7 @@
     <div class="wrap reveal">
       <div class="eyebrow">Il quadro</div>
       <h2 class="title">Statico è la parola chiave</h2>
-      <p>Gli embedding di questo modulo si dicono <em>statici</em>: calcolati una volta, uguali per sempre, identici in ogni frase in cui la parola compare. Per tutto ciò che il modulo ha mostrato — vicinanza, direzioni, aritmetica — la staticità era invisibile. La polisemia la rende visibile: il significato reale di una parola non è una proprietà della parola da sola, è una proprietà della parola <em>in un contesto</em>. Serve una rappresentazione che venga calcolata frase per frase.</p>
+      <p>Gli embedding di questo modulo si dicono <em><button class="termine-concetto" data-concetto="EmbeddingStatico">statici</button></em>: calcolati una volta, uguali per sempre, identici in ogni frase in cui la parola compare. Per tutto ciò che il modulo ha mostrato — vicinanza, direzioni, aritmetica — la staticità era invisibile. <button class="termine-concetto" data-concetto="Polisemia">La polisemia</button> la rende visibile: il significato reale di una parola non è una proprietà della parola da sola, è una proprietà della parola <em>in un contesto</em>. Serve una rappresentazione che venga calcolata frase per frase.</p>
     </div>
   </section>
 
@@ -729,11 +841,16 @@
     if(Array.isArray(parole)) parole.forEach(p => { if(!(p in GROUP_OF)) GROUP_OF[p] = gruppo; });
   });
 
+  // ECCEZIONE DELIBERATA, riarmonizzata come nel widget gemello di Meccanismo · 5:
+  // 4 categorie, 3 famiglie di accento nella palette — reale_genere/sportivo/animali
+  // riusano arancio-scuro/blu/verde a piena saturazione; chimico resta l'unico
+  // colore davvero nuovo, il prugna già in uso in ontologia/lente-semantica per lo
+  // stesso ruolo (distinguere categorie in un grafo).
   const GROUP_COLORS = {
-    reale_genere: '#F0A85E',
-    sportivo: '#7EB8D4',
-    chimico: '#B79FD6',
-    animali: '#8FC9A0'
+    reale_genere: '#A85419', // arancio-scuro
+    sportivo: '#2B3A8C',     // blu
+    chimico: '#6B4A7A',      // prugna — vedi lente-semantica
+    animali: '#3D7A3A'       // verde
   };
   const GROUP_LABELS = {
     reale_genere: 'genere e regalità',
@@ -868,13 +985,13 @@
     const A = ARIT[selA.value], B = ARIT[selB.value], C = ARIT[selC.value];
     const t = aritTarget();
     const arrow = (x1, y1, x2, y2) =>
-      `<line x1="${sx(x1)}" y1="${sy(y1)}" x2="${sx(x2)}" y2="${sy(y2)}" stroke="var(--copper-bright)" stroke-width="1.4" stroke-dasharray="5 4" opacity="0.75" marker-end="url(#m3-arrowhead)"/>`;
+      `<line x1="${sx(x1)}" y1="${sy(y1)}" x2="${sx(x2)}" y2="${sy(y2)}" stroke="var(--arancio-scuro)" stroke-width="1.4" stroke-dasharray="5 4" opacity="0.75" marker-end="url(#m3-arrowhead)"/>`;
     const tx = sx(t[0]), ty = sy(t[1]);
     const diamond = `M ${tx} ${ty - 7} L ${tx + 7} ${ty} L ${tx} ${ty + 7} L ${tx - 7} ${ty} Z`;
-    return `<defs><marker id="m3-arrowhead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="var(--copper-bright)"/></marker></defs>` +
+    return `<defs><marker id="m3-arrowhead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="var(--arancio-scuro)"/></marker></defs>` +
       arrow(B[0], B[1], A[0], A[1]) +
       arrow(C[0], C[1], t[0], t[1]) +
-      `<path d="${diamond}" fill="var(--copper-bright)"/>` +
+      `<path d="${diamond}" fill="var(--arancio-scuro)"/>` +
       `<text class="em-label accent" x="${tx + 10}" y="${ty - 8}">bersaglio</text>`;
   }
 
@@ -942,6 +1059,152 @@
 
   document.getElementById('m3-poli-caption').innerHTML =
     `Nella proiezione 2D qui sopra, "calcio" dista <strong>${distSport.toFixed(3)}</strong> dal centroide sportivo e <strong>${distChim.toFixed(3)}</strong> da quello chimico (distanze euclidee calcolate dal vivo su questa proiezione). Nello spazio reale a 300 dimensioni la misura è diversa — una similarità coseno, non una distanza su una proiezione — ma racconta la stessa storia: <strong>0.62</strong> di similarità con il gruppo sportivo contro <strong>0.44</strong> con quello chimico. Due misure distinte, da non confondere: la prima serve al disegno, la seconda è il dato nello spazio originale.`;
+
+  // ============ PILOTA: termini collegati all'ontologia ============
+  // Dati trascritti a mano da ontologia/output/concetti/*.html (sola lettura, non
+  // generati da script): gli 11 concetti con :discussoInUnita verso U31..U35,
+  // trovati interrogando dati.ttl — non un elenco a occhio nel testo.
+  const CONCETTI = {
+    SpazioSemanticoEEmbedding: {
+      label: "Spazio semantico ed embedding",
+      nota: "Il Modulo 3: dalle parole come punti discreti alle parole come punti in uno spazio continuo.",
+      specifici: ["Abduzione","Aritmetica vettoriale","Embedding","Ipotesi distribuzionale","Irragionevole efficacia della matematica","Polisemia","Qualità primarie e secondarie","Sillogismo dell'erba","Word2Vec","fastText"],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Meccanismo · 3.1","Il problema lasciato aperto"],["Meccanismo · 3.2","Le parole come vettori (embedding)"],["Meccanismo · 3.3","L'ipotesi distribuzionale"],["Meccanismo · 3.4","L'aritmetica vettoriale"],["Meccanismo · 3.5","Polisemia ed embedding statico"]]
+    },
+    Embedding: {
+      label: "Embedding",
+      nota: "Rappresentazione di una parola come vettore/punto in uno spazio continuo: vicinanza spaziale = somiglianza semantica.",
+      specifici: ["Embedding contestuale","Embedding statico"],
+      relazioni: [["Richiede come prerequisito","Tokenizzazione"],["Si contrappone a","Numerabilità"],["Rende operativo","Qualità primarie e secondarie"]],
+      teorici: [],
+      discussoIn: [["Meccanismo · 3.2","Le parole come vettori (embedding)"]]
+    },
+    EmbeddingStatico: {
+      label: "Embedding statico",
+      nota: "Rappresentazione vettoriale fissa di una parola, identica in ogni frase in cui compare; non risolve la polisemia.",
+      specifici: [],
+      relazioni: [["È risolto da","Attention"],["Si contrappone a","Embedding contestuale"]],
+      teorici: [],
+      discussoIn: [["Meccanismo · 3.5","Polisemia ed embedding statico"]]
+    },
+    IpotesiDistribuzionale: {
+      label: "Ipotesi distribuzionale",
+      nota: "«Si conosce una parola dalla compagnia che tiene» (Firth): il significato si ricava dai contesti d'uso, non da un dizionario.",
+      specifici: [],
+      relazioni: [["Rende operativo","Significato come uso"]],
+      teorici: ["John Rupert Firth"],
+      discussoIn: [["Meccanismo · 3.3","L'ipotesi distribuzionale"]]
+    },
+    AritmeticaVettoriale: {
+      label: "Aritmetica vettoriale",
+      nota: "Operazioni algebriche fra embedding (es. re−uomo+donna=regina) che producono risultati semanticamente coerenti.",
+      specifici: [],
+      relazioni: [["Esemplifica","Abduzione, Sillogismo dell'erba"]],
+      teorici: [],
+      discussoIn: [["Meccanismo · 3.4","L'aritmetica vettoriale"]]
+    },
+    SillogismoDellErba: {
+      label: "Sillogismo dell'erba",
+      nota: "Ragionare per predicato/direzione condivisa invece che per appartenenza di classe (Bateson); modello filosofico dell'aritmetica vettoriale.",
+      specifici: [],
+      relazioni: [["È esemplificato da","Aritmetica vettoriale"]],
+      teorici: ["Gregory Bateson"],
+      discussoIn: [["Meccanismo · 3.4","L'aritmetica vettoriale"]]
+    },
+    Abduzione: {
+      label: "Abduzione",
+      nota: "Inferenza alla spiegazione/analogia più plausibile; il tipo di ragionamento dell'aritmetica vettoriale, distinto da induzione e deduzione.",
+      specifici: [],
+      relazioni: [["È esemplificato da","Aritmetica vettoriale"]],
+      teorici: [],
+      discussoIn: [["Meccanismo · 3.4","L'aritmetica vettoriale"]]
+    },
+    QualitaPrimarieSecondarie: {
+      label: "Qualità primarie e secondarie",
+      nota: "Distinzione di Galileo fra ciò che è quantificabile (forma, numero) e ciò che sembra soggettivo/relazionale (colore, significato).",
+      specifici: [],
+      relazioni: [["È analogo a","Embedding contestuale"],["È reso operativo da","Embedding"]],
+      teorici: ["Galileo Galilei"],
+      discussoIn: [["Meccanismo · 3.2","Le parole come vettori (embedding)"],["Meccanismo · 5.4","Embedding contestuale"]]
+    },
+    Polisemia: {
+      label: "Polisemia",
+      nota: "Una parola, più significati; limite dell'embedding statico che le assegna un solo vettore fisso.",
+      specifici: [],
+      relazioni: [["È risolto da","Attention"]],
+      teorici: [],
+      discussoIn: [["Meccanismo · 3.5","Polisemia ed embedding statico"]]
+    },
+    IrragionevoleEfficaciaMatematica: {
+      label: "Irragionevole efficacia della matematica",
+      nota: "Formula di Wigner sull'inspiegata efficacia della matematica; applicata nel corso all'aritmetica vettoriale.",
+      specifici: [],
+      relazioni: [],
+      teorici: ["Eugene Wigner"],
+      discussoIn: [["Meccanismo · 3.4","L'aritmetica vettoriale"]]
+    },
+    FastText: {
+      label: "fastText",
+      tag: "Tecnica",
+      nota: "Modello di embedding reale (addestrato su italiano) usato per i dataset del corso.",
+      specifici: [],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Meccanismo · 3.2","Le parole come vettori (embedding)"]]
+    }
+  };
+
+  const tendaEl = document.getElementById('tenda-concetto');
+  const scrimEl = document.getElementById('tenda-scrim');
+  const tendaTitolo = document.getElementById('tenda-titolo');
+  const tendaNota = document.getElementById('tenda-nota');
+  const tendaCorpo = document.getElementById('tenda-corpo');
+  const tendaLinkLente = document.getElementById('tenda-link-lente');
+  let ultimoTermineAperto = null;
+
+  function sezioneLista(titolo, voci, render){
+    if(!voci || !voci.length) return '';
+    return `<div class="tenda-sezione"><h3>${titolo}</h3><ul class="tenda-lista">${voci.map(render).join('')}</ul></div>`;
+  }
+
+  function apriTenda(id, triggerEl){
+    const c = CONCETTI[id];
+    if(!c) return;
+    if(ultimoTermineAperto) ultimoTermineAperto.classList.remove('aperto');
+    ultimoTermineAperto = triggerEl || null;
+    if(triggerEl) triggerEl.classList.add('aperto');
+
+    tendaTitolo.innerHTML = c.label + (c.tag ? `<span class="tag">${c.tag}</span>` : '');
+    tendaNota.textContent = c.nota;
+    tendaCorpo.innerHTML =
+      sezioneLista('Concetti più specifici', c.specifici, v => `<li>${v}</li>`) +
+      sezioneLista('Relazioni con altri concetti', c.relazioni, r => `<li><span class="rel-tipo">${r[0]}</span> ${r[1]}</li>`) +
+      sezioneLista('Teorici', c.teorici, t => `<li><span class="rel-tipo">Teorizzato da</span> ${t}</li>`) +
+      sezioneLista('Discusso in', c.discussoIn, d => `<li><span class="tenda-unita-cod">${d[0]}</span> — ${d[1]}</li>`);
+    tendaLinkLente.href = `../../../ontologia/lente-semantica/output/index.html#${id}`;
+
+    tendaEl.classList.add('visibile');
+    tendaEl.setAttribute('aria-hidden', 'false');
+    scrimEl.classList.add('visibile');
+  }
+
+  function chiudiTenda(){
+    tendaEl.classList.remove('visibile');
+    tendaEl.setAttribute('aria-hidden', 'true');
+    scrimEl.classList.remove('visibile');
+    if(ultimoTermineAperto) ultimoTermineAperto.classList.remove('aperto');
+    ultimoTermineAperto = null;
+  }
+
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.termine-concetto');
+    if(btn){ apriTenda(btn.dataset.concetto, btn); return; }
+    if(e.target === scrimEl){ chiudiTenda(); }
+  });
+  document.getElementById('tenda-chiudi').addEventListener('click', chiudiTenda);
+  document.addEventListener('keydown', (e) => { if(e.key === 'Escape') chiudiTenda(); });
 </script>
 
 </body>

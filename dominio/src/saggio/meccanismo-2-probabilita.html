@@ -4,105 +4,140 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Meccanismo · 2 · Probabilità e linguaggio</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+  @font-face {
+    font-family: 'EB Garamond';
+    src: url('fonts/EBGaramond-Variable.woff2') format('woff2-variations');
+    font-weight: 400 800;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'EB Garamond';
+    src: url('fonts/EBGaramond-Italic-Variable.woff2') format('woff2-variations');
+    font-weight: 400 800;
+    font-style: italic;
+    font-display: swap;
+  }
+
   :root{
-    --bg: #0F2A22;
-    --surface: #173B30;
-    --surface-2: #1E4A3C;
-    --copper: #C97D3D;
-    --copper-bright: #F0A85E;
-    --text: #F2ECE0;
-    --text-dim: #A9BFB6;
-    --line: rgba(242,236,224,0.12);
+    /* palette — vedi ../../../design-system/README.md */
+    --bianco:        #FFFFFF;
+    --brina:         #F6F8FB;
+    --inchiostro:    #1a1a1a;
+    --grigio-testo:  #4a4540;
+    --grigio-soft:   #8A8580;
+    --blu-scuro:     #1F2B6B;
+    --blu:           #2B3A8C;
+    --blu-chiaro:    #5A6FB8;
+    --arancio-scuro: #A85419;
+    --arancio:       #D4722A;
+    --arancio-chiaro:#E9A66B;
+    --verde-scuro:   #2A5628;
+    --verde:         #3D7A3A;
+    --verde-chiaro:  #7AAD76;
+
+    --serif: 'EB Garamond', Garamond, Georgia, 'Times New Roman', serif;
+    --mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+
+    --line: rgba(26,26,26,0.12);
     --rail-w: 300px;
   }
 
   *{ box-sizing: border-box; }
-  html{ scroll-behavior: smooth; }
+  html{ scroll-behavior: smooth; font-size: 120%; }
 
   body{
     margin:0;
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Source Serif 4', Georgia, serif;
+    background: var(--brina);
+    color: var(--inchiostro);
+    font-family: var(--serif);
     line-height: 1.65;
     -webkit-font-smoothing: antialiased;
   }
 
   h1,h2,h3, .display{
-    font-family: 'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
-    font-weight: 600;
-    letter-spacing: -0.01em;
+    font-family: var(--serif);
+    font-weight: 500;
     margin: 0;
   }
-  .mono{ font-family: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace; }
-  a{ color: var(--copper-bright); }
+  .mono{ font-family: var(--mono); }
+  a{ color: var(--arancio-scuro); }
+
+  /* piccola utility per il ruolo "apparato": maiuscoletto spaziato sulla stessa
+     famiglia, non un cambio di font — stesso meccanismo di ontologia/output/style.css
+     e di ~/projects/portfolio/specimen.html (.apparato) */
+  .apparato{
+    font-variant: small-caps;
+    letter-spacing: .06em;
+    color: var(--grigio-soft);
+  }
 
   /* ---------- layout shell: sidebar fissa con indice del sito ---------- */
   .sidebar{
-    background: rgba(15,42,34,0.92);
+    background: var(--bianco);
     border-bottom: 1px solid var(--line);
     padding: 28px 24px 32px;
   }
   .sidebar-kicker{
-    font-family: 'IBM Plex Mono', monospace; font-size: .74rem; letter-spacing: .12em;
-    text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px;
+    font-variant: small-caps; letter-spacing: .06em; font-size: .74rem;
+    color: var(--grigio-soft); margin-bottom: 10px;
   }
   .sidebar-title{
-    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.02rem;
-    color: var(--text); margin-bottom: 22px;
+    font-family: var(--serif); font-weight: 500; font-size: 1.02rem;
+    color: var(--inchiostro); margin-bottom: 22px;
   }
   .sidebar .parte{ margin-top: 26px; }
   .sidebar .parte:first-of-type{ margin-top: 0; }
   .sidebar .parte-heading{
-    font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: .74rem;
-    letter-spacing: .1em; text-transform: uppercase; color: var(--copper-bright);
+    font-family: var(--serif); font-weight: 600; font-size: .74rem;
+    font-variant: small-caps; letter-spacing: .06em; color: var(--blu);
     padding-bottom: 10px; margin-bottom: 2px; border-bottom: 1px solid var(--line);
   }
   .sidebar .voce-semplice{
     display: block; padding: 10px 4px; border-bottom: 1px solid var(--line);
-    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem;
-    color: var(--text); text-decoration: none;
+    font-family: var(--serif); font-weight: 500; font-size: .9rem;
+    color: var(--inchiostro); text-decoration: none;
   }
-  .sidebar .voce-semplice:hover{ color: var(--copper-bright); }
-  .sidebar .voce-semplice.current{ color: var(--copper-bright); }
+  .sidebar .voce-semplice:hover{ color: var(--blu); }
+  .sidebar .voce-semplice.current{ color: var(--blu); }
   .sidebar details.modulo{ border-bottom: 1px solid var(--line); }
   .sidebar details.modulo summary{
     display: flex; align-items: center; gap: 8px; padding: 10px 4px; cursor: pointer;
-    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem; color: var(--text);
+    font-family: var(--serif); font-weight: 500; font-size: .9rem; color: var(--inchiostro);
     list-style: none;
   }
-  .sidebar details.modulo summary.current{ color: var(--copper-bright); }
+  .sidebar details.modulo summary.current{ color: var(--blu); }
   .sidebar details.modulo summary::-webkit-details-marker{ display: none; }
   .sidebar details.modulo summary::before{
-    content: "›"; display: inline-block; font-family: 'IBM Plex Mono', monospace;
-    color: var(--text-dim); transition: transform .15s ease; flex-shrink: 0;
+    content: "›"; display: inline-block;
+    color: var(--grigio-soft); transition: transform .15s ease; flex-shrink: 0;
   }
-  .sidebar details.modulo[open] summary::before{ transform: rotate(90deg); color: var(--copper-bright); }
-  .sidebar details.modulo summary:hover{ color: var(--copper-bright); }
+  .sidebar details.modulo[open] summary::before{ transform: rotate(90deg); color: var(--blu); }
+  .sidebar details.modulo summary:hover{ color: var(--blu); }
   .sidebar .unita-list{ padding: 2px 0 12px 22px; display: flex; flex-direction: column; gap: 1px; }
   .sidebar .unita-list a{
-    display: block; padding: 6px 4px; font-size: .82rem; color: var(--text-dim); text-decoration: none;
+    display: block; padding: 6px 4px; font-size: .82rem; color: var(--grigio-testo); text-decoration: none;
   }
-  .sidebar .unita-list a:hover{ color: var(--copper-bright); }
-  .sidebar .unita-list a .num{ color: var(--copper); margin-right: 6px; font-family: 'IBM Plex Mono', monospace; font-size: .74rem; }
+  .sidebar .unita-list a:hover{ color: var(--blu); }
+  .sidebar .unita-list a .num{ color: var(--blu); margin-right: 6px; font-size: .74rem; }
 
-  /* pallini luminosi di scroll-spy, sulle voci dell'unità corrente */
+  /* pallini luminosi di scroll-spy, sulle voci dell'unità corrente — stesso
+     accento blu della sidebar, non arancio: qui il pallino segna "sei qui nella
+     navigazione", ruolo diverso da un rimando arancio nel corpo del testo. */
   .sidebar .unita-list.scrollspy a{ position: relative; padding-left: 20px; }
   .sidebar .unita-list.scrollspy a::before{
     content: "";
     position: absolute; left: 2px; top: 50%;
     width: 7px; height: 7px; border-radius: 50%;
-    background: var(--surface-2); border: 1px solid var(--line);
+    background: var(--brina); border: 1px solid var(--line);
     transform: translateY(-50%);
     transition: background .25s, box-shadow .25s, transform .25s;
   }
-  .sidebar .unita-list.scrollspy a.active{ color: var(--copper-bright); }
+  .sidebar .unita-list.scrollspy a.active{ color: var(--blu); }
   .sidebar .unita-list.scrollspy a.active::before{
-    background: var(--copper-bright);
-    box-shadow: 0 0 0 4px rgba(240,168,94,0.18);
+    background: var(--blu);
+    box-shadow: 0 0 0 4px rgba(43,58,140,0.18);
     transform: translateY(-50%) scale(1.2);
   }
 
@@ -122,17 +157,17 @@
   .unit-block:last-child section:last-of-type{ border-bottom:none; }
 
   .eyebrow{
-    font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
-    letter-spacing: 0.12em; text-transform: uppercase; color: var(--copper-bright);
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.78rem;
+    color: var(--grigio-soft);
     margin-bottom: 14px; display:flex; align-items:center; gap:10px;
   }
-  .eyebrow::before{ content:""; width: 22px; height:1px; background: var(--copper-bright); display:inline-block; }
+  .eyebrow::before{ content:""; width: 22px; height:1px; background: var(--grigio-soft); display:inline-block; }
 
   h2.title{ font-size: clamp(1.6rem, 4vw, 2.3rem); margin-bottom: 20px; }
 
-  p{ margin: 0 0 18px; color: var(--text); font-size: 1.05rem; }
-  p.dim{ color: var(--text-dim); }
-  .lede{ font-size: 1.15rem; color: var(--text); }
+  p{ margin: 0 0 18px; color: var(--inchiostro); font-size: 1.05rem; }
+  p.dim{ color: var(--grigio-testo); }
+  .lede{ font-size: 1.15rem; color: var(--inchiostro); }
 
   .reveal{ opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
   .reveal.visible{ opacity:1; transform: translateY(0); }
@@ -142,144 +177,228 @@
   }
 
   .aside{
-    margin: 26px 0; padding: 18px 20px; background: var(--surface);
-    border-left: 3px solid var(--copper); border-radius: 2px;
+    margin: 26px 0; padding: 18px 20px; background: var(--bianco);
+    border-left: 3px solid var(--arancio); border-radius: 2px;
   }
   .aside .label{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--copper-bright); margin-bottom: 8px; display:block;
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.72rem;
+    color: var(--grigio-soft); margin-bottom: 8px; display:block;
   }
-  .aside p{ margin-bottom:0; font-size: 0.96rem; color: var(--text-dim); }
+  .aside p{ margin-bottom:0; font-size: 0.96rem; color: var(--grigio-testo); }
 
   .question{
     margin: 28px 0; padding: 20px 22px; border: 1px dashed var(--line); border-radius: 4px;
-    font-family: 'Space Grotesk', sans-serif; font-size: 1.0rem; color: var(--copper-bright);
+    font-family: var(--serif); font-size: 1.0rem; color: var(--arancio-scuro);
   }
 
   blockquote{
-    margin: 0; padding-left: 22px; border-left: 2px solid var(--copper);
-    font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; color: var(--text);
+    margin: 0; padding-left: 22px; border-left: 2px solid var(--arancio);
+    font-family: var(--serif); font-size: 1.1rem; color: var(--inchiostro);
   }
 
   /* ---------- hero ---------- */
   .hero{ padding-top: 62px; }
   .hero .kicker{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.8rem; letter-spacing: 0.14em;
-    text-transform: uppercase; color: var(--text-dim); margin-bottom: 18px;
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.8rem;
+    color: var(--grigio-soft); margin-bottom: 18px;
   }
   .hero h1{ font-size: clamp(1.9rem, 5.6vw, 2.9rem); line-height:1.12; margin-bottom: 24px; }
-  .hero h1 em{ font-style: normal; color: var(--copper-bright); }
+  .hero h1 em{ font-style: italic; color: var(--arancio-scuro); }
   .scrolldown{
-    margin-top: 50px; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem;
-    color: var(--text-dim); letter-spacing: 0.08em; text-transform: uppercase;
+    margin-top: 50px; font-variant: small-caps; font-size: 0.78rem;
+    color: var(--grigio-soft); letter-spacing: 0.06em;
     display:flex; align-items:center; gap:8px;
   }
-  .scrolldown::after{ content:"↓"; color: var(--copper-bright); animation: nudge 1.8s infinite ease-in-out; }
+  .scrolldown::after{ content:"↓"; color: var(--arancio-scuro); animation: nudge 1.8s infinite ease-in-out; }
   @media (prefers-reduced-motion: reduce){ .scrolldown::after{ animation:none; } }
   @keyframes nudge{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(5px); } }
 
   /* ---------- widget: playground condiviso ---------- */
   .playground{
-    margin: 30px 0; background: var(--surface); border: 1px solid var(--line);
+    margin: 30px 0; background: var(--bianco); border: 1px solid var(--line);
     border-radius: 10px; padding: 24px 26px;
   }
   .playground .ptitle{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--copper-bright); margin-bottom: 14px; display:block;
+    font-size: 0.72rem; letter-spacing: 0.1em;
+    font-variant: small-caps; color: var(--grigio-soft); margin-bottom: 14px; display:block;
   }
   .pg-input{
-    width:100%; background: var(--bg); border: 1px solid var(--line); border-radius: 6px;
-    color: var(--text); font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem;
+    width:100%; background: var(--brina); border: 1px solid var(--line); border-radius: 6px;
+    color: var(--inchiostro); font-family: var(--serif); font-size: 1.1rem;
     padding: 12px 14px; outline: none;
   }
-  .pg-input:focus{ border-color: var(--copper-bright); }
+  .pg-input:focus{ border-color: var(--arancio-scuro); }
   .pg-row-label{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em;
-    text-transform: uppercase; color: var(--text-dim); margin: 18px 0 8px;
+    font-size: 0.68rem; letter-spacing: 0.08em;
+    font-variant: small-caps; color: var(--grigio-soft); margin: 18px 0 8px;
   }
   .pg-examples{ margin-top: 14px; display:flex; flex-wrap: wrap; gap: 8px; }
   .pg-example-btn{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.74rem; color: var(--copper-bright);
-    background: transparent; border: 1px solid var(--copper); border-radius: 20px;
+    font-size: 0.74rem; color: var(--arancio-scuro);
+    background: transparent; border: 1px solid var(--arancio); border-radius: 20px;
     padding: 5px 12px; cursor: pointer; transition: background .2s;
   }
-  .pg-example-btn:hover{ background: var(--surface-2); }
-  .pg-empty{ color: var(--text-dim); font-size: 0.92rem; font-style: italic; }
+  .pg-example-btn:hover{ background: var(--brina); }
+  .pg-empty{ color: var(--grigio-testo); font-size: 0.92rem; font-style: italic; }
 
   /* ---------- widget: predittore n-grammi ---------- */
   .ngram-bars{ display:flex; flex-direction:column; gap:8px; margin-top:14px; }
   .ngram-bar-row{ display:flex; align-items:center; gap:10px; }
   .ngram-label{
-    width: 112px; flex-shrink:0; font-family:'Space Grotesk', sans-serif; font-size: 0.95rem;
-    color: var(--text); text-align:right; word-break: break-word;
+    width: 112px; flex-shrink:0; font-family: var(--serif); font-size: 0.95rem;
+    color: var(--inchiostro); text-align:right; word-break: break-word;
   }
   .ngram-bar-track{
-    flex:1; height:20px; background: var(--bg); border:1px solid var(--line);
+    flex:1; height:20px; background: var(--brina); border:1px solid var(--line);
     border-radius:4px; overflow:hidden;
   }
   .ngram-bar-fill{
-    height:100%; background: var(--copper-bright); border-radius: 4px 0 0 4px;
+    height:100%; background: var(--arancio-scuro); border-radius: 4px 0 0 4px;
     transition: width .3s ease;
   }
   .ngram-pct{
-    width: 132px; flex-shrink:0; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem;
-    color: var(--text-dim);
+    width: 132px; flex-shrink:0; font-size: 0.78rem;
+    color: var(--grigio-testo);
   }
-  .ngram-count{ color: var(--text-dim); }
-  .ngram-empty{ color: var(--text-dim); font-size: 0.92rem; font-style: italic; margin-top: 14px; }
+  .ngram-count{ color: var(--grigio-testo); }
+  .ngram-empty{ color: var(--grigio-testo); font-size: 0.92rem; font-style: italic; margin-top: 14px; }
 
   .ngram-compare{ display:flex; gap: 24px; flex-wrap: wrap; margin-top: 18px; }
   .ngram-compare-col{ flex: 1 1 260px; }
   .ngram-compare-col .pg-row-label{ margin-top: 0; }
-  .ngram-ctx{ color: var(--copper-bright); }
+  .ngram-ctx{ color: var(--arancio-scuro); }
 
   .ngram-slider-row{ margin: 20px 0 10px; }
-  .ngram-slider{ width:100%; accent-color: var(--copper-bright); }
+  .ngram-slider{ width:100%; accent-color: var(--arancio-scuro); }
   .ngram-slider-val{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.78rem; color: var(--text-dim); margin-top: 6px;
+    font-size: 0.78rem; color: var(--grigio-testo); margin-top: 6px;
   }
 
   /* ---------- widget: diagramma di calibrazione ---------- */
   .calib-svg-wrap svg{ width:100%; max-width: 320px; display:block; margin: 14px auto; }
-  .calib-axis{ stroke: var(--text-dim); stroke-width: 1.5; }
+  .calib-axis{ stroke: var(--grigio-testo); stroke-width: 1.5; }
   .calib-diag{ stroke: var(--line); stroke-width: 1.5; stroke-dasharray: 4 4; }
-  .calib-tick{ font-family:'IBM Plex Mono', monospace; font-size: 9px; fill: var(--text-dim); }
-  .calib-axis-label{ font-family:'IBM Plex Mono', monospace; font-size: 9px; fill: var(--text-dim); letter-spacing: 0.04em; }
+  .calib-tick{ font-size: 9px; fill: var(--grigio-testo); }
+  .calib-axis-label{ font-size: 9px; fill: var(--grigio-testo); letter-spacing: 0.04em; }
   .calib-point{
-    fill: var(--copper-bright); fill-opacity: 0.85; cursor: pointer;
-    stroke: var(--bg); stroke-width: 1.5; transition: fill-opacity .2s;
+    fill: var(--arancio-scuro); fill-opacity: 0.85; cursor: pointer;
+    stroke: var(--brina); stroke-width: 1.5; transition: fill-opacity .2s;
   }
   .calib-point:hover{ fill-opacity: 1; }
-  .calib-detail{ margin-top: 14px; font-size: 0.92rem; color: var(--copper-bright); min-height: 1.6em; }
+  .calib-detail{ margin-top: 14px; font-size: 0.92rem; color: var(--arancio-scuro); min-height: 1.6em; }
 
   /* ---------- diagramma statico: dipendenze lontane ---------- */
   .dep-diagram{
-    margin: 30px 0; background: var(--surface); border: 1px solid var(--line);
+    margin: 30px 0; background: var(--bianco); border: 1px solid var(--line);
     border-radius: 10px; padding: 24px 26px;
   }
-  .dep-sentence{ font-family:'Space Grotesk', sans-serif; font-size: 1.05rem; color: var(--text); margin-bottom: 20px; }
-  .dep-highlight{ color: var(--copper-bright); font-weight: 600; border-bottom: 2px solid var(--copper); }
-  .dep-window-box{ background: var(--bg); border: 1px dashed var(--line); border-radius: 6px; padding: 16px 18px; }
+  .dep-sentence{ font-family: var(--serif); font-size: 1.05rem; color: var(--inchiostro); margin-bottom: 20px; }
+  .dep-highlight{ color: var(--arancio-scuro); font-weight: 600; border-bottom: 2px solid var(--arancio); }
+  .dep-window-box{ background: var(--brina); border: 1px dashed var(--line); border-radius: 6px; padding: 16px 18px; }
   .dep-window-label{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.7rem; letter-spacing: 0.08em;
-    text-transform: uppercase; color: var(--text-dim); display:block; margin-bottom: 10px;
+    font-size: 0.7rem; letter-spacing: 0.08em;
+    font-variant: small-caps; color: var(--grigio-soft); display:block; margin-bottom: 10px;
   }
   .dep-window-words{ display:flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
   .dep-word{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.85rem; background: var(--surface-2);
-    border: 1px solid var(--line); border-radius: 4px; padding: 5px 9px; color: var(--text-dim);
+    font-size: 0.85rem; background: var(--brina);
+    border: 1px solid var(--line); border-radius: 4px; padding: 5px 9px; color: var(--grigio-testo);
   }
-  .dep-word-arrow{ color: var(--copper-bright); background: transparent; border-color: var(--copper); }
-  .dep-window-note{ margin:0; font-size: 0.92rem; color: var(--text-dim); }
+  .dep-word-arrow{ color: var(--arancio-scuro); background: transparent; border-color: var(--arancio); }
+  .dep-window-note{ margin:0; font-size: 0.92rem; color: var(--grigio-testo); }
 
   /* ---------- chiusura ---------- */
-  .chiusura{ background: linear-gradient(180deg, var(--bg), var(--surface)); }
+  .chiusura{ background: linear-gradient(180deg, var(--brina), var(--bianco)); }
   .footer-note{
-    margin-top: 46px; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem; color: var(--text-dim);
+    margin-top: 46px; font-variant: small-caps; letter-spacing: .06em; font-size: 0.78rem; color: var(--grigio-soft);
   }
+
+  /* ---------- termini collegati all'ontologia + tenda laterale ----------
+     Verde deliberatamente: è l'unico posto in questo capitolo dove il colore segnala
+     "stai per lasciare il saggio ed entrare nell'ontologia" — un registro diverso
+     dall'arancio (apparato del saggio stesso) e dal blu (navigazione del saggio).
+     Dati e link derivati SOLO da ciò che l'ontologia già espone (pagine
+     ontologia/output/concetti/*.html, sola lettura) — nessuna modifica ai .ttl o
+     agli script Python che li generano. */
+  .termine-concetto{
+    background: none; border: none; padding: 0; margin: 0; cursor: pointer;
+    font: inherit; color: var(--verde);
+    border-bottom: 1px dotted var(--verde);
+    transition: background .15s ease, border-bottom-style .15s ease;
+  }
+  .termine-concetto:hover, .termine-concetto:focus-visible{
+    background: rgba(61,122,58,0.14);
+    border-bottom-style: solid;
+    outline: none;
+  }
+  .termine-concetto.aperto{ background: rgba(61,122,58,0.22); border-bottom-style: solid; }
+
+  .tenda-scrim{
+    position: fixed; inset: 0; background: rgba(26,26,26,0.32);
+    opacity: 0; pointer-events: none; transition: opacity .25s ease; z-index: 90;
+  }
+  .tenda-scrim.visibile{ opacity: 1; pointer-events: auto; }
+
+  .tenda-concetto{
+    position: fixed; top: 0; right: 0; bottom: 0; width: min(420px, 92vw);
+    background: var(--bianco); z-index: 91;
+    box-shadow: -8px 0 28px rgba(26,26,26,0.18);
+    transform: translateX(100%); transition: transform .3s ease;
+    overflow-y: auto; padding: 28px 26px 40px;
+  }
+  .tenda-concetto.visibile{ transform: translateX(0); }
+  .tenda-testata{
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 14px;
+    border-bottom: 2px solid var(--verde); padding-bottom: 16px; margin-bottom: 18px;
+  }
+  .tenda-eyebrow{
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.86rem;
+    color: var(--verde); display: block; margin-bottom: 6px;
+  }
+  .tenda-titolo{ font-family: var(--serif); font-weight: 500; font-size: 1.5rem; color: var(--inchiostro); }
+  .tenda-titolo .tag{
+    font-variant: small-caps; letter-spacing: .04em; font-size: 0.8rem; color: var(--verde);
+    border: 1px solid var(--verde-chiaro); border-radius: 20px; padding: 1px 10px; margin-left: 8px;
+  }
+  .tenda-chiudi{
+    background: none; border: 1px solid var(--line); border-radius: 50%;
+    width: 32px; height: 32px; font-size: 1.1rem; line-height: 1; cursor: pointer;
+    color: var(--grigio-testo); flex-shrink: 0;
+  }
+  .tenda-chiudi:hover{ border-color: var(--verde); color: var(--verde-scuro); }
+  .tenda-nota{ font-size: 1.05rem; color: var(--inchiostro); margin: 0 0 22px; }
+  .tenda-sezione{ margin-bottom: 20px; }
+  .tenda-sezione h3{
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.86rem;
+    color: var(--grigio-soft); font-weight: 500; margin: 0 0 8px;
+  }
+  .tenda-lista{ list-style: none; margin: 0; padding: 0; font-size: 0.98rem; color: var(--grigio-testo); }
+  .tenda-lista li{ margin-bottom: 5px; }
+  .tenda-lista .rel-tipo{ color: var(--verde); font-size: 0.9em; }
+  .tenda-unita-cod{ font-variant: small-caps; color: var(--grigio-soft); font-size: 0.9em; }
+  .tenda-lente{
+    display: block; text-align: center; margin-top: 26px; padding: 12px 16px;
+    background: var(--verde); color: var(--bianco); border-radius: 8px;
+    text-decoration: none; font-variant: small-caps; letter-spacing: .04em; font-size: 0.98rem;
+  }
+  .tenda-lente:hover{ background: var(--verde-scuro); }
 </style>
 </head>
 <body>
+
+<div class="tenda-scrim" id="tenda-scrim"></div>
+<aside class="tenda-concetto" id="tenda-concetto" aria-hidden="true">
+  <div class="tenda-testata">
+    <div>
+      <span class="tenda-eyebrow">Dal vocabolario dell'ontologia</span>
+      <span class="tenda-titolo" id="tenda-titolo"></span>
+    </div>
+    <button class="tenda-chiudi" id="tenda-chiudi" aria-label="Chiudi">×</button>
+  </div>
+  <p class="tenda-nota" id="tenda-nota"></p>
+  <div id="tenda-corpo"></div>
+  <a class="tenda-lente" id="tenda-link-lente" href="#" target="_blank" rel="noopener">Apri nella Lente semantica →</a>
+</aside>
 
 <nav class="sidebar" aria-label="Indice del saggio">
   <div class="sidebar-kicker">Indice</div>
@@ -442,8 +561,8 @@
     <div class="wrap">
       <div class="kicker">Meccanismo · 2 · Probabilità e linguaggio · Unità 2.1</div>
       <h1>Quando il telefono suggerisce la parola successiva, <em>che cosa sta facendo davvero?</em></h1>
-      <p class="lede dim">È un'esperienza quotidiana, quasi banale: si comincia a scrivere una frase e il telefono, o il motore di ricerca, propone già la parola più probabile. «Il gatto è salito sul ___» — quasi chiunque, senza pensarci, completa con «tetto» o «divano», non con «vulcano» o «frigorifero». Questo modulo prende sul serio proprio tale compito, apparentemente ovvio: prevedere la parola successiva.</p>
-      <p class="dim">È lo stesso compito, reso esplicito, già chiamato «completamento statistico» in Genealogia · 2.1 di questo corso: non comprensione, non ragionamento — un calcolo su ciò che è probabile, dato ciò che è già scritto.</p>
+      <p class="lede dim">È un'esperienza quotidiana, quasi banale: si comincia a scrivere una frase e il telefono, o il motore di ricerca, propone già la parola più probabile. «Il gatto è salito sul ___» — quasi chiunque, senza pensarci, completa con «tetto» o «divano», non con «vulcano» o «frigorifero». Questo modulo prende sul serio proprio tale compito, apparentemente ovvio: <button class="termine-concetto" data-concetto="ProbabilitaEPrevisioneLinguistica">prevedere la parola successiva</button>.</p>
+      <p class="dim">È lo stesso compito, reso esplicito, già chiamato «<button class="termine-concetto" data-concetto="CompletamentoStatistico">completamento statistico</button>» in Genealogia · 2.1 di questo corso: non comprensione, non ragionamento — un calcolo su ciò che è probabile, dato ciò che è già scritto.</p>
       <div class="scrolldown">un compito che sembra ovvio, e non lo è</div>
     </div>
   </section>
@@ -536,7 +655,7 @@
 
       <div class="aside">
         <span class="label">Filo discreto/continuo</span>
-        <p>È la prima vera crepa nel discreto di questo corso. I simboli — le parole — restano discreti: «tetto» non sfuma in «divano». Ma il numero che li accompagna, la probabilità, è per la prima volta un valore reale fra 0 e 1, non più solo zero o uno. Il modulo precedente, Meccanismo · 1, si era chiuso proprio anticipando questo momento.</p>
+        <p>È la prima vera crepa nel discreto di questo corso. I simboli — le parole — restano discreti: «tetto» non sfuma in «divano». Ma il numero che li accompagna, la probabilità, è per la prima volta <button class="termine-concetto" data-concetto="ProbabilitaComeNumeroReale">un valore reale fra 0 e 1</button>, non più solo zero o uno. Il modulo precedente, Meccanismo · 1, si era chiuso proprio anticipando questo momento.</p>
       </div>
     </div>
   </section>
@@ -545,7 +664,7 @@
     <div class="wrap reveal">
       <div class="eyebrow">Un nome tecnico per quello che sta succedendo</div>
       <h2 class="title">Contare per prevedere è induzione, non deduzione</h2>
-      <p>Una deduzione applica una regola certa a premesse certe, e arriva a una conclusione altrettanto certa. Ciò che il componente qui sopra fa è diverso per natura: osserva casi passati (le frasi del corpus) e ne generalizza una regola probabile, non certa — «sul» è seguito da «divano» più spesso che da «tavolo», ma nulla lo garantisce per la prossima frase. Questo procedimento ha un nome preciso in logica: <strong>induzione</strong>.</p>
+      <p>Una deduzione applica una regola certa a premesse certe, e arriva a una conclusione altrettanto certa. Ciò che il componente qui sopra fa è diverso per natura: osserva casi passati (le frasi del corpus) e ne generalizza una regola probabile, non certa — «sul» è seguito da «divano» più spesso che da «tavolo», ma nulla lo garantisce per la prossima frase. Questo procedimento ha un nome preciso in logica: <strong><button class="termine-concetto" data-concetto="Induzione">induzione</button></strong>.</p>
 
       <div class="aside">
         <span class="label">Da Genealogia · 2.2</span>
@@ -558,9 +677,9 @@
     <div class="wrap reveal">
       <div class="eyebrow">Un debito che si paga qui</div>
       <h2 class="title">Cosa significa che una previsione è calibrata</h2>
-      <p>In Genealogia · 2.2 era stato lasciato un debito esplicito, mai onorato in forma tecnica: «un tema che tornerà, quando si parlerà di calibrazione». È qui, nel punto esatto in cui nasce per la prima volta una probabilità in uscita da un modello, che va saldato. Un modello è <strong>calibrato</strong> se, fra tutte le previsioni fatte con una data confidenza — diciamo il 70% — circa il 70% di quelle previsioni risulta poi effettivamente corretta. Non è una proprietà automatica: va misurata.</p>
+      <p>In Genealogia · 2.2 era stato lasciato un debito esplicito, mai onorato in forma tecnica: «un tema che tornerà, quando si parlerà di calibrazione». È qui, nel punto esatto in cui nasce per la prima volta una probabilità in uscita da un modello, che va saldato. Un modello è <strong><button class="termine-concetto" data-concetto="Calibrazione">calibrato</button></strong> se, fra tutte le previsioni fatte con una data confidenza — diciamo il 70% — circa il 70% di quelle previsioni risulta poi effettivamente corretta. Non è una proprietà automatica: va misurata.</p>
 
-      <p>Il diagramma qui sotto (un <em>reliability diagram</em>) mostra una misura reale, non illustrativa: la tabella di bigrammi di questo stesso corpus è stata costruita solo su 34 frasi di addestramento; le restanti 12 frasi, mai viste da quella tabella, sono servite a verificare 65 previsioni. Ogni previsione è stata raggruppata per la confidenza dichiarata, e per ciascun gruppo è stata misurata l'accuratezza reale.</p>
+      <p>Il diagramma qui sotto (un <em><button class="termine-concetto" data-concetto="ReliabilityDiagram">reliability diagram</button></em>) mostra una misura reale, non illustrativa: la tabella di bigrammi di questo stesso corpus è stata costruita solo su 34 frasi di addestramento; le restanti 12 frasi, mai viste da quella tabella, sono servite a verificare 65 previsioni. Ogni previsione è stata raggruppata per la confidenza dichiarata, e per ciascun gruppo è stata misurata l'accuratezza reale.</p>
 
       <div class="playground">
         <span class="ptitle">Diagramma di calibrazione — confidenza dichiarata vs accuratezza reale</span>
@@ -608,7 +727,7 @@
   <section id="u3-sez-ngrammi">
     <div class="wrap reveal">
       <div class="eyebrow">Generalizzare il conteggio</div>
-      <h2 class="title">Un n-gramma è solo una finestra di N parole</h2>
+      <h2 class="title"><button class="termine-concetto" data-concetto="Ngramma">Un n-gramma è solo una finestra di N parole</button></h2>
       <p>Un unigramma è un n-gramma con N=1, un bigramma con N=2. Un <strong>trigramma</strong> (N=3) guarda le ultime tre parole; e così via. Il principio non cambia mai: contare quante volte una parola ha seguito una data finestra di contesto, nel corpus a disposizione. Cambia solo l'ampiezza della finestra — e, come si vedrà, cambiano le conseguenze di quella scelta.</p>
 
       <p>Il componente qui sotto è la versione completa del predittore visto nelle unità precedenti: uno slider regola l'ampiezza della finestra da 1 a 3 parole. Lo sposti osservando lo stesso prefisso.</p>
@@ -619,7 +738,7 @@
     <div class="wrap reveal">
       <div class="eyebrow">L'assunzione di Markov</div>
       <h2 class="title">Solo il passato recente conta — per ipotesi, non per certezza</h2>
-      <p>Limitarsi a una finestra piccola invece di guardare l'intera frase fin dall'inizio è una scelta esplicita, con un nome: <strong>assunzione di Markov</strong> — l'idea che il futuro dipenda solo da un pezzo finito e recente del passato, non dalla sua storia intera. Non è un'idea nata per il linguaggio: una previsione del tempo di domani si basa soprattutto sulle condizioni di oggi, non sul dettaglio di ogni giorno dell'ultimo decennio; in molti giochi da tavolo (dama, backgammon) ciò che conta per la mossa successiva è la posizione attuale sul tabellone, non l'intera sequenza di mosse che ci ha portato lì.</p>
+      <p>Limitarsi a una finestra piccola invece di guardare l'intera frase fin dall'inizio è una scelta esplicita, con un nome: <strong><button class="termine-concetto" data-concetto="AssunzioneDiMarkov">assunzione di Markov</button></strong> — l'idea che il futuro dipenda solo da un pezzo finito e recente del passato, non dalla sua storia intera. Non è un'idea nata per il linguaggio: una previsione del tempo di domani si basa soprattutto sulle condizioni di oggi, non sul dettaglio di ogni giorno dell'ultimo decennio; in molti giochi da tavolo (dama, backgammon) ciò che conta per la mossa successiva è la posizione attuale sul tabellone, non l'intera sequenza di mosse che ci ha portato lì.</p>
 
       <div class="playground">
         <span class="ptitle">Playground — predittore n-grammi, finestra regolabile</span>
@@ -703,7 +822,7 @@
     <div class="wrap reveal">
       <div class="eyebrow">Il problema più profondo: dipendenze lontane</div>
       <h2 class="title">Alcuni accordi grammaticali non stanno in nessuna finestra piccola</h2>
-      <p>La sparsità è un problema di dati: si attenua (non scompare mai del tutto) con un corpus più grande. Le <strong>dipendenze lontane</strong> sono un problema diverso, strutturale: in una frase con un inciso o una subordinata annidata, due parole grammaticalmente legate — un soggetto e il suo verbo, per esempio — possono trovarsi separate da molte parole. Nessuna finestra fissa di ampiezza piccola può contenerle entrambe insieme, per costruzione, indipendentemente da quanti dati si aggiungano.</p>
+      <p>La sparsità è un problema di dati: si attenua (non scompare mai del tutto) con un corpus più grande. Le <strong><button class="termine-concetto" data-concetto="DipendenzeLungoRaggio">dipendenze lontane</button></strong> sono un problema diverso, strutturale: in una frase con un inciso o una subordinata annidata, due parole grammaticalmente legate — un soggetto e il suo verbo, per esempio — possono trovarsi separate da molte parole. Nessuna finestra fissa di ampiezza piccola può contenerle entrambe insieme, per costruzione, indipendentemente da quanti dati si aggiungano.</p>
 
       <div class="dep-diagram">
         <p class="dep-sentence"><span class="dep-highlight">Il gatto</span>, che ieri sera aveva dormito tutto il pomeriggio sul divano del salotto, <span class="dep-highlight">salta</span> sul tavolo.</p>
@@ -727,7 +846,7 @@
     <div class="wrap reveal">
       <div class="eyebrow">Il quadro</div>
       <h2 class="title">Due limiti diversi, nessuno risolvibile allargando la finestra</h2>
-      <p>Allargare la finestra aiuta con la sparsità in alcuni casi (previsioni più nitide, quando i dati ci sono) ma la peggiora in altri (contesti più specifici, meno probabili da aver visto). E nessuna finestra, per quanto ampia, risolve le dipendenze lontane in linea di principio: si può sempre costruire una frase con un inciso più lungo della finestra scelta. Il problema non è la quantità di dati o l'ampiezza della finestra — è l'idea stessa di finestra fissa.</p>
+      <p>Allargare la finestra aiuta con la <button class="termine-concetto" data-concetto="Sparsita">sparsità</button> in alcuni casi (previsioni più nitide, quando i dati ci sono) ma la peggiora in altri (contesti più specifici, meno probabili da aver visto). E nessuna finestra, per quanto ampia, risolve le dipendenze lontane in linea di principio: si può sempre costruire una frase con un inciso più lungo della finestra scelta. Il problema non è la quantità di dati o l'ampiezza della finestra — è l'idea stessa di finestra fissa.</p>
     </div>
   </section>
 
@@ -920,6 +1039,141 @@
     });
   }
   renderDiagrammaCalibrazione();
+
+  // ============ termini collegati all'ontologia + tenda laterale ============
+  const CONCETTI = {
+    ProbabilitaEPrevisioneLinguistica: {
+      label: "Probabilità e previsione linguistica",
+      nota: "Il Modulo 2: la prima crepa nel discreto, dal conteggio di frequenze alla previsione probabilistica.",
+      specifici: ["Assunzione di Markov","Calibrazione","Completamento statistico","Dipendenze a lungo raggio","Induzione","N-gramma","Probabilità (come numero reale)","Reliability diagram","Sparsità"],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Meccanismo · 2.1","Prevedere la parola successiva"],["Meccanismo · 2.2","Unigrammi/bigrammi, induzione, calibrazione"],["Meccanismo · 2.3","N-grammi e assunzione di Markov"],["Meccanismo · 2.4","Sparsità e dipendenze lontane"]]
+    },
+    ProbabilitaComeNumeroReale: {
+      label: "Probabilità (come numero reale)",
+      nota: "Prima «crepa nel discreto»: gradazione continua fra 0 e 1, non più solo vero/falso.",
+      specifici: [],
+      relazioni: [["È analogo a","Softmax"]],
+      teorici: [],
+      discussoIn: [["Meccanismo · 2.2","Unigrammi/bigrammi, induzione, calibrazione"]]
+    },
+    Induzione: {
+      label: "Induzione",
+      nota: "Generalizzare da casi osservati (conteggio di frequenze) a una regola probabile, non certa.",
+      specifici: [],
+      relazioni: [["È esemplificato da","N-gramma"]],
+      teorici: [],
+      discussoIn: [["Meccanismo · 2.2","Unigrammi/bigrammi, induzione, calibrazione"]]
+    },
+    ReliabilityDiagram: {
+      label: "Reliability diagram",
+      tag: "Tecnica",
+      nota: "Grafico confidenza dichiarata vs. accuratezza reale, usato per misurare la calibrazione.",
+      specifici: [],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Meccanismo · 2.2","Unigrammi/bigrammi, induzione, calibrazione"]]
+    },
+    Calibrazione: {
+      label: "Calibrazione",
+      nota: "Proprietà per cui, tra le previsioni fatte con una data confidenza, quella percentuale risulta poi effettivamente corretta.",
+      specifici: [],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Genealogia · 2.2","Interpolazione, pesi statistici, metacognizione"],["Meccanismo · 2.2","Unigrammi/bigrammi, induzione, calibrazione"]]
+    },
+    Ngramma: {
+      label: "N-gramma",
+      nota: "Finestra di N parole di contesto usata per contare e prevedere la parola successiva.",
+      specifici: [],
+      relazioni: [["Esemplifica","Induzione"]],
+      teorici: [],
+      discussoIn: [["Meccanismo · 2.3","N-grammi e assunzione di Markov"]]
+    },
+    AssunzioneDiMarkov: {
+      label: "Assunzione di Markov",
+      nota: "Ipotesi che il futuro dipenda solo da una finestra recente e finita del passato, non dall'intera storia.",
+      specifici: [],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Meccanismo · 2.3","N-grammi e assunzione di Markov"]]
+    },
+    Sparsita: {
+      label: "Sparsità",
+      nota: "Assenza, nei dati, di combinazioni specifiche di contesto: la previsione di un n-gramma si azzera, non si indebolisce.",
+      specifici: [],
+      relazioni: [["È spiegato da","ID numerico (token ID)"]],
+      teorici: [],
+      discussoIn: [["Meccanismo · 2.4","Sparsità e dipendenze lontane"],["Meccanismo · 3.1","Il problema lasciato aperto"]]
+    },
+    DipendenzeLungoRaggio: {
+      label: "Dipendenze a lungo raggio",
+      nota: "Legami grammaticali fra parole lontane nella frase, invisibili per costruzione a una finestra fissa piccola.",
+      specifici: [],
+      relazioni: [["È risolto da","Attention"]],
+      teorici: [],
+      discussoIn: [["Meccanismo · 2.4","Sparsità e dipendenze lontane"],["Meccanismo · 5.1","Il problema che l'attenzione risolve"]]
+    },
+    CompletamentoStatistico: {
+      label: "Completamento statistico",
+      nota: "Stima del token più probabile dato il testo precedente; l'unica cosa che un LLM fa, alla radice.",
+      specifici: [],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Genealogia · 2.1","Completamento statistico a scala massiva, in-context learning, transfer cross-dominio e altre capacità emergenti"],["Meccanismo · 2.1","Prevedere la parola successiva"]]
+    }
+  };
+
+  const tendaEl = document.getElementById('tenda-concetto');
+  const scrimEl = document.getElementById('tenda-scrim');
+  const tendaTitolo = document.getElementById('tenda-titolo');
+  const tendaNota = document.getElementById('tenda-nota');
+  const tendaCorpo = document.getElementById('tenda-corpo');
+  const tendaLinkLente = document.getElementById('tenda-link-lente');
+  let ultimoTermineAperto = null;
+
+  function sezioneLista(titolo, voci, render){
+    if(!voci || !voci.length) return '';
+    return `<div class="tenda-sezione"><h3>${titolo}</h3><ul class="tenda-lista">${voci.map(render).join('')}</ul></div>`;
+  }
+
+  function apriTenda(id, triggerEl){
+    const c = CONCETTI[id];
+    if(!c) return;
+    if(ultimoTermineAperto) ultimoTermineAperto.classList.remove('aperto');
+    ultimoTermineAperto = triggerEl || null;
+    if(triggerEl) triggerEl.classList.add('aperto');
+
+    tendaTitolo.innerHTML = c.label + (c.tag ? `<span class="tag">${c.tag}</span>` : '');
+    tendaNota.textContent = c.nota;
+    tendaCorpo.innerHTML =
+      sezioneLista('Concetti più specifici', c.specifici, v => `<li>${v}</li>`) +
+      sezioneLista('Relazioni con altri concetti', c.relazioni, r => `<li><span class="rel-tipo">${r[0]}</span> ${r[1]}</li>`) +
+      sezioneLista('Teorici', c.teorici, t => `<li><span class="rel-tipo">Teorizzato da</span> ${t}</li>`) +
+      sezioneLista('Discusso in', c.discussoIn, d => `<li><span class="tenda-unita-cod">${d[0]}</span> — ${d[1]}</li>`);
+    tendaLinkLente.href = `../../../ontologia/lente-semantica/output/index.html#${id}`;
+
+    tendaEl.classList.add('visibile');
+    tendaEl.setAttribute('aria-hidden', 'false');
+    scrimEl.classList.add('visibile');
+  }
+
+  function chiudiTenda(){
+    tendaEl.classList.remove('visibile');
+    tendaEl.setAttribute('aria-hidden', 'true');
+    scrimEl.classList.remove('visibile');
+    if(ultimoTermineAperto) ultimoTermineAperto.classList.remove('aperto');
+    ultimoTermineAperto = null;
+  }
+
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.termine-concetto');
+    if(btn){ apriTenda(btn.dataset.concetto, btn); return; }
+    if(e.target === scrimEl){ chiudiTenda(); }
+  });
+  document.getElementById('tenda-chiudi').addEventListener('click', chiudiTenda);
+  document.addEventListener('keydown', (e) => { if(e.key === 'Escape') chiudiTenda(); });
 </script>
 
 </body>

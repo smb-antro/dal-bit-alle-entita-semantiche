@@ -1,9 +1,11 @@
-/* Lente semantica — riusa i font e i token di colore del sito principale
-   (../../output/style.css) invece di duplicarli o inventarne di nuovi. Il
-   verde resta riservato a numerazione/rimandi, come nel resto del sito — le
-   4 categorie di relazione e i 7 gruppi di nodi sotto usano due palette
-   separate, deliberatamente diverse dal verde e diverse fra loro (colore =
-   tipo di relazione contro colore = tipo di nodo non devono sovrapporsi). */
+/* Lente semantica — riarmonizzata sulla palette generale del portfolio
+   (bianco/brina/inchiostro/grigio + blu/arancio/verde, la stessa ora usata da
+   ontologia/output/style.css e da dominio/), con VERDE come accento proprio
+   della Lente/ontologia — lo stesso ruolo che arancio-scuro ha nel saggio,
+   deciso dopo che la tenda dei concetti nel saggio aveva già scelto verde per
+   segnalare "si entra nell'ontologia". Le 4 categorie di relazione e i 7
+   gruppi di nodo sotto restano ESATTAMENTE come erano — sono palette
+   categoriali già validate (dataviz, separazione CVD), non toccate. */
 
 @font-face {
     font-family: "EB Garamond";
@@ -21,33 +23,27 @@
 }
 
 :root {
-    --carta: #faf7f0;
-    --carta-alt: #f2ede1;
-    --inchiostro: #1e1a15;
-    --inchiostro-attenuato: #5a5245;
-    --bordo: #ddd3bd;
-    --verde: #1f5c3d;
-    --verde-tenue: #e8efe9;
+    --bianco:        #FFFFFF;
+    --brina:         #F6F8FB;
+    --inchiostro:    #1a1a1a;
+    --grigio-testo:  #4a4540;
+    --grigio-soft:   #8A8580;
+    --verde-scuro:   #2A5628;
+    --verde:         #3D7A3A;
+    --verde-chiaro:  #7AAD76;
+    --line:          rgba(26,26,26,0.12);
 
-    /* Palette delle 4 categorie di relazione — separata dal verde. Le varianti
-       -tenue sono state rialzate di luminosità (contrasto reale ~1.05:1 contro
-       carta prima della correzione, praticamente invisibili come fill dei
-       satelliti — vedi docs/decisioni-modellazione.md, sezione Lente semantica). */
-    --cat-gerarchia: #5a5245;      /* stesso grigio-bruno di --inchiostro-attenuato */
-    --cat-concettuale: #a8543a;    /* terracotta */
-    --cat-attribuzione: #6b4a7a;   /* prugna */
-    --cat-struttura: #4a6b7a;      /* blu ardesia */
+    /* Palette delle 4 categorie di relazione — invariata. */
+    --cat-gerarchia: #5a5245;
+    --cat-concettuale: #a8543a;
+    --cat-attribuzione: #6b4a7a;
+    --cat-struttura: #4a6b7a;
     --cat-gerarchia-tenue: #c2baae;
     --cat-concettuale-tenue: #dca493;
     --cat-attribuzione-tenue: #bea5ca;
     --cat-struttura-tenue: #a5beca;
 
-    /* Palette dei 7 gruppi di nodi (sidebar) — famiglie di tinta diverse dalle
-       4 sopra, validata con la skill dataviz (separazione CVD, soglia a vista
-       normale, contrasto vs carta) contro le superfici reali di questa pagina.
-       --grp-altro è un grigio neutro deliberato (gruppo residuale), non un
-       errore di validazione: fallisce apposta i controlli di croma/luminosità
-       categoriale, stessa logica del grigio neutro di un punto medio divergente. */
+    /* Palette dei 7 gruppi di nodi — invariata. */
     --grp-concetto: #b1652f;
     --grp-teorico: #327aae;
     --grp-unita: #5f8627;
@@ -58,10 +54,10 @@
 }
 
 * { box-sizing: border-box; }
-html { background: var(--carta); }
+html { background: var(--brina); }
 body {
     margin: 0;
-    background: var(--carta);
+    background: var(--brina);
     color: var(--inchiostro);
     font-family: "EB Garamond", "Iowan Old Style", Georgia, serif;
     font-size: 1.05rem;
@@ -70,41 +66,41 @@ body {
 
 .pagina-lente { max-width: 78rem; margin: 0 auto; padding: 1.4rem 1.5rem 3rem; }
 
-a { color: var(--inchiostro); text-decoration-color: var(--bordo); }
-a:hover { text-decoration-color: var(--verde); }
+a { color: var(--verde); text-decoration-color: var(--grigio-soft); }
+a:hover { text-decoration-color: var(--verde-scuro); }
 
 .apparato, .briciole-root, .toggle-grado, .codice-cat {
     font-variant-caps: small-caps;
     letter-spacing: 0.06em;
     font-size: 0.82rem;
-    color: var(--inchiostro-attenuato);
+    color: var(--grigio-soft);
 }
 .briciole-root { display: block; margin-bottom: 1.5rem; }
-.briciole-root a { color: var(--inchiostro-attenuato); }
-.briciole-root .sep { color: var(--bordo); margin: 0 0.4em; }
+.briciole-root a { color: var(--grigio-soft); }
+.briciole-root .sep { color: var(--grigio-soft); margin: 0 0.4em; }
 
-.testata-lente { border-bottom: 1px solid var(--bordo); padding-bottom: 0.8rem; margin-bottom: 1rem; }
+.testata-lente { border-bottom: 1px solid var(--line); padding-bottom: 0.8rem; margin-bottom: 1rem; }
 .testata-lente h1 { font-weight: 600; font-size: 1.8rem; margin: 0.2rem 0 0.3rem; }
-.testata-lente .sottotitolo { font-style: italic; color: var(--inchiostro-attenuato); max-width: 46rem; margin: 0; }
+.testata-lente .sottotitolo { font-style: italic; color: var(--grigio-testo); max-width: 46rem; margin: 0; }
 
 .controlli-riga { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.8rem; }
 .toggle-grado {
     font-family: inherit;
-    background: var(--carta);
-    border: 1px solid var(--bordo);
+    background: var(--bianco);
+    border: 1px solid var(--line);
     padding: 0.3em 0.9em;
     cursor: pointer;
     color: var(--inchiostro);
 }
-.toggle-grado.attivo { background: var(--inchiostro); color: var(--carta); border-color: var(--inchiostro); }
-.toggle-grado:not(.attivo):hover { border-color: var(--verde); background: var(--carta-alt); }
+.toggle-grado.attivo { background: var(--verde); color: var(--bianco); border-color: var(--verde); }
+.toggle-grado:not(.attivo):hover { border-color: var(--verde); background: var(--brina); }
 
 .corpo-lente { display: grid; grid-template-columns: 17rem 1fr; gap: 1.2rem; align-items: start; }
 @media (max-width: 52rem) { .corpo-lente { grid-template-columns: 1fr; } }
 
 .sidebar-lente {
-    border: 1px solid var(--bordo);
-    background: var(--carta-alt);
+    border: 1px solid var(--line);
+    background: var(--bianco);
     height: 40rem;
     min-height: 0; /* necessario dentro un grid item perché max-height/overflow funzionino */
     display: flex;
@@ -115,7 +111,7 @@ a:hover { text-decoration-color: var(--verde); }
     font-size: 0.95rem;
     padding: 0.6em 0.8em;
     border: none;
-    border-bottom: 1px solid var(--bordo);
+    border-bottom: 1px solid var(--line);
     background: transparent;
     color: var(--inchiostro);
 }
@@ -126,7 +122,7 @@ a:hover { text-decoration-color: var(--verde); }
    volte, una per gruppo, e non deve più scorrere ciascuna per conto suo). */
 #lista-nodi { overflow-y: auto; flex: 1; min-height: 0; }
 
-.gruppo-nodi { border-bottom: 1px solid var(--bordo); }
+.gruppo-nodi { border-bottom: 1px solid var(--line); }
 .gruppo-nodi summary {
     display: flex;
     align-items: center;
@@ -143,12 +139,12 @@ a:hover { text-decoration-color: var(--verde); }
     content: "▸";
     display: inline-block;
     width: 1em;
-    color: var(--inchiostro-attenuato);
+    color: var(--grigio-soft);
     transition: transform 0.15s ease;
 }
 .gruppo-nodi[open] > summary::before { transform: rotate(90deg); }
 .gruppo-nodi[open] > summary,
-.gruppo-nodi summary:hover { background: var(--carta); }
+.gruppo-nodi summary:hover { background: var(--brina); }
 .gruppo-nodi .nome-gruppo { flex: 1; }
 .conteggio-gruppo { color: var(--verde); font-variant-numeric: tabular-nums; }
 
@@ -157,24 +153,24 @@ a:hover { text-decoration-color: var(--verde); }
     display: flex; justify-content: space-between; align-items: baseline;
     gap: 0.6em;
     padding: 0.32em 0.7em;
-    border-bottom: 1px dotted var(--bordo);
+    border-bottom: 1px dotted var(--line);
     border-left: 3px solid transparent;
     cursor: pointer;
     font-size: 0.92rem;
 }
-.lista-nodi li:hover { background: var(--carta); border-left-color: var(--colore-gruppo, var(--bordo)); }
-.lista-nodi li.selezionato { background: var(--inchiostro); color: var(--carta); border-left-color: var(--inchiostro); }
+.lista-nodi li:hover { background: var(--brina); border-left-color: var(--colore-gruppo, var(--line)); }
+.lista-nodi li.selezionato { background: var(--verde); color: var(--bianco); border-left-color: var(--verde); }
 .lista-nodi .nome { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .lista-nodi .grado { color: var(--verde); font-variant-numeric: tabular-nums; flex-shrink: 0; }
-.lista-nodi li.selezionato .grado { color: var(--carta); }
+.lista-nodi li.selezionato .grado { color: var(--bianco); }
 
 .pannello-grafo { min-width: 0; }
-.breadcrumb-nodo { margin-bottom: 0.6rem; font-size: 0.95rem; color: var(--inchiostro-attenuato); }
+.breadcrumb-nodo { margin-bottom: 0.6rem; font-size: 0.95rem; color: var(--grigio-testo); }
 .breadcrumb-nodo strong { color: var(--inchiostro); font-weight: 600; }
 .breadcrumb-nodo .num { color: var(--verde); }
 
 .grafo-riquadro { position: relative; }
-#svg-grafo { width: 100%; height: auto; display: block; border: 1px solid var(--bordo); background: var(--carta); }
+#svg-grafo { width: 100%; height: auto; display: block; border: 1px solid var(--line); background: var(--bianco); }
 
 .badge-relazione {
     position: absolute;
@@ -192,12 +188,12 @@ a:hover { text-decoration-color: var(--verde); }
 }
 .badge-relazione.visibile { opacity: 1; }
 
-.nodo-centro circle { fill: var(--carta); stroke: var(--inchiostro); stroke-width: 2; }
+.nodo-centro circle { fill: var(--bianco); stroke: var(--inchiostro); stroke-width: 2; }
 
 .satellite circle { stroke-width: 1.5; cursor: pointer; }
 .satellite text { font-size: 11.5px; cursor: pointer; }
 .satellite:hover circle { stroke-width: 3.5; }
-.satellite:hover text { fill: var(--verde); }
+.satellite:hover text { fill: var(--verde-scuro); }
 .linea-guida { stroke-width: 1; opacity: 0.55; }
 
 .satellite-2 circle { cursor: pointer; opacity: 0.6; }
@@ -213,20 +209,20 @@ svg[data-nascondi~="concettuale"] [data-cat="concettuale"],
 svg[data-nascondi~="attribuzione"] [data-cat="attribuzione"],
 svg[data-nascondi~="struttura"] [data-cat="struttura"] { opacity: 0.12; }
 
-.legenda { display: flex; flex-wrap: wrap; gap: 0.9rem; margin-top: 0.8rem; font-size: 0.85rem; color: var(--inchiostro-attenuato); }
+.legenda { display: flex; flex-wrap: wrap; gap: 0.9rem; margin-top: 0.8rem; font-size: 0.85rem; color: var(--grigio-testo); }
 .legenda .voce {
     display: inline-flex; align-items: center; gap: 0.4em;
     font: inherit; color: inherit;
     background: none; border: none; padding: 0; cursor: pointer;
 }
 .legenda .voce:hover { color: var(--inchiostro); }
-.legenda .voce[aria-pressed="false"] { opacity: 0.45; text-decoration: line-through; text-decoration-color: var(--bordo); }
+.legenda .voce[aria-pressed="false"] { opacity: 0.45; text-decoration: line-through; text-decoration-color: var(--grigio-soft); }
 .pallino { width: 0.7em; height: 0.7em; border-radius: 50%; display: inline-block; flex-shrink: 0; }
 
 .glossario-lente { margin-top: 1rem; font-size: 0.85rem; }
 .glossario-lente > summary {
     cursor: pointer;
-    color: var(--inchiostro-attenuato);
+    color: var(--grigio-testo);
     font-variant-caps: small-caps;
     letter-spacing: 0.05em;
 }
@@ -243,6 +239,6 @@ svg[data-nascondi~="struttura"] [data-cat="struttura"] { opacity: 0.12; }
 }
 .glossario-categoria dl { margin: 0; font-size: 0.82rem; }
 .glossario-categoria dt { color: var(--inchiostro); font-weight: 600; }
-.glossario-categoria dd { margin: 0 0 0.5em; color: var(--inchiostro-attenuato); }
+.glossario-categoria dd { margin: 0 0 0.5em; color: var(--grigio-testo); }
 
-.piede-lente { margin-top: 2.5rem; padding-top: 1rem; border-top: 1px solid var(--bordo); font-size: 0.85rem; color: var(--inchiostro-attenuato); }
+.piede-lente { margin-top: 2.5rem; padding-top: 1rem; border-top: 1px solid var(--line); font-size: 0.85rem; color: var(--grigio-testo); }

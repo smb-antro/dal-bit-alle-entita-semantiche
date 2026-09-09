@@ -4,105 +4,140 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Genealogia · 4 — Lo spazio, il corpo, la macchina</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+  @font-face {
+    font-family: 'EB Garamond';
+    src: url('fonts/EBGaramond-Variable.woff2') format('woff2-variations');
+    font-weight: 400 800;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'EB Garamond';
+    src: url('fonts/EBGaramond-Italic-Variable.woff2') format('woff2-variations');
+    font-weight: 400 800;
+    font-style: italic;
+    font-display: swap;
+  }
+
   :root{
-    --bg: #0F2A22;
-    --surface: #173B30;
-    --surface-2: #1E4A3C;
-    --copper: #C97D3D;
-    --copper-bright: #F0A85E;
-    --text: #F2ECE0;
-    --text-dim: #A9BFB6;
-    --line: rgba(242,236,224,0.12);
+    /* palette — vedi ../../../design-system/README.md */
+    --bianco:        #FFFFFF;
+    --brina:         #F6F8FB;
+    --inchiostro:    #1a1a1a;
+    --grigio-testo:  #4a4540;
+    --grigio-soft:   #8A8580;
+    --blu-scuro:     #1F2B6B;
+    --blu:           #2B3A8C;
+    --blu-chiaro:    #5A6FB8;
+    --arancio-scuro: #A85419;
+    --arancio:       #D4722A;
+    --arancio-chiaro:#E9A66B;
+    --verde-scuro:   #2A5628;
+    --verde:         #3D7A3A;
+    --verde-chiaro:  #7AAD76;
+
+    --serif: 'EB Garamond', Garamond, Georgia, 'Times New Roman', serif;
+    --mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+
+    --line: rgba(26,26,26,0.12);
     --rail-w: 300px;
   }
 
   *{ box-sizing: border-box; }
-  html{ scroll-behavior: smooth; }
+  html{ scroll-behavior: smooth; font-size: 120%; }
 
   body{
     margin:0;
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Source Serif 4', Georgia, serif;
+    background: var(--brina);
+    color: var(--inchiostro);
+    font-family: var(--serif);
     line-height: 1.65;
     -webkit-font-smoothing: antialiased;
   }
 
   h1,h2,h3, .display{
-    font-family: 'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
-    font-weight: 600;
-    letter-spacing: -0.01em;
+    font-family: var(--serif);
+    font-weight: 500;
     margin: 0;
   }
-  .mono{ font-family: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace; }
-  a{ color: var(--copper-bright); }
+  .mono{ font-family: var(--mono); }
+  a{ color: var(--arancio-scuro); }
+
+  /* piccola utility per il ruolo "apparato": maiuscoletto spaziato sulla stessa
+     famiglia, non un cambio di font — stesso meccanismo di ontologia/output/style.css
+     e di ~/projects/portfolio/specimen.html (.apparato) */
+  .apparato{
+    font-variant: small-caps;
+    letter-spacing: .06em;
+    color: var(--grigio-soft);
+  }
 
   /* ---------- layout shell: sidebar fissa con indice del sito ---------- */
   .sidebar{
-    background: rgba(15,42,34,0.92);
+    background: var(--bianco);
     border-bottom: 1px solid var(--line);
     padding: 28px 24px 32px;
   }
   .sidebar-kicker{
-    font-family: 'IBM Plex Mono', monospace; font-size: .74rem; letter-spacing: .12em;
-    text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px;
+    font-variant: small-caps; letter-spacing: .06em; font-size: .74rem;
+    color: var(--grigio-soft); margin-bottom: 10px;
   }
   .sidebar-title{
-    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.02rem;
-    color: var(--text); margin-bottom: 22px;
+    font-family: var(--serif); font-weight: 500; font-size: 1.02rem;
+    color: var(--inchiostro); margin-bottom: 22px;
   }
   .sidebar .parte{ margin-top: 26px; }
   .sidebar .parte:first-of-type{ margin-top: 0; }
   .sidebar .parte-heading{
-    font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: .74rem;
-    letter-spacing: .1em; text-transform: uppercase; color: var(--copper-bright);
+    font-family: var(--serif); font-weight: 600; font-size: .74rem;
+    font-variant: small-caps; letter-spacing: .06em; color: var(--blu);
     padding-bottom: 10px; margin-bottom: 2px; border-bottom: 1px solid var(--line);
   }
   .sidebar .voce-semplice{
     display: block; padding: 10px 4px; border-bottom: 1px solid var(--line);
-    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem;
-    color: var(--text); text-decoration: none;
+    font-family: var(--serif); font-weight: 500; font-size: .9rem;
+    color: var(--inchiostro); text-decoration: none;
   }
-  .sidebar .voce-semplice:hover{ color: var(--copper-bright); }
-  .sidebar .voce-semplice.current{ color: var(--copper-bright); }
+  .sidebar .voce-semplice:hover{ color: var(--blu); }
+  .sidebar .voce-semplice.current{ color: var(--blu); }
   .sidebar details.modulo{ border-bottom: 1px solid var(--line); }
   .sidebar details.modulo summary{
     display: flex; align-items: center; gap: 8px; padding: 10px 4px; cursor: pointer;
-    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem; color: var(--text);
+    font-family: var(--serif); font-weight: 500; font-size: .9rem; color: var(--inchiostro);
     list-style: none;
   }
-  .sidebar details.modulo summary.current{ color: var(--copper-bright); }
+  .sidebar details.modulo summary.current{ color: var(--blu); }
   .sidebar details.modulo summary::-webkit-details-marker{ display: none; }
   .sidebar details.modulo summary::before{
-    content: "›"; display: inline-block; font-family: 'IBM Plex Mono', monospace;
-    color: var(--text-dim); transition: transform .15s ease; flex-shrink: 0;
+    content: "›"; display: inline-block;
+    color: var(--grigio-soft); transition: transform .15s ease; flex-shrink: 0;
   }
-  .sidebar details.modulo[open] summary::before{ transform: rotate(90deg); color: var(--copper-bright); }
-  .sidebar details.modulo summary:hover{ color: var(--copper-bright); }
+  .sidebar details.modulo[open] summary::before{ transform: rotate(90deg); color: var(--blu); }
+  .sidebar details.modulo summary:hover{ color: var(--blu); }
   .sidebar .unita-list{ padding: 2px 0 12px 22px; display: flex; flex-direction: column; gap: 1px; }
   .sidebar .unita-list a{
-    display: block; padding: 6px 4px; font-size: .82rem; color: var(--text-dim); text-decoration: none;
+    display: block; padding: 6px 4px; font-size: .82rem; color: var(--grigio-testo); text-decoration: none;
   }
-  .sidebar .unita-list a:hover{ color: var(--copper-bright); }
-  .sidebar .unita-list a .num{ color: var(--copper); margin-right: 6px; font-family: 'IBM Plex Mono', monospace; font-size: .74rem; }
+  .sidebar .unita-list a:hover{ color: var(--blu); }
+  .sidebar .unita-list a .num{ color: var(--blu); margin-right: 6px; font-size: .74rem; }
 
-  /* pallini luminosi di scroll-spy, sulle voci dell'unità corrente */
+  /* pallini luminosi di scroll-spy, sulle voci dell'unità corrente — stesso
+     accento blu della sidebar, non arancio: qui il pallino segna "sei qui nella
+     navigazione", ruolo diverso da un rimando arancio nel corpo del testo. */
   .sidebar .unita-list.scrollspy a{ position: relative; padding-left: 20px; }
   .sidebar .unita-list.scrollspy a::before{
     content: "";
     position: absolute; left: 2px; top: 50%;
     width: 7px; height: 7px; border-radius: 50%;
-    background: var(--surface-2); border: 1px solid var(--line);
+    background: var(--brina); border: 1px solid var(--line);
     transform: translateY(-50%);
     transition: background .25s, box-shadow .25s, transform .25s;
   }
-  .sidebar .unita-list.scrollspy a.active{ color: var(--copper-bright); }
+  .sidebar .unita-list.scrollspy a.active{ color: var(--blu); }
   .sidebar .unita-list.scrollspy a.active::before{
-    background: var(--copper-bright);
-    box-shadow: 0 0 0 4px rgba(240,168,94,0.18);
+    background: var(--blu);
+    box-shadow: 0 0 0 4px rgba(43,58,140,0.18);
     transform: translateY(-50%) scale(1.2);
   }
 
@@ -122,17 +157,17 @@
   .unit-block:last-child section:last-of-type{ border-bottom:none; }
 
   .eyebrow{
-    font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
-    letter-spacing: 0.12em; text-transform: uppercase; color: var(--copper-bright);
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.78rem;
+    color: var(--grigio-soft);
     margin-bottom: 14px; display:flex; align-items:center; gap:10px;
   }
-  .eyebrow::before{ content:""; width: 22px; height:1px; background: var(--copper-bright); display:inline-block; }
+  .eyebrow::before{ content:""; width: 22px; height:1px; background: var(--grigio-soft); display:inline-block; }
 
   h2.title{ font-size: clamp(1.6rem, 4vw, 2.3rem); margin-bottom: 20px; }
 
-  p{ margin: 0 0 18px; color: var(--text); font-size: 1.05rem; }
-  p.dim{ color: var(--text-dim); }
-  .lede{ font-size: 1.15rem; color: var(--text); }
+  p{ margin: 0 0 18px; color: var(--inchiostro); font-size: 1.05rem; }
+  p.dim{ color: var(--grigio-testo); }
+  .lede{ font-size: 1.15rem; color: var(--inchiostro); }
 
   .reveal{ opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
   .reveal.visible{ opacity:1; transform: translateY(0); }
@@ -142,51 +177,135 @@
   }
 
   .aside{
-    margin: 26px 0; padding: 18px 20px; background: var(--surface);
-    border-left: 3px solid var(--copper); border-radius: 2px;
+    margin: 26px 0; padding: 18px 20px; background: var(--bianco);
+    border-left: 3px solid var(--arancio); border-radius: 2px;
   }
   .aside .label{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--copper-bright); margin-bottom: 8px; display:block;
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.72rem;
+    color: var(--grigio-soft); margin-bottom: 8px; display:block;
   }
-  .aside p{ margin-bottom:0; font-size: 0.96rem; color: var(--text-dim); }
+  .aside p{ margin-bottom:0; font-size: 0.96rem; color: var(--grigio-testo); }
 
   .question{
     margin: 28px 0; padding: 20px 22px; border: 1px dashed var(--line); border-radius: 4px;
-    font-family: 'Space Grotesk', sans-serif; font-size: 1.0rem; color: var(--copper-bright);
+    font-family: var(--serif); font-size: 1.0rem; color: var(--arancio-scuro);
   }
 
   blockquote{
-    margin: 0; padding-left: 22px; border-left: 2px solid var(--copper);
-    font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; color: var(--text);
+    margin: 0; padding-left: 22px; border-left: 2px solid var(--arancio);
+    font-family: var(--serif); font-size: 1.1rem; color: var(--inchiostro);
   }
 
   /* ---------- hero ---------- */
   .hero{ padding-top: 62px; }
   .hero .kicker{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.8rem; letter-spacing: 0.14em;
-    text-transform: uppercase; color: var(--text-dim); margin-bottom: 18px;
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.8rem;
+    color: var(--grigio-soft); margin-bottom: 18px;
   }
   .hero h1{ font-size: clamp(1.9rem, 5.6vw, 2.9rem); line-height:1.12; margin-bottom: 24px; }
-  .hero h1 em{ font-style: normal; color: var(--copper-bright); }
+  .hero h1 em{ font-style: italic; color: var(--arancio-scuro); }
 
   .scrolldown{
-    margin-top: 50px; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem;
-    color: var(--text-dim); letter-spacing: 0.08em; text-transform: uppercase;
+    margin-top: 50px; font-variant: small-caps; font-size: 0.78rem;
+    color: var(--grigio-soft); letter-spacing: 0.06em;
     display:flex; align-items:center; gap:8px;
   }
-  .scrolldown::after{ content:"↓"; color: var(--copper-bright); animation: nudge 1.8s infinite ease-in-out; }
+  .scrolldown::after{ content:"↓"; color: var(--arancio-scuro); animation: nudge 1.8s infinite ease-in-out; }
   @media (prefers-reduced-motion: reduce){ .scrolldown::after{ animation:none; } }
   @keyframes nudge{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(5px); } }
 
   /* ---------- chiusura ---------- */
-  .chiusura{ background: linear-gradient(180deg, var(--bg), var(--surface)); }
+  .chiusura{ background: linear-gradient(180deg, var(--brina), var(--bianco)); }
   .footer-note{
-    margin-top: 46px; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem; color: var(--text-dim);
+    margin-top: 46px; font-variant: small-caps; letter-spacing: .06em; font-size: 0.78rem; color: var(--grigio-soft);
   }
+
+  /* ---------- termini collegati all'ontologia + tenda laterale ----------
+     Verde deliberatamente: è l'unico posto in questo capitolo dove il colore segnala
+     "stai per lasciare il saggio ed entrare nell'ontologia" — un registro diverso
+     dall'arancio (apparato del saggio stesso) e dal blu (navigazione del saggio).
+     Dati e link derivati SOLO da ciò che l'ontologia già espone (pagine
+     ontologia/output/concetti/*.html, sola lettura) — nessuna modifica ai .ttl o
+     agli script Python che li generano. */
+  .termine-concetto{
+    background: none; border: none; padding: 0; margin: 0; cursor: pointer;
+    font: inherit; color: var(--verde);
+    border-bottom: 1px dotted var(--verde);
+    transition: background .15s ease, border-bottom-style .15s ease;
+  }
+  .termine-concetto:hover, .termine-concetto:focus-visible{
+    background: rgba(61,122,58,0.14);
+    border-bottom-style: solid;
+    outline: none;
+  }
+  .termine-concetto.aperto{ background: rgba(61,122,58,0.22); border-bottom-style: solid; }
+
+  .tenda-scrim{
+    position: fixed; inset: 0; background: rgba(26,26,26,0.32);
+    opacity: 0; pointer-events: none; transition: opacity .25s ease; z-index: 90;
+  }
+  .tenda-scrim.visibile{ opacity: 1; pointer-events: auto; }
+
+  .tenda-concetto{
+    position: fixed; top: 0; right: 0; bottom: 0; width: min(420px, 92vw);
+    background: var(--bianco); z-index: 91;
+    box-shadow: -8px 0 28px rgba(26,26,26,0.18);
+    transform: translateX(100%); transition: transform .3s ease;
+    overflow-y: auto; padding: 28px 26px 40px;
+  }
+  .tenda-concetto.visibile{ transform: translateX(0); }
+  .tenda-testata{
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 14px;
+    border-bottom: 2px solid var(--verde); padding-bottom: 16px; margin-bottom: 18px;
+  }
+  .tenda-eyebrow{
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.86rem;
+    color: var(--verde); display: block; margin-bottom: 6px;
+  }
+  .tenda-titolo{ font-family: var(--serif); font-weight: 500; font-size: 1.5rem; color: var(--inchiostro); }
+  .tenda-titolo .tag{
+    font-variant: small-caps; letter-spacing: .04em; font-size: 0.8rem; color: var(--verde);
+    border: 1px solid var(--verde-chiaro); border-radius: 20px; padding: 1px 10px; margin-left: 8px;
+  }
+  .tenda-chiudi{
+    background: none; border: 1px solid var(--line); border-radius: 50%;
+    width: 32px; height: 32px; font-size: 1.1rem; line-height: 1; cursor: pointer;
+    color: var(--grigio-testo); flex-shrink: 0;
+  }
+  .tenda-chiudi:hover{ border-color: var(--verde); color: var(--verde-scuro); }
+  .tenda-nota{ font-size: 1.05rem; color: var(--inchiostro); margin: 0 0 22px; }
+  .tenda-sezione{ margin-bottom: 20px; }
+  .tenda-sezione h3{
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.86rem;
+    color: var(--grigio-soft); font-weight: 500; margin: 0 0 8px;
+  }
+  .tenda-lista{ list-style: none; margin: 0; padding: 0; font-size: 0.98rem; color: var(--grigio-testo); }
+  .tenda-lista li{ margin-bottom: 5px; }
+  .tenda-lista .rel-tipo{ color: var(--verde); font-size: 0.9em; }
+  .tenda-unita-cod{ font-variant: small-caps; color: var(--grigio-soft); font-size: 0.9em; }
+  .tenda-lente{
+    display: block; text-align: center; margin-top: 26px; padding: 12px 16px;
+    background: var(--verde); color: var(--bianco); border-radius: 8px;
+    text-decoration: none; font-variant: small-caps; letter-spacing: .04em; font-size: 0.98rem;
+  }
+  .tenda-lente:hover{ background: var(--verde-scuro); }
 </style>
 </head>
 <body>
+
+<div class="tenda-scrim" id="tenda-scrim"></div>
+<aside class="tenda-concetto" id="tenda-concetto" aria-hidden="true">
+  <div class="tenda-testata">
+    <div>
+      <span class="tenda-eyebrow">Dal vocabolario dell'ontologia</span>
+      <span class="tenda-titolo" id="tenda-titolo"></span>
+    </div>
+    <button class="tenda-chiudi" id="tenda-chiudi" aria-label="Chiudi">×</button>
+  </div>
+  <p class="tenda-nota" id="tenda-nota"></p>
+  <div id="tenda-corpo"></div>
+  <a class="tenda-lente" id="tenda-link-lente" href="#" target="_blank" rel="noopener">Apri nella Lente semantica →</a>
+</aside>
 
 <nav class="sidebar" aria-label="Indice del saggio">
   <div class="sidebar-kicker">Indice</div>
@@ -350,7 +469,7 @@
       <div class="kicker">Genealogia · 4.1</div>
       <h1>Una mano verso un bicchiere. <em>Senza pensarci.</em></h1>
       <p class="lede dim">Allunghi una mano verso un bicchiere sul tavolo. Senza pensarci: sa già quanto è lontano, in che direzione girare il polso, quanta forza serve per sollevarlo senza rovesciarlo. Nessuno di questi calcoli passa mai per la coscienza. Eppure ognuno presuppone una risposta implicita alla domanda più antica e meno ovvia della filosofia: che cos'è, esattamente, lo spazio?</p>
-      <p class="dim">I blocchi precedenti hanno smontato che cosa un LLM sa fare, simula di fare, e non fa affatto — e hanno mostrato che dietro quei limiti c'è quasi sempre la stessa assenza: un corpo. Questo blocco prende quell'assenza sul serio, a partire dalla cosa più data per scontata di tutte: lo spazio in cui il corpo si muove.</p>
+      <p class="dim">I blocchi precedenti hanno smontato che cosa un LLM sa fare, simula di fare, e non fa affatto — e hanno mostrato che dietro quei limiti c'è quasi sempre la stessa assenza: un corpo. Questo blocco prende quell'assenza sul serio, a partire dalla cosa più data per scontata di tutte: <button class="termine-concetto" data-concetto="FilosofiaSpazioECorpo">lo spazio in cui il corpo si muove</button>.</p>
 
       <div class="scrolldown">tre filosofi, tre spazi diversi</div>
     </div>
@@ -359,7 +478,7 @@
   <section id="d1-sez-newton">
     <div class="wrap reveal">
       <div class="eyebrow">Primo spazio</div>
-      <h2 class="title">Newton: lo spazio come contenitore assoluto</h2>
+      <h2 class="title">Newton: <button class="termine-concetto" data-concetto="SpazioContenitoreAssoluto">lo spazio come contenitore assoluto</button></h2>
       <p>Isaac Newton (fine Seicento) tratta lo spazio come un palcoscenico fisico assoluto, esistente indipendentemente da qualunque cosa lo occupi — un contenitore vuoto, misurabile in coordinate, dentro cui gli oggetti si muovono. È lo spazio del senso comune scientifico, quello dei righelli e delle coordinate cartesiane — e anche, in anticipo, lo spazio in cui vivrà ogni sistema di coordinate usato più tardi dalla computer vision.</p>
 
       <div class="aside">
@@ -372,7 +491,7 @@
   <section id="d1-sez-kant">
     <div class="wrap reveal">
       <div class="eyebrow">Secondo spazio</div>
-      <h2 class="title">Kant: lo spazio come forma dell'intuizione</h2>
+      <h2 class="title">Kant: <button class="termine-concetto" data-concetto="SpazioFormaIntuizione">lo spazio come forma dell'intuizione</button></h2>
       <p>Immanuel Kant rovescia la prospettiva: lo spazio non è una proprietà del mondo esterno che la mente scopre, ma una struttura che la mente stessa impone a ogni esperienza possibile — una «forma dell'intuizione», la lente stessa attraverso cui qualunque oggetto può apparirci, non un oggetto essa stessa. Non possiamo mai fare esperienza di qualcosa che non sia già organizzato spazialmente: non è che impariamo lo spazio dall'esperienza, è che l'esperienza stessa è possibile solo perché lo spazio è già lì, come precondizione.</p>
 
       <div class="question">Se lo spazio è (anche in parte) una struttura imposta dalla mente e non solo scoperta nel mondo, che cosa accade quando la «mente» in questione non ha mai avuto un corpo che si muove in quello spazio?</div>
@@ -382,7 +501,7 @@
   <section id="d1-sez-merleau-ponty">
     <div class="wrap reveal">
       <div class="eyebrow">Terzo spazio</div>
-      <h2 class="title">Merleau-Ponty: lo spazio vissuto attraverso il corpo</h2>
+      <h2 class="title">Merleau-Ponty: <button class="termine-concetto" data-concetto="SpazioVissuto">lo spazio vissuto</button> attraverso il corpo</h2>
       <p>Maurice Merleau-Ponty (Novecento, fenomenologia) porta la domanda un passo oltre Kant: lo spazio non è nemmeno solo una struttura mentale astratta — è vissuto attraverso un corpo specifico, situato, orientato. «Destra» e «sinistra» non sono coordinate neutre: esistono perché ha una mano destra e una mano sinistra. «Vicino» e «lontano» non sono misure oggettive pure: sono relative a ciò che il suo corpo può raggiungere, vedere, percorrere in un tempo ragionevole.</p>
 
       <p class="dim">Il bicchiere dell'apertura, ripreso qui: è vicino perché il braccio può allungarsi fin lì; è davanti perché il corpo ha una faccia orientata in una direzione precisa; è piccolo perché viene confrontato, implicitamente, con la mano. Nessuna di queste proprietà — vicino, davanti, piccolo — esiste indipendentemente da un corpo con quelle caratteristiche specifiche.</p>
@@ -393,7 +512,7 @@
     <div class="wrap reveal">
       <div class="eyebrow">La prova empirica</div>
       <h2 class="title">Le illusioni ottiche: la percezione è costruttiva, non passiva</h2>
-      <p>Le illusioni ottiche (dalla scacchiera di Adelson alle illusioni di Müller-Lyer) non sono difetti del sistema percettivo — sono la prova più diretta che la percezione non riceve mai un'immagine neutra del mondo. Costruisce un'ipotesi, la più probabile date le informazioni sensoriali disponibili e le aspettative pregresse — un'idea formalizzata nella «Bayesian brain hypothesis»: il cervello funziona come un motore inferenziale che aggiorna continuamente ipotesi sul mondo, non come una macchina fotografica.</p>
+      <p>Le illusioni ottiche (dalla scacchiera di Adelson alle illusioni di Müller-Lyer) non sono difetti del sistema percettivo — sono la prova più diretta che la percezione non riceve mai un'immagine neutra del mondo. Costruisce un'ipotesi, la più probabile date le informazioni sensoriali disponibili e le aspettative pregresse — un'idea formalizzata nella «<button class="termine-concetto" data-concetto="BayesianBrain">Bayesian brain hypothesis</button>»: il cervello funziona come un motore inferenziale che aggiorna continuamente ipotesi sul mondo, non come una macchina fotografica.</p>
 
       <div class="aside">
         <span class="label">Perché conta per questo corso</span>
@@ -471,12 +590,12 @@
   <section id="d2-sez-gap-sensorimotor">
     <div class="wrap reveal">
       <div class="eyebrow">Il nodo teorico</div>
-      <h2 class="title">Il gap sensorimotor come gap cognitivo</h2>
-      <p>Rodney Brooks, negli anni '80, propone una tesi che ribalta decenni di ricerca in intelligenza artificiale simbolica: forse l'intelligenza non richiede, prima di tutto, rappresentazioni simboliche interne del mondo — richiede corpi, situati in ambienti reali, capaci di agire e reagire senza dover prima costruire un modello simbolico completo di ciò che li circonda. È l'origine della robotica <em>embodied</em>: intelligenza che emerge dall'interazione diretta col mondo, non da un ragionamento astratto che precede l'azione.</p>
+      <h2 class="title">Il <button class="termine-concetto" data-concetto="GapSensorimotor">gap sensorimotor</button> come gap cognitivo</h2>
+      <p>Rodney Brooks, negli anni '80, propone una tesi che ribalta decenni di ricerca in intelligenza artificiale simbolica: forse l'intelligenza non richiede, prima di tutto, rappresentazioni simboliche interne del mondo — richiede corpi, situati in ambienti reali, capaci di agire e reagire senza dover prima costruire un modello simbolico completo di ciò che li circonda. È l'origine della <button class="termine-concetto" data-concetto="RoboticaEmbodied">robotica <em>embodied</em></button>: intelligenza che emerge dall'interazione diretta col mondo, non da un ragionamento astratto che precede l'azione.</p>
 
       <p>Questa tesi si aggancia direttamente al grounding mancante discusso in Genealogia · 3.1: il grounding che manca a un LLM è, in buona parte, grounding <em>sensorimotorio</em> — non semplicemente l'assenza di un riferimento nel mondo in generale, ma specificamente l'assenza di un corpo che si muove in quel mondo.</p>
 
-      <p>George Lakoff e Mark Johnson aggiungono un tassello linguistico diretto: molte metafore concettuali con cui si pensano i concetti astratti hanno un'origine sensorimotoria esplicita. «Capire» si dice, in innumerevoli lingue, come una variante di «afferrare» — capire un'idea è, metaforicamente, prenderla in mano. «Il futuro è davanti a noi» presuppone un corpo orientato che si muove in una direzione. Queste non sono decorazioni retoriche: per Lakoff e Johnson sono la struttura stessa con cui il pensiero astratto viene organizzato, ed è una struttura che nasce dal corpo, non dal linguaggio puro.</p>
+      <p>George Lakoff e Mark Johnson aggiungono un tassello linguistico diretto: molte <button class="termine-concetto" data-concetto="MetaforeConcettuali">metafore concettuali</button> con cui si pensano i concetti astratti hanno un'origine sensorimotoria esplicita. «Capire» si dice, in innumerevoli lingue, come una variante di «afferrare» — capire un'idea è, metaforicamente, prenderla in mano. «Il futuro è davanti a noi» presuppone un corpo orientato che si muove in una direzione. Queste non sono decorazioni retoriche: per Lakoff e Johnson sono la struttura stessa con cui il pensiero astratto viene organizzato, ed è una struttura che nasce dal corpo, non dal linguaggio puro.</p>
 
       <div class="aside">
         <span class="label">Un punto spesso trascurato</span>
@@ -531,6 +650,127 @@
     });
   }, { threshold: 0, rootMargin: '-45% 0px -45% 0px' });
   unitBlocksForSpy.forEach(b => localSpy2.observe(b));
+
+  // ============ termini collegati all'ontologia ============
+  // Dati trascritti a mano da ontologia/output/concetti/*.html (sola lettura, non
+  // generati da script): i concetti con :discussoInUnita verso Gen41/Gen42,
+  // trovati interrogando dati.ttl — non un elenco a occhio nel testo.
+  const CONCETTI = {
+    FilosofiaSpazioECorpo: {
+      label: "Filosofia dello spazio e del corpo",
+      nota: "Genealogia · 4: tre concezioni rivali dello spazio messe a confronto con l'assenza di corpo di un LLM.",
+      specifici: ["Bayesian brain hypothesis","Gap sensorimotor","Metafore concettuali","Robotica embodied","Spazio come contenitore assoluto","Spazio come forma dell'intuizione","Spazio vissuto (attraverso il corpo)"],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Genealogia · 4.1","Cos'è lo spazio? Il corpo come strumento di misura"],["Genealogia · 4.2","Il corpo mancante"]]
+    },
+    SpazioContenitoreAssoluto: {
+      label: "Spazio come contenitore assoluto",
+      nota: "Concezione newtoniana: palcoscenico fisico indipendente da ciò che lo occupa, misurabile in coordinate.",
+      specifici: [],
+      relazioni: [],
+      teorici: ["Isaac Newton"],
+      discussoIn: [["Genealogia · 4.1","Cos'è lo spazio? Il corpo come strumento di misura"]]
+    },
+    SpazioFormaIntuizione: {
+      label: "Spazio come forma dell'intuizione",
+      nota: "Lo spazio come struttura imposta dalla mente all'esperienza possibile, non scoperta nel mondo (Kant).",
+      specifici: [],
+      relazioni: [],
+      teorici: ["Immanuel Kant"],
+      discussoIn: [["Genealogia · 4.1","Cos'è lo spazio? Il corpo come strumento di misura"]]
+    },
+    SpazioVissuto: {
+      label: "Spazio vissuto (attraverso il corpo)",
+      nota: "Lo spazio come relativo a un corpo situato, orientato, che afferra e si muove (Merleau-Ponty).",
+      specifici: [],
+      relazioni: [],
+      teorici: ["Maurice Merleau-Ponty"],
+      discussoIn: [["Genealogia · 4.1","Cos'è lo spazio? Il corpo come strumento di misura"]]
+    },
+    BayesianBrain: {
+      label: "Bayesian brain hypothesis",
+      nota: "Il cervello come motore inferenziale che costruisce ipotesi percettive più probabili, non riceve immagini passive.",
+      specifici: [],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Genealogia · 4.1","Cos'è lo spazio? Il corpo come strumento di misura"]]
+    },
+    GapSensorimotor: {
+      label: "Gap sensorimotor",
+      nota: "Assenza, in un LLM (e in parte in un robot), di un corpo che agisce e percepisce nel mondo fisico.",
+      specifici: [],
+      relazioni: [["È collegato a","Grounding (symbol grounding problem)"]],
+      teorici: [],
+      discussoIn: [["Genealogia · 4.2","Il corpo mancante"]]
+    },
+    RoboticaEmbodied: {
+      label: "Robotica embodied",
+      nota: "Tesi che l'intelligenza richieda corpi situati capaci di agire, non (solo) rappresentazioni simboliche interne (Brooks).",
+      specifici: [],
+      relazioni: [],
+      teorici: ["Rodney Brooks"],
+      discussoIn: [["Genealogia · 4.2","Il corpo mancante"]]
+    },
+    MetaforeConcettuali: {
+      label: "Metafore concettuali",
+      nota: "Strutture del pensiero astratto con origine sensomotoria esplicita («capire» = «afferrare») (Lakoff/Johnson).",
+      specifici: [],
+      relazioni: [],
+      teorici: ["George Lakoff","Mark Johnson"],
+      discussoIn: [["Genealogia · 4.2","Il corpo mancante"]]
+    }
+  };
+
+  const tendaEl = document.getElementById('tenda-concetto');
+  const scrimEl = document.getElementById('tenda-scrim');
+  const tendaTitolo = document.getElementById('tenda-titolo');
+  const tendaNota = document.getElementById('tenda-nota');
+  const tendaCorpo = document.getElementById('tenda-corpo');
+  const tendaLinkLente = document.getElementById('tenda-link-lente');
+  let ultimoTermineAperto = null;
+
+  function sezioneLista(titolo, voci, render){
+    if(!voci || !voci.length) return '';
+    return `<div class="tenda-sezione"><h3>${titolo}</h3><ul class="tenda-lista">${voci.map(render).join('')}</ul></div>`;
+  }
+
+  function apriTenda(id, triggerEl){
+    const c = CONCETTI[id];
+    if(!c) return;
+    if(ultimoTermineAperto) ultimoTermineAperto.classList.remove('aperto');
+    ultimoTermineAperto = triggerEl || null;
+    if(triggerEl) triggerEl.classList.add('aperto');
+
+    tendaTitolo.innerHTML = c.label + (c.tag ? `<span class="tag">${c.tag}</span>` : '');
+    tendaNota.textContent = c.nota;
+    tendaCorpo.innerHTML =
+      sezioneLista('Concetti più specifici', c.specifici, v => `<li>${v}</li>`) +
+      sezioneLista('Relazioni con altri concetti', c.relazioni, r => `<li><span class="rel-tipo">${r[0]}</span> ${r[1]}</li>`) +
+      sezioneLista('Teorici', c.teorici, t => `<li><span class="rel-tipo">Teorizzato da</span> ${t}</li>`) +
+      sezioneLista('Discusso in', c.discussoIn, d => `<li><span class="tenda-unita-cod">${d[0]}</span> — ${d[1]}</li>`);
+    tendaLinkLente.href = `../../../ontologia/lente-semantica/output/index.html#${id}`;
+
+    tendaEl.classList.add('visibile');
+    tendaEl.setAttribute('aria-hidden', 'false');
+    scrimEl.classList.add('visibile');
+  }
+
+  function chiudiTenda(){
+    tendaEl.classList.remove('visibile');
+    tendaEl.setAttribute('aria-hidden', 'true');
+    scrimEl.classList.remove('visibile');
+    if(ultimoTermineAperto) ultimoTermineAperto.classList.remove('aperto');
+    ultimoTermineAperto = null;
+  }
+
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.termine-concetto');
+    if(btn){ apriTenda(btn.dataset.concetto, btn); return; }
+    if(e.target === scrimEl){ chiudiTenda(); }
+  });
+  document.getElementById('tenda-chiudi').addEventListener('click', chiudiTenda);
+  document.addEventListener('keydown', (e) => { if(e.key === 'Escape') chiudiTenda(); });
 </script>
 
 </body>

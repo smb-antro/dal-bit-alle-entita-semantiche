@@ -4,105 +4,140 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Genealogia · 2 — I limiti attuali come mappa del territorio inesplorato</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+  @font-face {
+    font-family: 'EB Garamond';
+    src: url('fonts/EBGaramond-Variable.woff2') format('woff2-variations');
+    font-weight: 400 800;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'EB Garamond';
+    src: url('fonts/EBGaramond-Italic-Variable.woff2') format('woff2-variations');
+    font-weight: 400 800;
+    font-style: italic;
+    font-display: swap;
+  }
+
   :root{
-    --bg: #0F2A22;
-    --surface: #173B30;
-    --surface-2: #1E4A3C;
-    --copper: #C97D3D;
-    --copper-bright: #F0A85E;
-    --text: #F2ECE0;
-    --text-dim: #A9BFB6;
-    --line: rgba(242,236,224,0.12);
+    /* palette — vedi ../../../design-system/README.md */
+    --bianco:        #FFFFFF;
+    --brina:         #F6F8FB;
+    --inchiostro:    #1a1a1a;
+    --grigio-testo:  #4a4540;
+    --grigio-soft:   #8A8580;
+    --blu-scuro:     #1F2B6B;
+    --blu:           #2B3A8C;
+    --blu-chiaro:    #5A6FB8;
+    --arancio-scuro: #A85419;
+    --arancio:       #D4722A;
+    --arancio-chiaro:#E9A66B;
+    --verde-scuro:   #2A5628;
+    --verde:         #3D7A3A;
+    --verde-chiaro:  #7AAD76;
+
+    --serif: 'EB Garamond', Garamond, Georgia, 'Times New Roman', serif;
+    --mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+
+    --line: rgba(26,26,26,0.12);
     --rail-w: 300px;
   }
 
   *{ box-sizing: border-box; }
-  html{ scroll-behavior: smooth; }
+  html{ scroll-behavior: smooth; font-size: 120%; }
 
   body{
     margin:0;
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Source Serif 4', Georgia, serif;
+    background: var(--brina);
+    color: var(--inchiostro);
+    font-family: var(--serif);
     line-height: 1.65;
     -webkit-font-smoothing: antialiased;
   }
 
   h1,h2,h3, .display{
-    font-family: 'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
-    font-weight: 600;
-    letter-spacing: -0.01em;
+    font-family: var(--serif);
+    font-weight: 500;
     margin: 0;
   }
-  .mono{ font-family: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace; }
-  a{ color: var(--copper-bright); }
+  .mono{ font-family: var(--mono); }
+  a{ color: var(--arancio-scuro); }
+
+  /* piccola utility per il ruolo "apparato": maiuscoletto spaziato sulla stessa
+     famiglia, non un cambio di font — stesso meccanismo di ontologia/output/style.css
+     e di ~/projects/portfolio/specimen.html (.apparato) */
+  .apparato{
+    font-variant: small-caps;
+    letter-spacing: .06em;
+    color: var(--grigio-soft);
+  }
 
   /* ---------- layout shell: sidebar fissa con indice del sito ---------- */
   .sidebar{
-    background: rgba(15,42,34,0.92);
+    background: var(--bianco);
     border-bottom: 1px solid var(--line);
     padding: 28px 24px 32px;
   }
   .sidebar-kicker{
-    font-family: 'IBM Plex Mono', monospace; font-size: .74rem; letter-spacing: .12em;
-    text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px;
+    font-variant: small-caps; letter-spacing: .06em; font-size: .74rem;
+    color: var(--grigio-soft); margin-bottom: 10px;
   }
   .sidebar-title{
-    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.02rem;
-    color: var(--text); margin-bottom: 22px;
+    font-family: var(--serif); font-weight: 500; font-size: 1.02rem;
+    color: var(--inchiostro); margin-bottom: 22px;
   }
   .sidebar .parte{ margin-top: 26px; }
   .sidebar .parte:first-of-type{ margin-top: 0; }
   .sidebar .parte-heading{
-    font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: .74rem;
-    letter-spacing: .1em; text-transform: uppercase; color: var(--copper-bright);
+    font-family: var(--serif); font-weight: 600; font-size: .74rem;
+    font-variant: small-caps; letter-spacing: .06em; color: var(--blu);
     padding-bottom: 10px; margin-bottom: 2px; border-bottom: 1px solid var(--line);
   }
   .sidebar .voce-semplice{
     display: block; padding: 10px 4px; border-bottom: 1px solid var(--line);
-    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem;
-    color: var(--text); text-decoration: none;
+    font-family: var(--serif); font-weight: 500; font-size: .9rem;
+    color: var(--inchiostro); text-decoration: none;
   }
-  .sidebar .voce-semplice:hover{ color: var(--copper-bright); }
-  .sidebar .voce-semplice.current{ color: var(--copper-bright); }
+  .sidebar .voce-semplice:hover{ color: var(--blu); }
+  .sidebar .voce-semplice.current{ color: var(--blu); }
   .sidebar details.modulo{ border-bottom: 1px solid var(--line); }
   .sidebar details.modulo summary{
     display: flex; align-items: center; gap: 8px; padding: 10px 4px; cursor: pointer;
-    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .9rem; color: var(--text);
+    font-family: var(--serif); font-weight: 500; font-size: .9rem; color: var(--inchiostro);
     list-style: none;
   }
-  .sidebar details.modulo summary.current{ color: var(--copper-bright); }
+  .sidebar details.modulo summary.current{ color: var(--blu); }
   .sidebar details.modulo summary::-webkit-details-marker{ display: none; }
   .sidebar details.modulo summary::before{
-    content: "›"; display: inline-block; font-family: 'IBM Plex Mono', monospace;
-    color: var(--text-dim); transition: transform .15s ease; flex-shrink: 0;
+    content: "›"; display: inline-block;
+    color: var(--grigio-soft); transition: transform .15s ease; flex-shrink: 0;
   }
-  .sidebar details.modulo[open] summary::before{ transform: rotate(90deg); color: var(--copper-bright); }
-  .sidebar details.modulo summary:hover{ color: var(--copper-bright); }
+  .sidebar details.modulo[open] summary::before{ transform: rotate(90deg); color: var(--blu); }
+  .sidebar details.modulo summary:hover{ color: var(--blu); }
   .sidebar .unita-list{ padding: 2px 0 12px 22px; display: flex; flex-direction: column; gap: 1px; }
   .sidebar .unita-list a{
-    display: block; padding: 6px 4px; font-size: .82rem; color: var(--text-dim); text-decoration: none;
+    display: block; padding: 6px 4px; font-size: .82rem; color: var(--grigio-testo); text-decoration: none;
   }
-  .sidebar .unita-list a:hover{ color: var(--copper-bright); }
-  .sidebar .unita-list a .num{ color: var(--copper); margin-right: 6px; font-family: 'IBM Plex Mono', monospace; font-size: .74rem; }
+  .sidebar .unita-list a:hover{ color: var(--blu); }
+  .sidebar .unita-list a .num{ color: var(--blu); margin-right: 6px; font-size: .74rem; }
 
-  /* pallini luminosi di scroll-spy, sulle voci dell'unità corrente */
+  /* pallini luminosi di scroll-spy, sulle voci dell'unità corrente — stesso
+     accento blu della sidebar, non arancio: qui il pallino segna "sei qui nella
+     navigazione", ruolo diverso da un rimando arancio nel corpo del testo. */
   .sidebar .unita-list.scrollspy a{ position: relative; padding-left: 20px; }
   .sidebar .unita-list.scrollspy a::before{
     content: "";
     position: absolute; left: 2px; top: 50%;
     width: 7px; height: 7px; border-radius: 50%;
-    background: var(--surface-2); border: 1px solid var(--line);
+    background: var(--brina); border: 1px solid var(--line);
     transform: translateY(-50%);
     transition: background .25s, box-shadow .25s, transform .25s;
   }
-  .sidebar .unita-list.scrollspy a.active{ color: var(--copper-bright); }
+  .sidebar .unita-list.scrollspy a.active{ color: var(--blu); }
   .sidebar .unita-list.scrollspy a.active::before{
-    background: var(--copper-bright);
-    box-shadow: 0 0 0 4px rgba(240,168,94,0.18);
+    background: var(--blu);
+    box-shadow: 0 0 0 4px rgba(43,58,140,0.18);
     transform: translateY(-50%) scale(1.2);
   }
 
@@ -122,17 +157,17 @@
   .unit-block:last-child section:last-of-type{ border-bottom:none; }
 
   .eyebrow{
-    font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
-    letter-spacing: 0.12em; text-transform: uppercase; color: var(--copper-bright);
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.78rem;
+    color: var(--grigio-soft);
     margin-bottom: 14px; display:flex; align-items:center; gap:10px;
   }
-  .eyebrow::before{ content:""; width: 22px; height:1px; background: var(--copper-bright); display:inline-block; }
+  .eyebrow::before{ content:""; width: 22px; height:1px; background: var(--grigio-soft); display:inline-block; }
 
   h2.title{ font-size: clamp(1.6rem, 4vw, 2.3rem); margin-bottom: 20px; }
 
-  p{ margin: 0 0 18px; color: var(--text); font-size: 1.05rem; }
-  p.dim{ color: var(--text-dim); }
-  .lede{ font-size: 1.15rem; color: var(--text); }
+  p{ margin: 0 0 18px; color: var(--inchiostro); font-size: 1.05rem; }
+  p.dim{ color: var(--grigio-testo); }
+  .lede{ font-size: 1.15rem; color: var(--inchiostro); }
 
   .reveal{ opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
   .reveal.visible{ opacity:1; transform: translateY(0); }
@@ -142,55 +177,139 @@
   }
 
   .aside{
-    margin: 26px 0; padding: 18px 20px; background: var(--surface);
-    border-left: 3px solid var(--copper); border-radius: 2px;
+    margin: 26px 0; padding: 18px 20px; background: var(--bianco);
+    border-left: 3px solid var(--arancio); border-radius: 2px;
   }
   .aside .label{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--copper-bright); margin-bottom: 8px; display:block;
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.72rem;
+    color: var(--grigio-soft); margin-bottom: 8px; display:block;
   }
-  .aside p{ margin-bottom:0; font-size: 0.96rem; color: var(--text-dim); }
+  .aside p{ margin-bottom:0; font-size: 0.96rem; color: var(--grigio-testo); }
 
   .question{
     margin: 28px 0; padding: 20px 22px; border: 1px dashed var(--line); border-radius: 4px;
-    font-family: 'Space Grotesk', sans-serif; font-size: 1.0rem; color: var(--copper-bright);
+    font-family: var(--serif); font-size: 1.0rem; color: var(--arancio-scuro);
   }
 
   blockquote{
-    margin: 0; padding-left: 22px; border-left: 2px solid var(--copper);
-    font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; color: var(--text);
+    margin: 0; padding-left: 22px; border-left: 2px solid var(--arancio);
+    font-family: var(--serif); font-size: 1.1rem; color: var(--inchiostro);
   }
 
   ol.quadro-list{ margin: 0 0 18px; padding-left: 22px; }
   ol.quadro-list li{ margin-bottom: 12px; font-size: 1.02rem; }
-  ol.quadro-list li::marker{ color: var(--copper-bright); font-family:'IBM Plex Mono', monospace; }
+  ol.quadro-list li::marker{ color: var(--arancio-scuro); }
 
   /* ---------- hero ---------- */
   .hero{ padding-top: 62px; }
   .hero .kicker{
-    font-family:'IBM Plex Mono', monospace; font-size: 0.8rem; letter-spacing: 0.14em;
-    text-transform: uppercase; color: var(--text-dim); margin-bottom: 18px;
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.8rem;
+    color: var(--grigio-soft); margin-bottom: 18px;
   }
   .hero h1{ font-size: clamp(1.9rem, 5.6vw, 2.9rem); line-height:1.12; margin-bottom: 24px; }
-  .hero h1 em{ font-style: normal; color: var(--copper-bright); }
+  .hero h1 em{ font-style: italic; color: var(--arancio-scuro); }
 
   .scrolldown{
-    margin-top: 50px; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem;
-    color: var(--text-dim); letter-spacing: 0.08em; text-transform: uppercase;
+    margin-top: 50px; font-variant: small-caps; font-size: 0.78rem;
+    color: var(--grigio-soft); letter-spacing: 0.06em;
     display:flex; align-items:center; gap:8px;
   }
-  .scrolldown::after{ content:"↓"; color: var(--copper-bright); animation: nudge 1.8s infinite ease-in-out; }
+  .scrolldown::after{ content:"↓"; color: var(--arancio-scuro); animation: nudge 1.8s infinite ease-in-out; }
   @media (prefers-reduced-motion: reduce){ .scrolldown::after{ animation:none; } }
   @keyframes nudge{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(5px); } }
 
   /* ---------- chiusura ---------- */
-  .chiusura{ background: linear-gradient(180deg, var(--bg), var(--surface)); }
+  .chiusura{ background: linear-gradient(180deg, var(--brina), var(--bianco)); }
   .footer-note{
-    margin-top: 46px; font-family:'IBM Plex Mono', monospace; font-size: 0.78rem; color: var(--text-dim);
+    margin-top: 46px; font-variant: small-caps; letter-spacing: .06em; font-size: 0.78rem; color: var(--grigio-soft);
   }
+
+  /* ---------- termini collegati all'ontologia + tenda laterale ----------
+     Verde deliberatamente: è l'unico posto in questo capitolo dove il colore segnala
+     "stai per lasciare il saggio ed entrare nell'ontologia" — un registro diverso
+     dall'arancio (apparato del saggio stesso) e dal blu (navigazione del saggio).
+     Dati e link derivati SOLO da ciò che l'ontologia già espone (pagine
+     ontologia/output/concetti/*.html, sola lettura) — nessuna modifica ai .ttl o
+     agli script Python che li generano. */
+  .termine-concetto{
+    background: none; border: none; padding: 0; margin: 0; cursor: pointer;
+    font: inherit; color: var(--verde);
+    border-bottom: 1px dotted var(--verde);
+    transition: background .15s ease, border-bottom-style .15s ease;
+  }
+  .termine-concetto:hover, .termine-concetto:focus-visible{
+    background: rgba(61,122,58,0.14);
+    border-bottom-style: solid;
+    outline: none;
+  }
+  .termine-concetto.aperto{ background: rgba(61,122,58,0.22); border-bottom-style: solid; }
+
+  .tenda-scrim{
+    position: fixed; inset: 0; background: rgba(26,26,26,0.32);
+    opacity: 0; pointer-events: none; transition: opacity .25s ease; z-index: 90;
+  }
+  .tenda-scrim.visibile{ opacity: 1; pointer-events: auto; }
+
+  .tenda-concetto{
+    position: fixed; top: 0; right: 0; bottom: 0; width: min(420px, 92vw);
+    background: var(--bianco); z-index: 91;
+    box-shadow: -8px 0 28px rgba(26,26,26,0.18);
+    transform: translateX(100%); transition: transform .3s ease;
+    overflow-y: auto; padding: 28px 26px 40px;
+  }
+  .tenda-concetto.visibile{ transform: translateX(0); }
+  .tenda-testata{
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 14px;
+    border-bottom: 2px solid var(--verde); padding-bottom: 16px; margin-bottom: 18px;
+  }
+  .tenda-eyebrow{
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.86rem;
+    color: var(--verde); display: block; margin-bottom: 6px;
+  }
+  .tenda-titolo{ font-family: var(--serif); font-weight: 500; font-size: 1.5rem; color: var(--inchiostro); }
+  .tenda-titolo .tag{
+    font-variant: small-caps; letter-spacing: .04em; font-size: 0.8rem; color: var(--verde);
+    border: 1px solid var(--verde-chiaro); border-radius: 20px; padding: 1px 10px; margin-left: 8px;
+  }
+  .tenda-chiudi{
+    background: none; border: 1px solid var(--line); border-radius: 50%;
+    width: 32px; height: 32px; font-size: 1.1rem; line-height: 1; cursor: pointer;
+    color: var(--grigio-testo); flex-shrink: 0;
+  }
+  .tenda-chiudi:hover{ border-color: var(--verde); color: var(--verde-scuro); }
+  .tenda-nota{ font-size: 1.05rem; color: var(--inchiostro); margin: 0 0 22px; }
+  .tenda-sezione{ margin-bottom: 20px; }
+  .tenda-sezione h3{
+    font-variant: small-caps; letter-spacing: .06em; font-size: 0.86rem;
+    color: var(--grigio-soft); font-weight: 500; margin: 0 0 8px;
+  }
+  .tenda-lista{ list-style: none; margin: 0; padding: 0; font-size: 0.98rem; color: var(--grigio-testo); }
+  .tenda-lista li{ margin-bottom: 5px; }
+  .tenda-lista .rel-tipo{ color: var(--verde); font-size: 0.9em; }
+  .tenda-unita-cod{ font-variant: small-caps; color: var(--grigio-soft); font-size: 0.9em; }
+  .tenda-lente{
+    display: block; text-align: center; margin-top: 26px; padding: 12px 16px;
+    background: var(--verde); color: var(--bianco); border-radius: 8px;
+    text-decoration: none; font-variant: small-caps; letter-spacing: .04em; font-size: 0.98rem;
+  }
+  .tenda-lente:hover{ background: var(--verde-scuro); }
 </style>
 </head>
 <body>
+
+<div class="tenda-scrim" id="tenda-scrim"></div>
+<aside class="tenda-concetto" id="tenda-concetto" aria-hidden="true">
+  <div class="tenda-testata">
+    <div>
+      <span class="tenda-eyebrow">Dal vocabolario dell'ontologia</span>
+      <span class="tenda-titolo" id="tenda-titolo"></span>
+    </div>
+    <button class="tenda-chiudi" id="tenda-chiudi" aria-label="Chiudi">×</button>
+  </div>
+  <p class="tenda-nota" id="tenda-nota"></p>
+  <div id="tenda-corpo"></div>
+  <a class="tenda-lente" id="tenda-link-lente" href="#" target="_blank" rel="noopener">Apri nella Lente semantica →</a>
+</aside>
 
 <nav class="sidebar" aria-label="Indice del saggio">
   <div class="sidebar-kicker">Indice</div>
@@ -363,7 +482,7 @@
   <section id="b1-sez-completamento">
     <div class="wrap reveal">
       <div class="eyebrow">Capacità 01</div>
-      <h2 class="title">Completamento statistico a scala massiva</h2>
+      <h2 class="title"><button class="termine-concetto" data-concetto="CompletamentoStatistico">Completamento statistico</button> a scala massiva</h2>
       <p>Un LLM fa, in fondo, una sola cosa: stimare quale sia la parola (più precisamente, il <em>token</em>) più probabile dato tutto il testo che la precede. Non c'è un modulo separato per «capire», un altro per «sapere se è vero», un altro ancora per «avere un'opinione». C'è solo questo: una stima di probabilità, ripetuta un token alla volta.</p>
 
       <p>Detto così, sembra poco. Ed è, in un certo senso, poco — lo stesso principio, ridotto all'osso, sta dietro il correttore automatico del telefono, che suggerisce la parola successiva mentre si scrive un messaggio. La differenza tra quel correttore e un modello capace di discutere di filosofia non sta nel principio. Sta nella <em>scala</em>: centinaia di miliardi di parole viste in addestramento, miliardi di parametri per catturarne le regolarità. Applicato a quella scala, un meccanismo elementare produce testo che spiega, argomenta, improvvisa.</p>
@@ -380,7 +499,7 @@
   <section id="b1-sez-incontext">
     <div class="wrap reveal">
       <div class="eyebrow">Capacità 02</div>
-      <h2 class="title">In-context learning</h2>
+      <h2 class="title"><button class="termine-concetto" data-concetto="InContextLearning">In-context learning</button></h2>
       <p>Un fenomeno più specifico, e storicamente meno atteso: un LLM può imparare un compito nuovo dentro la stessa conversazione, senza che un solo peso della rete venga aggiornato. Bastano tre coppie «parola → suo contrario» costruite apposta, mai viste insieme in quella forma esatta in nessun testo di addestramento — e alla quarta il modello risponde correttamente, generalizzando il pattern dal solo contesto immediato.</p>
 
       <p>Perché conta: nessuno lo ha progettato esplicitamente. Nessun ingegnere ha scritto «quando vedi degli esempi nel prompt, generalizza da essi». È un comportamento emerso dall'addestramento su un compito enormemente più generico — prevedi il prossimo token — che i creatori dei primi modelli di questa scala non avevano previsto con questa nitidezza. Sarà ripreso più avanti in questa stessa unità, sotto l'ombrello più ampio delle capacità emergenti.</p>
@@ -392,7 +511,7 @@
   <section id="b1-sez-transfer">
     <div class="wrap reveal">
       <div class="eyebrow">Capacità 03</div>
-      <h2 class="title">Transfer cross-dominio</h2>
+      <h2 class="title"><button class="termine-concetto" data-concetto="TransferCrossDominio">Transfer cross-dominio</button></h2>
       <p>Un modello addestrato prevalentemente su testo generico — pagine web, libri, articoli — risolve compiti che appartengono a domini specialistici: un abbozzo di diagnosi medica, il debug di un frammento di codice, l'analisi di una clausola contrattuale. Nessuno di questi compiti ha ricevuto un addestramento dedicato.</p>
 
       <p class="dim">Va trattato con cautela pedagogica, per non scivolare nell'entusiasmo facile: non è "intelligenza generale" nel senso forte del termine. È la conseguenza diretta di aver visto, nel corpus di addestramento, innumerevoli tracce scritte di tutti questi domini — testi medici, codice sorgente, contratti pubblicati online. Ma il fatto che un'unica rappresentazione statistica, addestrata su un solo obiettivo (prevedi il token successivo), basti a coprire domini così eterogenei resta un fatto che nessuna tecnologia precedente aveva mostrato con questa ampiezza.</p>
@@ -402,7 +521,7 @@
   <section id="b1-sez-emergenti">
     <div class="wrap reveal">
       <div class="eyebrow">Capacità 04</div>
-      <h2 class="title">Capacità emergenti</h2>
+      <h2 class="title"><button class="termine-concetto" data-concetto="CapacitaEmergenti">Capacità emergenti</button></h2>
       <p>Il fenomeno più discusso, e più controverso, della letteratura recente. Alcune capacità — l'aritmetica a più cifre, il ragionamento a più passi — non migliorano gradualmente al crescere della scala del modello. Restano vicine allo zero fino a una certa soglia di parametri o dati, poi appaiono in modo quasi discontinuo, come se una soglia fosse stata superata.</p>
 
       <div class="aside">
@@ -416,7 +535,7 @@
     <div class="wrap reveal">
       <div class="eyebrow">Il quadro</div>
       <h2 class="title">Nessuna di queste richiede un modello del mondo</h2>
-      <p>Le quattro capacità di questa unità condividono un tratto strutturale: nessuna richiede, almeno nella descrizione più economica possibile, un modello del mondo. Richiedono statistica applicata a una scala mai raggiunta prima da nessuna tecnologia. Tenere a mente questo tratto è la chiave per l'unità successiva: che cosa accade quando la stessa macchina — pura statistica a scala — viene messa di fronte a compiti che <em>sembrano</em> richiedere qualcosa in più della statistica?</p>
+      <p>Le <button class="termine-concetto" data-concetto="CapacitaELimitiDeiLlm">quattro capacità</button> di questa unità condividono un tratto strutturale: nessuna richiede, almeno nella descrizione più economica possibile, un modello del mondo. Richiedono statistica applicata a una scala mai raggiunta prima da nessuna tecnologia. Tenere a mente questo tratto è la chiave per l'unità successiva: che cosa accade quando la stessa macchina — pura statistica a scala — viene messa di fronte a compiti che <em>sembrano</em> richiedere qualcosa in più della statistica?</p>
     </div>
   </section>
 
@@ -466,7 +585,7 @@
       <h2 class="title">Conoscenza: tutto compresso in pesi statistici</h2>
       <p>Un LLM non ha un database interno di fatti verificabili, consultabile e distinto dal resto. Ha pesi — miliardi di numeri — che codificano, in modo distribuito e non ispezionabile direttamente, le regolarità statistiche del testo visto in addestramento. Non esiste un punto nella rete in cui sia scritto, in modo isolabile, «Parigi è la capitale della Francia»: quel fatto è disperso, insieme a milioni di altri, nella stessa matrice di pesi.</p>
 
-      <p>Da qui l'allucinazione — inventare un fatto, una citazione, un riferimento bibliografico inesistente, con la stessa fluidità sintattica di un'affermazione vera.</p>
+      <p>Da qui l'<button class="termine-concetto" data-concetto="Allucinazione">allucinazione</button> — inventare un fatto, una citazione, un riferimento bibliografico inesistente, con la stessa fluidità sintattica di un'affermazione vera.</p>
 
       <div class="aside">
         <span class="label">Punto pedagogico centrale</span>
@@ -478,10 +597,10 @@
   <section id="b2-sez-metacognizione">
     <div class="wrap reveal">
       <div class="eyebrow">Facoltà 03</div>
-      <h2 class="title">Metacognizione: «non lo so» come stringa, non come stima</h2>
+      <h2 class="title"><button class="termine-concetto" data-concetto="MetacognizioneSimulata">Metacognizione</button>: «non lo so» come stringa, non come stima</h2>
       <p>Un LLM può scrivere le parole «non sono sicuro» o «non ho informazioni sufficienti». Ma quelle parole non sono il prodotto di un meccanismo interno che misura la propria incertezza e la confronta con una soglia — sono, semplicemente, un'altra sequenza di token, probabile in certi contesti (una domanda formulata in modo cauto, un argomento controverso) tanto quanto una risposta sicura lo è in altri contesti.</p>
 
-      <p class="dim">La conseguenza pratica: la sicurezza con cui un modello scrive una risposta non è calibrata sulla probabilità che quella risposta sia corretta. Un modello può essere sicurissimo — nel tono, nella forma — di un'informazione completamente inventata, e allo stesso tempo esitante su un fatto vero e ben noto, se il contesto linguistico lo suggerisce.</p>
+      <p class="dim">La conseguenza pratica: la sicurezza con cui un modello scrive una risposta non è <button class="termine-concetto" data-concetto="Calibrazione">calibrata</button> sulla probabilità che quella risposta sia corretta. Un modello può essere sicurissimo — nel tono, nella forma — di un'informazione completamente inventata, e allo stesso tempo esitante su un fatto vero e ben noto, se il contesto linguistico lo suggerisce.</p>
 
       <div class="aside">
         <span class="label">Perché conta per l'uso pratico</span>
@@ -529,7 +648,7 @@
   <section id="b3-sez-grounding">
     <div class="wrap reveal">
       <div class="eyebrow">Assenza 01</div>
-      <h2 class="title">Grounding: i simboli non si riferiscono a niente</h2>
+      <h2 class="title"><button class="termine-concetto" data-concetto="Grounding">Grounding</button>: i simboli non si riferiscono a niente</h2>
       <p>Stevan Harnad, nel 1990, ha dato un nome preciso a questo problema: il <em>symbol grounding problem</em>. Un sistema puramente simbolico — che manipola token in base a regole statistiche o logiche — può essere internamente coerentissimo, e allo stesso tempo non riferirsi a nulla nel mondo. I simboli si agganciano ad altri simboli, in un circolo chiuso, mai al mondo stesso.</p>
 
       <p>Per un essere umano, la parola «caldo» è ancorata a un'esperienza sensoriale diretta — la pelle che percepisce una temperatura. Per un LLM, «caldo» è ancorato solo ad altre parole: «fuoco», «estate», «febbre», nella misura in cui compaiono vicine nel testo. Il significato, per un LLM, è puramente differenziale e interno al linguaggio — mai referenziale verso il mondo extra-linguistico.</p>
@@ -539,7 +658,7 @@
   <section id="b3-sez-causale">
     <div class="wrap reveal">
       <div class="eyebrow">Assenza 02</div>
-      <h2 class="title">Ragionamento causale: correlazione, non intervento</h2>
+      <h2 class="title"><button class="termine-concetto" data-concetto="RagionamentoCausale">Ragionamento causale</button>: correlazione, non intervento</h2>
       <p>Judea Pearl distingue tre livelli di conoscenza causale, ordinati per profondità crescente: osservare un'associazione («quando piove, la gente porta l'ombrello»), intervenire su una causa e osservarne l'effetto («se si obbliga qualcuno a portare l'ombrello, piove di più? Ovviamente no — e questo dice qualcosa sulla direzione della causalità»), e infine ragionare su un controfattuale («se ieri non fosse piovuto, quella persona avrebbe comunque portato l'ombrello?»).</p>
 
       <p>Un LLM, addestrato su testo, opera quasi esclusivamente al primo livello: ha appreso correlazioni fortissime tra parole ed eventi che compaiono insieme nel testo, ma non ha un modello esplicito degli interventi — non simula «che cosa cambierebbe se». Quando un LLM sembra ragionare causalmente, sta riproducendo pattern linguistici in cui gli umani, loro sì capaci di intervento reale sul mondo, hanno già espresso ragionamenti causali per iscritto.</p>
@@ -554,7 +673,7 @@
   <section id="b3-sez-composizionale">
     <div class="wrap reveal">
       <div class="eyebrow">Assenza 03</div>
-      <h2 class="title">Generalizzazione composizionale: forte dentro, debole fuori</h2>
+      <h2 class="title"><button class="termine-concetto" data-concetto="GeneralizzazioneComposizionale">Generalizzazione composizionale</button>: forte dentro, debole fuori</h2>
       <p>Un essere umano che ha imparato il significato di «salta» e il significato di «tre volte all'indietro» può, senza sforzo, capire ed eseguire «salta tre volte all'indietro» anche se non ha mai visto quella frase esatta prima. Questa capacità — combinare pezzi noti in configurazioni nuove, in modo sistematico — si chiama generalizzazione composizionale.</p>
 
       <p>I LLM la mostrano in modo robusto quando la nuova combinazione resta vicina, in forma, a combinazioni già viste nel training. La mostrano in modo molto più fragile quando la combinazione richiesta è strutturalmente nuova, anche se costruita da pezzi singolarmente familiari. La distribuzione di addestramento agisce come una rete di sicurezza: dentro, tutto tiene; fuori, le crepe emergono in fretta.</p>
@@ -564,7 +683,7 @@
   <section id="b3-sez-apprendimento">
     <div class="wrap reveal">
       <div class="eyebrow">Assenza 04</div>
-      <h2 class="title">Apprendimento continuo: pesi statici, nessun aggiornamento dall'esperienza</h2>
+      <h2 class="title"><button class="termine-concetto" data-concetto="ApprendimentoContinuoAssente">Apprendimento continuo</button>: pesi statici, nessun aggiornamento dall'esperienza</h2>
       <p>Una volta terminato l'addestramento, i pesi di un LLM restano fissi. Una conversazione può durare ore, contenere correzioni esplicite, insegnare al modello qualcosa di nuovo — ma nulla di tutto questo cambia i pesi della rete. Alla conversazione successiva, quell'apprendimento è scomparso: nessuna traccia persistente, a meno di un intervento tecnico esplicito (fine-tuning, aggiornamento di memoria esterna) separato dal semplice conversare.</p>
 
       <div class="question">Un bambino impara camminando, cadendo, correggendo l'errore nell'istante successivo — un processo di aggiornamento continuo e locale. Un sistema che invece si «ferma» dopo l'addestramento e può solo ricevere contesto temporaneo, mai integrato in modo permanente, può essere «intelligente» in qualsiasi senso che valga la pena difendere? Non è una domanda retorica — è esattamente il tipo di domanda a cui il resto del saggio prova ad avvicinarsi senza pretendere di chiuderla, in parte anche in Genealogia · 3.3.</div>
@@ -623,6 +742,159 @@
     });
   }, { threshold: 0, rootMargin: '-45% 0px -45% 0px' });
   unitBlocksForSpy.forEach(b => localSpy2.observe(b));
+
+  // ============ termini collegati all'ontologia ============
+  // Dati trascritti a mano da ontologia/output/concetti/*.html (sola lettura, non
+  // generati da script): i concetti con :discussoInUnita verso Gen21/Gen22/Gen23,
+  // trovati interrogando dati.ttl — non un elenco a occhio nel testo.
+  const CONCETTI = {
+    CompletamentoStatistico: {
+      label: "Completamento statistico",
+      nota: "Stima del token più probabile dato il testo precedente; l'unica cosa che un LLM fa, alla radice.",
+      specifici: [],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Genealogia · 2.1","Completamento statistico a scala massiva, in-context learning, transfer cross-dominio e altre capacità emergenti"],["Meccanismo · 2.1","Prevedere la parola successiva"]]
+    },
+    CapacitaELimitiDeiLlm: {
+      label: "Capacità e limiti dei LLM",
+      nota: "Genealogia · 2: mappa esplicita del territorio — cosa un LLM sa fare, cosa simula, cosa non sa fare affatto.",
+      specifici: ["Allucinazione","Apprendimento continuo (assente)","Capacità emergenti","Generalizzazione composizionale","Grounding (symbol grounding problem)","In-context learning","Metacognizione (simulata)","Ragionamento causale (scala di Pearl)","Transfer cross-dominio"],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Genealogia · 2.1","Completamento statistico a scala massiva, in-context learning, transfer cross-dominio e altre capacità emergenti"],["Genealogia · 2.2","Interpolazione, pesi statistici, metacognizione"],["Genealogia · 2.3","Grounding, ragionamento causale, generalizzazione composizionale, cortocircuito dell'apprendimento"]]
+    },
+    InContextLearning: {
+      label: "In-context learning",
+      nota: "Apprendere un compito nuovo dentro la stessa conversazione, senza aggiornare alcun peso della rete.",
+      specifici: [],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Genealogia · 2.1","Completamento statistico a scala massiva, in-context learning, transfer cross-dominio e altre capacità emergenti"]]
+    },
+    TransferCrossDominio: {
+      label: "Transfer cross-dominio",
+      nota: "Un modello addestrato su testo generico risolve compiti di domini specialistici mai visti in addestramento dedicato.",
+      specifici: [],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Genealogia · 2.1","Completamento statistico a scala massiva, in-context learning, transfer cross-dominio e altre capacità emergenti"]]
+    },
+    CapacitaEmergenti: {
+      label: "Capacità emergenti",
+      nota: "Capacità che appaiono in modo discontinuo sopra una soglia di scala, non gradualmente (Wei et al. 2022; discusso da Schaeffer et al. 2023).",
+      specifici: [],
+      relazioni: [["È esemplificato da","Word2Vec"]],
+      teorici: ["Wei et al. (2022)"],
+      discussoIn: [["Genealogia · 2.1","Completamento statistico a scala massiva, in-context learning, transfer cross-dominio e altre capacità emergenti"],["Meccanismo · 6.2","Capacità emergenti"]]
+    },
+    Allucinazione: {
+      label: "Allucinazione",
+      nota: "Invenzione fluente di fatti/citazioni inesistenti; comportamento atteso di un sistema senza fonte di verità esterna.",
+      specifici: [],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Genealogia · 2.2","Interpolazione, pesi statistici, metacognizione"]]
+    },
+    MetacognizioneSimulata: {
+      label: "Metacognizione (simulata)",
+      nota: "L'espressione di incertezza («non lo so») è una stringa di testo probabile in certi contesti, non una stima calibrata interna.",
+      specifici: [],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Genealogia · 2.2","Interpolazione, pesi statistici, metacognizione"]]
+    },
+    Grounding: {
+      label: "Grounding (symbol grounding problem)",
+      nota: "Assenza di riferimento dei simboli al mondo extralinguistico; i simboli si agganciano solo ad altri simboli (Harnad 1990).",
+      specifici: [],
+      relazioni: [["È esemplificato da","Stanza cinese"],["È collegato a","Gap sensorimotor"]],
+      teorici: ["Stevan Harnad"],
+      discussoIn: [["Genealogia · 2.3","Grounding, ragionamento causale, generalizzazione composizionale, cortocircuito dell'apprendimento"],["Genealogia · 3.1","Il problema del significato"]]
+    },
+    RagionamentoCausale: {
+      label: "Ragionamento causale (scala di Pearl)",
+      nota: "Tre livelli — associazione, intervento, controfattuale; un LLM opera quasi solo al primo.",
+      specifici: [],
+      relazioni: [],
+      teorici: ["Judea Pearl"],
+      discussoIn: [["Genealogia · 2.3","Grounding, ragionamento causale, generalizzazione composizionale, cortocircuito dell'apprendimento"],["Genealogia · 3.2","Il problema della causalità"]]
+    },
+    GeneralizzazioneComposizionale: {
+      label: "Generalizzazione composizionale",
+      nota: "Capacità di combinare pezzi noti in configurazioni nuove in modo sistematico; robusta dentro, fragile fuori distribuzione.",
+      specifici: [],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Genealogia · 2.3","Grounding, ragionamento causale, generalizzazione composizionale, cortocircuito dell'apprendimento"]]
+    },
+    ApprendimentoContinuoAssente: {
+      label: "Apprendimento continuo (assente)",
+      nota: "Impossibilità per un LLM di aggiornare i propri pesi dall'esperienza conversazionale una volta terminato l'addestramento.",
+      specifici: [],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Genealogia · 2.3","Grounding, ragionamento causale, generalizzazione composizionale, cortocircuito dell'apprendimento"]]
+    },
+    Calibrazione: {
+      label: "Calibrazione",
+      nota: "Proprietà per cui, tra le previsioni fatte con una data confidenza, quella percentuale risulta poi effettivamente corretta.",
+      specifici: [],
+      relazioni: [],
+      teorici: [],
+      discussoIn: [["Genealogia · 2.2","Interpolazione, pesi statistici, metacognizione"],["Meccanismo · 2.2","Unigrammi/bigrammi, induzione, calibrazione"]]
+    }
+  };
+
+  const tendaEl = document.getElementById('tenda-concetto');
+  const scrimEl = document.getElementById('tenda-scrim');
+  const tendaTitolo = document.getElementById('tenda-titolo');
+  const tendaNota = document.getElementById('tenda-nota');
+  const tendaCorpo = document.getElementById('tenda-corpo');
+  const tendaLinkLente = document.getElementById('tenda-link-lente');
+  let ultimoTermineAperto = null;
+
+  function sezioneLista(titolo, voci, render){
+    if(!voci || !voci.length) return '';
+    return `<div class="tenda-sezione"><h3>${titolo}</h3><ul class="tenda-lista">${voci.map(render).join('')}</ul></div>`;
+  }
+
+  function apriTenda(id, triggerEl){
+    const c = CONCETTI[id];
+    if(!c) return;
+    if(ultimoTermineAperto) ultimoTermineAperto.classList.remove('aperto');
+    ultimoTermineAperto = triggerEl || null;
+    if(triggerEl) triggerEl.classList.add('aperto');
+
+    tendaTitolo.innerHTML = c.label + (c.tag ? `<span class="tag">${c.tag}</span>` : '');
+    tendaNota.textContent = c.nota;
+    tendaCorpo.innerHTML =
+      sezioneLista('Concetti più specifici', c.specifici, v => `<li>${v}</li>`) +
+      sezioneLista('Relazioni con altri concetti', c.relazioni, r => `<li><span class="rel-tipo">${r[0]}</span> ${r[1]}</li>`) +
+      sezioneLista('Teorici', c.teorici, t => `<li><span class="rel-tipo">Teorizzato da</span> ${t}</li>`) +
+      sezioneLista('Discusso in', c.discussoIn, d => `<li><span class="tenda-unita-cod">${d[0]}</span> — ${d[1]}</li>`);
+    tendaLinkLente.href = `../../../ontologia/lente-semantica/output/index.html#${id}`;
+
+    tendaEl.classList.add('visibile');
+    tendaEl.setAttribute('aria-hidden', 'false');
+    scrimEl.classList.add('visibile');
+  }
+
+  function chiudiTenda(){
+    tendaEl.classList.remove('visibile');
+    tendaEl.setAttribute('aria-hidden', 'true');
+    scrimEl.classList.remove('visibile');
+    if(ultimoTermineAperto) ultimoTermineAperto.classList.remove('aperto');
+    ultimoTermineAperto = null;
+  }
+
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.termine-concetto');
+    if(btn){ apriTenda(btn.dataset.concetto, btn); return; }
+    if(e.target === scrimEl){ chiudiTenda(); }
+  });
+  document.getElementById('tenda-chiudi').addEventListener('click', chiudiTenda);
+  document.addEventListener('keydown', (e) => { if(e.key === 'Escape') chiudiTenda(); });
 </script>
 
 </body>
