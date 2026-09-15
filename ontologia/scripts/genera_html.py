@@ -14,7 +14,7 @@ import shutil
 import rdflib
 from rdflib.namespace import RDF, RDFS
 
-N = rdflib.Namespace("http://example.org/corso-llm-vocabolario#")
+N = rdflib.Namespace("https://smb-antro.github.io/dal-bit-alle-entita-semantiche/vocabolario#")
 SKOS = rdflib.Namespace("http://www.w3.org/2004/02/skos/core#")
 
 DATA_FILES = ["src/vocabolario.ttl", "src/ontologia.ttl", "src/dati.ttl"]

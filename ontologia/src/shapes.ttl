@@ -1,4 +1,4 @@
-@prefix : <http://example.org/corso-llm-vocabolario#> .
+@prefix : <https://smb-antro.github.io/dal-bit-alle-entita-semantiche/vocabolario#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
@@ -96,7 +96,7 @@
     sh:sparql [
         sh:message "Un concetto non può essere prerequisito (anche transitivamente) di sé stesso — ciclo rilevato."@it ;
         sh:select """
-            PREFIX : <http://example.org/corso-llm-vocabolario#>
+            PREFIX : <https://smb-antro.github.io/dal-bit-alle-entita-semantiche/vocabolario#>
             SELECT $this
             WHERE { $this :prerequisitoDi+ $this . }
         """ ;
@@ -109,7 +109,7 @@
     sh:sparql [
         sh:message "Un concetto non dovrebbe essere analogoA/contrappostoA/collegatoA sé stesso."@it ;
         sh:select """
-            PREFIX : <http://example.org/corso-llm-vocabolario#>
+            PREFIX : <https://smb-antro.github.io/dal-bit-alle-entita-semantiche/vocabolario#>
             SELECT $this
             WHERE {
                 { $this :analogoA $this . }

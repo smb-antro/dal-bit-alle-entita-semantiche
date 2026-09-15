@@ -8,7 +8,7 @@ import rdflib
 
 DATA_FILES = ["src/vocabolario.ttl", "src/ontologia.ttl", "src/dati.ttl"]
 PREFIXES = """
-PREFIX : <http://example.org/corso-llm-vocabolario#>
+PREFIX : <https://smb-antro.github.io/dal-bit-alle-entita-semantiche/vocabolario#>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 """
@@ -66,7 +66,7 @@ def main():
     # 3. Tutti i concetti del filo trasversale discreto/continuo, nell'ordine
     #    dichiarato nella skos:OrderedCollection.
     print("\n=== Filo trasversale «discreto/continuo», in ordine ===")
-    lista = g.value(rdflib.URIRef("http://example.org/corso-llm-vocabolario#FiloDiscretoContinuo"),
+    lista = g.value(rdflib.URIRef("https://smb-antro.github.io/dal-bit-alle-entita-semantiche/vocabolario#FiloDiscretoContinuo"),
                      rdflib.URIRef("http://www.w3.org/2004/02/skos/core#memberList"))
     membri = list(g.items(lista)) if lista else []
     for m in membri:

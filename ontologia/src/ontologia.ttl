@@ -1,4 +1,4 @@
-@prefix : <http://example.org/corso-llm-vocabolario#> .
+@prefix : <https://smb-antro.github.io/dal-bit-alle-entita-semantiche/vocabolario#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
@@ -26,7 +26,7 @@
 # razionale. I commenti che seguono, dove descrivono lo stato originale di Fase 3,
 # non sono stati riscritti (solo le parti divenute inesatte sono state aggiornate).
 
-<http://example.org/corso-llm-vocabolario> a owl:Ontology ;
+<https://smb-antro.github.io/dal-bit-alle-entita-semantiche/vocabolario> a owl:Ontology ;
     dct:title "Micro-ontologia del saggio «Dal bit alle entità semantiche»"@it ;
     dct:description "Classi e proprietà che completano il vocabolario SKOS di vocabolario.ttl con la struttura che SKOS non può esprimere: tipi di entità diversi dal Concetto (Tecnica, Teorico, Parte, Capitolo, Unità, Dataset, FiloTrasversale) e relazioni tipizzate fra concetti."@it ;
     dct:creator "Stefano Bongiovanni" ;

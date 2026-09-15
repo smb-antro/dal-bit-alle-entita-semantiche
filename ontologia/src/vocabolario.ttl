@@ -1,4 +1,4 @@
-@prefix : <http://example.org/corso-llm-vocabolario#> .
+@prefix : <https://smb-antro.github.io/dal-bit-alle-entita-semantiche/vocabolario#> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix dct: <http://purl.org/dc/terms/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .

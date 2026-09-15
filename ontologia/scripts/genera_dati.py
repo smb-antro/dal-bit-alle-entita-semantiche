@@ -14,7 +14,7 @@ docs/decisioni-modellazione.md, sezione "Aggiornamento post-estrazione".
 Uso: .venv/bin/python3 scripts/genera_dati.py > src/dati.ttl
 """
 
-NS = "http://example.org/corso-llm-vocabolario#"
+NS = "https://smb-antro.github.io/dal-bit-alle-entita-semantiche/vocabolario#"
 
 # ---------------------------------------------------------------------------
 # Parti, Capitoli e Unità — mappatura dalla struttura reale del saggio

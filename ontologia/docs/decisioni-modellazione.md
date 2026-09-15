@@ -331,10 +331,16 @@ un bordo verde, mai un riempimento.
 Quanto segue non è nascosto altrove nel progetto: è qui, insieme al resto, perché un
 documento di decisioni di modellazione che elenca solo i successi non sarebbe onesto.
 
-- **Il namespace è un placeholder** (`http://example.org/corso-llm-vocabolario#`): la
-  sede di pubblicazione non è ancora decisa, e cambiarlo dopo aver popolato dati e
-  query sarebbe un trova-e-sostituisci meccanico, non una decisione di modellazione —
-  rimandato, non ignorato.
+- **Il namespace era un placeholder** (`http://example.org/corso-llm-vocabolario#`,
+  `example.org` è il dominio riservato IANA per la documentazione, non un dominio
+  dell'autore): risolto il 15 settembre 2026, prima della pubblicazione, sostituendolo
+  con `https://smb-antro.github.io/dal-bit-alle-entita-semantiche/vocabolario#` in
+  tutti i `.ttl` e negli script che li generano/interrogano — non un semplice
+  trova-e-sostituisci nel testo, ma seguito da una rigenerazione completa (`dati.ttl`,
+  le pagine di `output/`, il grafo della Lente semantica) e da una nuova esecuzione di
+  reasoner OWL-RL e SHACL, per verificare che il nuovo IRI non alterasse nulla — esito:
+  nessuna incoerenza, nessuna differenza nell'output oltre al prefisso stesso (i nomi
+  brevi, non l'IRI completo, sono l'unica cosa che compare nelle pagine generate).
 - **Alcune relazioni osservate nel corso non sono nel grafo** (§4): GPU, Memristor,
   "immagine raster/SVG" come concetti a sé, la coincidenza Von Neumann/Rosenblatt, il
   legame diretto Pearl-Hume. Nessuno di questi compromette la validità di quanto c'è,

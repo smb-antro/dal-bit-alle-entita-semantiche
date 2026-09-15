@@ -29,7 +29,7 @@ DATA_FILES = [ROOT / "src" / f for f in ("vocabolario.ttl", "ontologia.ttl", "da
 # preceduto da "const GRAFO =" per essere eseguibile invece che solo dati.
 OUT = Path(__file__).resolve().parent.parent / "src" / "grafo.js"
 
-N = rdflib.Namespace("http://example.org/corso-llm-vocabolario#")
+N = rdflib.Namespace("https://smb-antro.github.io/dal-bit-alle-entita-semantiche/vocabolario#")
 SKOS = rdflib.Namespace("http://www.w3.org/2004/02/skos/core#")
 
 # Proprietà esposte come archi del grafo: (property URI, etichetta diretta,
