@@ -1,7 +1,7 @@
 # cs-1-cartografia-semantica
 
 Repository indipendente dentro `~/projects/`. Primo caso studio del portfolio pubblico
-su GitHub — la card è già riservata in `~/projects/portfolio/site/lab.html`
+su GitHub — la card è già riservata in `portfolio/site/lab.html`
 ("Dal bit alle entità semantiche").
 
 ## Obiettivo
@@ -19,7 +19,7 @@ scollegati.
 - `ontologia/` — vocabolario SKOS + micro-ontologia OWL + "Lente semantica" (grafo
   radiale interattivo), copiato da `~/projects/vocabolario-ontologia-llm/` (HEAD
   `1765f29` del 4 settembre 2026), stesso metodo.
-- `design-system/` — vuota per ora, vedi `design-system/README.md`.
+- `design-system/` — linee guida di design e i prototipi che le hanno stabilite, vedi `design-system/README.md`.
 - `docs/` — decision-log.md, next-steps.md, snapshot.md di questo repository (distinti
   dai docs/ interni a dominio/ e ontologia/, che restano quelli originali).
 - `LICENSE` — placeholder con quattro alternative, decisione rimandata a prima della

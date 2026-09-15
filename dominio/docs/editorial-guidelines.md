@@ -1,7 +1,7 @@
-# Linee guida editoriali — qa-tool
+# Linee guida editoriali — «Dal bit alle entità semantiche»
 
 Regole estratte dal lavoro di editing sul corso-llm (Presentazione + refactor sidebar
-sui 12 file di `lezioni/`, agosto-settembre 2026). Versione curata a mano di quanto
+sui 12 file dei capitoli, agosto-settembre 2026). Versione curata a mano di quanto
 tracciato nella memoria automatica di Claude Code — va aggiornata manualmente quando
 emergono nuove regole, non si sincronizza da sola.
 

@@ -35,7 +35,7 @@ stesso territorio.
 dominio/          il saggio interattivo (copia sola lettura da cartografia-semantica)
 ontologia/        vocabolario SKOS + ontologia OWL + Lente semantica (copia sola
                    lettura da vocabolario-ontologia-llm)
-design-system/    vuota per ora — vedi design-system/README.md
+design-system/    linee guida di design e i prototipi che le hanno stabilite
 docs/             decision-log, next-steps, snapshot di questo repository
 ```
 
@@ -49,7 +49,8 @@ Integrazione sostanzialmente conclusa (9 settembre 2026): design chiaro uniforme
 tutte le pagine navigabili, tenda dei concetti su tutto il saggio (110 concetti
 cliccabili), poster statico del grafo completo, secondo grado della Lente semantica
 reso leggibile — vedi lo stato di dettaglio in [docs/snapshot.md](docs/snapshot.md).
-5 commit locali, non ancora pubblicato su GitHub (decisione a parte, da confermare).
+Storia di commit solo locale, non ancora pubblicato su GitHub (decisione a parte, da
+confermare).
 Resta da fare: scegliere la licenza, aggiornare e rigenerare il bundle statico a file
 singolo — vedi [docs/next-steps.md](docs/next-steps.md). La card è già riservata in
 `portfolio/site/lab.html` ("Dal bit alle entità semantiche"), da collegare qui

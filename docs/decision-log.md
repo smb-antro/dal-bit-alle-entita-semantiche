@@ -18,10 +18,10 @@ stesso giorno o poco prima:
   procedere — nessuna perdita. Se in futuro uno dei due sorgenti accumula contenuto in
   `assets/` prima di una nuova copia, andrà incluso deliberatamente.
 - `design-system/` lasciata vuota di proposito: le linee guida sono ancora in test in
-  `~/projects/portfolio/site/`, non ancora mature da formalizzare qui.
+  `portfolio/site/`, non ancora mature da formalizzare qui.
 
-**Trovato durante la creazione, non toccato**: esiste già `~/projects/laboratorio-precedente/`,
-un "laboratorio informale" (si definisce così nel proprio README) con prototipi
+**Trovato durante la creazione, non toccato**: esiste già un laboratorio informale precedente in un'altra cartella locale,
+uno spazio (si definisce così nel proprio README) con prototipi
 precedenti dello stesso concetto — struttura vera dichiarata esplicitamente rimandata a
 quando il lavoro fosse più maturo. Fuori scope per questo repository, che è quel
 momento di maturità con un'altra struttura; non migrato né toccato.
@@ -33,7 +33,7 @@ Sessione dedicata a leggere il saggio e l'ontologia, prototipare in
 [`../design-system/README.md`](../design-system/README.md). Decisioni che vale la pena
 registrare qui perché non ovvie a rileggerle in futuro:
 
-- **Palette**: adottata quella già confermata di `~/projects/portfolio/` (non
+- **Palette**: adottata quella già confermata di `portfolio/` (non
   inventata qui), con un vincolo non scritto altrove — ogni famiglia di colore
   appartiene a un solo dominio (blu = navigazione del saggio, arancio = apparato del
   saggio, verde = ontologia) e non si mescolano mai nello stesso componente. Verificato
@@ -380,8 +380,7 @@ duplicare/indebolire lo strumento interattivo già linkato subito sopra.
 
 ## 2026-09-08 — Verde più luminoso: dal tono più scuro al tono medio, ovunque
 
-Test di grafica sul prototipo di pagina PMI (`portfolio/prototipi-strategici-
-portfolio/`): il verde usato per il testo dei rimandi era `--verde-scuro` (`#2A5628`,
+Test di grafica su un prototipo separato di pagina di portfolio: il verde usato per il testo dei rimandi era `--verde-scuro` (`#2A5628`,
 il più scuro dei tre), giudicato troppo cupo. Passato a `--verde` (`#3D7A3A`, il tono
 medio) lì, poi esteso su richiesta dell'utente a tutto ciò che condivide lo stesso
 ruolo — "verde = stai per lasciare la prosa ed entrare nell'ontologia" — nel saggio

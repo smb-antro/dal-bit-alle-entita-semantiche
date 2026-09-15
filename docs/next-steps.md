@@ -62,7 +62,7 @@
    questo file. ✅ **Risolta**: vedi `decision-log.md`, voce "Lente semantica:
    secondo grado come ramificazione leggibile".
 
-5. **Collegare la card** già riservata in `~/projects/portfolio/site/lab.html`
+5. **Collegare la card** già riservata in `portfolio/site/lab.html`
    ("Dal bit alle entità semantiche") a questo repository, una volta pronto.
 
 ## Debito rimasto, non ancora fatto
@@ -77,8 +77,7 @@
 
 ## Fatto, non più debito
 
-- ~~**Commit**~~ — ✅ 9 settembre 2026: 5 commit totali (`feat(init)`,
-  `feat(design-system)`, due `feat(saggio)` per il lavoro sul tema chiaro e
-  sulla riorganizzazione di sidebar/presentazione, `feat(lente)` per il
-  secondo grado). Repository ancora non pubblicato su GitHub — decisione a
-  parte, vedi sopra.
+- ~~**Commit**~~ — ✅ 9 settembre 2026: il lavoro è committato (`feat(init)`,
+  `feat(design-system)`, i due `feat(saggio)`, `feat(lente)`), più la passata di
+  pulizia pre-pubblicazione del 15 settembre. Repository ancora non pubblicato su
+  GitHub — decisione a parte, vedi sopra.

@@ -8,8 +8,8 @@
 # Vocabolario controllato SKOS — corso "Come funzionano i LLM"
 #
 # Fase 2 del progetto (vedi docs/decisioni-modellazione.md per il razionale completo
-# delle scelte qui applicate). Namespace `:` provvisorio (http://example.org/...):
-# la scelta dell'URI base definitivo è rimandata alla pubblicazione, vedi decision-log.
+# delle scelte qui applicate). L'URI base definitivo è stato scelto il 15 settembre
+# 2026, prima della pubblicazione, al posto del placeholder — vedi decision-log.
 #
 # Convenzioni valide per l'intero file:
 # - skos:broader è asserito solo sui figli, mai skos:narrower sui genitori (le due
@@ -45,7 +45,7 @@
 
 :CorsoLLM a skos:ConceptScheme ;
     dct:title "Vocabolario controllato del saggio «Dal bit alle entità semantiche»"@it ;
-    dct:description "Vocabolario SKOS estratto dal saggio interattivo «Dal bit alle entità semantiche» (~/projects/cartografia-semantica/src/saggio/, sola lettura — ex corso «Come funzionano i LLM», estratto da qa-tool il 2 settembre 2026). Istantanea datata al 26 agosto 2026, aggiornata alla nuova struttura in tre Parti (Fondamenti/Genealogia/Meccanismo) il 4 settembre 2026 — stato dichiarato definitivo dall'autore in quella data, il vocabolario comunque non si aggiorna da solo se il saggio cambia ancora."@it ;
+    dct:description "Vocabolario SKOS estratto dal saggio interattivo «Dal bit alle entità semantiche» (sola lettura — ex corso «Come funzionano i LLM», estratto in un repository proprio il 2 settembre 2026). Istantanea datata al 26 agosto 2026, aggiornata alla nuova struttura in tre Parti (Fondamenti/Genealogia/Meccanismo) il 4 settembre 2026 — stato dichiarato definitivo dall'autore in quella data, il vocabolario comunque non si aggiorna da solo se il saggio cambia ancora."@it ;
     dct:creator "Stefano Bongiovanni" ;
     dct:created "2026-08-26"^^xsd:date ;
     dct:modified "2026-09-04"^^xsd:date ;

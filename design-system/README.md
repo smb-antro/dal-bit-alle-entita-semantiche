@@ -15,7 +15,7 @@ Prima di questi test esistevano **tre sistemi indipendenti**, mai confrontati fr
   capitolo;
 - l'ontologia (`ontologia/output/` e la Lente semantica): un solo font (EB Garamond)
   su carta chiara, apparato in maiuscoletto invece che con un secondo font;
-- il portfolio (`~/projects/portfolio/`): una palette confermata
+- il portfolio (`portfolio/`): una palette confermata
   (`design-system/tokens.css` lì) mai ancora collegata a nessuno dei due.
 
 Le regole sotto adottano la palette del portfolio ovunque, e il principio

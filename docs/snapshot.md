@@ -3,7 +3,7 @@
 **9 settembre 2026** — saggio e Lente semantica interamente integrati e rifiniti:
 design chiaro uniforme, tenda dei concetti su tutto il saggio, poster del grafo,
 indice della presentazione riorganizzato in 4 parti, secondo grado della Lente
-reso leggibile. 5 commit, nessuno pubblicato su GitHub.
+reso leggibile. Nessun commit pubblicato su GitHub.
 
 - `dominio/` e `ontologia/` copiati integralmente (`git archive`) dai rispettivi
   repository sorgente, al loro stato del 4 settembre 2026 (HEAD `bea0aaa` e `1765f29`
@@ -51,9 +51,9 @@ reso leggibile. 5 commit, nessuno pubblicato su GitHub.
 - `docs/` (questo file, decision-log, next-steps) sincronizzati il 9 settembre
   2026 dopo essere rimasti indietro rispetto al lavoro di giornata.
 - `LICENSE` placeholder con quattro alternative, nessuna scelta ancora fatta.
-- **5 commit** (`feat(init)`, `feat(design-system)`, `feat(saggio)` tema chiaro
-  completo, `feat(saggio)` sidebar/presentazione riorganizzata, `feat(lente)`
-  secondo grado). Non pubblicato su GitHub. Card del portfolio riservata in
+- Storia di commit solo locale (`feat(init)`, `feat(design-system)`, i due
+  `feat(saggio)`, `feat(lente)`, più la passata di pulizia pre-pubblicazione).
+  Non pubblicato su GitHub. Card del portfolio riservata in
   `portfolio/site/lab.html` ma non collegata.
 
 Prossimo passo reale: nessun lavoro di contenuto bloccante resta aperto né sul

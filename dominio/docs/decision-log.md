@@ -209,23 +209,25 @@ verificare se toccasse la struttura già scritta, seguendo il principio già sta
 contesto prima di spendere lavoro tecnico che potrebbe dover essere rifatto.
 
 **Fonti lette in questa fase**:
-- `(appunti personali)` — conversazione integrale
+- Un dialogo salvato in locale (appunti personali) — conversazione integrale
   utente/Opus 4.7 (Flora/Tolomeo), 9 capitoli: lezione su continuo/discreto (ℤ, ℚ, ℝ,
   numerabilità), lo scalare degli SVG, Gödel, la diagonale di Cantor, due nozioni di
   completezza, Galileo e le qualità primarie/secondarie, il crollo quantistico di quella
   distinzione, platonismo/formalismo matematico e Wigner, chiusura con la geometria
   differenziale sintetica di Lawvere (continuo primitivo, discreto come suo aggiunto).
-- `(copia personale in PDF)` (Roberto Calasso, *L'impronta
-  dell'editore: I libri unici*) — letto per intero via `pdftotext`, con attenzione
+- Roberto Calasso, *L'impronta dell'editore: I libri unici* (copia personale in PDF) —
+  letto per intero via `pdftotext`, con attenzione
   particolare, su richiesta esplicita, alla sezione dalle copertine al saggio di Kevin Kelly
   sulla digitalizzazione universale (righe ~944-1470 del testo estratto), scomposta passo per
   passo senza comprimerla in sintesi lineare.
 
 **Decisioni sull'uso del materiale**:
-- La tesi che "il mondo si digitalizza da millenni, senza saperlo" viene ripresa come tesi
-  generale nel corso, **senza attribuzione esplicita a Calasso** (decisione dell'utente: non è
-  chiaro sia una tesi originale sua, e comunque non è necessaria una citazione d'autore per gli
-  scopi del corso). Restano invece citate come fatti verificabili: von Neumann (*The Computer
+- Queste letture sono servite da contesto, non da fonte di testo. **Voce corretta il 15
+  settembre 2026**: una versione precedente diceva che la tesi "il mondo si digitalizza da
+  millenni, senza saperlo" fosse stata ripresa come tesi generale del corso. Verificato con
+  una ricerca sul testo di tutti i capitoli: non compare, né quella formulazione né alcun
+  riferimento a Calasso o a Kevin Kelly — la voce descriveva un'intenzione mai entrata nel
+  saggio, e nessun testo altrui è stato riprodotto. Restano citate come fatti verificabili: von Neumann (*The Computer
   and the Brain*, 1958) e la coppia *veritas filia temporis* (Bacone) / *error filius
   temporis* (Bayle, via Blumenberg).
 - Scartata la digressione sui *bandhu* vedici (concordato con l'utente): bellissima ma
@@ -1395,7 +1397,7 @@ Parti visibili. Presentato all'utente, giudicato non corrispondente a quanto imm
 voleva l'indice completo (Fondamenti/Genealogia/Meccanismo) sempre leggibile, con i moduli
 che si aprono al click per rivelare le unità, le sezioni annidate sotto l'unità attiva. Su
 sua richiesta esplicita, quel primo tentativo è stato costruito da capo come campione
-**separato**, senza toccare il file vero (`laboratorio-precedente/bozze/indice-sidebar-prova.html`),
+**separato**, senza toccare il file vero (in una cartella di bozze separata),
 verificato e approvato.
 
 **Oggi, su richiesta esplicita dell'utente ("il nuovo indice che mi è piaciuto deve stare in

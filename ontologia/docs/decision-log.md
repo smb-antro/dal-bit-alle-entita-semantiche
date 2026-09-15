@@ -29,9 +29,8 @@ fonte che si aggiorna da sola. Se il corso cambierà in modo sostanziale, andrà
 rivalutato esplicitamente, non aggiornato in automatico.
 
 **Nota operativa**: la cartella è stata creata con percorsi assoluti da una sessione
-radicata in un worktree della root (`.claude/worktrees/worktree`, branch
-`branch`), non nella root reale — stesso precedente già
-documentato in `qa-tool/docs/decision-log.md` (nota del 2026-07-05). Nessun worktree
+radicata in un worktree della root invece che nella root reale — stesso precedente
+già documentato nel repository di provenienza (nota del 2026-07-05). Nessun worktree
 aggiuntivo creato per questo bootstrap.
 
 ## 2026-09-04 — Aggiornamento post-estrazione: cartografia-semantica

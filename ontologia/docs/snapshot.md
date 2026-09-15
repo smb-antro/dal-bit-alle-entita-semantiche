@@ -25,8 +25,8 @@ conforms=True) e `scripts/query-esempio.py` (6 query, tutte verificate a mano) d
 comando. 8 nuove decisioni in `docs/decisioni-modellazione.md`, inclusi i gap dichiarati
 (relazioni di Fase 1 non mappate per assenza di nodo target).
 
-Fase 5 completata: `scripts/genera_html.py` genera 187 pagine statiche in `output/`
-(111 concetti, 7 moduli, 3 fili trasversali, 61 teorici, 5 indice/home) + `style.css` +
+Fase 5 completata: `scripts/genera_html.py` genera 195 pagine statiche in `output/`
+(111 concetti, 12 capitoli, 3 fili trasversali, 64 teorici, 5 indice/home) + `style.css` +
 font EB Garamond self-hosted (WOFF2, scaricati da google/fonts, OFL). Verificato in
 browser reale (server locale su `python3 -m http.server`): 1606 link interni, 0 rotti
 dopo la correzione di un bug reale (pagine Modulo mescolavano Concetti e Teorici nella
