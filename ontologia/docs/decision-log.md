@@ -14,8 +14,8 @@ della cognizione). Verificato contro i tre vincoli del dominio:
 - **Diritti**: `corso-llm` è interamente scritto dall'utente. Le citazioni presenti (von
   Neumann, Wei et al., Bacone/Bayle, Herculano-Houzel, Ouyang et al.) sono riferimenti
   fattuali a lavori pubblicati, non riproduzione di testo altrui.
-- **Nessun dato personale di terzi**: i dati sensibili di `qa-tool` (interviste un progetto di ricerca,
-  materiale di un collaboratore terzo) vivono in `capstone-qualitativo/` e `data/`, cartelle
+- **Nessun dato personale di terzi**: i dati sensibili di `qa-tool` (interviste e materiale di un
+  progetto di ricerca con un collaboratore terzo, non nominato qui per riservatezza) vivono in `capstone-qualitativo/` e `data/`, cartelle
   sorelle mai toccate da questo progetto.
 - **Complessità**: decine di concetti tecnici, teorici citati, moduli/unità, dataset
   verificati, relazioni di prerequisito/analogia/contrapposizione già esplicitate in
