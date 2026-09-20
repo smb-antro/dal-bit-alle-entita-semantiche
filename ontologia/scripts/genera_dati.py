@@ -289,7 +289,7 @@ TEORICI = [
 # ---------------------------------------------------------------------------
 
 DATASET = [
-    ("VocabolarioBpeDelCorso", "Vocabolario BPE del corso", "334 simboli (34 caratteri base + 300 unioni apprese), addestrato realmente sul testo di Genealogia.", "Reale", "2026-07-06"),
+    ("VocabolarioBpeDelSaggio", "Vocabolario BPE del saggio", "334 simboli (34 caratteri base + 300 unioni apprese), addestrato realmente sul testo di Genealogia.", "Reale", "2026-07-06"),
     ("Corpus46FrasiItaliane", "Corpus di 46 frasi italiane", "Corpus scritto apposta per il predittore n-grammi (34 training, 12 test).", "Reale", "2026-07-06"),
     ("DatiCalibrazioneReliability", "Dati di calibrazione (reliability diagram)", "65 previsioni reali raggruppate in 3 bucket di confidenza, misurate sul corpus di 46 frasi.", "Reale", "2026-07-06"),
     ("EmbeddingFastTextIt23Parole", "Embedding fastText di 23 parole italiane", "Vettori reali a 300 dimensioni, proiettati in 2D per esplorazione, aritmetica e polisemia.", "Reale", "2026-07-06"),

@@ -2012,8 +2012,8 @@ const GRAFO = {
    "grado": 5
   },
   {
-   "id": "VocabolarioBpeDelCorso",
-   "label": "Vocabolario BPE del corso",
+   "id": "VocabolarioBpeDelSaggio",
+   "label": "Vocabolario BPE del saggio",
    "tipi": [
     "Dataset"
    ],
@@ -4592,7 +4592,7 @@ const GRAFO = {
    "prop": "rimandaA"
   },
   {
-   "da": "VocabolarioBpeDelCorso",
+   "da": "VocabolarioBpeDelSaggio",
    "a": "Reale",
    "prop": "haStatoEpistemico"
   },

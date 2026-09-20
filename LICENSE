@@ -1,31 +1,73 @@
-LICENZA — DA DECIDERE PRIMA DELLA PUBBLICAZIONE
+LICENZA — «Dal bit alle entità semantiche», caso studio 1
 
-Questo repository non ha ancora una licenza definitiva. La scelta è stata discussa il
-4 settembre 2026 tra le quattro alternative seguenti, e resta aperta — va chiusa prima
-di pubblicare il repository (push su GitHub):
+Copyright (c) 2026 Stefano Bongiovanni
 
-1. MIT (codice) + CC BY 4.0 (contenuti originali — saggio e ontologia)
-   Permissiva su entrambi i fronti: riuso libero, anche commerciale, con solo obbligo
-   di attribuzione. Combinazione tipica per repository portfolio open.
+Questo repository contiene tre tipi di materiale diversi, con tre regimi diversi.
+Il criterio è il tipo di materiale, non la cartella: dove uno stesso file ne
+contiene più di uno (le pagine HTML del saggio hanno insieme prosa e codice), a
+ciascuna parte si applica il regime che le spetta.
 
-2. MIT (codice) + CC BY-NC 4.0 (contenuti originali)
-   Codice permissivo come sopra; saggio e ontologia restano protetti dal riuso
-   commerciale non autorizzato — solo attribuzione e uso non commerciale.
 
-3. Apache 2.0 (codice) + CC BY-SA 4.0 (contenuti originali)
-   Codice permissivo con clausola brevetti esplicita; saggio e ontologia riutilizzabili
-   ma con obbligo di condividere allo stesso modo (share-alike).
+1. CODICE — Licenza MIT
 
-4. Tutti i diritti riservati
-   Nessuna licenza open: il repository resta pubblico solo per consultazione
-   (portfolio), senza concedere diritti di riuso su codice o contenuti.
+   Tutto il codice sorgente: gli script Python (dominio/src/, ontologia/scripts/,
+   ontologia/lente-semantica/scripts/), il JavaScript e il CSS, compresi quelli
+   incorporati nelle pagine HTML, e la struttura HTML delle pagine.
 
-Questa scelta riguarda solo il codice e i contenuti originali di questo repository
-(dominio/ e ontologia/). Non riguarda le librerie di terze parti già vendorizzate con
-licenza propria, invariate:
+   Ai fini della licenza MIT qui sotto, per «Software» si intende esclusivamente
+   questo codice sorgente. La documentazione è esclusa e ricade nel regime 3.
 
-- D3.js v7 — BSD — licenza in ontologia/lente-semantica/output/vendor/LICENSE-d3
-- EB Garamond (font) — SIL Open Font License — licenza in ontologia/output/fonts/OFL.txt
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this software and associated documentation files (the "Software"), to deal
+   in the Software without restriction, including without limitation the rights
+   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   copies of the Software, and to permit persons to whom the Software is
+   furnished to do so, subject to the following conditions:
 
-Fino alla decisione, nessun diritto di riuso è concesso su dominio/ e ontologia/ oltre
-a quanto già garantito dalle licenze di terzi elencate sopra.
+   The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+   SOFTWARE.
+
+
+2. ONTOLOGIA E VOCABOLARIO — Creative Commons Attribuzione 4.0 (CC BY 4.0)
+   https://creativecommons.org/licenses/by/4.0/deed.it
+
+   Il vocabolario SKOS, la micro-ontologia OWL, i dati e le forme SHACL
+   (ontologia/src/*.ttl), e tutto ciò che ne è generato: le pagine di
+   ontologia/output/ e i dati del grafo della Lente semantica
+   (ontologia/lente-semantica/src/grafo.js).
+
+   Riuso libero, anche commerciale, a condizione di citare l'autore. La licenza è
+   dichiarata anche dentro i dati, in forma leggibile dalla macchina
+   (dct:license sull'ontologia e sullo schema di concetti).
+
+
+3. PROSA E DOCUMENTAZIONE — Tutti i diritti riservati
+
+   Il testo del saggio, ovunque compaia (le pagine di dominio/, comprese le copie
+   nei prototipi di design-system/lab/), e tutta la documentazione del repository
+   (README, file .md, decisioni di modellazione, decision-log).
+
+   Consultabili e citabili nei limiti di legge; non è concesso nessun diritto di
+   riproduzione, ridistribuzione, traduzione o adattamento senza autorizzazione
+   scritta dell'autore.
+
+
+COMPONENTI DI TERZE PARTI
+
+Inclusi con la propria licenza originale, che resta invariata e prevale su quanto
+sopra per ciò che li riguarda:
+
+- D3.js v7 — licenza ISC — testo in
+  ontologia/lente-semantica/output/vendor/LICENSE-d3 (e nella copia in
+  design-system/lab/lente-semantica-test/output/vendor/)
+- EB Garamond (font) — SIL Open Font License 1.1 — testo in OFL.txt accanto a
+  ogni copia dei file del font (dominio/src/saggio/fonts/, ontologia/output/fonts/,
+  design-system/lab/fonts/)

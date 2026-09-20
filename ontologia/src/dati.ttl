@@ -717,8 +717,8 @@
 # Dataset
 ########################################################################
 
-:VocabolarioBpeDelCorso a :Dataset ;
-    rdfs:label "Vocabolario BPE del corso"@it ;
+:VocabolarioBpeDelSaggio a :Dataset ;
+    rdfs:label "Vocabolario BPE del saggio"@it ;
     rdfs:comment "334 simboli (34 caratteri base + 300 unioni apprese), addestrato realmente sul testo di Genealogia."@it ;
     :haStatoEpistemico :Reale ;
     :dataVerifica "2026-07-06"^^xsd:date .

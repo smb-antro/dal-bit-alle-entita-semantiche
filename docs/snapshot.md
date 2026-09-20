@@ -50,7 +50,8 @@ reso leggibile. Nessun commit pubblicato su GitHub.
   ri-lancio, va prima aggiornato. Deliberatamente rimandato.
 - `docs/` (questo file, decision-log, next-steps) sincronizzati il 9 settembre
   2026 dopo essere rimasti indietro rispetto al lavoro di giornata.
-- `LICENSE` placeholder con quattro alternative, nessuna scelta ancora fatta.
+- `LICENSE` definita il 19 settembre 2026: codice MIT, ontologia CC BY 4.0 (anche
+  dentro i dati, con `owl:versionInfo "1.0"`), prosa e documentazione riservate.
 - Storia di commit solo locale (`feat(init)`, `feat(design-system)`, i due
   `feat(saggio)`, `feat(lente)`, più la passata di pulizia pre-pubblicazione).
   Non pubblicato su GitHub. Card del portfolio riservata in
@@ -58,6 +59,7 @@ reso leggibile. Nessun commit pubblicato su GitHub.
 
 Prossimo passo reale: nessun lavoro di contenuto bloccante resta aperto né sul
 saggio né sulla Lente. Quello che resta è amministrativo — aggiornare
-`build_output.py` e rigenerare il bundle statico, poi licenza/push, in
+`build_output.py` e rigenerare il bundle statico, poi le decisioni aperte in
+`next-steps.md` e il push, in
 quest'ordine o nell'ordine che l'utente preferisce (vedi `next-steps.md`,
 sezione "Debito rimasto").

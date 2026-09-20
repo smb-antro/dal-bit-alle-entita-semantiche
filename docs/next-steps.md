@@ -2,8 +2,15 @@
 
 ## Prima della pubblicazione
 
-- **Licenza** — scegliere tra le quattro alternative in [`../LICENSE`](../LICENSE)
-  (discusse il 4 settembre 2026, decisione lasciata aperta di proposito).
+- ~~**Licenza**~~ — ✅ decisa il 19 settembre 2026: tre regimi (codice MIT, ontologia
+  CC BY 4.0, prosa riservata), vedi [`../LICENSE`](../LICENSE) e `decision-log.md`.
+- ~~**Identificatori legacy**~~ — ✅ 20 settembre 2026: `:CorsoLLM` (schema di concetti)
+  diventa `:DalBitAlleEntitaSemantiche`, `:VocabolarioBpeDelCorso` diventa
+  `:VocabolarioBpeDelSaggio`. Vedi `decision-log.md`.
+- **IBM Plex Mono** — 5 capitoli la caricano da Google Fonts (serve ai quattro simboli
+  logici). Self-hosting o accettare la dipendenza di rete: decisione aperta.
+- **Cartelle `lab/`** (`design-system/lab/`, `ontologia/lente-semantica/lab/`) — da non
+  pubblicare; per ora restano nel repository, da escludere prima del push.
 - **Push su GitHub** — decisione a parte, da confermare esplicitamente quando il resto
   sarà pronto (vedi `../CLAUDE.md`, Regole operative).
 
@@ -73,7 +80,7 @@
   design system, tenda dei concetti, indice riorganizzato), e lo script stesso
   si è rivelato in parte disallineato (testo e font vecchi hardcoded in alcuni
   punti) — non un semplice ri-lancio, va prima aggiornato.
-- **Licenza e push su GitHub** — vedi sopra, "Prima della pubblicazione".
+- **Push su GitHub** — vedi sopra, "Prima della pubblicazione".
 
 ## Fatto, non più debito
 

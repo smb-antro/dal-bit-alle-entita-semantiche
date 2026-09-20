@@ -30,7 +30,10 @@
     dct:title "Micro-ontologia del saggio «Dal bit alle entità semantiche»"@it ;
     dct:description "Classi e proprietà che completano il vocabolario SKOS di vocabolario.ttl con la struttura che SKOS non può esprimere: tipi di entità diversi dal Concetto (Tecnica, Teorico, Parte, Capitolo, Unità, Dataset, FiloTrasversale) e relazioni tipizzate fra concetti."@it ;
     dct:creator "Stefano Bongiovanni" ;
-    dct:created "2026-08-26"^^xsd:date .
+    dct:created "2026-08-26"^^xsd:date ;
+    dct:modified "2026-09-19"^^xsd:date ;
+    dct:license <https://creativecommons.org/licenses/by/4.0/> ;
+    owl:versionInfo "1.0" .
 
 
 ########################################################################

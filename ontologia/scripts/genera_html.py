@@ -209,7 +209,7 @@ def genera_pagina_concetto(g, c):
 
 
 def genera_indice_concetti(g):
-    top = sorted(g.subjects(SKOS.topConceptOf, N.CorsoLLM), key=lambda x: label(g, x))
+    top = sorted(g.subjects(SKOS.topConceptOf, N.DalBitAlleEntitaSemantiche), key=lambda x: label(g, x))
     corpo = ["<p>Tutti i 111 concetti, raggruppati per area tematica. Ogni pagina mostra la sua gerarchia, le relazioni tipizzate con altri concetti, i teorici collegati e le unità del corso in cui è discusso.</p>"]
     for t in top:
         figli = sorted(g.subjects(SKOS.broader, t), key=lambda x: label(g, x))

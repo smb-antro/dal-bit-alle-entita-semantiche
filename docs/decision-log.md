@@ -532,3 +532,75 @@ pagina reale, su richiesta esplicita dell'utente.
 - Due commit separati: uno per il lavoro di sidebar/presentazione sopra, uno
   per questa correzione — lavoro semanticamente indipendente.
 
+## 2026-09-15 — Seconda passata di pulizia e riscrittura della storia git
+
+Un audit indipendente (agente separato, modello diverso, istruito a leggere come un
+revisore esterno ostile) ha trovato ciò che la prima passata aveva mancato: il nome
+del repository privato del portfolio in 11 punti fuori da `dominio/src/saggio/`, un
+percorso locale dentro l'RDF pubblicato (`dct:description` dello schema di concetti),
+un commento che dichiarava ancora provvisorio il namespace già sostituito, percorsi che
+iniziavano per `Desktop/` invece che per `/Users/` o `~/` — sfuggiti proprio per il
+pattern usato nella prima ricerca — e una voce del decision-log di `dominio/` che
+affermava la ripresa di una tesi letta in un libro. Verificata con una ricerca su tutti i
+capitoli: quella tesi non compare nel saggio; la voce è stata corretta registrando la
+verifica, non cancellata.
+
+**La scoperta più importante riguardava il metodo, non il contenuto**: i commit di
+correzione del primo giro erano additivi, quindi nomi e percorsi redatti restavano
+leggibili nella cronologia (`git log -p`). Il repository non era mai stato pubblicato,
+quindi la storia è stata riscritta con `git filter-repo` (`--replace-text` e
+`--replace-message`, sui contenuti e sui messaggi), conservando tutti i commit e il loro
+racconto — cambiano solo gli hash. Verifica dopo la riscrittura: zero occorrenze delle
+stringhe sensibili in qualunque blob o messaggio di qualunque commit. Deliberatamente
+**non** sostituito `example.org`: non è un dato sensibile, ed è il valore che questo
+stesso log documenta come rimpiazzato — sostituirlo nella storia avrebbe reso
+incomprensibile la voce che registra la sostituzione.
+
+## 2026-09-19 — Licenza: tre regimi, uno per tipo di materiale
+
+Chiusa la decisione rimandata dal 4 settembre. Nessuna delle quattro alternative
+iniziali distingueva fra i tre beni presenti nel repository, che hanno valore diverso:
+
+- **Il codice** vale poco in sé — la licenza è soprattutto un segnale di igiene. MIT.
+- **L'ontologia** esiste per essere referenziata: un vocabolario pubblicato sotto un
+  namespace dereferenziabile ma non riusabile è una contraddizione. CC BY 4.0,
+  dichiarata anche dentro i dati (`dct:license`), con `owl:versionInfo "1.0"` a marcare
+  la prima versione pubblicata.
+- **La prosa del saggio** è capitale editoriale dell'autore. Tutti i diritti riservati,
+  documentazione compresa.
+
+Scartate le varianti NC e SA per l'ontologia: "non commerciale" è mal definito
+proprio per il pubblico che deve valutare il lavoro (un'azienda non sa se aprirla in
+contesto lavorativo sia uso commerciale); share-alike su un vocabolario obbligherebbe
+chi lo importa a rilicenziare il proprio. Per la prosa, preferito il riservato a CC
+BY-NC-ND per l'asimmetria di reversibilità: da riservato si può sempre allentare, da
+una licenza aperta non si torna indietro sulle copie già distribuite — e resta
+possibile un'eventuale cessione in esclusiva a un editore.
+
+Corretto anche un errore del placeholder: D3.js v7 è sotto licenza **ISC**, non BSD.
+
+## 2026-09-20 — Identificatori legacy rinominati prima della pubblicazione
+
+Il namespace era già stato sostituito (15 settembre), ma il segmento locale di due
+identificatori portava ancora il nome del corso da cui il saggio è stato estratto:
+`:CorsoLLM` (lo schema di concetti, radice dell'intero vocabolario) e
+`:VocabolarioBpeDelCorso` (il dataset del tokenizzatore). Stesso motivo del namespace:
+un identificatore pubblicato è citabile, e rinominarlo dopo il push romperebbe ogni
+riferimento esterno — oggi, con il repository ancora locale, è una sostituzione senza
+costi di compatibilità, senza bisogno di `owl:sameAs`.
+
+- Lo schema diventa **`:DalBitAlleEntitaSemantiche`**, specchio del titolo del saggio
+  (già nel suo `dct:title`). Scartato `:VocabolarioDelSaggio`: sarebbe stato quasi
+  omonimo del dataset `:VocabolarioBpe…`, due "vocabolari" di natura diversa (l'uno di
+  concetti, l'altro di token del tokenizzatore).
+- Il dataset diventa **`:VocabolarioBpeDelSaggio`**, con etichetta «Vocabolario BPE del
+  saggio».
+- Sostituiti alla fonte, non a mano nell'output: 126 occorrenze in `vocabolario.ttl`,
+  `genera_html.py` (la query sui concetti di primo livello), `genera_dati.py`, da cui
+  `dati.ttl` è stato rigenerato (diff: due righe). Reasoner OWL-RL e SHACL rieseguiti:
+  conformi. Le pagine di `output/` sono risultate identiche a prima — controllo
+  significativo, perché la home ne elenca i concetti di primo livello proprio tramite lo
+  schema rinominato: se la query non avesse trovato più nulla, la pagina sarebbe cambiata.
+  Nel grafo della Lente cambiano solo le tre righe del dataset.
+- Non toccati: `termini-grezzi.md` (elenco storico del materiale grezzo di partenza) e le
+  copie storiche dentro `design-system/lab/`, destinate a non essere pubblicate.

@@ -51,13 +51,18 @@ cliccabili), poster statico del grafo completo, secondo grado della Lente semant
 reso leggibile — vedi lo stato di dettaglio in [docs/snapshot.md](docs/snapshot.md).
 Storia di commit solo locale, non ancora pubblicato su GitHub (decisione a parte, da
 confermare).
-Resta da fare: scegliere la licenza, aggiornare e rigenerare il bundle statico a file
+Resta da fare: aggiornare e rigenerare il bundle statico a file
 singolo — vedi [docs/next-steps.md](docs/next-steps.md). La card è già riservata in
 `portfolio/site/lab.html` ("Dal bit alle entità semantiche"), da collegare qui
 quando il repository sarà pubblicato.
 
 ## Licenza
 
-Non ancora decisa — vedi [LICENSE](LICENSE) per le quattro alternative in discussione.
-Le librerie di terze parti vendorizzate (D3.js, EB Garamond) restano con la propria
-licenza originale, indipendentemente da questa scelta.
+Tre regimi, uno per tipo di materiale — dettagli in [LICENSE](LICENSE):
+
+- **Codice** (script, JavaScript, CSS) — MIT.
+- **Ontologia e vocabolario** (`ontologia/src/*.ttl` e quanto ne è generato) — CC BY 4.0,
+  dichiarata anche dentro i dati (`dct:license`).
+- **Prosa del saggio e documentazione** — tutti i diritti riservati.
+
+D3.js (ISC) ed EB Garamond (OFL) restano con la propria licenza originale.
