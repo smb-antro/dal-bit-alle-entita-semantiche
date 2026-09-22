@@ -7,53 +7,11 @@
    gruppi di nodo sotto restano ESATTAMENTE come erano — sono palette
    categoriali già validate (dataviz, separazione CVD), non toccate. */
 
-@font-face {
-    font-family: "EB Garamond";
-    src: url("../../output/fonts/EBGaramond-Variable.woff2") format("woff2-variations");
-    font-weight: 400 800;
-    font-style: normal;
-    font-display: swap;
-}
-@font-face {
-    font-family: "EB Garamond";
-    src: url("../../output/fonts/EBGaramond-Italic-Variable.woff2") format("woff2-variations");
-    font-weight: 400 800;
-    font-style: italic;
-    font-display: swap;
-}
+/* Font, tavolozza e azzeramenti — comprese le scale categoriali --cat-* e
+   --grp-*, che lente.js legge per nome — vengono da
+   ../../../design-system/css/fondamenta.css, collegato prima di questo file.
+   Qui resta solo ciò che è proprio della Lente. */
 
-:root {
-    --bianco:        #FFFFFF;
-    --brina:         #F6F8FB;
-    --inchiostro:    #1a1a1a;
-    --grigio-testo:  #4a4540;
-    --grigio-soft:   #8A8580;
-    --verde-scuro:   #2A5628;
-    --verde:         #3D7A3A;
-    --verde-chiaro:  #7AAD76;
-    --line:          rgba(26,26,26,0.12);
-
-    /* Palette delle 4 categorie di relazione — invariata. */
-    --cat-gerarchia: #5a5245;
-    --cat-concettuale: #a8543a;
-    --cat-attribuzione: #6b4a7a;
-    --cat-struttura: #4a6b7a;
-    --cat-gerarchia-tenue: #c2baae;
-    --cat-concettuale-tenue: #dca493;
-    --cat-attribuzione-tenue: #bea5ca;
-    --cat-struttura-tenue: #a5beca;
-
-    /* Palette dei 7 gruppi di nodi — invariata. */
-    --grp-concetto: #b1652f;
-    --grp-teorico: #327aae;
-    --grp-unita: #5f8627;
-    --grp-dataset: #ae327a;
-    --grp-capitolo: #6c3bb0;
-    --grp-parte: #298e53;
-    --grp-altro: #463f38;
-}
-
-* { box-sizing: border-box; }
 html { background: var(--brina); }
 body {
     margin: 0;

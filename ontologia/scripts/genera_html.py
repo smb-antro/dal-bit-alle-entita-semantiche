@@ -86,6 +86,11 @@ def pagina(titolo, sottotitolo, briciole, corpo, profondita=1, titolo_html=None)
     """titolo: testo semplice per <title> (mai HTML). titolo_html: markup per
     <h1>, se diverso da titolo (es. per aggiungere il tag "Tecnica")."""
     css = "../style.css" if profondita else "style.css"
+    # Fondamenta condivise del design system: font e tavolozza, non la scala
+    # tipografica del saggio. L'ontologia è una superficie di consultazione e
+    # ha una sua misura (corpo 1.15rem su radice 16px, colonna da 46rem);
+    # style.css viene DOPO e la sovrascrive, perché non è stratificato.
+    fondamenta = ("../../../" if profondita else "../../") + "design-system/css/fondamenta.css"
     briciole_html = ""
     if briciole:
         parti = []
@@ -106,6 +111,7 @@ def pagina(titolo, sottotitolo, briciole, corpo, profondita=1, titolo_html=None)
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{titolo} — Vocabolario del saggio «Dal bit alle entità semantiche»</title>
+<link rel="stylesheet" href="{fondamenta}">
 <link rel="stylesheet" href="{css}">
 </head>
 <body>

@@ -141,6 +141,30 @@
     /* tratto */
     --line: rgba(26,26,26,0.12);
 
+    /* Scale categoriali della Lente semantica. Stanno fra i primitivi e non
+       fra i semantici per la stessa ragione degli altri: lente.js le legge per
+       nome (`var(--cat-gerarchia)` dentro le stringhe che generano l'SVG).
+       Sono già validate per contrasto e distinguibilità: non si ridisegnano. */
+
+    /* categorie di relazione */
+    --cat-gerarchia:          #5a5245;
+    --cat-concettuale:        #a8543a;
+    --cat-attribuzione:       #6b4a7a;
+    --cat-struttura:          #4a6b7a;
+    --cat-gerarchia-tenue:    #c2baae;
+    --cat-concettuale-tenue:  #dca493;
+    --cat-attribuzione-tenue: #bea5ca;
+    --cat-struttura-tenue:    #a5beca;
+
+    /* gruppi di nodo */
+    --grp-concetto: #b1652f;
+    --grp-teorico:  #327aae;
+    --grp-unita:    #5f8627;
+    --grp-dataset:  #ae327a;
+    --grp-capitolo: #6c3bb0;
+    --grp-parte:    #298e53;
+    --grp-altro:    #463f38;
+
     /* famiglie tipografiche */
     --serif: 'EB Garamond', Garamond, Georgia, 'Times New Roman', serif;
     --mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;

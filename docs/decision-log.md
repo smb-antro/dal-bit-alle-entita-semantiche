@@ -839,3 +839,39 @@ relativi, per le pagine navigabili; `design-system.inline.css` con i font in
 data-URI base64 (980 KB), per il bundle a file singolo, dove un percorso relativo
 non significherebbe più niente. `build_css.py --check` fallisce se i generati non
 corrispondono alle sorgenti.
+
+## 2026-09-22 — Ontologia e Lente sulle fondamenta condivise, non sulla tipografia del saggio
+
+Terzo passo del design system. La domanda non era «come faccio ereditare anche
+all'ontologia il CSS del saggio» ma «che cosa condividono davvero».
+
+L'ontologia è una **superficie di consultazione**, non di lettura continua: radice
+a 16px contro i 19,2 del saggio, corpo 1.15rem, stack di font proprio (con
+`Iowan Old Style` fra i ripieghi), colonna da 46rem invece di 740px, link color
+inchiostro invece che arancio. La Lente semantica ha misure sue ancora diverse.
+Farle ereditare la scala di lettura del saggio le avrebbe peggiorate in nome
+dell'uniformità.
+
+Condividono invece font, tavolozza e azzeramenti. Da qui una terza variante
+generata, `design-system/css/fondamenta.css` (9 KB): solo i layer `reset` e
+`tokens`, senza `base`, `layout` e `components` — quindi senza il
+`html{font-size:120%}` che è proprio del saggio. Ontologia e Lente la collegano
+**prima** del proprio CSS, che non essendo stratificato la sovrascrive dove serve.
+
+- `pagina()` in `genera_html.py` è l'unico punto cambiato per tutte e 194 le
+  pagine: una riga di `<link>` in più, calcolata sulla profondità come già faceva
+  per `style.css`.
+- `output/style.css` perde 28 righe (due `@font-face`, il `:root`, `box-sizing`),
+  `lente.css` ne perde 47 (le stesse più le due scale categoriali).
+- Le scale categoriali della Lente — `--cat-*` e `--grp-*`, 15 nomi — entrano nei
+  token **fra i primitivi**, non fra i semantici: `lente.js` le legge per nome
+  esattamente come gli altri primitivi, quindi valgono le stesse regole del
+  contratto pubblico. Non sono state ridisegnate: erano già validate per contrasto
+  e distinguibilità.
+- **`ontologia/output/fonts/` eliminata**: 584 KB di font identici a quelli di
+  `design-system/fonts/`. Nel repository resta una copia sola, più quella in
+  `design-system/lab/`, che è archivio destinato a non essere pubblicato.
+
+Verifica: harness a zero differenze; il diff delle 194 pagine rigenerate è
+esattamente una riga per pagina; 1.869 link nell'ontologia, nessuno rotto; nessun
+riferimento residuo alla cartella dei font rimossa.

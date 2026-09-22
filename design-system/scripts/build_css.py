@@ -10,8 +10,13 @@ Sorgenti (queste si editano a mano):
     css/reset.css, css/base.css, css/layout.css, css/components/*.css
 
 Generati (questi NON si editano a mano):
-    css/design-system.css          le pagine navigabili lo collegano con <link>.
+    css/design-system.css          le pagine del saggio lo collegano con <link>.
                                    I font hanno url() relativi a css/.
+    css/fondamenta.css             solo font, azzeramenti e token. Lo collegano
+                                   l'ontologia e la Lente semantica, che sono
+                                   superfici di consultazione con una tipografia
+                                   propria — condividono la tavolozza e i font,
+                                   non la scala di lettura del saggio.
     css/design-system.inline.css   per il bundle a file singolo: i font sono
                                    incorporati in data-URI base64, perché un
                                    url() relativo non significa più niente una
@@ -98,9 +103,12 @@ def font_inline():
     return re.sub(r"url\('([^']+\.woff2)'\)", incorpora, css)
 
 
-def assembla(font_css, nome):
+def assembla(font_css, nome, solo=None):
+    """`solo` limita i layer inclusi: serve alla variante `fondamenta`."""
     pezzi = [INTESTAZIONE.format(nome=nome), ORDINE_LAYER, "", font_css.rstrip(), ""]
     for nome_layer, percorsi in sorgenti().items():
+        if solo is not None and nome_layer not in solo:
+            continue
         pezzi.append(blocco_layer(nome_layer, percorsi))
     return "\n".join(pezzi).rstrip() + "\n"
 
@@ -114,6 +122,9 @@ def main():
     uscite = {
         RADICE / "css" / "design-system.css":
             assembla(font_link(), "design-system.css — variante <link>"),
+        RADICE / "css" / "fondamenta.css":
+            assembla(font_link(), "fondamenta.css — solo font, azzeramenti e token",
+                     solo=["reset", "tokens"]),
         RADICE / "css" / "design-system.inline.css":
             assembla(font_inline(), "design-system.inline.css — variante da incorporare"),
     }

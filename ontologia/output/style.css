@@ -11,34 +11,9 @@
    semantica — verde resta riservato a numerazione e rimandi, come prima.
    Vedi ../../design-system/README.md. */
 
-@font-face {
-    font-family: "EB Garamond";
-    src: url("fonts/EBGaramond-Variable.woff2") format("woff2-variations");
-    font-weight: 400 800;
-    font-style: normal;
-    font-display: swap;
-}
-@font-face {
-    font-family: "EB Garamond";
-    src: url("fonts/EBGaramond-Italic-Variable.woff2") format("woff2-variations");
-    font-weight: 400 800;
-    font-style: italic;
-    font-display: swap;
-}
-
-:root {
-    --bianco:        #FFFFFF;
-    --brina:         #F6F8FB;
-    --inchiostro:    #1a1a1a;
-    --grigio-testo:  #4a4540;
-    --grigio-soft:   #8A8580;
-    --verde-scuro:   #2A5628;
-    --verde:         #3D7A3A;
-    --verde-chiaro:  #7AAD76;
-    --line:          rgba(26,26,26,0.12);
-}
-
-* { box-sizing: border-box; }
+/* Font, tavolozza e azzeramenti vengono da
+   ../../design-system/css/fondamenta.css, collegato prima di questo file.
+   Qui resta solo ciò che è proprio di questa superficie. */
 
 html { background: var(--brina); }
 

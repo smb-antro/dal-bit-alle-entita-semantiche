@@ -74,6 +74,10 @@ reso leggibile. Nessun commit pubblicato su GitHub.
   due varianti generate. Le 14 pagine del saggio lo collegano: CSS inline da 4.539
   a 1.250 righe, tutto guscio condiviso in meno. Harness a zero differenze.
   Restano da fare: ontologia e Lente, le schede dei componenti, l'export DTCG.
+- ✅ **Ontologia e Lente sulle fondamenta condivise** (22 settembre 2026): non la
+  tipografia del saggio — sono superfici di consultazione con misure proprie — ma
+  font, tavolozza e azzeramenti, in una terza variante generata (`fondamenta.css`).
+  Eliminata una copia duplicata dei font (584 KB). Harness a zero differenze.
 - Storia di commit solo locale (`feat(init)`, `feat(design-system)`, i due
   `feat(saggio)`, `feat(lente)`, più la passata di pulizia pre-pubblicazione).
   Non pubblicato su GitHub. Card del portfolio riservata in
