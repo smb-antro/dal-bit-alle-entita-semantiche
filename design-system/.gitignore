@@ -1,0 +1,6 @@
+# Variante con i font in data-URI base64 (~980 KB): serve solo a build_output.py
+# quando costruisce il bundle a file singolo, e non è altro che i font già
+# presenti in fonts/ ricodificati. Si rigenera con scripts/build_css.py.
+# design-system.css invece È versionato: le pagine lo collegano con <link>, e
+# deve esistere in un clone senza far girare nulla.
+css/design-system.inline.css

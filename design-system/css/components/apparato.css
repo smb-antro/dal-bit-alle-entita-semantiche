@@ -1,0 +1,29 @@
+/* Apparato: tutto ciò che parla del testo senza esserne parte —
+   occhielli, indicazioni, note di chiusura. Maiuscoletto spaziato sulla
+   stessa famiglia, non un secondo font: il saggio ne usa uno solo. */
+
+.apparato{
+  font-variant: small-caps;
+  letter-spacing: var(--traccia-apparato);
+  color: var(--colore-testo-tenue);
+}
+
+.eyebrow{
+  font-variant: small-caps; letter-spacing: var(--traccia-apparato); font-size: var(--dim-apparato);
+  color: var(--colore-testo-tenue);
+  margin-bottom: 14px; display:flex; align-items:center; gap:10px;
+}
+.eyebrow::before{ content:""; width: 22px; height:1px; background: var(--colore-testo-tenue); display:inline-block; }
+
+.footer-note{
+  margin-top: 46px; font-variant: small-caps; letter-spacing: var(--traccia-apparato); font-size: var(--dim-apparato); color: var(--colore-testo-tenue);
+}
+
+.scrolldown{
+  margin-top: 50px; font-variant: small-caps; font-size: var(--dim-apparato);
+  color: var(--colore-testo-tenue); letter-spacing: 0.06em;
+  display:flex; align-items:center; gap:8px;
+}
+.scrolldown::after{ content:"↓"; color: var(--colore-apparato); animation: nudge 1.8s infinite ease-in-out; }
+@media (prefers-reduced-motion: reduce){ .scrolldown::after{ animation:none; } }
+@keyframes nudge{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(5px); } }

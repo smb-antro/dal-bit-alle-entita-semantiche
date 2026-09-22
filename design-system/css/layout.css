@@ -1,0 +1,37 @@
+/* Impianto della pagina: colonna di lettura, binario laterale, sezioni. */
+
+main{ padding-top: 0; }
+
+.wrap{ max-width: var(--misura-colonna); margin: 0 auto; padding: 0 24px; }
+
+.unit-block section{ padding: 92px 0 84px; border-bottom: 1px solid var(--colore-bordo); }
+.unit-block:last-child section:last-of-type{ border-bottom:none; }
+
+/* Ritmo verticale dell'apertura di pagina.
+
+   `.hero` e `.unit-block section` si contendono padding-top, e l'esito
+   non è accademico: in 11 pagine su 14 l'hero sta dentro un .unit-block
+   e vince la regola più specifica (92px); nelle altre 3 — fondamenti-1,
+   fondamenti-2, presentazione — l'hero è autonomo e vale la sua (62px).
+   La cascata originale codificava questa distinzione per specificità.
+
+   Perché la regola sta qui e non in components/hero.css: i layer
+   scavalcano la specificità, quindi un `.hero` messo in `components`
+   batterebbe `.unit-block section` che sta in `layout`, e le 11 pagine
+   perderebbero 30px per ogni hero. È successo davvero: l'harness l'ha
+   trovato al primo capitolo migrato.
+
+   Regola generale del design system: due regole che si contendono la
+   stessa proprietà devono stare nello stesso layer, così decide la
+   specificità come prima. */
+.hero{ padding-top: 62px; }
+
+/* Sfumatura di chiusura: il fondo si schiarisce verso la superficie,
+   segnale che la pagina sta finendo. */
+.chiusura{ background: linear-gradient(180deg, var(--colore-fondo), var(--colore-superficie)); }
+
+/* Sopra i 900px il binario diventa fisso e il contenuto gli lascia
+   spazio. È l'unico vero punto di rottura del saggio. */
+@media (min-width: 900px){
+  main{ padding-left: var(--misura-rail); }
+}

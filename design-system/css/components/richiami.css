@@ -1,0 +1,26 @@
+/* Tre modi di uscire dal filo del discorso senza cambiare pagina.
+   Tutti e tre in famiglia arancio: sono apparato del saggio. */
+
+/* nota a margine */
+.aside{
+  margin: 26px 0; padding: 18px 20px; background: var(--colore-superficie);
+  border-left: 3px solid var(--colore-apparato-medio); border-radius: 2px;
+}
+.aside .label{
+  font-variant: small-caps; letter-spacing: var(--traccia-apparato); font-size: var(--dim-apparato-minore);
+  color: var(--colore-testo-tenue); margin-bottom: 8px; display:block;
+}
+.aside p{ margin-bottom:0; font-size: var(--dim-nota); color: var(--colore-testo-attenuato); }
+
+/* domanda rivolta a chi legge: bordo tratteggiato, perché è una sosta
+   e non un'affermazione */
+.question{
+  margin: 28px 0; padding: 20px 22px; border: 1px dashed var(--colore-bordo); border-radius: 4px;
+  font-family: var(--font-testo); font-size: var(--dim-richiamo); color: var(--colore-apparato);
+}
+
+/* citazione */
+blockquote{
+  margin: 0; padding-left: 22px; border-left: 2px solid var(--colore-apparato-medio);
+  font-family: var(--font-testo); font-size: var(--dim-citazione); color: var(--colore-testo);
+}

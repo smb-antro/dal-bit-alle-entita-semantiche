@@ -69,6 +69,11 @@ reso leggibile. Nessun commit pubblicato su GitHub.
   121 sostituzioni verificate a una a una: ora radice, voce, intestazione di parte
   e interlinea sono identiche su tutte e 14 le pagine. Ontologia, Lente e i canvas
   di `meccanismo-4` a zero differenze. Baseline rifatta su questo stato.
+- ✅ **Design system funzionante** (22 settembre 2026): non più prosa e prototipi
+  sparsi ma `design-system/` con token a tre livelli, cascade layer, componenti e
+  due varianti generate. Le 14 pagine del saggio lo collegano: CSS inline da 4.539
+  a 1.250 righe, tutto guscio condiviso in meno. Harness a zero differenze.
+  Restano da fare: ontologia e Lente, le schede dei componenti, l'export DTCG.
 - Storia di commit solo locale (`feat(init)`, `feat(design-system)`, i due
   `feat(saggio)`, `feat(lente)`, più la passata di pulizia pre-pubblicazione).
   Non pubblicato su GitHub. Card del portfolio riservata in

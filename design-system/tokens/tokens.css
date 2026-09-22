@@ -1,0 +1,132 @@
+/* ===================================================================
+   Token del design system — SORGENTE DI VERITÀ
+   Da qui si genera tokens.json (DTCG). Non si edita il JSON a mano.
+
+   Tre livelli, con una regola sola:
+     primitivi   il valore grezzo. Nessun significato, solo il colore o la misura.
+     semantici   il ruolo. È qui che si guarda per capire cosa fa un valore.
+     componente  solo dove un componente ha bisogno di uno scarto suo.
+
+   I componenti puntano ai semantici, mai direttamente ai primitivi.
+
+   ─── CONTRATTO PUBBLICO ────────────────────────────────────────────
+   I nomi dei primitivi NON si rinominano. Il JavaScript del saggio e
+   della Lente li legge per nome in 21 punti, in due modi diversi:
+
+     getComputedStyle(...).getPropertyValue('--brina')
+       meccanismo-4-reti-neurali.html:1090 (themeVarHex), usata per
+       disegnare i due canvas. Un nome inesistente restituisce "" e
+       produce un canvas nero, SENZA errore in console.
+
+     "…fill='var(--arancio-scuro)'…" dentro stringhe JS che generano
+       SVG inline: meccanismo-1, meccanismo-3, meccanismo-5,
+       meccanismo-6 e lente.js.
+
+   Perché i primitivi e non i semantici: chi disegna su un canvas ha
+   bisogno di un colore concreto, non di un ruolo. È un'eccezione
+   dichiarata alla regola dei tre livelli, non una svista.
+
+   I valori dei primitivi restano letterali per la stessa ragione: una
+   catena di var() si risolverebbe comunque, ma tenere qui il colore
+   vero rende il contratto ispezionabile senza aprire il browser.
+   =================================================================== */
+
+:root {
+
+  /* ═══ PRIMITIVI ═══════════════════════════════════════════════════
+     La tavolozza. Verificata identica in tutti i 16 file che la
+     definivano prima di questo design system: zero divergenze. */
+
+  /* neutri */
+  --bianco:         #FFFFFF;
+  --brina:          #F6F8FB;
+  --inchiostro:     #1a1a1a;
+  --grigio-testo:   #4a4540;
+  --grigio-soft:    #8A8580;
+
+  /* blu — famiglia della navigazione */
+  --blu-scuro:      #1F2B6B;
+  --blu:            #2B3A8C;
+  --blu-chiaro:     #5A6FB8;
+
+  /* arancio — famiglia dell'apparato del saggio */
+  --arancio-scuro:  #A85419;
+  --arancio:        #D4722A;
+  --arancio-chiaro: #E9A66B;
+
+  /* verde — famiglia dell'ontologia */
+  --verde-scuro:    #2A5628;
+  --verde:          #3D7A3A;
+  --verde-chiaro:   #7AAD76;
+
+  /* tratto */
+  --line: rgba(26,26,26,0.12);
+
+  /* famiglie tipografiche */
+  --serif: 'EB Garamond', Garamond, Georgia, 'Times New Roman', serif;
+  --mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+
+  /* misure di struttura */
+  --rail-w: 300px;
+
+
+  /* ═══ SEMANTICI ═══════════════════════════════════════════════════
+     Il ruolo, non il valore. Cambiare qui cambia il significato in
+     tutto il sistema; cambiare un primitivo cambia solo una tinta.
+
+     Il vincolo fondativo del design system — «una famiglia di colore
+     appartiene a un solo dominio, e non si mescolano mai nello stesso
+     componente» — qui smette di essere una regola scritta nel README e
+     diventa una cosa che si vede nei nomi. */
+
+  /* superfici e testo */
+  --colore-fondo:            var(--brina);
+  --colore-superficie:       var(--bianco);
+  --colore-testo:            var(--inchiostro);
+  --colore-testo-attenuato:  var(--grigio-testo);
+  --colore-testo-tenue:      var(--grigio-soft);
+  --colore-bordo:            var(--line);
+
+  /* navigazione: dove sei, dove puoi andare dentro al saggio */
+  --colore-navigazione:        var(--blu);
+  --colore-navigazione-forte:  var(--blu-scuro);
+  --colore-navigazione-tenue:  var(--blu-chiaro);
+
+  /* apparato: ciò che parla del testo senza esserne parte
+     (occhielli, note a margine, rimandi, domande) */
+  --colore-apparato:        var(--arancio-scuro);
+  --colore-apparato-medio:  var(--arancio);
+  --colore-apparato-tenue:  var(--arancio-chiaro);
+
+  /* ontologia: il passaggio dal saggio alla sua cartografia semantica */
+  --colore-ontologia:        var(--verde);
+  --colore-ontologia-forte:  var(--verde-scuro);
+  --colore-ontologia-tenue:  var(--verde-chiaro);
+
+  /* tipografia */
+  --font-testo: var(--serif);
+  --font-mono:  var(--mono);
+
+  /* Scala tipografica: una sola per tutte e 14 le pagine dal 22
+     settembre 2026. Prima erano tre, ereditate da tre modi diversi di
+     convertire i file — vedi decision-log.md. */
+  --dim-testo:            1.05rem;   /* corpo del testo */
+  --dim-lede:             1.2rem;    /* paragrafo d'attacco */
+  --dim-citazione:        1.1rem;
+  --dim-richiamo:         1.0rem;    /* .question */
+  --dim-nota:             0.96rem;   /* .aside p */
+  --dim-apparato:         0.78rem;   /* occhiello, nota di chiusura */
+  --dim-apparato-minore:  0.72rem;   /* etichetta di .aside */
+  --dim-nav-titolo:       1.02rem;
+  --dim-nav-parte:        .74rem;    /* intestazione di parte, kicker */
+  --dim-nav-voce:         .9rem;     /* voce di modulo */
+  --dim-nav-sottovoce:    .82rem;    /* voce di unità */
+  --dim-nav-numero:       .74rem;
+
+  --interlinea-testo: 1.65;
+  --traccia-apparato: .06em;   /* spaziatura del maiuscoletto */
+
+  /* struttura */
+  --misura-colonna: 740px;     /* larghezza di lettura */
+  --misura-rail:    var(--rail-w);
+}

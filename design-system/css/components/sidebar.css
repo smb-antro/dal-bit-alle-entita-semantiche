@@ -1,0 +1,88 @@
+/* Binario di navigazione: l'indice dell'intero saggio, identico in ogni
+   pagina. Sotto i 900px è una fascia in cima; sopra, una colonna fissa.
+
+   Tutto qui dentro è blu, mai arancio: il colore dice «struttura del
+   saggio», e un accento d'apparato in mezzo confonderebbe i due ruoli.
+   È una regola verificata sul campo — l'arancio c'era, per errore, ed è
+   stato tolto (vedi decision-log.md, 4 settembre 2026). */
+
+.sidebar{
+  background: var(--colore-superficie);
+  border-bottom: 1px solid var(--colore-bordo);
+  padding: 28px 24px 32px;
+}
+.sidebar-kicker{
+  font-variant: small-caps; letter-spacing: var(--traccia-apparato); font-size: var(--dim-nav-parte);
+  color: var(--colore-testo-tenue); margin-bottom: 10px;
+}
+.sidebar-title{
+  font-family: var(--font-testo); font-weight: 500; font-size: var(--dim-nav-titolo);
+  color: var(--colore-testo); margin-bottom: 22px; text-transform: uppercase;
+}
+.sidebar .parte{ margin-top: 26px; }
+.sidebar .parte:first-of-type{ margin-top: 0; }
+.sidebar .parte-heading{
+  font-family: var(--font-testo); font-weight: 600; font-size: var(--dim-nav-parte);
+  font-variant: small-caps; letter-spacing: var(--traccia-apparato); color: var(--colore-navigazione);
+  padding-bottom: 10px; margin-bottom: 2px; border-bottom: 1px solid var(--colore-bordo);
+}
+.sidebar details.modulo summary.voce-presentazione{
+  font-family: var(--font-testo); font-weight: 600; font-size: var(--dim-nav-parte);
+  font-variant: small-caps; letter-spacing: var(--traccia-apparato); color: var(--colore-navigazione);
+  padding-bottom: 10px; margin-bottom: 2px; border-bottom: 1px solid var(--colore-bordo);
+}
+.sidebar .voce-semplice{
+  display: block; padding: 10px 4px; border-bottom: 1px solid var(--colore-bordo);
+  font-family: var(--font-testo); font-weight: 500; font-size: var(--dim-nav-voce);
+  color: var(--colore-testo); text-decoration: none;
+}
+.sidebar .voce-semplice:hover{ color: var(--colore-navigazione); }
+.sidebar .voce-semplice.current{ color: var(--colore-navigazione); }
+.sidebar details.modulo{ border-bottom: 1px solid var(--colore-bordo); }
+.sidebar details.modulo summary{
+  display: flex; align-items: center; gap: 8px; padding: 10px 4px; cursor: pointer;
+  font-family: var(--font-testo); font-weight: 500; font-size: var(--dim-nav-voce); color: var(--colore-testo);
+  list-style: none;
+}
+.sidebar details.modulo summary.current{ color: var(--colore-navigazione); }
+.sidebar details.modulo summary::-webkit-details-marker{ display: none; }
+.sidebar details.modulo summary::before{
+  content: "›"; display: inline-block;
+  color: var(--colore-testo-tenue); transition: transform .15s ease; flex-shrink: 0;
+}
+.sidebar details.modulo[open] summary::before{ transform: rotate(90deg); color: var(--colore-navigazione); }
+.sidebar details.modulo summary:hover{ color: var(--colore-navigazione); }
+.sidebar .unita-list{ padding: 2px 0 12px 22px; display: flex; flex-direction: column; gap: 1px; }
+.sidebar .unita-list a{
+  display: block; padding: 6px 4px; font-size: var(--dim-nav-sottovoce); color: var(--colore-testo-attenuato); text-decoration: none;
+}
+.sidebar .unita-list a:hover{ color: var(--colore-navigazione); }
+.sidebar .unita-list a .num{ color: var(--colore-navigazione); margin-right: 6px; font-size: var(--dim-nav-numero); }
+
+/* Pallini di scroll-spy sulle voci dell'unità corrente. Blu come tutto
+   il resto del binario: segnano «sei qui nella navigazione», ruolo
+   diverso da un rimando arancio dentro il testo. */
+.sidebar .unita-list.scrollspy a{ position: relative; padding-left: 20px; }
+.sidebar .unita-list.scrollspy a::before{
+  content: "";
+  position: absolute; left: 2px; top: 50%;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--colore-fondo); border: 1px solid var(--colore-bordo);
+  transform: translateY(-50%);
+  transition: background .25s, box-shadow .25s, transform .25s;
+}
+.sidebar .unita-list.scrollspy a.active{ color: var(--colore-navigazione); }
+.sidebar .unita-list.scrollspy a.active::before{
+  background: var(--colore-navigazione);
+  /* alone: --blu a 18% di opacità. Letterale perché rgba() non accetta
+     una custom property come sorgente senza color-mix. */
+  box-shadow: 0 0 0 4px rgba(43,58,140,0.18);
+  transform: translateY(-50%) scale(1.2);
+}
+
+@media (min-width: 900px){
+  .sidebar{
+    position: fixed; z-index: 50; top:0; bottom:0; left:0; width: var(--misura-rail);
+    overflow-y: auto; border-bottom:none; border-right: 1px solid var(--colore-bordo);
+  }
+}

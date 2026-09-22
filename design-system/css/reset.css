@@ -1,0 +1,14 @@
+/* Azzeramenti. Vive nel layer `reset`, il più debole di tutti, così
+   qualunque altra cosa lo sovrascrive senza bisogno di specificità.
+
+   Perché un layer esplicito e non dichiarazioni sciolte: `!important`
+   inverte l'ordine dei layer. Un `!important` non stratificato ha la
+   priorità PIÙ BASSA fra gli important, quindi lo `scroll-behavior`
+   qui sotto deve stare in un layer per comportarsi come ci si aspetta
+   rispetto al CSS inline delle pagine. */
+
+*{ box-sizing: border-box; }
+
+@media (prefers-reduced-motion: reduce){
+  *{ scroll-behavior: auto !important; }
+}

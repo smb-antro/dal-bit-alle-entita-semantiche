@@ -770,3 +770,72 @@ system dovrà risultare a **zero differenze**: non è più «quasi uguale», è 
 **Perché prima e non dopo.** Riconciliare dopo l'estrazione avrebbe mescolato il
 cambiamento voluto con le eventuali regressioni della migrazione, rendendo la rete
 di sicurezza inutile proprio nel momento in cui serve. Stessa logica dei font.
+
+## 2026-09-22 — Il design system diventa un sistema: token, layer, componenti
+
+Le regole di design esistevano come prosa (`design-system/README.md`) e come CSS
+ricopiato in 14 file. Ora esistono come **una fonte sola**, che le pagine
+collegano: `design-system/css/design-system.css`, generato da token, base,
+impianto e componenti. Il CSS inline dei capitoli passa da **4.539 a 1.250
+righe**: quello che resta è CSS di widget, che è giusto stia dove sta.
+
+**Tre livelli di token, con un'eccezione dichiarata.** Primitivi (la tavolozza) →
+semantici (il ruolo) → componenti, che puntano ai semantici. L'eccezione: i
+**primitivi conservano i nomi storici** e valori letterali, perché sono un
+contratto pubblico — il JavaScript li legge per nome in 21 punti, sia via
+`getComputedStyle` per disegnare i canvas di `meccanismo-4`, sia come
+`var(--nome)` dentro stringhe che generano SVG inline (`meccanismo-1/3/5/6`,
+`lente.js`). Chi disegna su un canvas ha bisogno di un colore concreto, non di un
+ruolo. Un nome inesistente lì non dà errore: dà un canvas nero.
+
+Il vincolo fondativo del design system — «una famiglia di colore appartiene a un
+solo dominio» — smette di essere una regola scritta e diventa visibile nei nomi:
+`--colore-navigazione`, `--colore-apparato`, `--colore-ontologia`.
+
+**I cascade layer scavalcano la specificità: tre conseguenze vere, tutte trovate
+dall'harness e nessuna prevista leggendo il codice.**
+
+1. `.hero` (componente) contro `.unit-block section` (impianto). Prima vinceva la
+   seconda per specificità: in 11 pagine su 14 l'hero sta dentro un unit-block e
+   prende 92px, nelle altre 3 è autonomo e prende i suoi 62. Messe in due layer
+   diversi, ha iniziato a vincere `.hero`, e 11 pagine hanno perso 30px per ogni
+   hero. **Regola generale adottata**: due regole che si contendono la stessa
+   proprietà devono stare nello stesso layer, così decide la specificità come
+   prima. `.hero` è quindi in `layout`, accanto a ciò con cui si contende.
+2. In `fondamenti-1` un `section` di pagina — non stratificato, quindi più forte
+   di qualunque layer — ha iniziato a battere `.hero` del design system. La pagina
+   ora ridichiara `.hero`, con il commento che spiega perché.
+3. La variante copertina di `.sidebar-title` in `presentazione` dichiarava
+   `font-variant: small-caps` ma non `text-transform`: prima non serviva, perché
+   nessuna regola lo impostava; ora che una regola di base esiste, il maiuscolo
+   filtrava. La variante dichiara esplicitamente `text-transform: none`.
+
+**Un errore mio, registrato perché è istruttivo.** Per risolvere il caso 2 avevo
+spostato nel design system anche `section` e `section:last-of-type` delle tre
+pagine a sezioni nude. Sbagliato: `section:last-of-type` non significa «l'ultima
+sezione della pagina» ma «l'ultima di ogni genitore», quindi toglieva un bordo
+all'ultima sezione di **ogni** `.unit-block`. Undici pagine si sono accorciate.
+L'harness l'ha mostrato al primo giro, la modifica è stata annullata e il caso 2
+risolto in modo mirato. Generalizzare una regola perché tre file la condividono
+non basta: bisogna guardare cosa seleziona davvero.
+
+**Metodo della migrazione.** Uno strumento confronta ogni regola della pagina con
+quelle del design system e la toglie **solo** se, a parità di contesto `@media`,
+selettore e dichiarazioni coincidono — dopo aver risolto gli alias semantici
+(`var(--colore-testo)` → `var(--inchiostro)`) e normalizzato i numeri (`.06em` e
+`0.06em` sono lo stesso valore). Se qualcosa differisce, la regola resta: meglio
+un duplicato che una differenza silenziosa. Lo strumento ha riconosciuto da solo
+le differenze volute — le varianti copertina di `presentazione`, la testata
+propria di `dietro-i-widget` — e le ha lasciate dov'erano.
+
+**Verifica**: harness a **zero differenze su tutti e 65 i bersagli**, compresi i
+due canvas di `meccanismo-4` e le pagine dell'ontologia. 793 link, nessuno rotto.
+Nessun `:root` residuo nei capitoli, nessun riferimento a Google, un solo
+`!important` in tutto il design system — quello del reset, che deve stare in un
+layer proprio perché `!important` inverte l'ordine dei layer.
+
+**Due varianti generate**, non una: `design-system.css` con i font via `url()`
+relativi, per le pagine navigabili; `design-system.inline.css` con i font in
+data-URI base64 (980 KB), per il bundle a file singolo, dove un percorso relativo
+non significherebbe più niente. `build_css.py --check` fallisce se i generati non
+corrispondono alle sorgenti.

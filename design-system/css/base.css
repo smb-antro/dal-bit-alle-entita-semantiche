@@ -1,0 +1,31 @@
+/* Elementi nudi: come si legge il testo prima di qualunque componente. */
+
+html{ scroll-behavior: smooth; font-size: 120%; }
+
+body{
+  margin:0;
+  background: var(--colore-fondo);
+  color: var(--colore-testo);
+  font-family: var(--font-testo);
+  line-height: var(--interlinea-testo);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,h2,h3, .display{
+  font-family: var(--font-testo);
+  font-weight: 500;
+  margin: 0;
+}
+
+h2.title{ font-size: clamp(1.6rem, 4vw, 2.3rem); margin-bottom: 20px; }
+
+p{ margin: 0 0 18px; color: var(--colore-testo); font-size: var(--dim-testo); }
+p.dim{ color: var(--colore-testo-attenuato); }
+.lede{ font-size: var(--dim-lede); color: var(--colore-testo); }
+
+.mono{ font-family: var(--font-mono); }
+
+/* Il rimando nel corpo del testo è apparato, non navigazione: porta
+   fuori dalla riga che si sta leggendo, non dentro la struttura del
+   saggio. Da qui l'arancio e non il blu. */
+a{ color: var(--colore-apparato); }

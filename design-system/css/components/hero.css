@@ -1,0 +1,17 @@
+/* Testata di apertura di ogni pagina.
+
+   La scatola di .hero (il suo padding) NON sta qui ma in css/layout.css,
+   accanto a `.unit-block section`: le due regole si contendono
+   padding-top e devono restare nello stesso layer, altrimenti l'ordine
+   dei layer scavalca la specificità e ne cambia l'esito. Vedi la nota
+   in layout.css. Qui resta la tipografia, che non è contesa. */
+
+.hero .kicker{
+  font-variant: small-caps; letter-spacing: var(--traccia-apparato); font-size: 0.8rem;
+  color: var(--colore-testo-tenue); margin-bottom: 18px;
+}
+.hero h1{ font-size: clamp(1.9rem, 5.6vw, 2.9rem); line-height:1.12; margin-bottom: 24px; }
+
+/* Il corsivo nel titolo è l'unico accento cromatico concesso qui: una
+   parola sola, che porta il peso della frase. */
+.hero h1 em{ font-style: italic; color: var(--colore-apparato); }

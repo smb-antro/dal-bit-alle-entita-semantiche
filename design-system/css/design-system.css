@@ -1,0 +1,560 @@
+/* ===================================================================
+   design-system.css — variante <link>
+   FILE GENERATO — non editare a mano.
+   Si rigenera con:  python3 design-system/scripts/build_css.py
+   Le sorgenti sono tokens/tokens.css, fonts/fonts.css, css/*.css e
+   css/components/*.css.
+   =================================================================== */
+
+
+@layer reset, tokens, base, layout, components;
+
+/* Font del design system — self-hosted, nessuna richiesta di rete.
+   Una sola copia per l'intero repository; i percorsi sono relativi a questo file,
+   quindi funziona da qualunque pagina che lo colleghi.
+
+   EB Garamond — testo del saggio.            Licenza: OFL-EBGaramond.txt
+   IBM Plex Mono — simboli logici ed etichette tecniche. Licenza: OFL-IBMPlexMono.txt
+
+   Nota: IBM Plex Mono era caricato da Google Fonts in 5 capitoli su 14, e i subset
+   serviti non coprivano U+2227 (∧), U+2228 (∨), U+2295 (⊕) — cioè tre dei quattro
+   simboli logici di Fondamenti · 1. I file completi qui presenti li contengono. */
+
+@font-face {
+  font-family: 'EB Garamond';
+  src: url('../fonts/EBGaramond-Variable.woff2') format('woff2-variations');
+  font-weight: 400 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'EB Garamond';
+  src: url('../fonts/EBGaramond-Italic-Variable.woff2') format('woff2-variations');
+  font-weight: 400 800;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  src: url('../fonts/IBMPlexMono-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  src: url('../fonts/IBMPlexMono-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  src: url('../fonts/IBMPlexMono-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer reset {
+  /* ---- css/reset.css ---- */
+  /* Azzeramenti. Vive nel layer `reset`, il più debole di tutti, così
+     qualunque altra cosa lo sovrascrive senza bisogno di specificità.
+
+     Perché un layer esplicito e non dichiarazioni sciolte: `!important`
+     inverte l'ordine dei layer. Un `!important` non stratificato ha la
+     priorità PIÙ BASSA fra gli important, quindi lo `scroll-behavior`
+     qui sotto deve stare in un layer per comportarsi come ci si aspetta
+     rispetto al CSS inline delle pagine. */
+
+  *{ box-sizing: border-box; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ scroll-behavior: auto !important; }
+  }
+
+}
+
+@layer tokens {
+  /* ---- tokens/tokens.css ---- */
+  /* ===================================================================
+     Token del design system — SORGENTE DI VERITÀ
+     Da qui si genera tokens.json (DTCG). Non si edita il JSON a mano.
+
+     Tre livelli, con una regola sola:
+       primitivi   il valore grezzo. Nessun significato, solo il colore o la misura.
+       semantici   il ruolo. È qui che si guarda per capire cosa fa un valore.
+       componente  solo dove un componente ha bisogno di uno scarto suo.
+
+     I componenti puntano ai semantici, mai direttamente ai primitivi.
+
+     ─── CONTRATTO PUBBLICO ────────────────────────────────────────────
+     I nomi dei primitivi NON si rinominano. Il JavaScript del saggio e
+     della Lente li legge per nome in 21 punti, in due modi diversi:
+
+       getComputedStyle(...).getPropertyValue('--brina')
+         meccanismo-4-reti-neurali.html:1090 (themeVarHex), usata per
+         disegnare i due canvas. Un nome inesistente restituisce "" e
+         produce un canvas nero, SENZA errore in console.
+
+       "…fill='var(--arancio-scuro)'…" dentro stringhe JS che generano
+         SVG inline: meccanismo-1, meccanismo-3, meccanismo-5,
+         meccanismo-6 e lente.js.
+
+     Perché i primitivi e non i semantici: chi disegna su un canvas ha
+     bisogno di un colore concreto, non di un ruolo. È un'eccezione
+     dichiarata alla regola dei tre livelli, non una svista.
+
+     I valori dei primitivi restano letterali per la stessa ragione: una
+     catena di var() si risolverebbe comunque, ma tenere qui il colore
+     vero rende il contratto ispezionabile senza aprire il browser.
+     =================================================================== */
+
+  :root {
+
+    /* ═══ PRIMITIVI ═══════════════════════════════════════════════════
+       La tavolozza. Verificata identica in tutti i 16 file che la
+       definivano prima di questo design system: zero divergenze. */
+
+    /* neutri */
+    --bianco:         #FFFFFF;
+    --brina:          #F6F8FB;
+    --inchiostro:     #1a1a1a;
+    --grigio-testo:   #4a4540;
+    --grigio-soft:    #8A8580;
+
+    /* blu — famiglia della navigazione */
+    --blu-scuro:      #1F2B6B;
+    --blu:            #2B3A8C;
+    --blu-chiaro:     #5A6FB8;
+
+    /* arancio — famiglia dell'apparato del saggio */
+    --arancio-scuro:  #A85419;
+    --arancio:        #D4722A;
+    --arancio-chiaro: #E9A66B;
+
+    /* verde — famiglia dell'ontologia */
+    --verde-scuro:    #2A5628;
+    --verde:          #3D7A3A;
+    --verde-chiaro:   #7AAD76;
+
+    /* tratto */
+    --line: rgba(26,26,26,0.12);
+
+    /* famiglie tipografiche */
+    --serif: 'EB Garamond', Garamond, Georgia, 'Times New Roman', serif;
+    --mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+
+    /* misure di struttura */
+    --rail-w: 300px;
+
+
+    /* ═══ SEMANTICI ═══════════════════════════════════════════════════
+       Il ruolo, non il valore. Cambiare qui cambia il significato in
+       tutto il sistema; cambiare un primitivo cambia solo una tinta.
+
+       Il vincolo fondativo del design system — «una famiglia di colore
+       appartiene a un solo dominio, e non si mescolano mai nello stesso
+       componente» — qui smette di essere una regola scritta nel README e
+       diventa una cosa che si vede nei nomi. */
+
+    /* superfici e testo */
+    --colore-fondo:            var(--brina);
+    --colore-superficie:       var(--bianco);
+    --colore-testo:            var(--inchiostro);
+    --colore-testo-attenuato:  var(--grigio-testo);
+    --colore-testo-tenue:      var(--grigio-soft);
+    --colore-bordo:            var(--line);
+
+    /* navigazione: dove sei, dove puoi andare dentro al saggio */
+    --colore-navigazione:        var(--blu);
+    --colore-navigazione-forte:  var(--blu-scuro);
+    --colore-navigazione-tenue:  var(--blu-chiaro);
+
+    /* apparato: ciò che parla del testo senza esserne parte
+       (occhielli, note a margine, rimandi, domande) */
+    --colore-apparato:        var(--arancio-scuro);
+    --colore-apparato-medio:  var(--arancio);
+    --colore-apparato-tenue:  var(--arancio-chiaro);
+
+    /* ontologia: il passaggio dal saggio alla sua cartografia semantica */
+    --colore-ontologia:        var(--verde);
+    --colore-ontologia-forte:  var(--verde-scuro);
+    --colore-ontologia-tenue:  var(--verde-chiaro);
+
+    /* tipografia */
+    --font-testo: var(--serif);
+    --font-mono:  var(--mono);
+
+    /* Scala tipografica: una sola per tutte e 14 le pagine dal 22
+       settembre 2026. Prima erano tre, ereditate da tre modi diversi di
+       convertire i file — vedi decision-log.md. */
+    --dim-testo:            1.05rem;   /* corpo del testo */
+    --dim-lede:             1.2rem;    /* paragrafo d'attacco */
+    --dim-citazione:        1.1rem;
+    --dim-richiamo:         1.0rem;    /* .question */
+    --dim-nota:             0.96rem;   /* .aside p */
+    --dim-apparato:         0.78rem;   /* occhiello, nota di chiusura */
+    --dim-apparato-minore:  0.72rem;   /* etichetta di .aside */
+    --dim-nav-titolo:       1.02rem;
+    --dim-nav-parte:        .74rem;    /* intestazione di parte, kicker */
+    --dim-nav-voce:         .9rem;     /* voce di modulo */
+    --dim-nav-sottovoce:    .82rem;    /* voce di unità */
+    --dim-nav-numero:       .74rem;
+
+    --interlinea-testo: 1.65;
+    --traccia-apparato: .06em;   /* spaziatura del maiuscoletto */
+
+    /* struttura */
+    --misura-colonna: 740px;     /* larghezza di lettura */
+    --misura-rail:    var(--rail-w);
+  }
+
+}
+
+@layer base {
+  /* ---- css/base.css ---- */
+  /* Elementi nudi: come si legge il testo prima di qualunque componente. */
+
+  html{ scroll-behavior: smooth; font-size: 120%; }
+
+  body{
+    margin:0;
+    background: var(--colore-fondo);
+    color: var(--colore-testo);
+    font-family: var(--font-testo);
+    line-height: var(--interlinea-testo);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,h2,h3, .display{
+    font-family: var(--font-testo);
+    font-weight: 500;
+    margin: 0;
+  }
+
+  h2.title{ font-size: clamp(1.6rem, 4vw, 2.3rem); margin-bottom: 20px; }
+
+  p{ margin: 0 0 18px; color: var(--colore-testo); font-size: var(--dim-testo); }
+  p.dim{ color: var(--colore-testo-attenuato); }
+  .lede{ font-size: var(--dim-lede); color: var(--colore-testo); }
+
+  .mono{ font-family: var(--font-mono); }
+
+  /* Il rimando nel corpo del testo è apparato, non navigazione: porta
+     fuori dalla riga che si sta leggendo, non dentro la struttura del
+     saggio. Da qui l'arancio e non il blu. */
+  a{ color: var(--colore-apparato); }
+
+}
+
+@layer layout {
+  /* ---- css/layout.css ---- */
+  /* Impianto della pagina: colonna di lettura, binario laterale, sezioni. */
+
+  main{ padding-top: 0; }
+
+  .wrap{ max-width: var(--misura-colonna); margin: 0 auto; padding: 0 24px; }
+
+  .unit-block section{ padding: 92px 0 84px; border-bottom: 1px solid var(--colore-bordo); }
+  .unit-block:last-child section:last-of-type{ border-bottom:none; }
+
+  /* Ritmo verticale dell'apertura di pagina.
+
+     `.hero` e `.unit-block section` si contendono padding-top, e l'esito
+     non è accademico: in 11 pagine su 14 l'hero sta dentro un .unit-block
+     e vince la regola più specifica (92px); nelle altre 3 — fondamenti-1,
+     fondamenti-2, presentazione — l'hero è autonomo e vale la sua (62px).
+     La cascata originale codificava questa distinzione per specificità.
+
+     Perché la regola sta qui e non in components/hero.css: i layer
+     scavalcano la specificità, quindi un `.hero` messo in `components`
+     batterebbe `.unit-block section` che sta in `layout`, e le 11 pagine
+     perderebbero 30px per ogni hero. È successo davvero: l'harness l'ha
+     trovato al primo capitolo migrato.
+
+     Regola generale del design system: due regole che si contendono la
+     stessa proprietà devono stare nello stesso layer, così decide la
+     specificità come prima. */
+  .hero{ padding-top: 62px; }
+
+  /* Sfumatura di chiusura: il fondo si schiarisce verso la superficie,
+     segnale che la pagina sta finendo. */
+  .chiusura{ background: linear-gradient(180deg, var(--colore-fondo), var(--colore-superficie)); }
+
+  /* Sopra i 900px il binario diventa fisso e il contenuto gli lascia
+     spazio. È l'unico vero punto di rottura del saggio. */
+  @media (min-width: 900px){
+    main{ padding-left: var(--misura-rail); }
+  }
+
+}
+
+@layer components {
+  /* ---- css/components/apparato.css ---- */
+  /* Apparato: tutto ciò che parla del testo senza esserne parte —
+     occhielli, indicazioni, note di chiusura. Maiuscoletto spaziato sulla
+     stessa famiglia, non un secondo font: il saggio ne usa uno solo. */
+
+  .apparato{
+    font-variant: small-caps;
+    letter-spacing: var(--traccia-apparato);
+    color: var(--colore-testo-tenue);
+  }
+
+  .eyebrow{
+    font-variant: small-caps; letter-spacing: var(--traccia-apparato); font-size: var(--dim-apparato);
+    color: var(--colore-testo-tenue);
+    margin-bottom: 14px; display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{ content:""; width: 22px; height:1px; background: var(--colore-testo-tenue); display:inline-block; }
+
+  .footer-note{
+    margin-top: 46px; font-variant: small-caps; letter-spacing: var(--traccia-apparato); font-size: var(--dim-apparato); color: var(--colore-testo-tenue);
+  }
+
+  .scrolldown{
+    margin-top: 50px; font-variant: small-caps; font-size: var(--dim-apparato);
+    color: var(--colore-testo-tenue); letter-spacing: 0.06em;
+    display:flex; align-items:center; gap:8px;
+  }
+  .scrolldown::after{ content:"↓"; color: var(--colore-apparato); animation: nudge 1.8s infinite ease-in-out; }
+  @media (prefers-reduced-motion: reduce){ .scrolldown::after{ animation:none; } }
+  @keyframes nudge{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(5px); } }
+
+  /* ---- css/components/hero.css ---- */
+  /* Testata di apertura di ogni pagina.
+
+     La scatola di .hero (il suo padding) NON sta qui ma in css/layout.css,
+     accanto a `.unit-block section`: le due regole si contendono
+     padding-top e devono restare nello stesso layer, altrimenti l'ordine
+     dei layer scavalca la specificità e ne cambia l'esito. Vedi la nota
+     in layout.css. Qui resta la tipografia, che non è contesa. */
+
+  .hero .kicker{
+    font-variant: small-caps; letter-spacing: var(--traccia-apparato); font-size: 0.8rem;
+    color: var(--colore-testo-tenue); margin-bottom: 18px;
+  }
+  .hero h1{ font-size: clamp(1.9rem, 5.6vw, 2.9rem); line-height:1.12; margin-bottom: 24px; }
+
+  /* Il corsivo nel titolo è l'unico accento cromatico concesso qui: una
+     parola sola, che porta il peso della frase. */
+  .hero h1 em{ font-style: italic; color: var(--colore-apparato); }
+
+  /* ---- css/components/reveal.css ---- */
+  /* Comparsa progressiva alla prima vista dell'elemento. Sotto
+     prefers-reduced-motion resta la sola dissolvenza, senza spostamento. */
+
+  .reveal{ opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.visible{ opacity:1; transform: translateY(0); }
+
+  @media (prefers-reduced-motion: reduce){
+    .reveal{ transition: opacity .2s linear; transform:none; }
+  }
+
+  /* ---- css/components/richiami.css ---- */
+  /* Tre modi di uscire dal filo del discorso senza cambiare pagina.
+     Tutti e tre in famiglia arancio: sono apparato del saggio. */
+
+  /* nota a margine */
+  .aside{
+    margin: 26px 0; padding: 18px 20px; background: var(--colore-superficie);
+    border-left: 3px solid var(--colore-apparato-medio); border-radius: 2px;
+  }
+  .aside .label{
+    font-variant: small-caps; letter-spacing: var(--traccia-apparato); font-size: var(--dim-apparato-minore);
+    color: var(--colore-testo-tenue); margin-bottom: 8px; display:block;
+  }
+  .aside p{ margin-bottom:0; font-size: var(--dim-nota); color: var(--colore-testo-attenuato); }
+
+  /* domanda rivolta a chi legge: bordo tratteggiato, perché è una sosta
+     e non un'affermazione */
+  .question{
+    margin: 28px 0; padding: 20px 22px; border: 1px dashed var(--colore-bordo); border-radius: 4px;
+    font-family: var(--font-testo); font-size: var(--dim-richiamo); color: var(--colore-apparato);
+  }
+
+  /* citazione */
+  blockquote{
+    margin: 0; padding-left: 22px; border-left: 2px solid var(--colore-apparato-medio);
+    font-family: var(--font-testo); font-size: var(--dim-citazione); color: var(--colore-testo);
+  }
+
+  /* ---- css/components/sidebar.css ---- */
+  /* Binario di navigazione: l'indice dell'intero saggio, identico in ogni
+     pagina. Sotto i 900px è una fascia in cima; sopra, una colonna fissa.
+
+     Tutto qui dentro è blu, mai arancio: il colore dice «struttura del
+     saggio», e un accento d'apparato in mezzo confonderebbe i due ruoli.
+     È una regola verificata sul campo — l'arancio c'era, per errore, ed è
+     stato tolto (vedi decision-log.md, 4 settembre 2026). */
+
+  .sidebar{
+    background: var(--colore-superficie);
+    border-bottom: 1px solid var(--colore-bordo);
+    padding: 28px 24px 32px;
+  }
+  .sidebar-kicker{
+    font-variant: small-caps; letter-spacing: var(--traccia-apparato); font-size: var(--dim-nav-parte);
+    color: var(--colore-testo-tenue); margin-bottom: 10px;
+  }
+  .sidebar-title{
+    font-family: var(--font-testo); font-weight: 500; font-size: var(--dim-nav-titolo);
+    color: var(--colore-testo); margin-bottom: 22px; text-transform: uppercase;
+  }
+  .sidebar .parte{ margin-top: 26px; }
+  .sidebar .parte:first-of-type{ margin-top: 0; }
+  .sidebar .parte-heading{
+    font-family: var(--font-testo); font-weight: 600; font-size: var(--dim-nav-parte);
+    font-variant: small-caps; letter-spacing: var(--traccia-apparato); color: var(--colore-navigazione);
+    padding-bottom: 10px; margin-bottom: 2px; border-bottom: 1px solid var(--colore-bordo);
+  }
+  .sidebar details.modulo summary.voce-presentazione{
+    font-family: var(--font-testo); font-weight: 600; font-size: var(--dim-nav-parte);
+    font-variant: small-caps; letter-spacing: var(--traccia-apparato); color: var(--colore-navigazione);
+    padding-bottom: 10px; margin-bottom: 2px; border-bottom: 1px solid var(--colore-bordo);
+  }
+  .sidebar .voce-semplice{
+    display: block; padding: 10px 4px; border-bottom: 1px solid var(--colore-bordo);
+    font-family: var(--font-testo); font-weight: 500; font-size: var(--dim-nav-voce);
+    color: var(--colore-testo); text-decoration: none;
+  }
+  .sidebar .voce-semplice:hover{ color: var(--colore-navigazione); }
+  .sidebar .voce-semplice.current{ color: var(--colore-navigazione); }
+  .sidebar details.modulo{ border-bottom: 1px solid var(--colore-bordo); }
+  .sidebar details.modulo summary{
+    display: flex; align-items: center; gap: 8px; padding: 10px 4px; cursor: pointer;
+    font-family: var(--font-testo); font-weight: 500; font-size: var(--dim-nav-voce); color: var(--colore-testo);
+    list-style: none;
+  }
+  .sidebar details.modulo summary.current{ color: var(--colore-navigazione); }
+  .sidebar details.modulo summary::-webkit-details-marker{ display: none; }
+  .sidebar details.modulo summary::before{
+    content: "›"; display: inline-block;
+    color: var(--colore-testo-tenue); transition: transform .15s ease; flex-shrink: 0;
+  }
+  .sidebar details.modulo[open] summary::before{ transform: rotate(90deg); color: var(--colore-navigazione); }
+  .sidebar details.modulo summary:hover{ color: var(--colore-navigazione); }
+  .sidebar .unita-list{ padding: 2px 0 12px 22px; display: flex; flex-direction: column; gap: 1px; }
+  .sidebar .unita-list a{
+    display: block; padding: 6px 4px; font-size: var(--dim-nav-sottovoce); color: var(--colore-testo-attenuato); text-decoration: none;
+  }
+  .sidebar .unita-list a:hover{ color: var(--colore-navigazione); }
+  .sidebar .unita-list a .num{ color: var(--colore-navigazione); margin-right: 6px; font-size: var(--dim-nav-numero); }
+
+  /* Pallini di scroll-spy sulle voci dell'unità corrente. Blu come tutto
+     il resto del binario: segnano «sei qui nella navigazione», ruolo
+     diverso da un rimando arancio dentro il testo. */
+  .sidebar .unita-list.scrollspy a{ position: relative; padding-left: 20px; }
+  .sidebar .unita-list.scrollspy a::before{
+    content: "";
+    position: absolute; left: 2px; top: 50%;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--colore-fondo); border: 1px solid var(--colore-bordo);
+    transform: translateY(-50%);
+    transition: background .25s, box-shadow .25s, transform .25s;
+  }
+  .sidebar .unita-list.scrollspy a.active{ color: var(--colore-navigazione); }
+  .sidebar .unita-list.scrollspy a.active::before{
+    background: var(--colore-navigazione);
+    /* alone: --blu a 18% di opacità. Letterale perché rgba() non accetta
+       una custom property come sorgente senza color-mix. */
+    box-shadow: 0 0 0 4px rgba(43,58,140,0.18);
+    transform: translateY(-50%) scale(1.2);
+  }
+
+  @media (min-width: 900px){
+    .sidebar{
+      position: fixed; z-index: 50; top:0; bottom:0; left:0; width: var(--misura-rail);
+      overflow-y: auto; border-bottom:none; border-right: 1px solid var(--colore-bordo);
+    }
+  }
+
+  /* ---- css/components/tenda-concetti.css ---- */
+  /* Tenda dei concetti: il ponte fra il saggio e la sua ontologia.
+
+     Un termine riconosciuto dal vocabolario diventa cliccabile e apre un
+     pannello laterale con la scheda del concetto, letta da
+     ontologia/output/concetti/*.html, più il link alla Lente semantica.
+
+     Verde in ogni sua parte, deliberatamente: è l'unico posto dove il
+     colore segnala «stai per lasciare il saggio ed entrare nella sua
+     cartografia». Registro diverso dall'arancio (apparato del saggio) e
+     dal blu (navigazione del saggio). I 110 termini cliccabili sono scelti
+     da :discussoInUnita nell'ontologia, mai a occhio. */
+
+  /* ---- il termine nel testo ---- */
+  .termine-concetto{
+    background: none; border: none; padding: 0; margin: 0; cursor: pointer;
+    font: inherit; color: var(--colore-ontologia);
+    border-bottom: 1px dotted var(--colore-ontologia);
+    transition: background .15s ease, border-bottom-style .15s ease;
+  }
+  /* Il fuoco da tastiera ha lo stesso trattamento del passaggio del
+     mouse: chi naviga con Tab vede esattamente quello che vede chi usa il
+     mouse, non un anello di ripiego. */
+  .termine-concetto:hover, .termine-concetto:focus-visible{
+    /* --verde al 14% e al 22%: letterali, rgba() non accetta var() */
+    background: rgba(61,122,58,0.14);
+    border-bottom-style: solid;
+    outline: none;
+  }
+  .termine-concetto.aperto{ background: rgba(61,122,58,0.22); border-bottom-style: solid; }
+
+  /* ---- velo ---- */
+  .tenda-scrim{
+    position: fixed; inset: 0; background: rgba(26,26,26,0.32);
+    opacity: 0; pointer-events: none; transition: opacity .25s ease; z-index: 90;
+  }
+  .tenda-scrim.visibile{ opacity: 1; pointer-events: auto; }
+
+  /* ---- pannello ---- */
+  .tenda-concetto{
+    position: fixed; top: 0; right: 0; bottom: 0; width: min(420px, 92vw);
+    background: var(--colore-superficie); z-index: 91;
+    box-shadow: -8px 0 28px rgba(26,26,26,0.18);
+    transform: translateX(100%); transition: transform .3s ease;
+    overflow-y: auto; padding: 28px 26px 40px;
+  }
+  .tenda-concetto.visibile{ transform: translateX(0); }
+  .tenda-testata{
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 14px;
+    border-bottom: 2px solid var(--colore-ontologia); padding-bottom: 16px; margin-bottom: 18px;
+  }
+  .tenda-eyebrow{
+    font-variant: small-caps; letter-spacing: var(--traccia-apparato); font-size: 0.86rem;
+    color: var(--colore-ontologia); display: block; margin-bottom: 6px;
+  }
+  .tenda-titolo{ font-family: var(--font-testo); font-weight: 500; font-size: 1.5rem; color: var(--colore-testo); }
+  .tenda-titolo .tag{
+    font-variant: small-caps; letter-spacing: .04em; font-size: 0.8rem; color: var(--colore-ontologia);
+    border: 1px solid var(--colore-ontologia-tenue); border-radius: 20px; padding: 1px 10px; margin-left: 8px;
+  }
+  .tenda-chiudi{
+    background: none; border: 1px solid var(--colore-bordo); border-radius: 50%;
+    width: 32px; height: 32px; font-size: 1.1rem; line-height: 1; cursor: pointer;
+    color: var(--colore-testo-attenuato); flex-shrink: 0;
+  }
+  .tenda-chiudi:hover{ border-color: var(--colore-ontologia); color: var(--colore-ontologia-forte); }
+
+  /* ---- contenuto della scheda ---- */
+  .tenda-nota{ font-size: var(--dim-testo); color: var(--colore-testo); margin: 0 0 22px; }
+  .tenda-sezione{ margin-bottom: 20px; }
+  .tenda-sezione h3{
+    font-variant: small-caps; letter-spacing: var(--traccia-apparato); font-size: 0.86rem;
+    color: var(--colore-testo-tenue); font-weight: 500; margin: 0 0 8px;
+  }
+  .tenda-lista{ list-style: none; margin: 0; padding: 0; font-size: 0.98rem; color: var(--colore-testo-attenuato); }
+  .tenda-lista li{ margin-bottom: 5px; }
+  .tenda-lista .rel-tipo{ color: var(--colore-ontologia); font-size: 0.9em; }
+  .tenda-unita-cod{ font-variant: small-caps; color: var(--colore-testo-tenue); font-size: 0.9em; }
+
+  /* ---- uscita verso la Lente ---- */
+  .tenda-lente{
+    display: block; text-align: center; margin-top: 26px; padding: 12px 16px;
+    background: var(--colore-ontologia); color: var(--colore-superficie); border-radius: 8px;
+    text-decoration: none; font-variant: small-caps; letter-spacing: .04em; font-size: 0.98rem;
+  }
+  .tenda-lente:hover{ background: var(--colore-ontologia-forte); }
+
+}

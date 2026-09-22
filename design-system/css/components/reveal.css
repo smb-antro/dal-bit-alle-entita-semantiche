@@ -1,0 +1,9 @@
+/* Comparsa progressiva alla prima vista dell'elemento. Sotto
+   prefers-reduced-motion resta la sola dissolvenza, senza spostamento. */
+
+.reveal{ opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
+.reveal.visible{ opacity:1; transform: translateY(0); }
+
+@media (prefers-reduced-motion: reduce){
+  .reveal{ transition: opacity .2s linear; transform:none; }
+}
