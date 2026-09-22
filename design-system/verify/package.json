@@ -1,0 +1,14 @@
+{
+  "name": "cs1-verify",
+  "private": true,
+  "description": "Harness di regressione visiva per cs-1-cartografia-semantica. Pilota il Chrome di sistema: non scarica binari di browser.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "baseline": "node cattura.js --baseline",
+    "verifica": "node cattura.js"
+  },
+  "dependencies": {
+    "playwright-core": "1.63.0"
+  }
+}

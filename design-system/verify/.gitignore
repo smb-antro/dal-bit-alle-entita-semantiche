@@ -1,0 +1,10 @@
+# dipendenze dell'harness: si reinstallano con `npm install`
+node_modules/
+
+# immagini di riferimento e risultati: si rigenerano, non si versionano
+baseline/
+attuale/
+differenze/
+
+# rapporto rigenerato a ogni cattura
+animazioni-infinite.json
