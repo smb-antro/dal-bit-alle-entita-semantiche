@@ -52,14 +52,26 @@ reso leggibile. Nessun commit pubblicato su GitHub.
   2026 dopo essere rimasti indietro rispetto al lavoro di giornata.
 - `LICENSE` definita il 19 settembre 2026: codice MIT, ontologia CC BY 4.0 (anche
   dentro i dati, con `owl:versionInfo "1.0"`), prosa e documentazione riservate.
+- ✅ **Font self-hosted in una copia sola** (22 settembre 2026): `design-system/fonts/`
+  con EB Garamond e IBM Plex Mono, nessuna richiesta a Google da nessuna pagina del
+  saggio. Ha riparato un difetto reale: tre dei quattro simboli logici di Fondamenti · 1
+  non erano coperti dai subset serviti e ripiegavano sul monospaziato di sistema. Primo
+  passo della trasformazione del design system da prosa a sistema funzionante.
+- ✅ **Harness di regressione visiva** (22 settembre 2026): `design-system/verify/`,
+  28 bersagli e 65 immagini per giro, deterministico — verificato con 4 catture
+  indipendenti e 6 confronti a coppie a zero fallimenti. Tolleranza basata
+  sull'entità della differenza (delta per canale), non sulla percentuale di pixel.
+  Ha fatto emergere una lacuna di accessibilità: animazioni infinite che non si
+  fermano sotto `prefers-reduced-motion`.
 - Storia di commit solo locale (`feat(init)`, `feat(design-system)`, i due
   `feat(saggio)`, `feat(lente)`, più la passata di pulizia pre-pubblicazione).
   Non pubblicato su GitHub. Card del portfolio riservata in
   `portfolio/site/lab.html` ma non collegata.
 
-Prossimo passo reale: nessun lavoro di contenuto bloccante resta aperto né sul
-saggio né sulla Lente. Quello che resta è amministrativo — aggiornare
-`build_output.py` e rigenerare il bundle statico, poi le decisioni aperte in
-`next-steps.md` e il push, in
-quest'ordine o nell'ordine che l'utente preferisce (vedi `next-steps.md`,
-sezione "Debito rimasto").
+Prossimo passo reale: nessun lavoro di contenuto resta aperto né sul saggio né sulla
+Lente. È in corso la trasformazione del design system da prosa e prototipi sparsi a
+sistema funzionante e autonomo — token, CSS condiviso, componenti, esportabile su
+Claude Design — con una rete di sicurezza di regressione visiva costruita prima di
+toccare le pagine. Solo dopo vengono l'aggiornamento di `build_output.py` e la
+rigenerazione del bundle statico (che serve anche come verifica), poi le decisioni
+aperte in `next-steps.md` e il push.

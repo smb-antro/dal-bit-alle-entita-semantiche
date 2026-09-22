@@ -604,3 +604,108 @@ costi di compatibilità, senza bisogno di `owl:sameAs`.
   Nel grafo della Lente cambiano solo le tre righe del dataset.
 - Non toccati: `termini-grezzi.md` (elenco storico del materiale grezzo di partenza) e le
   copie storiche dentro `design-system/lab/`, destinate a non essere pubblicate.
+
+## 2026-09-22 — Font self-hosted in una copia sola, e un difetto trovato nei subset
+
+Primo passo della trasformazione del design system da prosa a sistema funzionante:
+i font. Fatto **prima** di qualunque altra cosa e prima di registrare le immagini di
+riferimento per la regressione visiva, perché un cambio di font sposta l'aspetto di
+ogni pagina e si sarebbe confuso con le regressioni della migrazione vera.
+
+**Il difetto trovato.** Tutti e 14 i file del saggio dichiaravano `'IBM Plex Mono'` in
+`font-family`, ma solo 5 lo caricavano davvero (Fondamenti · 1, Genealogia · 1,
+Meccanismo · 3/4/5): negli altri 9 il monospaziato era da sempre quello di sistema,
+diverso da macchina a macchina. E nei 5 che lo caricavano, nessuno dei `unicode-range`
+serviti da Google copriva U+2227 (∧), U+2228 (∨), U+2295 (⊕). Un `@font-face` non
+viene usato per un codepoint fuori dal proprio `unicode-range` — anche quando il file
+contiene il glifo: è la regola, non un caso limite. Quindi in Fondamenti · 1 i «quattro
+simboli logici» a 2.1rem, affiancati in quattro riquadri, erano tre glifi di sistema
+accanto a un `¬` in IBM Plex Mono. Il commento nel sorgente diceva «l'unico posto in
+questa pagina dove `--mono` è confermato»: era esattamente il punto in cui non lo era.
+
+Vale la pena registrare **come** è stato accertato, perché il primo metodo era sbagliato:
+i confronti a pixel nel browser davano risultati contraddittori, dato che mettevano a
+confronto due *file* diversi dello stesso carattere e il fallback dello stack non era
+il monospaziato generico ma SF Mono. La prova non sta nel rendering ma nella
+dichiarazione: i `unicode-range` del CSS servito.
+
+**Cosa è stato fatto.** `design-system/fonts/` diventa l'unica copia dei font del
+repository: EB Garamond spostato da `dominio/src/saggio/fonts/` (cartella ora
+inesistente) e IBM Plex Mono nei tre pesi richiesti, dal pacchetto ufficiale
+`@ibm/plex-mono` 2.5.0 (OFL-1.1), ciascuno con la propria licenza accanto.
+`fonts.css` dichiara i cinque `@font-face` con percorsi relativi a sé stesso, così
+funziona da qualunque pagina lo colleghi. I 14 file perdono 28 `@font-face` inline e
+15 righe verso `fonts.googleapis.com`/`fonts.gstatic.com`: 14 righe aggiunte, 225
+tolte.
+
+**Verificato**, non dato per buono: i 17 glifi non latini usati nel saggio (compresi
+↔ ≈ ∼ ␣, anch'essi scoperti) sono tutti presenti nei file completi; a pagina caricata
+il browser dichiara 5 face invece di 17 e nessun `@font-face` inline; nessuna richiesta
+di rete esterna; tutti i `<link>` dei 14 file risolvono su file esistenti.
+
+**Cambiamento d'aspetto voluto e messo a verbale**: i 9 capitoli che ripiegavano sul
+monospaziato di sistema ora mostrano IBM Plex Mono, e i tre simboli logici cambiano
+disegno. Non è una regressione: è la correzione che rende uniforme la resa del
+monospaziato sull'intero saggio, su qualunque macchina.
+
+**Resta aperto**: i pesi 500 e 600 non risultano caricati sulla pagina provata, segno
+che nessun elemento li usa. Se la registrazione delle immagini di riferimento lo
+conferma su tutte le pagine, sono due file da eliminare — deciso sui dati, non adesso.
+
+**Non toccati**: `ontologia/output/fonts/` e `design-system/lab/fonts/`, che restano
+copie a sé finché l'ontologia non passerà anch'essa al design system condiviso.
+
+## 2026-09-22 — Rete di sicurezza prima della migrazione: harness di regressione visiva
+
+Prima di toccare il CSS condiviso serviva poter dimostrare, con un numero invece
+che a occhio, che l'estrazione non cambia l'aspetto. `design-system/verify/`
+pilota il Chrome di sistema con `playwright-core` (nessun binario di browser
+scaricato) e confronta le immagini con Pillow: 28 bersagli, 65 immagini per giro,
+circa 90 secondi. Copre le 14 pagine del saggio su due viewport, 8 pagine
+campione dell'ontologia, la Lente con il secondo grado attivato per interazione
+reale, gli stati interattivi (tenda aperta, `<details>` aperto, `:focus-visible`
+raggiunto tabulando), `prefers-reduced-motion`, e i due canvas di `meccanismo-4`
+salvati anche via `toDataURL`.
+
+**Il requisito che ha fatto la differenza** era: due catture consecutive dello
+stesso codice immutato devono dare zero differenze. Senza quel cancello l'harness
+sarebbe sembrato funzionante fin dal primo giro; con esso sono emerse quattro
+cause di non determinismo che una cattura singola non mostra mai.
+
+- Una **corsa di rasterizzazione dei font**: dopo `document.fonts.ready` Chrome
+  impiega ancora 100-200 ms a finire il testo appena passato al font definitivo.
+  Pausa fissata a 300 ms, sopra la soglia misurata.
+- Animazioni a tempo, congelate con `animation-duration: 0s` e non con
+  `animation: none` — che farebbe ricadere sullo stile non animato e lascerebbe
+  invisibile ciò che parte da `opacity: 0` con `fill-mode: forwards`.
+- Un loop `requestAnimationFrame` in `meccanismo-4`, deterministico nella fisica
+  ma non nei tempi: si aspetta che converga, non un numero di millisecondi.
+- Il **dithering delle sfumature**, che ha costretto a ripensare la tolleranza.
+
+**La tolleranza non è una percentuale di pixel, è l'entità della differenza.** Due
+catture identiche possono differire su centinaia di migliaia di pixel restando
+indistinguibili, perché il dithering non è riproducibile al bit. Una soglia
+percentuale sarebbe dovuta salire al 4% per assorbirlo, e a quel punto avrebbe
+lasciato passare cambiamenti veri. Misurando il delta per canale le due
+popolazioni si separano nettamente: fino a 2 è rumore (~18.000 pixel per giro su
+~900 milioni), da 3 in su è segnale. Il valore non è a occhio: un bersaglio ha
+mostrato 16 pixel a delta 2 in un confronto e zero nel successivo.
+
+**Una pista convincente e sbagliata, registrata perché il ragionamento si
+ripeterà**: 25 bersagli su 65 superano i 16384px di altezza (il limite delle
+texture di Chrome, fino a 54.900px) e una differenza intermittente cadeva in un
+riquadro che finiva esatto a y=16384. Sembrava causa ed effetto. La cattura a
+fasce da 8000px è stata implementata e poi rimossa: misurando l'entità di quelle
+differenze erano tutte di 1 livello su 255 — Playwright cuce bene, il limite non
+corrompe nulla, e le fasce introducevano più rumore di quanto ne togliessero.
+Correlazione scambiata per causa, smontata misurando invece di contare.
+
+Validazione finale: 4 catture indipendenti, 6 confronti a coppie, zero fallimenti.
+
+**Trovata una lacuna di accessibilità reale**, non un difetto dell'harness:
+`fondamenti-2-hardware-software.html` ha tre cursori con
+`animation: 1.2s infinite blink` che continuano a lampeggiare anche sotto
+`prefers-reduced-motion: reduce`, perché il blocco `@media` di tutte e 14 le
+pagine contiene soltanto `scroll-behavior: auto`. L'harness ora la censisce a ogni
+giro (`animazioni-infinite.json`). Va chiusa nel layer `reset` del design system,
+con un reset che fermi davvero animazioni e transizioni sotto quella media query.

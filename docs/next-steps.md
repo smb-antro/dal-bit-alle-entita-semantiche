@@ -7,8 +7,10 @@
 - ~~**Identificatori legacy**~~ — ✅ 20 settembre 2026: `:CorsoLLM` (schema di concetti)
   diventa `:DalBitAlleEntitaSemantiche`, `:VocabolarioBpeDelCorso` diventa
   `:VocabolarioBpeDelSaggio`. Vedi `decision-log.md`.
-- **IBM Plex Mono** — 5 capitoli la caricano da Google Fonts (serve ai quattro simboli
-  logici). Self-hosting o accettare la dipendenza di rete: decisione aperta.
+- ~~**IBM Plex Mono**~~ — ✅ 22 settembre 2026: self-hosted in `design-system/fonts/`
+  insieme a EB Garamond, unica copia per tutto il repository, nessuna richiesta di rete.
+  Ha riparato anche un difetto reale (tre dei quattro simboli logici non erano coperti
+  dai subset serviti da Google). Vedi `decision-log.md`.
 - **Cartelle `lab/`** (`design-system/lab/`, `ontologia/lente-semantica/lab/`) — da non
   pubblicare; per ora restano nel repository, da escludere prima del push.
 - **Push su GitHub** — decisione a parte, da confermare esplicitamente quando il resto
