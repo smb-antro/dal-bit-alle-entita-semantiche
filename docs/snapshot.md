@@ -63,6 +63,12 @@ reso leggibile. Nessun commit pubblicato su GitHub.
   sull'entità della differenza (delta per canale), non sulla percentuale di pixel.
   Ha fatto emergere una lacuna di accessibilità: animazioni infinite che non si
   fermano sotto `prefers-reduced-motion`.
+- ✅ **Riconciliazione tipografica** (22 settembre 2026): i tre lignaggi di
+  conversione avevano lasciato tre scale diverse nello stesso saggio — la sidebar,
+  identica in ogni pagina, era resa a 17,3 / 15,7 / 13,1px a seconda del capitolo.
+  121 sostituzioni verificate a una a una: ora radice, voce, intestazione di parte
+  e interlinea sono identiche su tutte e 14 le pagine. Ontologia, Lente e i canvas
+  di `meccanismo-4` a zero differenze. Baseline rifatta su questo stato.
 - Storia di commit solo locale (`feat(init)`, `feat(design-system)`, i due
   `feat(saggio)`, `feat(lente)`, più la passata di pulizia pre-pubblicazione).
   Non pubblicato su GitHub. Card del portfolio riservata in

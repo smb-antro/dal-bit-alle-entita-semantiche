@@ -709,3 +709,64 @@ Validazione finale: 4 catture indipendenti, 6 confronti a coppie, zero falliment
 pagine contiene soltanto `scroll-behavior: auto`. L'harness ora la censisce a ogni
 giro (`animazioni-infinite.json`). Va chiusa nel layer `reset` del design system,
 con un reset che fermi davvero animazioni e transizioni sotto quella media query.
+
+## 2026-09-22 — Riconciliazione tipografica: una sola scala per tutto il saggio
+
+L'inventario del CSS a livello di dichiarazione (parser scritto per l'occasione,
+non `diff` testuale) ha trovato **41 selettori con valori diversi a seconda del
+file**, e la buona notizia accanto: **zero divergenze nella palette** — le 33
+custom property hanno lo stesso valore in tutti i 16 file che le definiscono. La
+deriva era tutta tipografica, e seguiva i tre lignaggi di conversione già
+registrati qui: 5 capitoli promossi da `lab/`, 7 convertiti con script, 2 a mano.
+
+**Quanto si vedeva.** La sidebar è lo stesso indice in ogni pagina, ma era resa in
+tre dimensioni: voce a 17,28px nei 5, 15,74px nei 9, 13,12px nell'appendice.
+Passando da Genealogia · 2 a Genealogia · 1 l'indice di navigazione cambiava taglia
+sotto gli occhi del lettore.
+
+**Le scelte, prese dall'utente su un confronto visivo reale** e non su numeri
+astratti:
+- **Canonica la scala più piccola, quella dei 9.** La voce dell'indice sta a 0,78
+  del testo invece che a 0,86: la navigazione resta apparato e non compete con la
+  prosa, e nel binario da 300px le voci vanno meno a capo. La scala più grande era
+  probabilmente un residuo dei prototipi `lab/`, già ingranditi prima che il +20%
+  sulla radice venisse applicato a tutti.
+- **L'appendice si allinea** (`html{font-size:120%}` anche lì). Era l'unica pagina
+  al 100%: passando da un capitolo all'appendice tutto rimpiccioliva del 17%. La
+  voce dell'8 settembre registrava l'esclusione come non motivata e chiedeva di
+  chiarirla «prima di un prossimo intervento sulla tipografia»: era questo.
+- **Interlinea 1.65**, **`.lede` 1.2rem** (unico caso senza maggioranza, 7 contro 7:
+  scelto lo stacco più marcato, perché l'attacco si riconosca come tale).
+- `fondamenti-2` torna alla norma dei capitoli: seguiva `presentazione` per un
+  artefatto della conversione a mano, non per una scelta.
+
+**Differenze conservate, e dichiarate tali** invece di essere appiattite:
+`presentazione` resta variante copertina (hero più grande e maiuscolo, titolo di
+sidebar in maiuscoletto blu cliccabile, kicker in `--blu-chiaro`, footer ravvicinato);
+`ontologia/output` e la Lente mantengono corpo e interlinea propri, perché sono
+superfici di consultazione, non di lettura continua; `.truth-table`, `.switch`,
+`.tl-*`, `.playground .ptitle`, `.pg-example-btn` restano CSS locale — stesso nome
+di classe ma widget diversi in pagine diverse. Quest'ultima è **collisione di nomi
+da conoscere**: innocua finché quel CSS resta inline e non stratificato, un problema
+il giorno in cui qualcuno provasse a estrarla.
+
+**Metodo**: 121 sostituzioni, ciascuna con il valore atteso dichiarato prima; un
+giro a vuoto ha verificato che tutte e 121 trovassero esattamente ciò che si
+aspettavano, e solo allora si è scritto. Nessuna sostituzione a tentoni.
+
+**Verifica.** L'harness, con la baseline registrata prima della riconciliazione, ha
+separato nettamente il voluto dall'involontario: 45 bersagli del saggio cambiati,
+**tutti e 18 quelli dell'ontologia e i 2 della Lente a zero differenze**, e
+**a zero anche i due canvas di `meccanismo-4`** — cioè i nomi di custom property
+letti dal JavaScript sono rimasti intatti. Controllato anche che nessuna delle 14
+pagine tracimi orizzontalmente ai due viewport, e a occhio l'appendice, dove `rem`
+e `px` convivono nei widget e il 20% in più poteva rompere qualcosa: integra.
+A riconciliazione fatta, radice, voce, intestazione di parte e interlinea sono
+**identiche su tutte e 14 le pagine**.
+
+La baseline è stata poi rifatta su questo stato. Da qui la migrazione al design
+system dovrà risultare a **zero differenze**: non è più «quasi uguale», è uguale.
+
+**Perché prima e non dopo.** Riconciliare dopo l'estrazione avrebbe mescolato il
+cambiamento voluto con le eventuali regressioni della migrazione, rendendo la rete
+di sicurezza inutile proprio nel momento in cui serve. Stessa logica dei font.
