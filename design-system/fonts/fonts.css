@@ -5,9 +5,15 @@
    EB Garamond — testo del saggio.            Licenza: OFL-EBGaramond.txt
    IBM Plex Mono — simboli logici ed etichette tecniche. Licenza: OFL-IBMPlexMono.txt
 
-   Nota: IBM Plex Mono era caricato da Google Fonts in 5 capitoli su 14, e i subset
-   serviti non coprivano U+2227 (∧), U+2228 (∨), U+2295 (⊕) — cioè tre dei quattro
-   simboli logici di Fondamenti · 1. I file completi qui presenti li contengono. */
+   Nota: IBM Plex Mono era caricato da Google Fonts in 5 capitoli su 14, e in 9 non
+   era caricato affatto. Averlo qui rende uniforme la resa del monospaziato.
+
+   ATTENZIONE, verificato leggendo la cmap dei file: IBM Plex Mono NON contiene
+   U+2227 (∧), U+2228 (∨), U+2295 (⊕) — tre dei quattro simboli logici di
+   Fondamenti · 1. Contiene solo ¬ (U+00AC). Nemmeno EB Garamond li ha. Quei tre
+   glifi vengono quindi da un ripiego di sistema, diverso da macchina a macchina.
+   Non è una regressione introdotta qui: era già così quando li serviva Google.
+   Decisione aperta, vedi docs/next-steps.md. */
 
 @font-face {
   font-family: 'EB Garamond';

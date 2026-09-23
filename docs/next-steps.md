@@ -7,10 +7,15 @@
 - ~~**Identificatori legacy**~~ — ✅ 20 settembre 2026: `:CorsoLLM` (schema di concetti)
   diventa `:DalBitAlleEntitaSemantiche`, `:VocabolarioBpeDelCorso` diventa
   `:VocabolarioBpeDelSaggio`. Vedi `decision-log.md`.
-- ~~**IBM Plex Mono**~~ — ✅ 22 settembre 2026: self-hosted in `design-system/fonts/`
+- ~~**IBM Plex Mono self-hosted**~~ — ✅ 22 settembre 2026: in `design-system/fonts/`
   insieme a EB Garamond, unica copia per tutto il repository, nessuna richiesta di rete.
-  Ha riparato anche un difetto reale (tre dei quattro simboli logici non erano coperti
-  dai subset serviti da Google). Vedi `decision-log.md`.
+- **I tre simboli logici `∧ ∨ ⊕`** — ⚠️ **decisione aperta**. Verificato il 23 settembre
+  leggendo la `cmap` dei file: IBM Plex Mono non li contiene (ha solo `¬`), e nemmeno
+  EB Garamond. Ripiegano quindi su un font di sistema, diverso da macchina a macchina —
+  e l'unico uso dichiarato del monospaziato nel design system è soddisfatto per un glifo
+  su quattro. Visivamente reggono; l'affermazione contraria nei documenti è stata
+  corretta. Opzioni: un font di ripiego che li contenga, disegnarli come SVG, o
+  accettare il ripiego dichiarandolo.
 - **Cartelle `lab/`** (`design-system/lab/`, `ontologia/lente-semantica/lab/`) — da non
   pubblicare; per ora restano nel repository, da escludere prima del push.
 - **Push su GitHub** — decisione a parte, da confermare esplicitamente quando il resto

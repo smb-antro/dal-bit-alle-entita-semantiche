@@ -638,8 +638,11 @@ funziona da qualunque pagina lo colleghi. I 14 file perdono 28 `@font-face` inli
 15 righe verso `fonts.googleapis.com`/`fonts.gstatic.com`: 14 righe aggiunte, 225
 tolte.
 
-**Verificato**, non dato per buono: i 17 glifi non latini usati nel saggio (compresi
-↔ ≈ ∼ ␣, anch'essi scoperti) sono tutti presenti nei file completi; a pagina caricata
+**Verificato**, non dato per buono: ~~i 17 glifi non latini usati nel saggio (compresi
+↔ ≈ ∼ ␣, anch'essi scoperti) sono tutti presenti nei file completi~~ —
+**AFFERMAZIONE FALSA, corretta il 23 settembre 2026: vedi la voce di quel giorno.
+IBM Plex Mono non contiene ∧ ∨ ⊕, e il metodo con cui l'avevo "verificato" non poteva
+accorgersene.** Resta vero che: a pagina caricata
 il browser dichiara 5 face invece di 17 e nessun `@font-face` inline; nessuna richiesta
 di rete esterna; tutti i `<link>` dei 14 file risolvono su file esistenti.
 
@@ -1002,3 +1005,103 @@ Verificato che il cambiamento sia **solo** quello: confronto degli stili calcola
 quattro superfici (un capitolo, la presentazione, la home dell'ontologia, la Lente) —
 l'unica proprietà che cambia è quel colore, su 286, 246, 29 e 1.007 elementi. Nessuno
 spostamento, nessun cambio di misura. Baseline dell'harness rifatta su questo stato.
+
+## 2026-09-23 — Correzione: IBM Plex Mono non contiene ∧ ∨ ⊕, e il mio metodo non poteva accorgersene
+
+La voce del 22 settembre affermava che i file dei font appena self-hostati contenessero
+tutti e 17 i glifi non latini usati nel saggio, e che questo **riparasse** il difetto dei
+tre simboli logici non coperti dai subset di Google. **È falso.**
+
+Verificato leggendo la `cmap` dentro i file con fontTools — nessun rendering di mezzo:
+
+| file | codepoint | ∧ U+2227 | ∨ U+2228 | ⊕ U+2295 | ¬ U+00AC |
+|---|---|---|---|---|---|
+| IBMPlexMono-{Regular,Medium,SemiBold} | 1082 | assente | assente | assente | presente |
+| EBGaramond-{Variable,Italic} | 2091 / 1972 | assente | assente | assente | presente |
+
+Quindi in Fondamenti · 1 solo `¬` viene da IBM Plex Mono; `∧ ∨ ⊕` ripiegano su un font di
+sistema — `⊕` su qualcosa che rende come Courier New, gli altri due su un font che non
+corrisponde a nessuno dei candidati provati. Uno su quattro, non quattro su quattro.
+
+**Perché il mio test diceva il contrario.** Rendevo ogni glifo con il font locale e poi
+con `monospace`, e concludevo «presente» se i pixel differivano. Ma quando un font non ha
+un glifo il browser ripiega **per singolo glifo** su un font di sistema, che non è quello
+a cui risolve `monospace`: i pixel differivano comunque. Quel test poteva rilevare solo i
+quadratini `.notdef`, non il ripiego — era strutturalmente incapace di rispondere alla
+domanda che gli ponevo, e l'ho dichiarato conclusivo.
+
+È la **seconda volta nella stessa giornata** che sbaglio allo stesso modo: poche ore prima
+avevo già scambiato «diverso dal monospace generico» per «presente nel font», me ne ero
+accorto, l'avevo messo a verbale — e poi ho rifatto lo stesso errore in una forma diversa,
+su file locali invece che su subset remoti. La lezione che avevo scritto («la prova non sta
+nel rendering ma nella dichiarazione») era giusta e non l'ho applicata: la dichiarazione,
+per un file locale, è la sua `cmap`, e leggerla costava una riga di fontTools — che era già
+installato nel venv dell'ontologia da settembre.
+
+L'errore l'ha trovato un agente a cui avevo chiesto di verificare i quattro simboli come
+parte della fase sul bundle. Ha fatto la cosa giusta: ha misurato invece di fidarsi della
+documentazione del repository, e ha dichiarato che la contraddiceva.
+
+**Corretto** in `design-system/fonts/fonts.css`, `design-system/README.md`,
+`docs/snapshot.md`, `docs/next-steps.md`, e nella voce del 22 settembre, che porta ora la
+correzione sul posto invece di essere riscritta. I due messaggi di commit che contengono
+l'affermazione falsa (`6da4c30`, `352c9c6`) restano come sono: la storia non si riscrive
+per un errore che una voce successiva può correggere.
+
+**Cosa resta vero della voce del 22 settembre**: i font sono self-hostati in una copia
+sola, la dipendenza da Google è eliminata, e la resa del monospaziato è ora uniforme su
+tutte e 14 le pagine — 9 non lo caricavano affatto. Cambia solo la parte sui tre simboli.
+
+**Decisione aperta**, in `next-steps.md`: un font di ripiego che li contenga, disegnarli
+come SVG, o accettare il ripiego dichiarandolo. Visivamente reggono.
+
+## 2026-09-23 — Il bundle a file singolo, rifatto
+
+`build_output.py` non girava più: la migrazione al design system aveva tolto il `<style>`
+a `genealogia-4-corpo.html` — era il capitolo più puro, tutto il suo CSS era guscio
+condiviso — e lo script pretendeva che ogni capitolo ne avesse uno. Giusto che si sia
+rotto: quell'assunzione non valeva più.
+
+Ma il bundle era indietro di più: il suo tema chiaro definiva variabili (`--bg`,
+`--surface`, `--copper`) che **nessun capitolo legge più**; il bottone «Tema: scuro» era
+in pagina e non faceva niente; l'introduzione e il Sommario erano stilati con quelle
+variabili inesistenti e con due font (Space Grotesk, Source Serif 4) che il saggio non usa
+da settembre; e i quattordici paragrafi d'introduzione, ricopiati a mano nello script,
+annunciavano la Lente semantica come «in preparazione» — esiste da settembre.
+
+**Due decisioni prese**: `presentazione.html` e `dietro-i-widget.html` diventano capitoli
+veri, trattati dallo stesso estrattore degli altri. Il bundle torna a essere **un file
+solo** (prima erano due) e la sua introduzione è la presentazione reale, per sempre, senza
+prosa duplicata.
+
+**Tre cose emerse durante l'esecuzione, che non erano nell'inventario:**
+
+1. **Il CSS dei capitoli andava scopato.** Finché ogni pagina ricopiava l'intero guscio, i
+   selettori duplicati erano identici e concatenarli era innocuo. Ora che resta solo il CSS
+   dei widget, `.switch` è 84×42 in Fondamenti 1 e 90×44 in Fondamenti 2, e `.truth-table`,
+   `.tl-*`, `.hero` hanno valori diversi: concatenati, vinceva l'ultimo capitolo per tutti.
+   Era un danno **preesistente e invisibile**, che la migrazione ha solo reso percepibile.
+   Ogni selettore diventa ora discendente di `#chapter-<slug>`.
+2. **La tenda dei concetti si apriva in tutti i capitoli insieme.** Il suo listener è
+   delegato su `document` e ogni capitolo ne registra uno: cliccare un termine nella
+   Presentazione apriva anche la tenda di Meccanismo · 3, invisibile finché quel capitolo
+   era nascosto — ma navigandoci ci si arrivava con la tenda aperta e il velo sopra la
+   pagina. Riprodotto e corretto.
+3. **Due rimandi da capitolo a capitolo** puntavano a file che accanto al bundle non
+   esistono, e il percorso verso la Lente semantica era rotto nel compilato (un livello di
+   profondità in meno rispetto ai sorgenti) — in tutti e 14 i file, da prima.
+
+**Verifica**, misurata e non riferita: zero richieste a host esterni; zero errori in
+console su tutti e 14 i capitoli; nessun capitolo vuoto; 13 capitoli su 14 con altezza
+identica alla propria pagina sorgente (il quattordicesimo è l'introduzione, più alta
+esattamente dell'altezza del Sommario); **816 proprietà di stile calcolato confrontate fra
+bundle e sorgenti su quattro capitoli, zero differenze**. Funziona anche aperto da
+`file://`, che è il ritorno sull'investimento dei font in data-URI.
+
+Dimensione: da 721.587 byte in due file a **1.879.717 in uno**, di cui 979.783 i font in
+base64 e 132.392 le immagini incorporate.
+
+**Un residuo voluto**: `<html data-theme="light">` resta. Non è il tema morto — è la stessa
+dichiarazione che `meccanismo-4-reti-neurali.html` porta sul proprio `<html>`, e che il suo
+`currentLossPalette()` legge per scegliere la tavolozza dello shader. Senza, la superficie
+di perdita sarebbe disegnata in variante scura su pagina chiara.

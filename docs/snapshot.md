@@ -44,19 +44,22 @@ reso leggibile. Nessun commit pubblicato su GitHub.
   due prototipi isolati in `ontologia/lente-semantica/lab/` prima di portare la
   correzione in `output/`. Corretto anche un bug indipendente: il filtro della
   legenda non toccava affatto il secondo grado (mancava `data-cat`).
-- `dominio/output/dal-bit-alle-entita-semantiche_it.html` (bundle generato da
-  `build_output.py`) ancora **non rigenerato**: lo script si è rivelato in parte
-  disallineato (contiene testo e font vecchi hardcoded) — non un semplice
-  ri-lancio, va prima aggiornato. Deliberatamente rimandato.
+- ✅ **Bundle a file singolo rifatto** (23 settembre 2026): `build_output.py` non girava
+  più. Ora presentazione e appendice sono capitoli veri, il tema morto è eliminato, i font
+  sono incorporati in data-URI e il bundle è **un file solo** (1,88 MB) che funziona anche
+  da `file://`. Verificato: 816 proprietà di stile confrontate fra bundle e sorgenti su
+  quattro capitoli, zero differenze.
 - `docs/` (questo file, decision-log, next-steps) sincronizzati il 9 settembre
   2026 dopo essere rimasti indietro rispetto al lavoro di giornata.
 - `LICENSE` definita il 19 settembre 2026: codice MIT, ontologia CC BY 4.0 (anche
   dentro i dati, con `owl:versionInfo "1.0"`), prosa e documentazione riservate.
 - ✅ **Font self-hosted in una copia sola** (22 settembre 2026): `design-system/fonts/`
   con EB Garamond e IBM Plex Mono, nessuna richiesta a Google da nessuna pagina del
-  saggio. Ha riparato un difetto reale: tre dei quattro simboli logici di Fondamenti · 1
-  non erano coperti dai subset serviti e ripiegavano sul monospaziato di sistema. Primo
-  passo della trasformazione del design system da prosa a sistema funzionante.
+  saggio. Primo passo della trasformazione del design system da prosa a sistema
+  funzionante. **Nota del 23 settembre**: si era scritto qui che l'operazione avesse
+  riparato i tre simboli logici non coperti dai subset di Google. Non è vero — IBM Plex
+  Mono non contiene affatto ∧ ∨ ⊕, quindi quei tre glifi ripiegano ancora su un font di
+  sistema. Decisione aperta in `next-steps.md`.
 - ✅ **Harness di regressione visiva** (22 settembre 2026): `design-system/verify/`,
   28 bersagli e 65 immagini per giro, deterministico — verificato con 4 catture
   indipendenti e 6 confronti a coppie a zero fallimenti. Tolleranza basata
@@ -87,6 +90,6 @@ Prossimo passo reale: nessun lavoro di contenuto resta aperto né sul saggio né
 Lente. È in corso la trasformazione del design system da prosa e prototipi sparsi a
 sistema funzionante e autonomo — token, CSS condiviso, componenti, esportabile su
 Claude Design — con una rete di sicurezza di regressione visiva costruita prima di
-toccare le pagine. Solo dopo vengono l'aggiornamento di `build_output.py` e la
-rigenerazione del bundle statico (che serve anche come verifica), poi le decisioni
-aperte in `next-steps.md` e il push.
+toccare le pagine. Il bundle statico è stato rifatto e rigenerato — serviva anche come
+verifica, e ha fatto emergere difetti veri. Restano le decisioni aperte in
+`next-steps.md` (i tre simboli logici, le cartelle `lab/`) e il push.

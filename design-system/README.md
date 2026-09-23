@@ -117,6 +117,11 @@ small-caps` più `letter-spacing: .06em` sulla stessa Garamond, colore
 `--colore-testo-tenue`. Niente secondo font.
 
 **Il monospaziato ha un uso solo, dichiarato**: i quattro simboli logici `∧ ∨ ¬ ⊕`.
+Con un'avvertenza che vale la pena leggere: IBM Plex Mono contiene solo `¬`. Gli altri
+tre glifi non ci sono — verificato leggendo la `cmap` dei file, non a occhio — e
+ripiegano su un font di sistema. L'uso dichiarato del monospaziato è quindi oggi
+soddisfatto per un glifo su quattro; la decisione su cosa farne è aperta, vedi
+`../docs/next-steps.md`.
 Tutto ciò che nel saggio originale era monospaziato — kicker, valori dei widget,
 intestazioni di tabella — è passato a Garamond in maiuscoletto, verificato dal vivo
 che i numeri che cambiano in tempo reale non «ballano», perché stanno in riquadri a

@@ -1,29 +1,56 @@
 #!/usr/bin/env python3
 """Compila i file di src/saggio/ in un unico output/dal-bit-alle-entita-semantiche_<lingua>.html.
 
-Namespacing per evitare collisioni tra capitoli (id duplicati, `const`/`function`
-ridichiarati a livello top-level): ogni capitolo viene avvolto in un contenitore
-`.chapter` con id/data-chapter univoci, ogni id interno viene prefissato con lo slug
-del capitolo, e lo script del capitolo viene avvolto in una IIFE che referenzia il
-proprio contenitore (`chapterRoot`) invece di `document` per le query di shell
-condivise (unit-tab, rail, unit-block, reveal).
+Il compilato e' UN SOLO file: nessun asset accanto, nessuna richiesta di rete.
+Il design system arriva da design-system/css/design-system.inline.css (la
+variante con i font in data-URI base64), il resto dei font e delle immagini e'
+incorporato allo stesso modo.
+
+Tre namespacing, non uno, perche' 14 pagine nate autonome finiscono nello
+stesso DOM e nello stesso <style>:
+
+  id      ogni id interno al capitolo prende il prefisso dello slug
+          (`namespace_tokens`), ovunque compaia — markup, CSS, JavaScript.
+  CSS     ogni selettore dello <style> del capitolo viene discendente di
+          `#chapter-<slug>` (`scope_css`). Da quando il guscio comune e'
+          passato al design system, in quello <style> resta solo il CSS dei
+          widget — e li' i nomi si ripetono fra capitoli (`.switch`,
+          `.truth-table`, `.timeline`, `.playground .ptitle`) con valori
+          diversi: senza scoping vince l'ultimo capitolo concatenato, per
+          tutti.
+  JS      lo script del capitolo e' avvolto in una IIFE che espone
+          `chapterRoot`, e le query di shell che cercano elementi del
+          capitolo passano da `document.` a `chapterRoot.`
+          (`scope_shell_queries`).
 
 Uso: python3 build_output.py [--trial] [--lang it]
   --trial   compila solo i due capitoli della prova tecnica di namespacing
-            (c00a: pagina singola; cm1: multi-unità con topbar+rail+UNITS)
+            (c00a: pagina singola; cm1: multi-unita' con rail+UNITS)
 """
 import argparse
 import base64
 import mimetypes
 import re
-import shutil
+import subprocess
+import sys
 from pathlib import Path
 
-LEZIONI_DIR = Path(__file__).parent / "saggio"
-OUTPUT_DIR = Path(__file__).parent.parent / "output"
+SRC_DIR = Path(__file__).parent
+LEZIONI_DIR = SRC_DIR / "saggio"
+OUTPUT_DIR = SRC_DIR.parent / "output"
+REPO_ROOT = SRC_DIR.parent.parent
+DESIGN_SYSTEM_DIR = REPO_ROOT / "design-system"
+INLINE_CSS = DESIGN_SYSTEM_DIR / "css" / "design-system.inline.css"
+BUILD_CSS_SCRIPT = DESIGN_SYSTEM_DIR / "scripts" / "build_css.py"
 
-# (file, slug, etichetta barra capitoli, kind: 'single' | 'multi', titolo indice)
+# (file, slug, etichetta barra capitoli, kind: 'intro' | 'single' | 'multi', titolo indice)
+#
+# `presentazione.html` e `dietro-i-widget.html` sono capitoli come gli altri:
+# la prima non e' piu' prosa ricopiata a mano qui dentro, la seconda non e'
+# piu' un file copiato accanto al bundle. Il compilato torna a essere un
+# file solo.
 CHAPTERS = [
+    ("presentazione.html", "intro", "P", "intro", "Presentazione"),
     ("fondamenti-1-funzioni-booleane.html", "c00a", "F1", "single", "1. Funzioni booleane"),
     ("fondamenti-2-hardware-software.html", "c00b", "F2", "single", "2. Hardware e software"),
     ("genealogia-1-disputa.html", "cba", "G1", "multi", "1. La storia come sequenza di problemi irrisolti"),
@@ -36,14 +63,25 @@ CHAPTERS = [
     ("meccanismo-4-reti-neurali.html", "cm4", "M4", "multi", "4. Reti neurali"),
     ("meccanismo-5-transformer.html", "cm5", "M5", "multi", "5. Il Transformer"),
     ("meccanismo-6-large.html", "cm6", "M6", "multi", "6. Cosa significa \"Large\""),
+    ("dietro-i-widget.html", "capp", "A", "multi", "Dietro i widget"),
 ]
 
-# Raggruppamento in Parti per il Sommario (non usato da extract_chapter/chapterbar,
-# solo per la costruzione del Sommario gerarchico in build_intro_and_toc).
+INTRO_SLUG = "intro"
+
+# Il binario di navigazione e' identico in tutti e 14 i file sorgente a meno
+# dei marcatori statici del file corrente — tranne in presentazione.html, che
+# espande la propria voce in un elenco con scroll-spy invece di tenerla
+# chiusa. Nel compilato la voce corrente e' dinamica, quindi la sorgente
+# della sidebar condivisa e' la forma "vista da un altro capitolo".
+SIDEBAR_SOURCE = "fondamenti-1-funzioni-booleane.html"
+
+# Raggruppamento in Parti per il Sommario (non usato da extract_chapter,
+# solo per la costruzione del Sommario gerarchico in build_sommario).
 PARTI = [
     ("Parte I — Fondamenti", ["c00a", "c00b"]),
     ("Parte II — Genealogia", ["cba", "cbb", "cbc", "cbd"]),
     ("Parte III — Meccanismo", ["cm1", "cm2", "cm3", "cm4", "cm5", "cm6"]),
+    ("Appendice", ["capp"]),
 ]
 
 # Titoli delle unità interne di ciascun capitolo multi-unità, per mostrarli nel
@@ -104,6 +142,14 @@ UNIT_TITLES = {
         "RLHF",
         "Quantizzazione (chiusura dell'arco tecnico)",
     ],
+    "capp": [
+        "Il tokenizzatore (Meccanismo · 1)",
+        "Il predittore n-grammi (Meccanismo · 2)",
+        "La mappa embedding (Meccanismo · 3)",
+        "Neurone, XOR, superficie di perdita (Meccanismo · 4)",
+        "L'attention (Meccanismo · 5)",
+        "Scala e capacità (Meccanismo · 6)",
+    ],
 }
 
 TRIAL_SLUGS = {"c00a", "cm1"}
@@ -114,6 +160,11 @@ SCRIPT_RE = re.compile(r"<script>(.*?)</script>", re.S)
 BODY_RE = re.compile(r"<body>(.*?)</body>", re.S)
 SIDEBAR_RE = re.compile(r'\s*<nav class="sidebar".*?</nav>\n?', re.S)
 SIDEBAR_HREF_RE = re.compile(r'href="([a-z0-9-]+\.html)(#[a-zA-Z0-9_-]+)?"')
+BODY_HREF_RE = re.compile(r'href="([a-z0-9-]+\.html)(#[a-zA-Z0-9_-]+)?"')
+
+# I sorgenti vivono in dominio/src/saggio/, il compilato in dominio/output/:
+# un livello in meno da risalire per arrivare alla radice del repository.
+FUORI_ALBERO = ("../../../", "../../")
 
 
 CLASS_ATTR_RE = re.compile(r'class="[^"]*"|class=\'[^\']*\'')
@@ -152,7 +203,150 @@ def namespace_tokens(text, slug, ids):
     return text
 
 
-ASSET_SRC_RE = re.compile(r'src="([^"]+)"')
+# ---------------------------------------------------------------------------
+# Scoping del CSS di capitolo
+# ---------------------------------------------------------------------------
+#
+# Finche' ogni pagina ricopiava nel proprio <style> l'intero guscio condiviso
+# (4.539 righe), i selettori che si ripetevano fra capitoli erano identici e
+# concatenarli non cambiava nulla. Dal passaggio al design system nello
+# <style> resta solo il CSS dei widget (1.250 righe) e li' gli stessi nomi
+# significano cose diverse: `.switch` e' 84x42 in Fondamenti 1 e 90x44 in
+# Fondamenti 2, `.truth-table` ha due scale di corpo, `.tl-*` due, e
+# `presentazione.html` — che da oggi e' un capitolo — dichiara un nudo
+# `section{ padding: 96px 0 88px; border-bottom: ... }` che senza scoping
+# colpirebbe ogni <section> del documento, `.chapter` compreso.
+#
+# Ogni selettore diventa quindi discendente del contenitore del capitolo.
+# Lo <style> dei capitoli resta non stratificato, quindi continua a vincere
+# sul design system senza alzare la specificita' contro di esso; il prefisso
+# aggiunge lo stesso id a tutte le regole di un capitolo, quindi il loro
+# ordine reciproco non cambia.
+
+
+def _skip_comment(css, i):
+    end = css.find("*/", i + 2)
+    return len(css) if end == -1 else end + 2
+
+
+def _skip_string(css, i):
+    quote = css[i]
+    j = i + 1
+    while j < len(css):
+        if css[j] == "\\":
+            j += 2
+            continue
+        if css[j] == quote:
+            return j + 1
+        j += 1
+    return j
+
+
+def _match_brace(css, i):
+    """Indice della `}` che chiude la `{` in posizione i."""
+    depth = 0
+    j = i
+    while j < len(css):
+        c = css[j]
+        if c == "/" and css[j:j + 2] == "/*":
+            j = _skip_comment(css, j)
+            continue
+        if c in "\"'":
+            j = _skip_string(css, j)
+            continue
+        if c == "{":
+            depth += 1
+        elif c == "}":
+            depth -= 1
+            if depth == 0:
+                return j
+        j += 1
+    raise ValueError("CSS del capitolo: graffa non chiusa")
+
+
+def _split_selector_list(prelude):
+    parts, buf, depth, i = [], [], 0, 0
+    while i < len(prelude):
+        c = prelude[i]
+        if c == "/" and prelude[i:i + 2] == "/*":
+            j = _skip_comment(prelude, i)
+            buf.append(prelude[i:j])
+            i = j
+            continue
+        if c in "\"'":
+            j = _skip_string(prelude, i)
+            buf.append(prelude[i:j])
+            i = j
+            continue
+        if c in "([":
+            depth += 1
+        elif c in ")]":
+            depth -= 1
+        elif c == "," and depth == 0:
+            parts.append("".join(buf))
+            buf = []
+            i += 1
+            continue
+        buf.append(c)
+        i += 1
+    parts.append("".join(buf))
+    return parts
+
+
+# At-rule condizionali: il corpo contiene altre regole, va percorso.
+AT_RULES_CON_REGOLE = {"media", "supports", "container", "layer", "scope"}
+
+
+def scope_css(css, scope):
+    """Rende ogni selettore di `css` discendente di `scope`.
+
+    Ricorre dentro @media/@supports/@container; lascia intatto il corpo di
+    @keyframes (dove `0%`/`from` non sono selettori) e di @font-face."""
+    out, buf, i = [], [], 0
+    while i < len(css):
+        c = css[i]
+        if c == "/" and css[i:i + 2] == "/*":
+            j = _skip_comment(css, i)
+            buf.append(css[i:j])
+            i = j
+            continue
+        if c in "\"'":
+            j = _skip_string(css, i)
+            buf.append(css[i:j])
+            i = j
+            continue
+        if c == "{":
+            prelude = "".join(buf)
+            buf = []
+            close = _match_brace(css, i)
+            body = css[i + 1:close]
+            stripped = prelude.lstrip()
+            if stripped.startswith("@"):
+                name = re.match(r"@([\w-]+)", stripped).group(1).lower()
+                if name in AT_RULES_CON_REGOLE:
+                    out.append(prelude + "{" + scope_css(body, scope) + "}")
+                else:
+                    out.append(prelude + "{" + body + "}")
+            else:
+                selectors = []
+                for part in _split_selector_list(prelude):
+                    bare = part.strip()
+                    selectors.append(f"{scope} {bare}" if bare else part)
+                out.append(",\n".join(selectors) + "{" + body + "}")
+            i = close + 1
+            continue
+        if c == ";" and "".join(buf).lstrip().startswith("@"):
+            out.append("".join(buf) + ";")
+            buf = []
+            i += 1
+            continue
+        buf.append(c)
+        i += 1
+    out.append("".join(buf))
+    return "".join(out)
+
+
+ASSET_SRC_RE = re.compile(r'src="([^"]*)"')
 
 
 def inline_relative_assets(markup, filename):
@@ -163,7 +357,9 @@ def inline_relative_assets(markup, filename):
 
     def replace(m):
         src = m.group(1)
-        if src.startswith(("data:", "http://", "https://", "//")):
+        # src="" e' un segnaposto riempito dal JavaScript (la <img> della
+        # lightbox di presentazione.html): non e' un asset da incorporare.
+        if not src or src.startswith(("data:", "http://", "https://", "//", "#")):
             return m.group(0)
         asset_path = LEZIONI_DIR / src
         if not asset_path.is_file():
@@ -175,22 +371,64 @@ def inline_relative_assets(markup, filename):
     return ASSET_SRC_RE.sub(replace, markup)
 
 
-def scope_shell_queries(script, kind):
-    """Riscrive le query di navigazione condivisa da `document.` a `chapterRoot.`
-    Sostituzioni meccaniche, identiche in tutti i file dello stesso `kind`.
+def rewrite_body_links(markup, filename, slug_by_file):
+    """Riscrive i rimandi da capitolo a capitolo che stanno nel corpo del
+    testo (non nel binario: quello lo fa build_shared_sidebar) in modo che
+    passino da showChapter invece di navigare a un file che accanto al
+    compilato non esiste. Due casi oggi: la nota di chiusura di
+    presentazione.html verso Fondamenti 1, e un rimando di Fondamenti 1
+    dentro Meccanismo 4.
 
-    Dalla sidebar fissa (che ha sostituito topbar/rail/rail-dot in tutti i file
-    sorgente), la shell condivisa e' ridotta a due query: il fade-in `.reveal`
-    (comune a tutti i 12 file) e lo scroll-spy sui `.unit-block` (comune ai 10
-    file multi-unita' — Genealogia + Meccanismo). Lo scroll-spy stesso usa un
-    selettore con id (`#local-scrollspy ...`), gia' reso univoco per capitolo
-    dal namespacing generico degli id sopra — non necessita di scoping qui."""
+    Va chiamata PRIMA di namespace_tokens: il frammento `#u3-sez-mlp` che
+    compare qui appartiene al capitolo di destinazione, non a questo, e il
+    namespacing lo prefisserebbe con lo slug sbagliato se per caso i due
+    file usassero lo stesso id."""
+
+    def rewrite(m):
+        file, frag = m.group(1), m.group(2)
+        slug = slug_by_file.get(file)
+        if slug is None:
+            return m.group(0)
+        target = f"{slug}-{frag[1:]}" if frag else f"chapter-{slug}"
+        return f'href="#{target}" data-nav-chapter="{slug}"'
+
+    return BODY_HREF_RE.sub(rewrite, markup)
+
+
+def scope_shell_queries(script, kind, slug):
+    """Riscrive le query di navigazione condivisa da `document.` a `chapterRoot.`
+    Sostituzioni su stringhe esatte: il JavaScript dei sorgenti non va
+    riformattato, o queste smettono di agganciare.
+
+    Attenzione: girano DOPO namespace_tokens, quindi i selettori con id sono
+    gia' prefissati — per questo le stringhe che ne contengono uno sono
+    costruite con lo slug.
+
+    La tenda dei concetti e il suo velo restano volutamente su `document`:
+    sono la stessa superficie condivisa in ogni capitolo, e il listener di
+    apertura e' delegato sul documento intero."""
     if kind == "multi":
         requirements = [
             [("const reveals = document.querySelectorAll('.reveal');",
               "const reveals = chapterRoot.querySelectorAll('.reveal');")],
             [("const unitBlocksForSpy = document.querySelectorAll('.unit-block');",
               "const unitBlocksForSpy = chapterRoot.querySelectorAll('.unit-block');")],
+        ]
+    elif kind == "intro":
+        # presentazione.html: il fade-in come tutti gli altri, piu' il suo
+        # scroll-spy locale, che cerca due cose diverse — le voci nel binario
+        # (che nel compilato e' condiviso, quindi fuori dal capitolo: scopata
+        # qui, la query non trova nulla e lo spy locale resta inerte, come
+        # gia' accade per `#local-scrollspy` negli altri 11 capitoli) e le
+        # quattro <section> delle Parti, che sono dentro il capitolo e
+        # senza scoping verrebbero cercate in tutto il documento.
+        requirements = [
+            [("const reveals = document.querySelectorAll('.reveal');",
+              "const reveals = chapterRoot.querySelectorAll('.reveal');")],
+            [(f"const spyLinks = document.querySelectorAll('#{slug}-presentazione-scrollspy a[data-spy-target]');",
+              f"const spyLinks = chapterRoot.querySelectorAll('#{slug}-presentazione-scrollspy a[data-spy-target]');")],
+            [(f"const spySections = document.querySelectorAll('#{slug}-parte-1, #{slug}-parte-2, #{slug}-parte-3, #{slug}-parte-4');",
+              f"const spySections = chapterRoot.querySelectorAll('#{slug}-parte-1, #{slug}-parte-2, #{slug}-parte-3, #{slug}-parte-4');")],
         ]
     else:  # single (Fondamenti 1/2): solo il fade-in, nessuno scroll-spy
         requirements = [
@@ -207,9 +445,9 @@ def scope_shell_queries(script, kind):
             missing.append(variants[0][0])
 
     # Query opzionali: selettori di classe bare, non ancorati a un id univoco,
-    # usati da widget "esempio rapido" presenti solo in alcuni file (non tutti,
-    # quindi non nella lista `requirements` sopra, che e' un requisito per ogni
-    # file del kind). Vanno scopate se presenti, senza errore se assenti.
+    # usati da widget presenti solo in alcuni file (non tutti, quindi non
+    # nella lista `requirements` sopra, che e' un requisito per ogni file del
+    # kind). Vanno scopate se presenti, senza errore se assenti.
     optional = [
         ("document.querySelectorAll('.pg-example-btn')",
          "chapterRoot.querySelectorAll('.pg-example-btn')"),
@@ -221,6 +459,9 @@ def scope_shell_queries(script, kind):
         # altro capitolo usa questa classe.
         ("document.querySelectorAll('.quant-level-btn')",
          "chapterRoot.querySelectorAll('.quant-level-btn')"),
+        # stessa famiglia: la scala di astrazione di Fondamenti 2.
+        ("document.querySelectorAll('.ladder-item')",
+         "chapterRoot.querySelectorAll('.ladder-item')"),
     ]
     for old, new in optional:
         script = script.replace(old, new)
@@ -228,16 +469,19 @@ def scope_shell_queries(script, kind):
     return script, missing
 
 
-def extract_chapter(filename, slug, kind):
+def extract_chapter(filename, slug, kind, slug_by_file):
     raw = (LEZIONI_DIR / filename).read_text(encoding="utf-8")
 
     style_m = STYLE_RE.search(raw)
     body_m = BODY_RE.search(raw)
     script_m = SCRIPT_RE.search(raw)
-    if not (style_m and body_m and script_m):
-        raise ValueError(f"{filename}: struttura head/body/script non riconosciuta")
+    if not (body_m and script_m):
+        raise ValueError(f"{filename}: struttura body/script non riconosciuta")
 
-    style = style_m.group(1)
+    # Un capitolo senza <style> e' legittimo: genealogia-4-corpo.html era la
+    # pagina piu' pura del saggio — tutto il suo CSS era guscio condiviso, ed
+    # e' finito nel design system. Zero righe rimaste, nessun <style>.
+    style = style_m.group(1) if style_m else ""
     body = body_m.group(1)
     script = script_m.group(1)
 
@@ -246,15 +490,20 @@ def extract_chapter(filename, slug, kind):
     # la sidebar del file sorgente viene rimossa qui: nel compilato ce n'e' una
     # sola condivisa (vedi build_shared_sidebar), non una copia per capitolo
     markup = SIDEBAR_RE.sub("", markup, count=1)
+    markup = rewrite_body_links(markup, filename, slug_by_file)
     markup = inline_relative_assets(markup, filename)
+    markup = markup.replace(*FUORI_ALBERO)
 
     ids = set(ID_ATTR_RE.findall(raw))
 
     style = namespace_tokens(style, slug, ids)
     markup = namespace_tokens(markup, slug, ids)
     script = namespace_tokens(script, slug, ids)
+    script = script.replace(*FUORI_ALBERO)
 
-    script, missing = scope_shell_queries(script, kind)
+    style = scope_css(style, f"#chapter-{slug}")
+
+    script, missing = scope_shell_queries(script, kind, slug)
     if missing:
         raise ValueError(f"{filename}: pattern di scoping non trovati: {missing}")
 
@@ -271,30 +520,23 @@ def extract_chapter(filename, slug, kind):
     return style, wrapped_markup, wrapped_script
 
 
-def build_shared_sidebar():
+def build_shared_sidebar(slug_by_file):
     """Costruisce un'unica sidebar condivisa per l'intero documento compilato,
-    riscrivendo gli href della sidebar sorgente (identica in tutti e 12 i file,
-    a parte i marcatori statici "current"/open per il file corrente) in modo
-    che passino da showChapter() invece che navigare a un file separato. Lo
-    stato "corrente" e lo scroll-spy diventano dinamici via JS (vedi
-    NAV_CONTROLLER), non piu' marcati staticamente per file."""
-    raw = (LEZIONI_DIR / CHAPTERS[0][0]).read_text(encoding="utf-8")
+    riscrivendo gli href della sidebar sorgente in modo che passino da
+    showChapter() invece che navigare a un file separato. Lo stato "corrente"
+    e lo scroll-spy diventano dinamici via JS (vedi NAV_CONTROLLER), non piu'
+    marcati staticamente per file.
+
+    Da quando presentazione.html e dietro-i-widget.html sono capitoli come
+    gli altri, i loro rami speciali sono spariti: una regola sola, uguale per
+    tutte e 14 le voci, che e' anche l'unica coerente con extract_chapter —
+    che prefissa ogni id con lo slug del suo capitolo."""
+    raw = (LEZIONI_DIR / SIDEBAR_SOURCE).read_text(encoding="utf-8")
     sidebar_m = SIDEBAR_RE.search(raw)
     if not sidebar_m:
         raise ValueError("sidebar sorgente non trovata per costruire la sidebar condivisa")
     sidebar = sidebar_m.group(0).strip()
     sidebar = sidebar.replace('<nav class="sidebar"', '<nav class="sidebar" id="master-sidebar"', 1)
-    # la voce Appendice non entra nella compilazione SPA (resta un documento
-    # a se', non un capitolo namespacizzato), ma deve restare raggiungibile
-    # da un file compilato aperto direttamente via file://: un link che esce
-    # dalla cartella di output/ viene bloccato dal sandbox file:// di Safari/
-    # Chrome, indipendentemente da quanto sia corretto il percorso relativo
-    # (verificato dal vivo: "Ignoring request to load this main resource
-    # because it is outside the sandbox"). Soluzione: `dietro-i-widget.html`
-    # viene copiato dentro output/ da build() qui sotto, cosi' il link bare
-    # gia' presente nella sidebar sorgente (stesso schema di ogni altro
-    # capitolo) resta valido cosi' com'e' - stessa cartella, nessun sandbox
-    # da attraversare. Il passthrough esplicito e' in rewrite() piu' sotto.
     sidebar = sidebar.replace(' current', "")
     sidebar = sidebar.replace('<details class="modulo" open>', '<details class="modulo">')
     # nel compilato qualunque parte puo' diventare quella "corrente" (navigazione
@@ -309,184 +551,119 @@ def build_shared_sidebar():
     sidebar = re.sub(r'class="unita-list(?: scrollspy)?"', 'class="unita-list scrollspy"', sidebar)
     sidebar = sidebar.replace(' id="local-scrollspy"', "").replace(' id="presentazione-scrollspy"', "")
 
-    slug_by_file = {file: slug for file, slug, *_ in CHAPTERS}
-
     def rewrite(m):
         file, frag = m.group(1), m.group(2)
-        if file == "dietro-i-widget.html":
-            # passthrough: non e' un capitolo compilato (non e' in CHAPTERS),
-            # resta un file bare sibling - build() lo copia dentro output/.
-            return f'href="dietro-i-widget.html{frag or ""}"'
-        if file == "presentazione.html":
-            chapter = "intro"
-            target = frag[1:] if frag else "chapter-intro"
-        else:
-            chapter = slug_by_file[file]
-            target = f"{chapter}-{frag[1:]}" if frag else f"chapter-{chapter}"
+        slug = slug_by_file.get(file)
+        if slug is None:
+            raise ValueError(f"sidebar: voce verso un file che non e' un capitolo compilato: {file}")
+        target = f"{slug}-{frag[1:]}" if frag else f"chapter-{slug}"
         spy = f' data-spy-target="{target}"' if frag else ""
-        return f'href="#{target}" data-nav-chapter="{chapter}"{spy}'
+        return f'href="#{target}" data-nav-chapter="{slug}"{spy}'
 
     return SIDEBAR_HREF_RE.sub(rewrite, sidebar)
 
 
 NEW_CSS = """
-  /* ============ compilato: sidebar unica condivisa + tema ============ */
-  /* Tema chiaro derivato dalla STESSA tinta del tema scuro (verde ~162 gradi
-     per bg/surface/superfici, rame ~28-30 gradi per gli accenti), non da una
-     famiglia di colori nuova (niente beige/sabbia neutro): --text riusa
-     esattamente il valore di --bg del tema scuro (stesso swatch, ruolo
-     invertito); --copper/--copper-bright restano nella stessa tinta del
-     tema scuro, solo scuriti per il contrasto su sfondo chiaro. */
-  :root[data-theme="light"]{
-    --bg: #F0F5F3;
-    --surface: #E0EBE8;
-    --surface-2: #CDDFDA;
-    --copper: #804C1E;
-    --copper-bright: #6D3D0D;
-    --text: #0F2A22;
-    --text-dim: #326253;
-    --line: rgba(15,42,34,0.14);
-    --true: #804C1E;
-    --false: #6B8177;
-  }
+  /* ============ compilato: quel che esiste solo qui ============ */
+  /* Tutto con i token del design system. Niente tema: il saggio ha una
+     sola resa, quella chiara, e il commutatore con localStorage che stava
+     qui e' stato tolto insieme al blocco :root[data-theme="light"]. */
 
   .chapter[hidden]{ display:none; }
-  body{ padding-top: 0; }
 
-  /* la sidebar condivisa (#master-sidebar) riusa lo stile .sidebar gia'
-     duplicato nello <style> di ogni capitolo (identico in tutti i file
-     sorgente) — qui va solo azzerato il padding-left che ciascun capitolo
-     applicava al proprio <main> pensando di essere l'unica pagina, e
-     spostato una volta sola su <body>, cosi' vale anche per l'introduzione
-     (che non ha un proprio <main>). */
-  main{ padding-left: 0 !important; }
-  @media (min-width: 900px){
-    body{ padding-left: var(--rail-w); }
+  /* ---------- Sommario ----------
+     L'unico pezzo di interfaccia che nasce nel compilato e non esiste in
+     nessuna pagina sorgente: il binario porta a un'unita' alla volta, il
+     Sommario da' la mappa intera. Stessa famiglia del resto (una sola nel
+     sistema), apparato in maiuscoletto e non in un secondo font, arancio
+     perche' e' apparato e non navigazione — il blu resta al binario. */
+  .sommario h2{
+    font-size: var(--dim-lede);
+    font-variant: small-caps; letter-spacing: var(--traccia-apparato);
+    color: var(--colore-apparato);
+    margin-bottom: 24px;
   }
-  #master-sidebar{ z-index: 90; }
-
-  .theme-toggle{
-    position: fixed; z-index: 95; top: 16px; right: 16px;
-    font-family: 'IBM Plex Mono', monospace; font-size: 0.74rem;
-    color: var(--text-dim); background: var(--surface); border: 1px solid var(--line); border-radius: 4px;
-    padding: 6px 12px; cursor: pointer; white-space: nowrap;
+  .sommario-parte{ margin-bottom: 26px; }
+  .sommario-parte:last-child{ margin-bottom: 0; }
+  .sommario-parte-heading{
+    font-variant: small-caps; letter-spacing: var(--traccia-apparato);
+    font-size: var(--dim-apparato); color: var(--colore-testo-tenue);
+    padding-bottom: 8px; margin-bottom: 12px;
+    border-bottom: 1px solid var(--colore-bordo);
   }
-  .theme-toggle:focus-visible{ outline: 2px solid var(--copper-bright); outline-offset: 2px; }
-
-  .intro-wrap{ max-width: 740px; margin: 0 auto; padding: 80px 24px 100px; }
-  .intro-wrap h1{ font-size: clamp(1.8rem, 5vw, 2.6rem); margin-bottom: 20px; }
-  .intro-wrap .sottotitolo{ font-size: 1.15rem; color: var(--text-dim); margin: 0 0 56px; max-width: 62ch; }
-  .intro-wrap h2{ font-size: clamp(1.3rem, 3.2vw, 1.7rem); line-height: 1.2; margin: 0 0 24px; }
-  .intro-wrap section.parte{ margin-bottom: 52px; }
-  .intro-wrap p{ font-size: 1.05rem; color: var(--text); margin-bottom: 20px; }
-  .toc{ margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--line); }
-  .toc h2{ font-size: 1.2rem; color: var(--copper-bright); margin-bottom: 18px; }
-  .toc-parte{ margin-bottom: 28px; }
-  .toc-parte:last-child{ margin-bottom: 0; }
-  .toc-parte-heading{
-    font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px;
+  .sommario-list{ display:flex; flex-direction:column; gap: 10px; }
+  .sommario-entry{ display:flex; flex-direction:column; }
+  .sommario-item{
+    text-align: left;
+    font-family: var(--font-testo); font-size: var(--dim-testo);
+    line-height: var(--interlinea-testo);
+    color: var(--colore-testo);
+    background: var(--colore-superficie);
+    border: 1px solid var(--colore-bordo); border-radius: 6px;
+    padding: 12px 16px; cursor: pointer;
+    transition: border-color .2s ease, color .2s ease;
   }
-  .toc-list{ display:flex; flex-direction:column; gap: 6px; }
-  .toc-entry{ display:flex; flex-direction:column; }
-  .toc-item{
-    text-align:left; font-family: 'Space Grotesk', sans-serif; font-size: 0.98rem;
-    color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
-    padding: 12px 16px; cursor: pointer; transition: border-color .2s, background .2s;
-  }
-  .toc-item:hover{ border-color: var(--copper); background: var(--surface-2); }
-  .toc-units{
-    font-family: 'Source Serif 4', Georgia, serif; font-size: 0.82rem; color: var(--text-dim);
-    padding: 8px 16px 2px; line-height: 1.6;
+  .sommario-item:hover{ border-color: var(--colore-apparato-medio); color: var(--colore-apparato); }
+  .sommario-item:focus-visible{ outline: 2px solid var(--colore-apparato); outline-offset: 2px; }
+  .sommario-unita{
+    font-size: var(--dim-nota); color: var(--colore-testo-tenue);
+    padding: 8px 16px 2px;
   }
 """
 
 
-def build_intro_and_toc():
-    abstract = """
-    <p class="abstract">C'è un piccolo gioco linguistico che chiunque risolve all'istante, quasi senza pensarci. Alla parola «re» si toglie mentalmente tutto ciò che ha a che fare con l'essere un uomo, e si aggiunge tutto ciò che ha a che fare con l'essere una donna. La risposta arriva da sola: «regina». Sembra solo buon senso linguistico, non un calcolo. Eppure è precisamente questo calcolo — fatto non con le parole ma con i numeri che le rappresentano dentro un modello linguistico — a rivelare qualcosa di sorprendente su come i modelli linguistici (ovvero le reti neurali che imparano il linguaggio) trattano il significato.</p>
-
-    <p class="abstract">Un interruttore non sa cosa vuol dire «regina». Sa solo accendersi o spegnersi — un bit, niente altro. Eppure, sommando miliardi di quegli scatti in una rete addestrata a prevedere la parola successiva, succede qualcosa che nessun singolo interruttore prevede: le parole finiscono per occupare posizioni in uno spazio a centinaia di dimensioni, e quelle posizioni si comportano come se avessero una geometria del senso. Quella stessa sottrazione e quella stessa somma, fatte non sulle parole ma sui numeri che le rappresentano, atterrano nello stesso punto: vicino a «regina». Nessuno ha scritto questa regola: è emersa dai dati, non è stata dichiarata da nessuno — ed è precisamente qui che comincia la domanda a cui il resto di questo lavoro prova a rispondere. Una cosa è vedere il significato comportarsi in modo prevedibile dentro un vettore. Un'altra è poterlo dichiarare, interrogare, sottoporre a un controllo che non dipenda dal fidarsi della geometria. Quello che segue racconta entrambi i percorsi: come si arriva dal primo bit a quel punto nello spazio, e cosa serve, dopo, per trasformare quella posizione in un concetto di cui si possa rispondere.</p>
-
-    <p class="abstract">Il caso di studio è stato costruito in due fasi. La prima ha prodotto il dominio: il saggio interattivo, con i componenti tecnici — tokenizzatore, embedding, aritmetica vettoriale — calcolati su dati reali, non simulati; la stessa aritmetica che il saggio chiama esplicitamente non deduzione ma abduzione, inferenza all'analogia più plausibile. La seconda ha prodotto la mappa: il vocabolario controllato in SKOS e la micro-ontologia in OWL, verificati con un reasoner. Le due fasi corrispondono a due forme di rappresentazione della conoscenza: sub-simbolica la prima, dove il significato emerge dai dati come geometria, plausibile ma mai certa; simbolica la seconda, dove il significato è dichiarato come categoria verificabile — difendibile in un tribunale che non conosce sfumature geometriche.</p>
-
-    <p class="abstract">Entrambe le fasi sono state svolte in collaborazione con un agente AI — un assistente in grado di leggere e scrivere codice, eseguire strumenti di verifica e iterare sul proprio lavoro, con modelli diversi impiegati a seconda del compito. Nella prima fase l'agente ha contribuito alla stesura e alla verifica tecnica dei componenti del saggio. Nella seconda, alla costruzione e al controllo formale dell'ontologia. La verifica finale, in entrambe le fasi, resta umana.</p>
-
-    <p class="abstract">Chi lavora oggi fuori dai grandi laboratori — un'organizzazione piccola, un progetto indipendente — raramente può permettersi entrambe le competenze come ruoli separati: la scrittura tecnica che rende un dominio comprensibile a un lettore, e la costruzione di un grafo di conoscenza o di un'ontologia che lo rende interrogabile da una macchina — quello che oggi si chiama knowledge engineering. Di solito resta solo una delle due, e l'altra si perde. Questo caso di studio è un piccolo controesempio: la stessa persona, con l'aiuto dello stesso agente, ha attraversato entrambe le fasi in sequenza — prima il mestiere di chi spiega, poi quello di chi formalizza. Non perché le due competenze siano diventate la stessa cosa, ma perché un assistente capace di scrivere codice, verificare un'ontologia e iterare sul proprio lavoro abbassa il costo di attraversare il confine tra l'una e l'altra: è un piccolo contrappeso tecnico alla logica per cui solo chi possiede grande scala — infrastrutture, laboratori, ruoli distinti e retribuiti separatamente — può permettersi entrambe le competenze insieme.</p>
-    """
-    parte1 = """
-    <section class="parte" id="parte-1">
-      <h2>Framework epistemologico: i limiti che condividiamo con le macchine</h2>
-
-      <p>Il confine appena attraversato — tra chi spiega e chi formalizza, reso più economico da un agente capace di entrambi i mestieri — è un caso piccolo di una domanda più grande, e più temuta. C'è un timore che circola, oggi, attorno a ogni discorso sull'intelligenza artificiale: che le macchine stiano per sostituire l'uomo — nel lavoro, nel pensiero, forse anche nella coscienza. Il lavoro appena descritto suggerisce altro: un agente ha reso più facile attraversare un confine tra due competenze umane, non ha eliminato nessuna delle due. Eppure è proprio questo timore a costruire gran parte della retorica di mercato di questi anni, tanto nell'annuncio trionfale quanto nell'allarme. Non si può governare ciò che non si conosce, e conoscere la macchina — davvero, nei suoi meccanismi, non nelle sue promesse — è indispensabile per saperla governare. Conoscere, qui, significa conoscerne i limiti epistemologici: i limiti di ciò che possiamo sapere della macchina.</p>
-
-      <p>La retorica della sostituzione tratta l'intelligenza artificiale come un rimpiazzo dell'uomo, un nuovo arrivato che rende obsoleto il vecchio. In <em>Ridondanza e Codificazione</em>, Bateson smonta un'idea analoga a proposito del linguaggio iconico: se fosse sostituzione, i vecchi canali sarebbero decaduti. Invece cinetica e paralinguaggio sono fioriti in parallelo al linguaggio verbale — danza, musica, arte — perché comunicano ciò che il linguaggio non può: la relazione (amore, fiducia, timore), proprio perché parzialmente involontaria e difficile da falsificare. Nella storia della comunicazione, il nuovo non ha mai sostituito il vecchio quando i due svolgono funzioni realmente diverse — è cresciuto accanto.</p>
-
-      <p>Forse per la stessa ragione, la domanda «la macchina ha coscienza?» è mal posta. Forse chiedere «la macchina ha coscienza?» tratta la coscienza come una sostanza che un ente possiede o non possiede — un errore categoriale che Bateson aveva messo radicalmente in discussione dal punto di vista epistemologico. La domanda ben posta sarebbe relazionale: non chi ce l'ha, ma tra quali sistemi, a quale livello di contesto, si genera quella particolare ridondanza che chiamiamo coscienza — dove i limiti di mente e macchina si intersecano, e cosa quell'intersezione lascia visibile, o cieco.</p>
-
-      <p>Un sistema totalmente cosciente è impossibile, perché ogni circuito aggiunto per riferire su ciò che manca genera a sua volta nuovi processi all'infinito. La coscienza resta quindi «una piccola parte della verità sull'io» — non per pigrizia, ma per economia di sistema. Quello che offre non è un campione rappresentativo del tutto, ma «archi di circuito» isolati — «una mostruosa negazione dell'integrazione di quel tutto». Per le stesse ragioni è stato portato ad affermare: «la pura razionalità finalizzata, senza l'aiuto di fenomeni come l'arte, la religione, il sogno... è di necessità patogena e distruttrice di vita» (<em>Stile, Grazia, Informazione</em>) — perché la vita dipende da circuiti di contingenze interconnessi, mentre la coscienza vede solo i brevi archi su cui può intervenire. Operare al contrario implicherebbe un errore che si autoalimenta a ogni intervento successivo.</p>
-
-      <p>È in questo spazio — dove i limiti della coscienza umana incontrano i limiti, ancora da mappare, di un sistema che la estende — che si colloca il lavoro che segue.</p>
-    </section>
-    """
-    parte2 = """
-    <section class="parte" id="parte-2">
-      <h2>Il dominio: struttura e composizione del saggio interattivo</h2>
-
-      <p>Il saggio è organizzato in tre parti. La prima comincia dalle funzioni booleane e dall'hardware — i mattoni discreti su cui tutto il resto poggia. La seconda racconta, in quattro tappe, da dove viene il sogno di una macchina che calcola il pensiero e quali limiti ha oggi — informatica, filosofia della mente, biologia e fisica messe in dialogo, non separate. La terza e ultima ricostruisce il funzionamento tecnico vero e proprio: tokenizzazione, probabilità, lo spazio vettoriale del significato già anticipato in apertura, reti neurali, Transformer, scala.</p>
-      <p>Un filo attraversa l'intera trattazione: la tensione tra discreto e continuo. Il saggio non risolve questa tensione ma la usa come chiave di lettura. Un vocabolario di token è un insieme enumerabile, finito; lo spazio vettoriale in cui quei token vengono proiettati è invece continuo, ad alta dimensionalità — la stessa distanza che separa, in matematica, i numeri naturali dai numeri reali. Inoltre ogni componente interattivo è verificato su dati reali, non simulato: il tokenizzatore BPE è addestrato per davvero sul testo del saggio stesso; i vettori sono fastText reali, non inventati per l'occasione; la rete neurale del modulo sulle reti è effettivamente addestrata sul problema XOR, non animata a mano. Chi clicca guarda l'output di un calcolo realmente avvenuto, non una messinscena.</p>
-    </section>
-    """
-    parte3 = """
-    <section class="parte" id="parte-3">
-      <h2>La lente semantica</h2>
-
-      <p>Formalizzare un dominio come ontologia non è raccontarlo di nuovo in un linguaggio più rigido: è essere costretti a decidere cose che la prosa lascia sospese. Tre esempi bastano a mostrare la differenza. Cos'è un termine, e cosa non lo è? I teorici citati nel saggio non sono concetti nel dominio: sono agenti, autori di un'affermazione. Confonderli con i concetti che nominano avrebbe mescolato una gerarchia con una relazione di attribuzione. Dove finisce una gerarchia genere-specie, e comincia una relazione di tutt'altro tipo? Un generico «è collegato a» avrebbe appiattito «risolve un problema» e «è analogo a» sotto la stessa freccia. Quale incertezza va formalizzata, e quale resta solo descritta? Che un dataset sia reale o illustrativo non è una sfumatura da lasciare a un commento: è una classe che un reasoner può far rispettare, o violare visibilmente.</p>
-
-      <p>Il risultato non è un doppione del saggio in un altro formato: è una mappa che mostra, per ogni scelta fatta scrivendo, l'alternativa che è stata scartata — visibile solo a chi guarda attraverso questa lente. Una versione esplorabile di questa lente, termine per termine, è in preparazione: arriverà a editing del saggio concluso, quando anche il vocabolario e l'ontologia saranno aggiornati di conseguenza.</p>
-    </section>
-    """
+def build_sommario():
+    """Il Sommario gerarchico: Parti, capitoli, e sotto ciascun capitolo
+    multi-unita' i titoli delle sue unita'. Viene innestato dentro il
+    capitolo `intro` (vedi build), non piu' accompagnato da prosa ricopiata
+    a mano: la prosa dell'introduzione e' presentazione.html, che ora e' un
+    capitolo estratto come tutti gli altri."""
     by_slug = {slug: (label, title) for _, slug, label, _, title in CHAPTERS}
 
-    def build_toc_parte(heading, slugs):
+    def build_parte(heading, slugs):
         entries = []
         for slug in slugs:
             _, title = by_slug[slug]
             units = UNIT_TITLES.get(slug)
             units_html = (
-                f'<div class="toc-units">{" · ".join(units)}</div>' if units else ""
+                f'<div class="sommario-unita">{" · ".join(units)}</div>' if units else ""
             )
             entries.append(
-                f'<div class="toc-entry">'
-                f'<button class="toc-item" onclick="window.showChapter(\'{slug}\')">{title}</button>'
+                f'<div class="sommario-entry">'
+                f'<button class="sommario-item" type="button" '
+                f'onclick="window.showChapter(\'{slug}\')">{title}</button>'
                 f'{units_html}'
                 f'</div>'
             )
         return (
-            f'<div class="toc-parte">'
-            f'<div class="toc-parte-heading">{heading}</div>'
-            f'<div class="toc-list">{"".join(entries)}</div>'
+            f'<div class="sommario-parte">'
+            f'<div class="sommario-parte-heading">{heading}</div>'
+            f'<div class="sommario-list">{"".join(entries)}</div>'
             f'</div>'
         )
 
-    toc_parti = "\n".join(build_toc_parte(heading, slugs) for heading, slugs in PARTI)
+    parti = "\n      ".join(build_parte(heading, slugs) for heading, slugs in PARTI)
     return (
-        f'<section class="chapter" id="chapter-intro" data-chapter="intro" hidden>\n'
-        f'  <div class="intro-wrap">\n'
-        f'    <h1>Dal bit alle entità semantiche</h1>\n'
-        f'    <p class="sottotitolo">Un saggio interattivo come dominio, formalizzato in un\'ontologia: cartografia della conoscenza tra spazio vettoriale e grafo — dall\'apprendimento dei modelli linguistici al knowledge engineering.</p>\n'
-        f'    <p class="abstract">Il presente caso di studio integra in un unico lavoro la scrittura tecnica, che produce un saggio interattivo su come funzionano i modelli linguistici — dai principi discreti dell\'hardware fino allo spazio vettoriale in cui si rappresenta il significato — e la sua cartografia: un vocabolario controllato e un\'ontologia OWL che formalizzano quello stesso dominio in un grafo di entità semantiche verificabile da un reasoner, non solo descritto in prosa.</p>\n'
-        f'{abstract}\n'
-        f'{parte1}\n'
-        f'{parte2}\n'
-        f'{parte3}\n'
-        f'    <div class="toc">\n'
-        f'      <h2>Indice</h2>\n'
-        f'      {toc_parti}\n'
-        f'    </div>\n'
-        f'  </div>\n'
-        f'</section>'
+        '  <section id="sommario" class="sommario">\n'
+        '    <div class="wrap">\n'
+        '      <h2>Sommario</h2>\n'
+        f'      {parti}\n'
+        '    </div>\n'
+        '  </section>\n'
     )
+
+
+def innesta_sommario(markup, slug):
+    """Inserisce il Sommario nel capitolo intro, prima della nota di
+    chiusura (che rimanda al capitolo successivo: la mappa viene prima
+    dell'indicazione di dove andare)."""
+    sommario = build_sommario()
+    ancora = f'<section id="{slug}-chiusura"'
+    if ancora in markup:
+        return markup.replace(ancora, sommario + "\n  " + ancora, 1)
+    if "</main>" in markup:
+        return markup.replace("</main>", sommario + "</main>", 1)
+    raise ValueError("capitolo intro: nessun punto dove innestare il Sommario")
 
 
 NAV_CONTROLLER = """
@@ -517,7 +694,27 @@ NAV_CONTROLLER = """
     });
   }
 
+  function chiudiSovrapposizioni(){
+    // Ogni capitolo ha la propria tenda dei concetti e il proprio velo, e il
+    // listener che li apre e' delegato su `document`: con 14 capitoli nello
+    // stesso DOM, un clic su un termine apre anche le tende degli altri
+    // capitoli che dichiarano quello stesso concetto. Finche' quei capitoli
+    // sono nascosti non si vedono — ma cambiando capitolo senza prima
+    // chiudere ci si arriva con la tenda gia' aperta e il velo sopra la
+    // pagina. Verificato dal vivo: «Embedding» dalla Presentazione, poi
+    // Meccanismo 3 dal binario, e Meccanismo 3 si apre velato.
+    document.querySelectorAll('.tenda-concetto.visibile, .lightbox-box.visibile').forEach(el => {
+      el.classList.remove('visibile');
+      if(el.hasAttribute('aria-hidden')) el.setAttribute('aria-hidden', 'true');
+    });
+    document.querySelectorAll('.tenda-scrim.visibile, .lightbox-scrim.visibile')
+      .forEach(el => el.classList.remove('visibile'));
+    document.querySelectorAll('.termine-concetto.aperto')
+      .forEach(el => el.classList.remove('aperto'));
+  }
+
   function showChapter(id){
+    chiudiSovrapposizioni();
     chapters.forEach(c => { c.hidden = (c.id !== 'chapter-' + id); });
     updateSidebarState(id);
     window.scrollTo({ top: 0 });
@@ -527,7 +724,11 @@ NAV_CONTROLLER = """
     window.dispatchEvent(new CustomEvent('corso:chapterchange'));
   }
 
-  sidebar.addEventListener('click', (e) => {
+  // Delegato sul documento e non sulla sola sidebar: i rimandi da capitolo a
+  // capitolo esistono anche dentro il testo (la nota di chiusura della
+  // Presentazione, un rimando di Fondamenti 1 verso Meccanismo 4), e in un
+  // file solo devono cambiare capitolo invece di cercare un file accanto.
+  document.addEventListener('click', (e) => {
     const a = e.target.closest('a[data-nav-chapter]');
     if(!a) return;
     e.preventDefault();
@@ -540,7 +741,10 @@ NAV_CONTROLLER = """
   });
 
   window.showChapter = showChapter;
-  showChapter('intro');
+  // Il primo capitolo nel DOM, non uno slug scritto a mano: cosi' regge
+  // anche la compilazione --trial, che di capitoli ne mette due.
+  const primo = document.querySelector('.chapter');
+  if(primo) showChapter(primo.dataset.chapter);
 })();
 
 (function(){
@@ -550,27 +754,33 @@ NAV_CONTROLLER = """
   // nascosti (display:none finche' non si naviga li'), in Chrome reale non
   // scatta mai per quei target — bug verificato dal vivo (zero callback
   // durante lo scroll reale), non solo un sospetto. Ricalcolo diretto da
-  // getBoundingClientRect ad ogni scroll, scoped al solo capitolo
-  // effettivamente visibile in quel momento: nessun observer creato su
-  // elementi nascosti, nessuna dipendenza da un comportamento del browser
-  // rivelatosi inaffidabile qui.
-  const spyLinks = document.querySelectorAll('#master-sidebar a[data-spy-target]');
+  // getBoundingClientRect ad ogni scroll.
+  //
+  // I bersagli non sono piu' un elenco di selettori scritto qui (che
+  // conosceva `.unit-block` e le tre Parti della vecchia introduzione
+  // ricopiata a mano, e non sopravviverebbe al fatto che le Parti della
+  // Presentazione ora si chiamano `intro-parte-N`): sono gli elementi che
+  // le voci del binario dichiarano come proprio bersaglio. Una regola sola,
+  // valida per ogni capitolo presente e futuro.
+  const spyLinks = Array.from(document.querySelectorAll('#master-sidebar a[data-spy-target]'));
   let ticking = false;
 
   function updateActive(){
     ticking = false;
     const visibleChapter = document.querySelector('.chapter:not([hidden])');
     if(!visibleChapter) return;
-    const targets = visibleChapter.querySelectorAll('.unit-block, #parte-1, #parte-2, #parte-3');
-    if(!targets.length) return;
+    const links = spyLinks.filter(a => a.dataset.navChapter === visibleChapter.dataset.chapter);
+    if(!links.length) return;
     const centerY = window.innerHeight / 2;
     let current = null;
-    targets.forEach(el => {
+    links.forEach(a => {
+      const el = document.getElementById(a.dataset.spyTarget);
+      if(!el) return;
       const rect = el.getBoundingClientRect();
-      if(rect.top <= centerY && rect.bottom >= centerY) current = el;
+      if(rect.top <= centerY && rect.bottom >= centerY) current = a.dataset.spyTarget;
     });
     if(current){
-      spyLinks.forEach(a => a.classList.toggle('active', a.dataset.spyTarget === current.id));
+      spyLinks.forEach(a => a.classList.toggle('active', a.dataset.spyTarget === current));
     }
   }
 
@@ -584,57 +794,70 @@ NAV_CONTROLLER = """
   window.addEventListener('corso:chapterchange', updateActive);
   updateActive();
 })();
-
-(function(){
-  const KEY = 'corso-llm-theme';
-  const btn = document.getElementById('theme-toggle');
-  const saved = localStorage.getItem(KEY);
-  if(saved === 'light' || saved === 'dark'){ document.documentElement.dataset.theme = saved; }
-  function label(){ return document.documentElement.dataset.theme === 'light' ? 'Tema: chiaro' : 'Tema: scuro'; }
-  btn.textContent = label();
-  btn.addEventListener('click', () => {
-    const next = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
-    document.documentElement.dataset.theme = next;
-    localStorage.setItem(KEY, next);
-    btn.textContent = label();
-    // Alcuni widget (canvas 2D pre-renderizzati, shader WebGL) non seguono
-    // da soli le variabili CSS del tema: si ridisegnano ascoltando questo
-    // evento invece di un semplice cambio di `data-theme`.
-    window.dispatchEvent(new CustomEvent('corso:themechange'));
-  });
-})();
 """
+
+
+def leggi_design_system_inline():
+    """Il CSS del design system con i font in data-URI base64. Non e'
+    versionato (sono i woff2 di design-system/fonts/ ricodificati): se manca,
+    si rigenera invece di fallire. E' il motivo per cui il compilato non fa
+    una sola richiesta di rete — niente Google Fonts, che per giunta serviva
+    subset di IBM Plex Mono privi di tre dei quattro simboli logici."""
+    if not INLINE_CSS.is_file():
+        print(f"{INLINE_CSS.name} assente (non versionato): lo rigenero con build_css.py")
+        subprocess.run([sys.executable, str(BUILD_CSS_SCRIPT)], check=True, cwd=DESIGN_SYSTEM_DIR)
+    if not INLINE_CSS.is_file():
+        raise ValueError(f"{INLINE_CSS} non generato da build_css.py")
+    return INLINE_CSS.read_text(encoding="utf-8")
 
 
 def build(trial=False, lang="it"):
     chapters = [c for c in CHAPTERS if (c[1] in TRIAL_SLUGS)] if trial else CHAPTERS
+    slug_by_file = {file: slug for file, slug, *_ in CHAPTERS}
+
+    design_system_css = leggi_design_system_inline()
 
     styles, markups, scripts = [], [], []
     for filename, slug, label, kind, title in chapters:
-        style, markup, script = extract_chapter(filename, slug, kind)
-        styles.append(f"  /* ===== capitolo {slug} ({filename}) ===== */\n{style}")
+        style, markup, script = extract_chapter(filename, slug, kind, slug_by_file)
+        if slug == INTRO_SLUG:
+            markup = innesta_sommario(markup, slug)
+        styles.append(f"\n  /* ===== capitolo {slug} ({filename}) ===== */\n{style}")
         markups.append(markup)
         scripts.append(script)
 
+    # data-theme="light" e' l'unico residuo del tema, e non e' un tema: e' la
+    # stessa dichiarazione che meccanismo-4-reti-neurali.html porta sul
+    # proprio <html>. Il suo shader della superficie di perdita sceglie la
+    # tavolozza leggendola (currentLossPalette), e senza questo attributo nel
+    # compilato disegnerebbe la variante scura su una pagina chiara.
     html = f"""<!DOCTYPE html>
-<html lang="{lang}">
+<html lang="{lang}" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dal bit alle entità semantiche — saggio interattivo</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+/* ===================================================================
+   design system, variante da incorporare: token, azzeramenti,
+   tipografia, impianto, componenti — e i font (EB Garamond, IBM Plex
+   Mono) in data-URI base64. Il compilato non fa richieste di rete.
+   Generato da design-system/scripts/build_css.py: non si edita qui.
+   =================================================================== */
+{design_system_css}
+
+/* ===================================================================
+   CSS dei widget, un blocco per capitolo, ciascuno reso discendente
+   del proprio #chapter-<slug>. Non stratificato: vince sul design
+   system senza alzare la specificita' contro di esso.
+   =================================================================== */
 {"".join(styles)}
 {NEW_CSS}
 </style>
 </head>
 <body>
 
-{build_shared_sidebar()}
-<button class="theme-toggle" id="theme-toggle">Tema: scuro</button>
-
-{build_intro_and_toc()}
+{build_shared_sidebar(slug_by_file)}
 
 {chr(10).join(markups)}
 
@@ -651,17 +874,6 @@ def build(trial=False, lang="it"):
     out_path = OUTPUT_DIR / f"dal-bit-alle-entita-semantiche_{lang}{suffix}.html"
     out_path.write_text(html, encoding="utf-8")
     print(f"Scritto {out_path} ({len(html)} caratteri, {len(chapters)} capitoli)")
-
-    # L'appendice non e' un capitolo compilato (resta un documento a se', non
-    # namespacizzato) ma va raggiungibile da un file aperto via file:// senza
-    # server: copiata come sibling dentro output/, cosi' il link bare della
-    # sidebar (vedi build_shared_sidebar) resta nella stessa cartella, senza
-    # attraversare il sandbox file:// che blocca la navigazione fuori da essa.
-    appendice_src = LEZIONI_DIR / "dietro-i-widget.html"
-    appendice_dst = OUTPUT_DIR / "dietro-i-widget.html"
-    shutil.copyfile(appendice_src, appendice_dst)
-    print(f"Copiato {appendice_dst}")
-
     return out_path
 
 
