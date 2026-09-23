@@ -397,8 +397,13 @@ async function main() {
   const durata = ((Date.now() - t0) / 1000).toFixed(1);
   console.log(`\nFatto: ${bersagliUsati} bersagli, ${totale} file in ${outDirName}/, ${durata}s`);
 
+  const rapporto = path.join(__dirname, 'animazioni-infinite.json');
+  // Si cancella quando non c'e' piu' niente da segnalare: un rapporto
+  // rimasto da un giro precedente direbbe il falso, ed e' proprio il genere
+  // di bugia che passa inosservata.
+  await fsp.rm(rapporto, { force: true });
+
   if (ANIMAZIONI_INFINITE.length) {
-    const rapporto = path.join(__dirname, 'animazioni-infinite.json');
     await fsp.writeFile(rapporto, JSON.stringify(ANIMAZIONI_INFINITE, null, 2) + '\n');
     console.log(`\nAnimazioni infinite ancora in corso sotto prefers-reduced-motion:`);
     for (const r of ANIMAZIONI_INFINITE) {

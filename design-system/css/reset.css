@@ -10,5 +10,32 @@
 *{ box-sizing: border-box; }
 
 @media (prefers-reduced-motion: reduce){
+
+  /* Chi ha chiesto meno animazioni non deve vedere niente che si muove da
+     solo all'infinito. Prima di questo reset non era vero: le pagine
+     dichiaravano il blocco @media ma ci mettevano dentro solo
+     scroll-behavior, e in fondamenti-2 tre cursori continuavano a
+     lampeggiare (animation: blink 1.2s infinite) insieme a un bagliore e a
+     due pulsazioni. Lo ha trovato l'harness di regressione, che a ogni giro
+     censisce le animazioni infinite ancora in corso sotto questa media
+     query — vedi verify/README.md.
+
+     Durata quasi nulla e una sola iterazione, non `animation: none`:
+     `none` farebbe ricadere l'elemento sullo stile non animato della
+     cascata, lasciando invisibile ciò che parte da opacity:0 con
+     fill-mode:forwards. Così invece il motore delle animazioni gira
+     comunque e rispetta il fill-mode, solo senza il tempo di mezzo.
+
+     Le TRANSIZIONI non si azzerano qui di proposito. Non sono il problema:
+     nel saggio sono brevi e quasi tutte di colore o opacità, e i componenti
+     che avevano qualcosa da dire sotto reduced-motion lo dicono già —
+     `.reveal` tiene la dissolvenza e toglie lo spostamento, `.scrolldown`
+     ferma la freccia. Un reset che le spazzasse via tutte cancellerebbe
+     quelle decisioni invece di rispettarle. */
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+
   *{ scroll-behavior: auto !important; }
 }

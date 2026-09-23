@@ -1,0 +1,53 @@
+<!-- @dsCard group="Ontologia" -->
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Scale categoriali della Lente</title>
+<link rel="stylesheet" href="../../css/design-system.css">
+<style>
+  body{ padding: 32px; }
+  h3{ font-size: .78rem; font-variant: small-caps; letter-spacing: .06em;
+      color: var(--colore-testo-tenue); margin: 0 0 10px; }
+  .gruppo{ margin-bottom: 28px; }
+  .righe{ display: flex; flex-direction: column; gap: 6px; }
+  .riga{ display: flex; align-items: center; gap: 10px; font-size: .88rem; }
+  .pastiglia{ width: 30px; height: 16px; border-radius: 3px; flex-shrink: 0; }
+  .riga code{ font-family: var(--font-mono); font-size: .72rem; color: var(--colore-testo-tenue); }
+  .nota{ font-size: .96rem; color: var(--colore-testo-attenuato); max-width: 54ch; margin-bottom: 26px; }
+</style>
+</head>
+<body>
+<p class="nota">Scale categoriali, non sfumature di una famiglia: qui il colore distingue
+<em>tipi</em>, quindi conta la separabilità, non la gerarchia. Già validate per contrasto e
+distinguibilità — si spostano nel sistema, non si ridisegnano. <code>lente.js</code> le legge
+per nome, quindi i nomi sono un contratto.</p>
+
+<div class="gruppo">
+  <h3>Categorie di relazione — piena e tenue</h3>
+  <div class="righe">
+    <div class="riga"><span class="pastiglia" style="background:var(--cat-gerarchia)"></span>
+      <span class="pastiglia" style="background:var(--cat-gerarchia-tenue)"></span> gerarchia <code>--cat-gerarchia</code></div>
+    <div class="riga"><span class="pastiglia" style="background:var(--cat-concettuale)"></span>
+      <span class="pastiglia" style="background:var(--cat-concettuale-tenue)"></span> concettuale <code>--cat-concettuale</code></div>
+    <div class="riga"><span class="pastiglia" style="background:var(--cat-attribuzione)"></span>
+      <span class="pastiglia" style="background:var(--cat-attribuzione-tenue)"></span> attribuzione <code>--cat-attribuzione</code></div>
+    <div class="riga"><span class="pastiglia" style="background:var(--cat-struttura)"></span>
+      <span class="pastiglia" style="background:var(--cat-struttura-tenue)"></span> struttura <code>--cat-struttura</code></div>
+  </div>
+</div>
+
+<div class="gruppo">
+  <h3>Gruppi di nodo</h3>
+  <div class="righe">
+    <div class="riga"><span class="pastiglia" style="background:var(--grp-concetto)"></span> Concetto <code>--grp-concetto</code></div>
+    <div class="riga"><span class="pastiglia" style="background:var(--grp-teorico)"></span> Teorico <code>--grp-teorico</code></div>
+    <div class="riga"><span class="pastiglia" style="background:var(--grp-unita)"></span> Unità <code>--grp-unita</code></div>
+    <div class="riga"><span class="pastiglia" style="background:var(--grp-dataset)"></span> Dataset <code>--grp-dataset</code></div>
+    <div class="riga"><span class="pastiglia" style="background:var(--grp-capitolo)"></span> Capitolo <code>--grp-capitolo</code></div>
+    <div class="riga"><span class="pastiglia" style="background:var(--grp-parte)"></span> Parte <code>--grp-parte</code></div>
+    <div class="riga"><span class="pastiglia" style="background:var(--grp-altro)"></span> Altro <code>--grp-altro</code></div>
+  </div>
+</div>
+</body>
+</html>

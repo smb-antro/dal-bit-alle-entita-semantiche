@@ -1,0 +1,38 @@
+<!-- @dsCard group="Lettura" -->
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Apertura di pagina</title>
+<link rel="stylesheet" href="../../css/design-system.css">
+<style>
+  body{ padding: 0 32px 36px; }
+  .wrap{ padding: 0; }
+  .che{ font-size: .7rem; font-family: var(--font-mono); color: var(--colore-testo-tenue);
+        padding-top: 22px; border-top: 1px solid var(--colore-bordo); margin-top: 26px; }
+  /* La variante copertina di presentazione.html: hero più grande e in
+     maiuscolo, fuori da ogni .unit-block. Non è un capriccio di quella
+     pagina — è l'unica del repository che apre invece di continuare. */
+  .copertina h1{ font-size: clamp(2rem, 6vw, 3.1rem); line-height: 1.08;
+                 margin-bottom: 26px; text-transform: uppercase; }
+  .copertina{ padding-top: 64px; text-align: left; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="hero">
+    <div class="kicker">Parte II · Genealogia</div>
+    <h1>Lo spazio, il corpo, <em>la macchina</em></h1>
+    <p class="lede">Prima che una macchina potesse trattare il significato come
+    posizione, qualcuno ha dovuto pensare il significato come spazio.</p>
+    <div class="scrolldown">Si comincia da qui</div>
+  </section>
+
+  <div class="che">variante copertina — solo presentazione.html</div>
+  <section class="hero copertina">
+    <div class="kicker">Caso studio · 1</div>
+    <h1>Dal bit alle <em>entità semantiche</em></h1>
+  </section>
+</div>
+</body>
+</html>

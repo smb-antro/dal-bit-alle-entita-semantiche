@@ -1,0 +1,41 @@
+<!-- @dsCard group="Fondamenta" -->
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Scala tipografica</title>
+<link rel="stylesheet" href="../../css/design-system.css">
+<style>
+  body{ padding: 32px; }
+  .riga{ display: grid; grid-template-columns: 210px 1fr; gap: 20px; align-items: baseline;
+         padding: 12px 0; border-bottom: 1px solid var(--colore-bordo); }
+  .meta{ font-size: .72rem; color: var(--colore-testo-tenue); line-height: 1.5; }
+  .meta code{ font-family: var(--font-mono); font-size: .68rem; display:block; color: var(--colore-testo-attenuato); }
+  .nota{ font-size: .96rem; color: var(--colore-testo-attenuato); max-width: 56ch; margin-bottom: 26px; }
+  .simboli{ font-family: var(--font-mono); font-size: 1.5rem; color: var(--colore-apparato);
+            white-space: nowrap; }
+</style>
+</head>
+<body>
+<p class="nota">Un solo carattere per il testo, EB Garamond, e il maiuscoletto al posto di
+un secondo font per tutto ciò che è apparato. Il monospaziato ha un uso solo, dichiarato:
+i quattro simboli logici. Una scala sola per tutte e 14 le pagine — prima erano tre.</p>
+
+<div class="riga"><div class="meta">paragrafo d'attacco<code>--dim-lede · 1.2rem</code></div>
+  <p class="lede" style="margin:0">Ogni modello linguistico comincia da una domanda banale.</p></div>
+<div class="riga"><div class="meta">corpo del testo<code>--dim-testo · 1.05rem</code></div>
+  <p style="margin:0">Alla domanda «stai bene?» esistono, in pratica, due risposte oneste.</p></div>
+<div class="riga"><div class="meta">citazione<code>--dim-citazione · 1.1rem</code></div>
+  <blockquote>Il significato non sta nella parola: sta nella distanza fra le parole.</blockquote></div>
+<div class="riga"><div class="meta">nota a margine<code>--dim-nota · 0.96rem</code></div>
+  <p style="margin:0;font-size:var(--dim-nota);color:var(--colore-testo-attenuato)">Un dettaglio che si può saltare senza perdere il filo.</p></div>
+<div class="riga"><div class="meta">apparato<code>--dim-apparato · 0.78rem</code></div>
+  <span class="apparato">Fondamenti · 1 — Funzioni booleane</span></div>
+<div class="riga"><div class="meta">indice, voce di modulo<code>--dim-nav-voce · .9rem</code></div>
+  <span style="font-size:var(--dim-nav-voce)">Il testo come dato</span></div>
+<div class="riga"><div class="meta">indice, voce di unità<code>--dim-nav-sottovoce · .82rem</code></div>
+  <span style="font-size:var(--dim-nav-sottovoce);color:var(--colore-testo-attenuato)">2. Il fenomeno e i suoi limiti</span></div>
+<div class="riga"><div class="meta">monospaziato<code>--font-mono</code><br>uso ristretto</div>
+  <div class="simboli">A ∧ B &nbsp; A ∨ B &nbsp; ¬A &nbsp; A ⊕ B</div></div>
+</body>
+</html>

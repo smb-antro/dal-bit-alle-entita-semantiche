@@ -1,138 +1,225 @@
 # design-system/
 
-Linee guida derivate da cinque prototipi verificati dal vivo in
-[`lab/`](lab/README.md) (Fondamenti · 1, Genealogia · 1, Meccanismo · 3/4/5, Lente
-semantica) — non ancora applicate ai file reali di `dominio/` o `ontologia/`. Questo
-documento raccoglie le regole; il *perché* di ciascuna, con i casi limite discussi per
-arrivarci, resta in `lab/README.md` e nella cronologia git.
+Il sistema che tiene insieme le due metà di questo caso studio: il saggio
+interattivo (`dominio/`) e la sua cartografia semantica (`ontologia/`).
 
-## Da dove veniamo
+Non è una raccolta di linee guida da leggere e applicare a mano. È CSS che le
+pagine collegano: cambiare un valore qui cambia tutte e 14 le pagine del saggio,
+le 194 dell'ontologia e la Lente semantica, senza toccarle.
 
-Prima di questi test esistevano **tre sistemi indipendenti**, mai confrontati fra loro:
+## Come si usa
 
-- il saggio (`dominio/`): tre font (Source Serif 4, Space Grotesk, IBM Plex Mono) su
-  tema scuro, accento rame — mai pensato come "design system", cresciuto capitolo per
-  capitolo;
-- l'ontologia (`ontologia/output/` e la Lente semantica): un solo font (EB Garamond)
-  su carta chiara, apparato in maiuscoletto invece che con un secondo font;
-- il portfolio (`portfolio/`): una palette confermata
-  (`design-system/tokens.css` lì) mai ancora collegata a nessuno dei due.
+Le pagine del saggio collegano il sistema intero:
 
-Le regole sotto adottano la palette del portfolio ovunque, e il principio
-"un solo font, l'apparato si distingue per trattamento non per famiglia" già
-dell'ontologia — esteso anche al saggio, che non lo seguiva.
+```html
+<link rel="stylesheet" href="../../../design-system/css/design-system.css">
+```
 
-## Font
+L'ontologia e la Lente collegano solo le **fondamenta** — font, tavolozza,
+azzeramenti — perché sono superfici di consultazione con una tipografia propria
+(radice a 16px invece di 19,2, colonna da 46rem invece di 740px, link color
+inchiostro invece che arancio). Condividono la tavolozza, non la scala di lettura:
 
-**EB Garamond**, self-hosted (OFL — stessi file di `ontologia/output/fonts/`, non
-riscaricare). Un'unica famiglia per argomentazione e apparato. Pesi: 500 per
-h1/h2/h3 (600+ è pensato per un grottesco come Space Grotesk, su Garamond risulta
-pesante). Corsivo sempre vero (`font-style: italic`, mai simulato), per enfasi,
-termini stranieri, citazioni.
+```html
+<link rel="stylesheet" href="../../design-system/css/fondamenta.css">
+<link rel="stylesheet" href="style.css">
+```
 
-**Mono** (IBM Plex Mono) **ristretto ai quattro simboli logici letterali** (∧ ∨ ¬ ⊕) —
-decisione già presa altrove nel portfolio (`tokens.css`, 27 agosto 2026) prima ancora
-di questi test, e confermata qui. Tutto il resto che nel saggio originale era mono —
-kicker, readout dal vivo dei widget, intestazioni di tabella, valori vero/falso — passa
-a Garamond in maiuscoletto (vedi sotto), anche i numeri che cambiano in tempo reale:
-verificato dal vivo che non "ballano" percettibilmente, perché stanno in riquadri a
-larghezza fissa, non in mezzo a una frase.
+Il CSS della pagina viene **dopo** e non è stratificato: per le dichiarazioni
+normali questo basta a sovrascrivere il sistema senza alzare la specificità.
 
-**Apparato = maiuscoletto, non un secondo font.** `font-variant: small-caps` più
-`letter-spacing: .06em` sulla stessa Garamond, per: kicker, eyebrow, etichette di
-form, intestazioni di tabella, footer-note, nomi di gruppo nella Lente. Colore
-`--grigio-soft` di default — l'arancio (o il verde, nell'ontologia) resta riservato a
-numeri e rimandi, non a ogni etichetta.
+## Come è fatto
 
-## Palette
+```
+tokens/tokens.css          SORGENTE dei token. Primitivi → semantici.
+css/reset.css              azzeramenti, e il reset di prefers-reduced-motion
+css/base.css               tipografia, corpo, titoli, link
+css/layout.css             colonna, binario, ritmo delle sezioni
+css/components/*.css       sidebar, hero, apparato, richiami, tenda dei concetti
+fonts/                     EB Garamond + IBM Plex Mono, self-hosted, una copia sola
+components/<nome>/         schede di anteprima, una per componente
+scripts/build_css.py       assembla le varianti generate
+verify/                    harness di regressione visiva — vedi verify/README.md
+lab/                       archivio dei prototipi che hanno stabilito le regole
+```
 
-| Token | Hex | Ruolo |
-|---|---|---|
-| `--bianco` | `#FFFFFF` | pannelli, superfici elevate |
-| `--brina` | `#F6F8FB` | sfondo di pagina |
-| `--inchiostro` | `#1a1a1a` | testo principale |
-| `--grigio-testo` | `#4a4540` | testo secondario, didascalie |
-| `--grigio-soft` | `#8A8580` | apparato, etichette, bordi di enfasi minima |
-| `--blu-scuro` / `--blu` / `--blu-chiaro` | `#1F2B6B` / `#2B3A8C` / `#5A6FB8` | **solo** navigazione del saggio |
-| `--arancio-scuro` / `--arancio` / `--arancio-chiaro` | `#A85419` / `#D4722A` / `#E9A66B` | apparato del saggio: link, numeri, stati attivi |
-| `--verde-scuro` / `--verde` / `--verde-chiaro` | `#2A5628` / `#3D7A3A` / `#7AAD76` | **solo** ontologia: Lente semantica, tenda dei concetti |
-| `--line` | `rgba(26,26,26,.12)` | bordi/divisori |
+Tre file sono **generati** e non si editano a mano (`build_css.py` li rifà,
+`build_css.py --check` fallisce se sono disallineati):
 
-**Una famiglia, un dominio — non si mescolano.** Blu vive solo nella sidebar del
-saggio (etichette di parte, numeri unità, voce corrente, pallino di scroll-spy — mai
-l'arancio lì, verificato togliendolo esplicitamente). Arancio è tutto il resto del
-saggio. Verde è tutto ciò che viene dall'ontologia, saggio compreso quando la tocca
-(vedi sotto). Non è un vincolo estetico: è il modo in cui chi legge distingue "sono
-ancora nel saggio" da "sto guardando dentro l'ontologia" senza doverlo leggere.
+| generato | a chi serve |
+|---|---|
+| `css/design-system.css` | le pagine del saggio, con `<link>`. Versionato: un clone deve funzionare senza far girare Python. |
+| `css/fondamenta.css` | ontologia e Lente: solo `reset` e `tokens`. |
+| `css/design-system.inline.css` | il bundle a file singolo: i font in data-URI, perché lì un percorso relativo non significa più niente. Non versionato — sono i font di `fonts/` ricodificati. |
 
-**Grado (scuro/base/chiaro) = intensità d'uso, non scelta libera.** `-scuro` per testo
-e link (contrasto migliore su bianco/brina); base per bordi e hover; `-chiaro` per
-tinte di sfondo di stati (badge "attivo", riquadro "lit" di un widget).
+### I cascade layer, e la regola che ne è uscita
 
-## L'eccezione categoriale
+L'ordine è dichiarato una volta sola in testa ai file generati:
 
-Alcuni widget devono distinguere **più di tre categorie insieme** (es. le mappe degli
-embedding: quattro gruppi tematici di parole). Tre famiglie non bastano senza far
-coincidere due categorie — e una coincidenza lì significa perdere l'unica cosa che il
-grafico esiste per mostrare. Regola seguita finora, in ordine:
+```css
+@layer reset, tokens, base, layout, components;
+```
 
-1. Riusa le famiglie confermate **a piena saturazione** (non i toni "chiaro") per
-   quante categorie puoi — coprono già 3 casi su 4 nell'unico esempio incontrato finora.
-2. Per ciò che resta, riusa un colore **già esistente altrove nel progetto con lo
-   stesso ruolo categoriale**, invece di inventarne uno — es. il prugna (`#6B4A7A`)
-   della quarta categoria è lo stesso `--cat-attribuzione` già usato dalla Lente
-   semantica per lo stesso identico compito (distinguere categorie in un grafo).
+**I layer scavalcano la specificità**, e questo ha una conseguenza che non si vede
+leggendo il codice: due regole che prima si ordinavano per specificità, separate in
+due layer, si ordinano per layer. È costato 30px per ogni hero su 11 pagine prima che
+l'harness lo mostrasse — `.hero` e `.unit-block section` si contendono `padding-top`.
+
+> **Due regole che si contendono la stessa proprietà stanno nello stesso layer.**
+
+Per questo `.hero` vive in `layout` accanto a ciò con cui compete, e non in
+`components` dove la sua tipografia starebbe più comoda.
+
+Attenzione al rovescio, controintuitivo: per le dichiarazioni `!important` l'ordine
+dei layer **si inverte**, e un `!important` non stratificato diventa il più debole di
+tutti. Per questo nel sistema c'è un solo `!important`, nel layer `reset`, dove
+serve che vinca davvero.
+
+## Il contratto pubblico
+
+I nomi dei **primitivi non si rinominano**. Il JavaScript li legge per nome in 21
+punti, in due modi:
+
+- `getComputedStyle(...).getPropertyValue('--brina')` — `meccanismo-4-reti-neurali.html`,
+  per disegnare i due canvas. Un nome inesistente non dà errore: restituisce `""` e
+  produce un canvas nero.
+- `var(--arancio-scuro)` dentro stringhe JavaScript che generano SVG inline —
+  `meccanismo-1`, `meccanismo-3`, `meccanismo-5`, `meccanismo-6`, `lente.js`.
+
+Per questo i primitivi conservano i nomi storici e valori letterali: chi disegna su
+un canvas ha bisogno di un colore concreto, non di un ruolo. È un'eccezione
+dichiarata alla regola dei tre livelli, non una svista.
+
+I **semantici** (`--colore-navigazione`, `--dim-testo`…) sono invece liberi, e sono
+quelli che i componenti devono usare.
+
+## I principi
+
+**Una famiglia di colore appartiene a un solo dominio, e le famiglie non si
+mescolano mai nello stesso componente.** Blu vive solo nel binario di navigazione del
+saggio — mai l'arancio lì, verificato togliendolo quando c'era per errore. Arancio è
+tutto il resto dell'apparato del saggio. Verde è tutto ciò che viene dall'ontologia,
+saggio compreso quando la tocca. Non è un vincolo estetico: è il modo in cui chi
+legge distingue «sono ancora nel saggio» da «sto guardando dentro l'ontologia» senza
+doverlo leggere. Dal 22 settembre 2026 il principio è visibile nei nomi stessi:
+`--colore-navigazione`, `--colore-apparato`, `--colore-ontologia`.
+
+**Il grado (scuro / base / chiaro) è intensità d'uso, non scelta libera.** `-scuro`
+per testo e link, dove serve contrasto su bianco e brina; base per bordi e hover;
+`-chiaro` per tinte di sfondo di stato.
+
+**Un solo carattere.** EB Garamond per argomentazione e apparato. Pesi: 500 per i
+titoli — 600 e oltre è pensato per un grottesco, su Garamond risulta pesante. Corsivo
+sempre vero, mai simulato.
+
+**L'apparato si distingue per trattamento, non per famiglia.** `font-variant:
+small-caps` più `letter-spacing: .06em` sulla stessa Garamond, colore
+`--colore-testo-tenue`. Niente secondo font.
+
+**Il monospaziato ha un uso solo, dichiarato**: i quattro simboli logici `∧ ∨ ¬ ⊕`.
+Tutto ciò che nel saggio originale era monospaziato — kicker, valori dei widget,
+intestazioni di tabella — è passato a Garamond in maiuscoletto, verificato dal vivo
+che i numeri che cambiano in tempo reale non «ballano», perché stanno in riquadri a
+larghezza fissa.
+
+**Mai verde per «vero».** Nelle tavole di verità il valore vero è arancio-scuro e il
+falso grigio-soft. La scorciatoia ovvia è evitata di proposito: il ruolo del verde è
+«viene dall'ontologia», non «logicamente vero», e confonderli costerebbe la
+distinzione su cui regge tutto il resto.
+
+### L'eccezione categoriale
+
+Alcuni widget devono distinguere **più di tre categorie insieme**, e tre famiglie non
+bastano senza farne coincidere due — una coincidenza lì significa perdere l'unica cosa
+che il grafico esiste per mostrare. In ordine:
+
+1. Riusa le famiglie confermate a piena saturazione, per quante categorie puoi.
+2. Per ciò che resta, riusa un colore già presente altrove **con lo stesso ruolo
+   categoriale**, invece di inventarne uno.
 3. Mai una palette nuova costruita da zero per un singolo widget.
 
-Le due palette categoriali della Lente semantica (4 categorie di relazione, 7 gruppi
-di nodo — in `ontologia/lente-semantica/output/lente.css`) sono un caso già risolto in
-precedenza e **non toccate** da questi test: restano fuori da questa regola, non
-riducibile a blu/arancio/verde e già validate.
+Le due scale categoriali della Lente (4 categorie di relazione, 7 gruppi di nodo)
+sono un caso già risolto e validato per contrasto e distinguibilità: stanno nei token
+fra i primitivi, e non si ridisegnano.
 
-## Componenti verificati
+## La tavolozza
 
-- **Sidebar** (saggio) — blu, vedi Palette.
-- **Kicker/eyebrow/etichette** — maiuscoletto, vedi Font.
-- **Riquadro `.aside`** — pannello bianco, bordo sinistro arancio.
-- **Box `.question`** — bordo tratteggiato, testo arancio-scuro.
-- **Tavole di verità / tabelle dati** — intestazioni maiuscoletto grigio-soft; valore
-  vero → arancio-scuro; valore falso → grigio-soft. **Mai verde per "vero"** — la
-  scorciatoia ovvia, deliberatamente evitata: il ruolo di verde è "viene
-  dall'ontologia", non "logicamente vero", e i due non vanno confusi.
-- **Widget canvas/WebGL** — leggere i colori da `getComputedStyle` a runtime (pattern
-  già presente nel codice originale, non inventato qui) invece di valori fissi, così
-  seguono il tema senza duplicare la palette in GLSL. Il paesaggio 3D di Meccanismo ·
-  4.5 aveva già una palette per tema chiaro scritta e mai attivata: attivata con
-  `data-theme="light"`, non ridisegnata da zero.
-- **Box "1"/"0" e "linea luminosa"** — **scartati** (2026-09-04, vedi
-  `docs/decision-log.md`): valutati fuori scope rispetto al lavoro restante. I box
-  "1"/"0" restano con il trattamento già verificato nelle tavole di verità (vero →
-  arancio-scuro, falso → grigio-soft); nessuna linea luminosa viene introdotta.
+| Primitivo | Hex | Ruolo semantico |
+|---|---|---|
+| `--bianco` | `#FFFFFF` | `--colore-superficie` |
+| `--brina` | `#F6F8FB` | `--colore-fondo` |
+| `--inchiostro` | `#1a1a1a` | `--colore-testo` |
+| `--grigio-testo` | `#4a4540` | `--colore-testo-attenuato` |
+| `--grigio-soft` | `#8A8580` | `--colore-testo-tenue` |
+| `--blu-scuro` / `--blu` / `--blu-chiaro` | `#1F2B6B` / `#2B3A8C` / `#5A6FB8` | `--colore-navigazione-forte` / `-navigazione` / `-navigazione-tenue` |
+| `--arancio-scuro` / `--arancio` / `--arancio-chiaro` | `#A85419` / `#D4722A` / `#E9A66B` | `--colore-apparato` / `-apparato-medio` / `-apparato-tenue` |
+| `--verde-scuro` / `--verde` / `--verde-chiaro` | `#2A5628` / `#3D7A3A` / `#7AAD76` | `--colore-ontologia-forte` / `-ontologia` / `-ontologia-tenue` |
+| `--line` | `rgba(26,26,26,.12)` | `--colore-bordo` |
 
-## Il rapporto dominio/ontologia
+## La scala tipografica
 
-Il pezzo che dimostra la tesi del case study: nel saggio, i termini che l'ontologia
-riconosce come concetti diventano cliccabili (dotted underline verde, colore
-verde-scuro — non arancio, per lo stesso principio "colore = dominio" di cui sopra) e
-aprono una tenda laterale con i dati letti **da `ontologia/output/concetti/*.html`,
-mai rigenerati né modificati da qui** — più un link diretto alla Lente semantica
-centrata su quel nodo (che ha già il proprio hash-routing, non aggiunto da questi
-test). I termini da agganciare si scelgono interrogando `:discussoInUnita`
-nell'ontologia, non individuandoli a occhio nel testo — finora fatto solo per
-Meccanismo · 3 (11 concetti); da ripetere capitolo per capitolo mano a mano che si
-converte il resto del saggio.
+Una sola per tutte e 14 le pagine, dal 22 settembre 2026. Prima erano tre, ereditate
+da tre modi diversi di convertire i file: la sidebar, che è lo stesso indice in ogni
+pagina, era resa a 17,3 / 15,7 / 13,1px a seconda del capitolo.
 
-## Cosa non si tocca mai
+| Token | Valore | Uso |
+|---|---|---|
+| `--dim-lede` | `1.2rem` | paragrafo d'attacco |
+| `--dim-testo` | `1.05rem` | corpo del testo |
+| `--dim-citazione` | `1.1rem` | `blockquote` |
+| `--dim-richiamo` | `1.0rem` | `.question` |
+| `--dim-nota` | `0.96rem` | `.aside p` |
+| `--dim-apparato` | `0.78rem` | occhiello, nota di chiusura |
+| `--dim-apparato-minore` | `0.72rem` | etichetta di `.aside` |
+| `--dim-nav-titolo` | `1.02rem` | titolo del binario |
+| `--dim-nav-parte` | `.74rem` | intestazione di parte |
+| `--dim-nav-voce` | `.9rem` | voce di modulo |
+| `--dim-nav-sottovoce` | `.82rem` | voce di unità |
 
-- `ontologia/src/*.ttl`, `ontologia/scripts/*.py` — asset, non file di lavoro di
-  questo repository.
-- Le palette `--cat-*`/`--grp-*` della Lente semantica — già validate.
-- `dominio/`, `ontologia/` restano copie sola lettura dei repository sorgente — le
-  regole sopra si applicano qui, mai lì.
+Radice a `120%` per il saggio, lasciata a 16px per l'ontologia. Interlinea `1.65`.
 
-## Prossimi capitoli
+## I componenti
 
-Saggio non ancora convertito: Fondamenti · 2, Genealogia · 2/3/4, Meccanismo · 1/2/6.
-Ontologia non ancora convertita: `ontologia/output/` (concetti, teorici, moduli,
-fili) — ha ancora Garamond su crema, non questa palette. Dettagli e stato di ogni
-test in [`lab/README.md`](lab/README.md).
+Ogni cartella in [`components/`](components/) è un'anteprima autonoma, apribile nel
+browser così com'è, e una scheda per il pannello di Claude Design — il marcatore
+`<!-- @dsCard group="…" -->` sulla prima riga dice a quale gruppo appartiene.
+
+| Scheda | Gruppo | Cosa mostra |
+|---|---|---|
+| [`tavolozza`](components/tavolozza/) | Fondamenta | le tre famiglie e i neutri, con primitivo e ruolo accanto |
+| [`tipografia`](components/tipografia/) | Fondamenta | la scala con testo vero, e i quattro simboli logici |
+| [`sidebar`](components/sidebar/) | Navigazione | il binario con scroll-spy e moduli apribili |
+| [`hero`](components/hero/) | Lettura | apertura di pagina |
+| [`richiami`](components/richiami/) | Lettura | nota a margine, domanda, citazione |
+| [`apparato`](components/apparato/) | Lettura | occhiello, indicazioni, nota di chiusura |
+| [`tenda-concetti`](components/tenda-concetti/) | Ontologia | il ponte fra saggio e ontologia, mostrato aperto |
+| [`lente-colori`](components/lente-colori/) | Ontologia | le scale categoriali del grafo |
+
+## Come si cambia qualcosa
+
+1. Si edita la **sorgente** — `tokens/tokens.css` o un file in `css/`. Mai i generati.
+2. `python3 scripts/build_css.py`
+3. `cd verify && node cattura.js && python3 confronta.py`
+
+Il terzo passo non è una formalità: è il motivo per cui questo sistema ha potuto
+sostituire 3.300 righe di CSS ricopiato senza cambiare un pixel. L'harness confronta
+65 immagini su due viewport, stati interattivi compresi, e distingue una differenza
+vera dal rumore di rasterizzazione misurando **di quanto** cambia un pixel, non
+quanti ne cambiano. Vedi [`verify/README.md`](verify/README.md).
+
+## Cosa non si tocca
+
+- **I nomi dei primitivi** — vedi *Il contratto pubblico*.
+- **Le scale `--cat-*` e `--grp-*`** della Lente — già validate.
+- **I file generati** in `css/` — si rigenerano, non si editano.
+- **`ontologia/src/*.ttl` e `ontologia/scripts/*.py`** — sono il deliverable
+  dell'ontologia, non file di lavoro del design system. L'unico punto toccato è la
+  riga di `pagina()` che collega le fondamenta.
+
+## Dove sta il resto della storia
+
+Il *perché* di ogni regola, con i casi limite discussi per arrivarci, sta in
+[`lab/README.md`](lab/README.md) — l'archivio dei cinque prototipi che le hanno
+stabilite — e in [`../docs/decision-log.md`](../docs/decision-log.md), che registra
+anche le piste sbagliate: servono più delle conclusioni, perché il ragionamento si
+ripete.

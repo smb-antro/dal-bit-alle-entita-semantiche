@@ -875,3 +875,75 @@ generata, `design-system/css/fondamenta.css` (9 KB): solo i layer `reset` e
 Verifica: harness a zero differenze; il diff delle 194 pagine rigenerate è
 esattamente una riga per pagina; 1.869 link nell'ontologia, nessuno rotto; nessun
 riferimento residuo alla cartella dei font rimossa.
+
+## 2026-09-22 — Animazioni ferme sotto reduced-motion, e le schede dei componenti
+
+**La lacuna di accessibilità, chiusa.** Tutte e 14 le pagine dichiaravano
+`@media (prefers-reduced-motion: reduce)` ma ci mettevano dentro solo
+`scroll-behavior: auto`. In `fondamenti-2` tre cursori continuavano a lampeggiare
+(`animation: blink 1.2s infinite`) insieme a un bagliore e a due pulsazioni, anche
+per chi aveva chiesto meno animazioni. L'ha trovata l'harness, non una lettura del
+codice.
+
+Il reset sta nel layer `reset` del design system e azzera **solo le animazioni**,
+non le transizioni. Le transizioni non erano il problema — sono brevi e quasi tutte
+di colore o opacità — e i componenti che avevano qualcosa da dire sotto
+reduced-motion lo dicevano già: `.reveal` tiene la dissolvenza e toglie lo
+spostamento, `.scrolldown` ferma la freccia. Un reset generalizzato avrebbe
+cancellato quelle decisioni invece di rispettarle.
+
+Durata quasi nulla e una sola iterazione, non `animation: none`: `none` farebbe
+ricadere l'elemento sullo stile non animato, lasciando invisibile ciò che parte da
+`opacity: 0` con `fill-mode: forwards`. Verificato prima di scegliere: nessuna delle
+5 animazioni del repository usa `fill-mode`, ma la ricetta sicura vale comunque per
+chi riuserà il sistema.
+
+Misurato, non dedotto: con `prefers-reduced-motion: reduce` le animazioni in corso su
+`fondamenti-2` passano da **46 a zero**; senza, restano 46. Zero differenze
+nell'harness, perché lì le animazioni erano già congelate: il cambiamento riguarda
+le persone, non gli screenshot.
+
+Corretto anche un difetto dell'harness stesso: il censimento delle animazioni
+infinite scriveva il proprio rapporto quando trovava qualcosa ma non lo cancellava
+quando non trovava più nulla, quindi dopo la correzione continuava a segnalare un
+problema risolto. Un rapporto che mente è peggio di nessun rapporto.
+
+**Le schede dei componenti.** Otto anteprime autonome in `design-system/components/`,
+ciascuna apribile nel browser così com'è e con il marcatore
+`<!-- @dsCard group="…" -->` sulla prima riga, che è il modo in cui il pannello di
+Claude Design costruisce il proprio indice (la registrazione esplicita via
+`register_assets` è legacy). Raggruppate secondo la logica del progetto — Fondamenta,
+Navigazione, Lettura, Ontologia — non secondo categorie generiche.
+
+Le schede mostrano i componenti con **testo vero del saggio**, non riempitivo: una
+scheda con testo finto non fa vedere se la tipografia regge. Verificate renderizzate,
+non a lettura — e poi riviste una seconda volta su richiesta, il che ha fatto emergere
+difetti che la prima passata non aveva visto:
+
+- **La tavolozza si rompeva a larghezze diverse.** `--bianco` finiva orfano su una riga
+  a sé, le etichette lunghe andavano a capo sfalsando le celle. Conta più di
+  un'inezia: il pannello di Claude Design decide lui quanto è larga una scheda. Ora è
+  una griglia adattiva, verificata a 860/720/560/430px con **zero nomi troncati** —
+  su una scheda della tavolozza il nome del token è l'informazione principale, e
+  troncarlo sarebbe stato peggio del difetto di partenza.
+- **I due quasi-bianchi erano invisibili**: `--bianco` su fondo bianco e `--brina` su
+  fondo brina. Il primo ora si legge su una scacchiera, il secondo perché la scheda
+  sta su superficie.
+- **L'hero occupava una scheda intera per tre righe.** Ora mostra anche la variante
+  copertina di `presentazione`, che era una decisione reale del sistema mai
+  documentata.
+- **Mancavano gli stati interattivi.** `:hover` e `:focus-visible` sono parte del
+  componente quanto il colore a riposo. Non si forzano in uno screenshot, ma la scheda
+  è una pagina vera: ci si può passare sopra e tabularci dentro. Così diventa visibile
+  una scelta deliberata prima sepolta nel CSS — il fuoco da tastiera ha lo stesso
+  trattamento del mouse, non un anello di ripiego.
+
+La tenda dei concetti è **markup come documentazione**, non una seconda
+implementazione: il JavaScript resta uno solo, nelle pagine.
+
+**Il README riscritto.** Da prosa che descriveva regole a porta d'ingresso di un
+sistema: come si collega, come è fatto, il contratto pubblico, i principi con il loro
+perché, le due tabelle (tavolozza e scala), l'indice delle schede, e come si cambia
+qualcosa — editare la sorgente, rigenerare, far girare l'harness. Quest'ultimo punto
+non è una formalità: è il motivo per cui 3.300 righe di CSS ricopiato sono sparite
+senza che cambiasse un pixel.

@@ -1,0 +1,70 @@
+<!-- @dsCard group="Ontologia" -->
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Tenda dei concetti</title>
+<link rel="stylesheet" href="../../css/design-system.css">
+<style>
+  body{ padding: 32px; }
+  .wrap{ padding: 0; max-width: 46ch; margin: 0; }
+  /* La tenda reale è fissa e scorre da destra al click su un termine. Qui è
+     mostrata già aperta e nel flusso: è markup come documentazione, non una
+     seconda implementazione — il JavaScript resta uno solo, nelle pagine. */
+  .tenda-concetto{ position: static; transform: none; width: 420px; max-width: 100%;
+                   margin-top: 26px; border: 1px solid var(--colore-bordo); border-radius: 4px; }
+  .stati{ display: flex; flex-wrap: wrap; gap: 26px; margin: 22px 0 16px; }
+  .stato{ display: flex; flex-direction: column; gap: 5px; align-items: flex-start; }
+  .che{ font-family: var(--font-mono); font-size: .66rem; color: var(--colore-testo-tenue); }
+  .avvertenza{ font-size: var(--dim-nota); color: var(--colore-testo-attenuato); margin: 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p>Un termine riconosciuto dal vocabolario diventa cliccabile:
+  la <button class="termine-concetto">funzione di attenzione</button> apre la scheda
+  del concetto. Verde, non arancio: il colore dice che si sta per lasciare il saggio ed
+  entrare nella sua cartografia.</p>
+
+  <div class="stati">
+    <div class="stato"><button class="termine-concetto">a riposo</button>
+      <span class="che">sottolineatura punteggiata</span></div>
+    <div class="stato"><button class="termine-concetto aperto">scheda aperta</button>
+      <span class="che">.aperto</span></div>
+    <div class="stato"><button class="termine-concetto" id="prova">passaci sopra, o premi Tab</button>
+      <span class="che">:hover e :focus-visible</span></div>
+  </div>
+  <p class="avvertenza">Il fuoco da tastiera ha <strong>lo stesso</strong> trattamento del
+  passaggio del mouse, non un anello di ripiego: chi naviga con Tab vede esattamente
+  quello che vede chi usa il mouse. È una scelta, e questa scheda è una pagina vera —
+  si può verificare tabulandoci dentro.</p>
+</div>
+
+<aside class="tenda-concetto">
+  <div class="tenda-testata">
+    <div>
+      <span class="tenda-eyebrow">Dal vocabolario dell'ontologia</span>
+      <span class="tenda-titolo">Attention<span class="tag">Tecnica</span></span>
+    </div>
+    <button class="tenda-chiudi" aria-label="Chiudi">×</button>
+  </div>
+  <p class="tenda-nota">Meccanismo che pesa ogni parola del contesto in funzione di
+  ogni altra, invece di comprimerle in un unico stato.</p>
+  <div class="tenda-sezione">
+    <h3>Relazioni</h3>
+    <ul class="tenda-lista">
+      <li><span class="rel-tipo">presuppone</span> Embedding</li>
+      <li><span class="rel-tipo">si oppone a</span> Assunzione di Markov</li>
+      <li><span class="rel-tipo">attribuito a</span> Bahdanau</li>
+    </ul>
+  </div>
+  <div class="tenda-sezione">
+    <h3>Discusso in</h3>
+    <ul class="tenda-lista">
+      <li><span class="tenda-unita-cod">Meccanismo · 5.2</span> — Il transformer</li>
+    </ul>
+  </div>
+  <a class="tenda-lente" href="#">Apri nella Lente semantica</a>
+</aside>
+</body>
+</html>

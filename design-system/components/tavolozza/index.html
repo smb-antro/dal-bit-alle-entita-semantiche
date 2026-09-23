@@ -1,0 +1,90 @@
+<!-- @dsCard group="Fondamenta" -->
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Tavolozza</title>
+<link rel="stylesheet" href="../../css/design-system.css">
+<style>
+  /* Fondo bianco e non brina: --brina mostrata su un fondo brina sarebbe un
+     campione invisibile. --bianco si legge grazie alla scacchiera. */
+  body{ padding: 32px; background: var(--colore-superficie); }
+  .famiglia{ margin-bottom: 30px; }
+  .famiglia h3{ font-size: .78rem; font-variant: small-caps; letter-spacing: .06em;
+                color: var(--colore-testo-tenue); margin-bottom: 10px; }
+  /* Griglia e non riga: il pannello di Claude Design decide la larghezza
+     della scheda, quindi la tavolozza deve reggere qualunque misura senza
+     lasciare una tinta orfana a capo. */
+  .tinte{ display: grid; grid-template-columns: repeat(auto-fit, minmax(142px, 1fr)); gap: 3px; }
+  .campione{ height: 60px; border-radius: 3px 3px 0 0; border: 1px solid var(--colore-bordo); border-bottom: none; }
+  .etichetta{ border: 1px solid var(--colore-bordo); border-top: none; border-radius: 0 0 3px 3px;
+              padding: 7px 9px; font-size: .74rem; line-height: 1.45; background: var(--colore-superficie);
+              min-height: 4.2em; }
+  /* Il nome del token non si tronca mai: è l'informazione principale di
+     questa scheda. Se non ci sta va a capo, e la min-height sopra tiene le
+     celle alla stessa altezza perché la griglia non si scomponga. */
+  .etichetta code{ font-family: var(--font-mono); font-size: .66rem; display: block; }
+  .etichetta .ruolo{ color: var(--colore-testo-tenue); }
+  .nota{ font-size: .96rem; color: var(--colore-testo-attenuato); max-width: 52ch; margin-bottom: 28px; }
+</style>
+</head>
+<body>
+<p class="nota">Una famiglia di colore appartiene a un solo dominio, e le famiglie non si
+mescolano mai dentro lo stesso componente. È il vincolo che tiene insieme il sistema: il
+colore dice sempre <em>di che natura</em> è ciò che stai guardando.</p>
+
+<div class="famiglia">
+  <h3>Blu — navigazione del saggio</h3>
+  <div class="tinte">
+    <div><div class="campione" style="background:var(--blu-scuro)"></div>
+      <div class="etichetta"><code>--blu-scuro</code><span class="ruolo">navigazione-forte</span></div></div>
+    <div><div class="campione" style="background:var(--blu)"></div>
+      <div class="etichetta"><code>--blu</code><span class="ruolo">navigazione</span></div></div>
+    <div><div class="campione" style="background:var(--blu-chiaro)"></div>
+      <div class="etichetta"><code>--blu-chiaro</code><span class="ruolo">navigazione-tenue</span></div></div>
+  </div>
+</div>
+
+<div class="famiglia">
+  <h3>Arancio — apparato del saggio</h3>
+  <div class="tinte">
+    <div><div class="campione" style="background:var(--arancio-scuro)"></div>
+      <div class="etichetta"><code>--arancio-scuro</code><span class="ruolo">apparato</span></div></div>
+    <div><div class="campione" style="background:var(--arancio)"></div>
+      <div class="etichetta"><code>--arancio</code><span class="ruolo">apparato-medio</span></div></div>
+    <div><div class="campione" style="background:var(--arancio-chiaro)"></div>
+      <div class="etichetta"><code>--arancio-chiaro</code><span class="ruolo">apparato-tenue</span></div></div>
+  </div>
+</div>
+
+<div class="famiglia">
+  <h3>Verde — passaggio all'ontologia</h3>
+  <div class="tinte">
+    <div><div class="campione" style="background:var(--verde-scuro)"></div>
+      <div class="etichetta"><code>--verde-scuro</code><span class="ruolo">ontologia-forte</span></div></div>
+    <div><div class="campione" style="background:var(--verde)"></div>
+      <div class="etichetta"><code>--verde</code><span class="ruolo">ontologia</span></div></div>
+    <div><div class="campione" style="background:var(--verde-chiaro)"></div>
+      <div class="etichetta"><code>--verde-chiaro</code><span class="ruolo">ontologia-tenue</span></div></div>
+  </div>
+</div>
+
+<div class="famiglia">
+  <h3>Neutri — superfici e testo</h3>
+  <div class="tinte">
+    <div><div class="campione" style="background:var(--inchiostro)"></div>
+      <div class="etichetta"><code>--inchiostro</code><span class="ruolo">testo</span></div></div>
+    <div><div class="campione" style="background:var(--grigio-testo)"></div>
+      <div class="etichetta"><code>--grigio-testo</code><span class="ruolo">testo-attenuato</span></div></div>
+    <div><div class="campione" style="background:var(--grigio-soft)"></div>
+      <div class="etichetta"><code>--grigio-soft</code><span class="ruolo">testo-tenue</span></div></div>
+    <div><div class="campione" style="background:var(--brina)"></div>
+      <div class="etichetta"><code>--brina</code><span class="ruolo">fondo</span></div></div>
+    <div><div class="campione" style="background:var(--bianco);
+           background-image:linear-gradient(45deg,var(--brina) 25%,transparent 25%,transparent 75%,var(--brina) 75%),linear-gradient(45deg,var(--brina) 25%,transparent 25%,transparent 75%,var(--brina) 75%);
+           background-size:14px 14px; background-position:0 0,7px 7px"></div>
+      <div class="etichetta"><code>--bianco</code><span class="ruolo">superficie</span></div></div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!-- @dsCard group="Navigazione" -->
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Binario di navigazione</title>
+<link rel="stylesheet" href="../../css/design-system.css">
+<style>
+  /* La sidebar reale è fissa sopra i 900px. Qui è mostrata nel flusso, alla
+     sua larghezza vera, perché una scheda non ha un viewport da occupare. */
+  body{ padding: 24px; }
+  .telaio{ width: var(--misura-rail); border: 1px solid var(--colore-bordo); border-radius: 3px; overflow: hidden; }
+</style>
+</head>
+<body>
+<div class="telaio">
+  <nav class="sidebar">
+    <div class="sidebar-kicker">Indice</div>
+    <div class="sidebar-title">Dal bit alle entità semantiche</div>
+
+    <div class="parte">
+      <div class="parte-heading">Parte I — Fondamenti</div>
+      <a class="voce-semplice current" href="#">1. Funzioni booleane</a>
+      <a class="voce-semplice" href="#">2. Hardware e software</a>
+    </div>
+
+    <div class="parte">
+      <div class="parte-heading">Parte II — Genealogia</div>
+      <details class="modulo" open>
+        <summary class="current">1. Tre ore di disputa senza esito</summary>
+        <div class="unita-list scrollspy">
+          <a class="active" href="#"><span class="num">1.1</span>La stanza e i suoi presenti</a>
+          <a href="#"><span class="num">1.2</span>Che cosa si stava discutendo</a>
+          <a href="#"><span class="num">1.3</span>Perché non si sono convinti</a>
+        </div>
+      </details>
+      <details class="modulo">
+        <summary>2. Il fenomeno e i suoi limiti</summary>
+      </details>
+    </div>
+  </nav>
+</div>
+</body>
+</html>
