@@ -42,7 +42,12 @@
   --brina:          #F6F8FB;
   --inchiostro:     #1a1a1a;
   --grigio-testo:   #4a4540;
-  --grigio-soft:    #8A8580;
+  /* Scurito il 23 settembre 2026: a #8A8580 il contrasto era 3,43:1 su brina
+     e 3,65:1 su bianco, sotto i 4,5:1 che WCAG AA chiede per il testo
+     normale — e questo grigio regge occhielli, kicker, note e etichette,
+     tutto testo fra 13,8 e 16,5px, quindi la soglia dei 3:1 del testo grande
+     non si applica. Ora 4,97:1 e 5,28:1. */
+  --grigio-soft:    #6F6B67;
 
   /* blu — famiglia della navigazione */
   --blu-scuro:      #1F2B6B;

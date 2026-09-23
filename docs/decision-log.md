@@ -947,3 +947,58 @@ perché, le due tabelle (tavolozza e scala), l'indice delle schede, e come si ca
 qualcosa — editare la sorgente, rigenerare, far girare l'harness. Quest'ultimo punto
 non è una formalità: è il motivo per cui 3.300 righe di CSS ricopiato sono sparite
 senza che cambiasse un pixel.
+
+## 2026-09-23 — Export DTCG, controllo del contrasto, contratto dei nomi — e un fallimento WCAG trovato
+
+Tre script che rendono verificabile ciò che finora era affermato.
+
+**`check_public_names.py`** — il contratto fra token e JavaScript. Distingue tre modi
+d'uso con conseguenze diverse: nomi **letti** via `getComputedStyle` (2, in
+`meccanismo-4`), nomi **interpolati** come `var()` dentro stringhe che generano SVG
+(20, fra `lente.js` e quattro capitoli), nomi **scritti** dal JavaScript (1,
+`--colore-gruppo`, che infatti non deve stare nei token). Controlla anche che chi
+viene passato a una funzione che lo interpreta come esadecimale abbia davvero un
+valore esadecimale: un `rgba()` lì produrrebbe NaN senza dirlo.
+
+Messo alla prova rompendo il contratto di proposito — prima rinominando un primitivo
+letto dal JS, poi dandogli un valore non esadecimale: in entrambi i casi esce con 1 e
+dice cosa si è rotto e dove. Uno strumento che non ha mai fallito non è dimostrato
+funzionante.
+
+**`export_tokens.py`** — genera `tokens/tokens.json` in formato W3C DTCG 2025.10: 66
+token, gruppi che dichiarano `$type` una volta sola, colori come
+`{colorSpace, components, alpha, hex}`, alias veri (`{primitivo.colore.neutro.brina}`)
+e non valori copiati. `--check` fallisce se il JSON va in deriva rispetto al CSS.
+Un caso limite dichiarato invece che nascosto: `.06em` non è rappresentabile come
+`dimension` nella spec (ammette solo unità assolute), quindi è reso come `number` con
+la spiegazione dentro il token stesso.
+
+Scritto da un'implementazione indipendente, di proposito: chi ha disegnato i token
+non vede ciò che dà per scontato. Ha fatto emergere due cose vere. **I trittici
+`blu-scuro/blu/blu-chiaro` non condividono una regola di prefisso** con i neutri né
+con `cat-*`/`grp-*`: non esiste un algoritmo solo che derivi il gruppo dal nome, e
+l'appartenenza va dichiarata in una tabella. Scrivendo il CSS a mano una volta sola,
+quel problema non si incontra mai. E **`--line` è l'unico primitivo con
+trasparenza**: funziona, ma è l'unica voce in cui «il colore vero» include un'alfa.
+
+**`check_contrast.py`** — e qui il risultato che conta. `--grigio-soft` (`#8A8580`)
+**non passava WCAG AA**: 3,43:1 su brina e 3,65:1 su bianco, contro i 4,5:1 richiesti.
+Non un colore marginale: è il ruolo «testo tenue», e regge occhielli, kicker della
+sidebar, note di chiusura, etichette delle note a margine, intestazioni della tenda —
+tutto testo fra 13,8 e 16,5px, quindi la soglia dei 3:1 riservata al testo grande non
+si applica. Non c'era lettura in cui passasse.
+
+Il calcolo è stato validato contro i due valori già registrati in questo log prima di
+dichiarare il difetto: verde su bianco 5,19:1 (qui era annotato ≈5,2) e verde-scuro
+8,54:1 (≈8,5). Combaciano, quindi il difetto era del design system, non della formula.
+Ricalcolato poi una seconda volta, in modo indipendente: 3,43 e 3,65 al centesimo.
+
+**Deciso: `--grigio-soft` diventa `#6F6B67`** — 4,97:1 e 5,28:1, con margine invece
+che al pelo. Stessa tinta calda, otto punti di luminosità in meno. L'apparato resta
+più chiaro del testo attenuato (8,91:1), quindi la gerarchia regge: è solo meno
+estrema di prima.
+
+Verificato che il cambiamento sia **solo** quello: confronto degli stili calcolati su
+quattro superfici (un capitolo, la presentazione, la home dell'ontologia, la Lente) —
+l'unica proprietà che cambia è quel colore, su 286, 246, 29 e 1.007 elementi. Nessuno
+spostamento, nessun cambio di misura. Baseline dell'harness rifatta su questo stato.

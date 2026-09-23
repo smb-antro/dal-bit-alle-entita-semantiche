@@ -150,7 +150,7 @@ fra i primitivi, e non si ridisegnano.
 | `--brina` | `#F6F8FB` | `--colore-fondo` |
 | `--inchiostro` | `#1a1a1a` | `--colore-testo` |
 | `--grigio-testo` | `#4a4540` | `--colore-testo-attenuato` |
-| `--grigio-soft` | `#8A8580` | `--colore-testo-tenue` |
+| `--grigio-soft` | `#6F6B67` | `--colore-testo-tenue` |
 | `--blu-scuro` / `--blu` / `--blu-chiaro` | `#1F2B6B` / `#2B3A8C` / `#5A6FB8` | `--colore-navigazione-forte` / `-navigazione` / `-navigazione-tenue` |
 | `--arancio-scuro` / `--arancio` / `--arancio-chiaro` | `#A85419` / `#D4722A` / `#E9A66B` | `--colore-apparato` / `-apparato-medio` / `-apparato-tenue` |
 | `--verde-scuro` / `--verde` / `--verde-chiaro` | `#2A5628` / `#3D7A3A` / `#7AAD76` | `--colore-ontologia-forte` / `-ontologia` / `-ontologia-tenue` |
@@ -195,13 +195,38 @@ browser così com'è, e una scheda per il pannello di Claude Design — il marca
 | [`tenda-concetti`](components/tenda-concetti/) | Ontologia | il ponte fra saggio e ontologia, mostrato aperto |
 | [`lente-colori`](components/lente-colori/) | Ontologia | le scale categoriali del grafo |
 
+## Il JSON dei token, e perché esiste
+
+La sorgente resta il CSS. `tokens/tokens.json` è **generato** da
+`scripts/export_tokens.py` nel formato W3C Design Tokens Community Group (2025.10),
+e serve a farsi leggere da fuori:
+
+- **Claude Design** accetta un JSON di token, con tipi e descrizioni espliciti invece
+  di dover dedurre il livello semantico dai nomi.
+- **Figma**, via Tokens Studio o l'import delle variabili.
+- **Style Dictionary v4**, che ha il DTCG di prima classe e da una sola sorgente
+  genera JS, SCSS, Tailwind, mobile — così un altro progetto può consumare questi
+  token senza accoppiarsi a questo repository: il flusso va in una direzione sola.
+
+Limite dichiarato: **la spec non standardizza temi e modalità.** Un eventuale tema
+scuro sarà un secondo file, non una variante dentro questo.
+
 ## Come si cambia qualcosa
 
 1. Si edita la **sorgente** — `tokens/tokens.css` o un file in `css/`. Mai i generati.
-2. `python3 scripts/build_css.py`
-3. `cd verify && node cattura.js && python3 confronta.py`
+2. `python3 scripts/build_css.py` — rigenera le tre varianti.
+3. `python3 scripts/export_tokens.py` — rigenera `tokens/tokens.json`.
+4. I tre controlli, che escono con 1 se qualcosa non va:
 
-Il terzo passo non è una formalità: è il motivo per cui questo sistema ha potuto
+   ```bash
+   python3 scripts/check_public_names.py   # il JavaScript trova ancora i nomi che legge?
+   python3 scripts/check_contrast.py       # le coppie testo/sfondo passano WCAG AA?
+   python3 scripts/export_tokens.py --check # il JSON corrisponde al CSS?
+   ```
+
+5. `cd verify && node cattura.js && python3 confronta.py`
+
+L'ultimo passo non è una formalità: è il motivo per cui questo sistema ha potuto
 sostituire 3.300 righe di CSS ricopiato senza cambiare un pixel. L'harness confronta
 65 immagini su due viewport, stati interattivi compresi, e distingue una differenza
 vera dal rumore di rasterizzazione misurando **di quanto** cambia un pixel, non
