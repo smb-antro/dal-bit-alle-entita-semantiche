@@ -9,6 +9,14 @@
 (function () {
     "use strict";
 
+    // La Lente vive in due posti: questa pagina a sé, e — dal 23 settembre
+    // 2026 — dentro il compilato di dominio/, come un capitolo fra gli altri.
+    // Là l'hash dell'URL appartiene alla navigazione fra capitoli: scriverci
+    // dentro il nodo selezionato farebbe cambiare capitolo a ogni clic sul
+    // grafo. Il guscio dichiara `window.LENTE_INCORPORATA = true` prima di
+    // caricare questo file; qui non si presuppone nulla, si legge.
+    const INCORPORATA = window.LENTE_INCORPORATA === true;
+
     const NODI_PER_ID = new Map(GRAFO.nodi.map((n) => [n.id, n]));
     const PROPRIETA = GRAFO.proprieta;
 
@@ -458,7 +466,7 @@
     function selezionaNodo(id) {
         if (!NODI_PER_ID.has(id)) return;
         centroCorrente = id;
-        location.hash = id;
+        if (!INCORPORATA) location.hash = id;
         renderBreadcrumb(id);
         renderGrafo(id);
         renderSidebar(campoRicerca.value);
@@ -474,15 +482,22 @@
         if (centroCorrente) renderGrafo(centroCorrente);
     }
 
-    window.addEventListener("hashchange", () => {
-        const id = decodeURIComponent(location.hash.slice(1));
-        if (id && NODI_PER_ID.has(id) && id !== centroCorrente) selezionaNodo(id);
-    });
+    if (!INCORPORATA) {
+        window.addEventListener("hashchange", () => {
+            const id = decodeURIComponent(location.hash.slice(1));
+            if (id && NODI_PER_ID.has(id) && id !== centroCorrente) selezionaNodo(id);
+        });
+    }
+
+    // Unico punto d'ingresso dall'esterno: il compilato lo chiama quando la
+    // tenda di un concetto manda alla Lente. Esposto anche nella pagina a sé
+    // (non fa danno) perche' una funzione esiste o non esiste, non a meta'.
+    window.lenteSeleziona = selezionaNodo;
 
     renderLegenda();
     renderGlossario();
     aggiornaFiltroLegenda();
-    const iniziale = decodeURIComponent(location.hash.slice(1));
+    const iniziale = INCORPORATA ? "" : decodeURIComponent(location.hash.slice(1));
     const nodoIniziale = NODI_PER_ID.has(iniziale) ? iniziale : nodoMaxGrado.id;
     selezionaNodo(nodoIniziale);
 })();

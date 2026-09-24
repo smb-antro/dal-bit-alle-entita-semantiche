@@ -43,6 +43,23 @@ DESIGN_SYSTEM_DIR = REPO_ROOT / "design-system"
 INLINE_CSS = DESIGN_SYSTEM_DIR / "css" / "design-system.inline.css"
 BUILD_CSS_SCRIPT = DESIGN_SYSTEM_DIR / "scripts" / "build_css.py"
 
+# La Lente semantica: dal 23 settembre 2026 e' un capitolo del compilato, non
+# un collegamento che esce dal file.
+#
+# Il motivo: Safari e' sandboxed e riceve l'accesso a un file locale SOLO se
+# glielo consegna il sistema — il pannello di apertura, il doppio clic,
+# `open`. Qualunque ALTRO file locale, che l'utente non ha consegnato, gli e'
+# negato: il clic sul rimando alla Lente non faceva semplicemente nulla. Non
+# e' una regola sulle cartelle superiori (cosi' l'avevo descritta all'inizio,
+# ed era sbagliato): e' per file. Che e' una ragione piu' forte, non piu'
+# debole — vale per qualunque riferimento esterno, a qualunque profondita'.
+# Un deliverable "un file solo" non puo' dipendere da nessun altro file.
+LENTE_DIR = REPO_ROOT / "ontologia" / "lente-semantica" / "output"
+LENTE_DATI = REPO_ROOT / "ontologia" / "lente-semantica" / "src" / "grafo.js"
+LENTE_SLUG = "lente"
+LENTE_TITOLO = "Lente semantica"
+LENTE_PARTE = "Strumenti"
+
 # (file, slug, etichetta barra capitoli, kind: 'intro' | 'single' | 'multi', titolo indice)
 #
 # `presentazione.html` e `dietro-i-widget.html` sono capitoli come gli altri:
@@ -82,6 +99,7 @@ PARTI = [
     ("Parte II — Genealogia", ["cba", "cbb", "cbc", "cbd"]),
     ("Parte III — Meccanismo", ["cm1", "cm2", "cm3", "cm4", "cm5", "cm6"]),
     ("Appendice", ["capp"]),
+    (LENTE_PARTE, [LENTE_SLUG]),
 ]
 
 # Titoli delle unità interne di ciascun capitolo multi-unità, per mostrarli nel
@@ -469,6 +487,106 @@ def scope_shell_queries(script, kind, slug):
     return script, missing
 
 
+LENTE_HREF_RE = re.compile(r'href="(?:\.\./)+ontologia/lente-semantica/output/index\.html(#\$\{id\})?"')
+LENTE_JS_RE = re.compile(
+    r'tendaLinkLente\.href = `(?:\.\./)+ontologia/lente-semantica/output/index\.html#\$\{id\}`;'
+)
+TENDA_LENTE_A_RE = re.compile(r'(<a class="tenda-lente"[^>]*?)\s+target="_blank" rel="noopener"')
+
+
+def rewrite_lente_links(markup):
+    """Nel compilato la Lente e' un capitolo, non un file accanto: i rimandi
+    ci arrivano con showChapter. Si toglie anche `target="_blank"`, che qui
+    aprirebbe una seconda copia dello stesso file da 2 MB."""
+    markup = LENTE_HREF_RE.sub('href="#chapter-' + LENTE_SLUG + '" data-nav-chapter="' + LENTE_SLUG + '"', markup)
+    return TENDA_LENTE_A_RE.sub(r"\1", markup)
+
+
+def rewrite_lente_script(script):
+    """L'unica riga del JS dei capitoli che punta alla Lente. Sostituzione su
+    stringa esatta, come le altre di `scope_shell_queries`: il JavaScript dei
+    capitoli non si riformatta. Il nodo da centrare viaggia in `data-nodo`,
+    e il guscio lo passa a window.lenteSeleziona dopo aver mostrato il
+    capitolo (vedi NAV_CONTROLLER)."""
+    return LENTE_JS_RE.sub(
+        "tendaLinkLente.href = '#chapter-" + LENTE_SLUG + "';\n"
+        "    tendaLinkLente.setAttribute('data-nav-chapter', '" + LENTE_SLUG + "');\n"
+        "    tendaLinkLente.setAttribute('data-nodo', id);",
+        script,
+    )
+
+
+def extract_lente():
+    """La Lente semantica come capitolo del compilato.
+
+    Non passa da `extract_chapter`: non viene da saggio/, non ha una sidebar
+    da togliere ne' query di guscio da riscopare, e i suoi id non vanno
+    prefissati — verificato che nessuno dei nove (`svg-grafo`, `ricerca`,
+    `lista-nodi`, `breadcrumb-nodo`, `badge-relazione`, `legenda`,
+    `glossario-relazioni`, `btn-grado-1`, `btn-grado-2`) collide con un id
+    del resto del compilato. Il prefisso costringerebbe a riscrivere
+    `lente.js`, che li cerca per nome: non prefissarli e' piu' sicuro, non
+    meno.
+
+    Il suo JavaScript non misura mai il layout reale (nessun
+    getBoundingClientRect, nessun clientWidth: il grafo e' disegnato in
+    coordinate `viewBox`), quindi puo' inizializzarsi mentre il capitolo e'
+    ancora `hidden` — che e' la condizione in cui si trova al caricamento."""
+    index = (LENTE_DIR / "index.html").read_text(encoding="utf-8")
+    m = re.search(r"<body>(.*?)<script", index, re.S)
+    if not m:
+        raise ValueError("lente/index.html: struttura body/script non riconosciuta")
+    markup = m.group(1)
+
+    # Le briciole portano alla home dell'ontologia, che nel compilato non
+    # esiste: era il secondo collegamento verso l'esterno.
+    markup, n = re.subn(r'\s*<nav class="briciole-root">.*?</nav>', "", markup, flags=re.S)
+    if n != 1:
+        raise ValueError(f"lente: attese 1 briciole-root, trovate {n}")
+
+    style = scope_css((LENTE_DIR / "lente.css").read_text(encoding="utf-8"), f"#chapter-{LENTE_SLUG}")
+
+    # Due conti da rifare, perche' nella pagina a se' la Lente vive da sola e
+    # qui vive dentro il saggio. Misurati guardando la resa, non previsti:
+    #
+    # 1. Sopra i 900px il binario del saggio e' fisso a sinistra e il
+    #    contenuto gli lascia spazio con `main{ padding-left: --misura-rail }`.
+    #    La Lente non ha un <main> che avvolga tutta la pagina, quindi partiva
+    #    da x=0, sotto il binario.
+    # 2. Peggio: il <main class="pannello-grafo"> che la Lente ha DENTRO di se'
+    #    quel padding lo prendeva — il riquadro del grafo si spostava di 300px
+    #    dentro un contenitore che non si era allargato, e l'elenco dei nodi
+    #    restava senza etichette.
+    #
+    # Non si tocca `layout.css`: la regola e' giusta per il saggio. Si
+    # correggono qui i due effetti, dentro il capitolo, dove il CSS non e'
+    # stratificato e quindi vince senza alzare la specificita'.
+    style += (
+        f"\n@media (min-width: 900px){{\n"
+        f"  #chapter-{LENTE_SLUG}{{ padding-left: var(--misura-rail); }}\n"
+        f"  #chapter-{LENTE_SLUG} main.pannello-grafo{{ padding-left: 0; }}\n"
+        f"}}\n"
+    )
+
+    wrapped_markup = (
+        f'<section class="chapter" id="chapter-{LENTE_SLUG}" data-chapter="{LENTE_SLUG}" '
+        f'data-kind="lente" hidden>\n{markup}\n</section>'
+    )
+
+    # Tre script separati e nell'ordine originale, non concatenati nel blocco
+    # degli altri capitoli: grafo.js dichiara GRAFO, d3 e' un UMD che si
+    # aggancia a window, lente.js presuppone entrambi. Tenerli come li ha
+    # scritti chi li ha scritti costa tre tag e toglie una classe intera di
+    # sorprese.
+    scripts = [
+        "window.LENTE_INCORPORATA = true;",
+        LENTE_DATI.read_text(encoding="utf-8"),
+        (LENTE_DIR / "vendor" / "d3.v7.min.js").read_text(encoding="utf-8"),
+        (LENTE_DIR / "lente.js").read_text(encoding="utf-8"),
+    ]
+    return style, wrapped_markup, scripts
+
+
 def extract_chapter(filename, slug, kind, slug_by_file):
     raw = (LEZIONI_DIR / filename).read_text(encoding="utf-8")
 
@@ -491,8 +609,14 @@ def extract_chapter(filename, slug, kind, slug_by_file):
     # sola condivisa (vedi build_shared_sidebar), non una copia per capitolo
     markup = SIDEBAR_RE.sub("", markup, count=1)
     markup = rewrite_body_links(markup, filename, slug_by_file)
+    markup = rewrite_lente_links(markup)
     markup = inline_relative_assets(markup, filename)
     markup = markup.replace(*FUORI_ALBERO)
+
+    # Prima del namespacing: la riga tocca `${id}`, che e' una variabile del
+    # JavaScript e non un id di elemento, e non ha niente da guadagnare a
+    # passare di li'.
+    script = rewrite_lente_script(script)
 
     ids = set(ID_ATTR_RE.findall(raw))
 
@@ -560,7 +684,19 @@ def build_shared_sidebar(slug_by_file):
         spy = f' data-spy-target="{target}"' if frag else ""
         return f'href="#{target}" data-nav-chapter="{slug}"{spy}'
 
-    return SIDEBAR_HREF_RE.sub(rewrite, sidebar)
+    sidebar = SIDEBAR_HREF_RE.sub(rewrite, sidebar)
+
+    # La voce della Lente si aggiunge DOPO la riscrittura: `rewrite` solleva
+    # eccezione su un href che non corrisponde a un file di saggio/, ed e'
+    # giusto che lo faccia — questa voce non ne ha uno.
+    voce = (
+        '\n  <div class="parte">\n'
+        f'    <div class="parte-heading">{LENTE_PARTE}</div>\n'
+        f'    <a class="voce-semplice" href="#chapter-{LENTE_SLUG}" '
+        f'data-nav-chapter="{LENTE_SLUG}">{LENTE_TITOLO}</a>\n'
+        '  </div>\n'
+    )
+    return sidebar.replace("</nav>", voce + "</nav>", 1)
 
 
 NEW_CSS = """
@@ -619,6 +755,9 @@ def build_sommario():
     a mano: la prosa dell'introduzione e' presentazione.html, che ora e' un
     capitolo estratto come tutti gli altri."""
     by_slug = {slug: (label, title) for _, slug, label, _, title in CHAPTERS}
+    # La Lente non viene da saggio/: non e' in CHAPTERS, ma nel Sommario e'
+    # una voce come le altre.
+    by_slug[LENTE_SLUG] = ("L", LENTE_TITOLO)
 
     def build_parte(heading, slugs):
         entries = []
@@ -673,6 +812,35 @@ NAV_CONTROLLER = """
   const sidebarModules = sidebar.querySelectorAll('details.modulo');
   const sidebarSimple = sidebar.querySelectorAll('.voce-semplice');
 
+  // Esegue uno spostamento di scroll SENZA animazione, qualunque cosa dica il
+  // CSS. Serve perche' il design system dichiara `html{ scroll-behavior:
+  // smooth }`: con quella regola attiva ogni scrollTo/scrollBy programmatico
+  // diventa un'animazione, e ogni nuova chiamata ANNULLA quella in corso
+  // ricalcolando il bersaglio dalla posizione del momento.
+  //
+  // Era il difetto che faceva "saltare" la pagina cambiando capitolo dal
+  // Sommario: showChapter chiedeva di tornare in cima, e i due scrollBy del
+  // nudge — partiti un istante dopo — cancellavano quel viaggio ripuntando a
+  // "dove sono adesso ±1". Misurato: partendo da 3000px si finiva a 2998,
+  // cioe' in mezzo al capitolo nuovo invece che al suo inizio.
+  //
+  // Si agisce sulla proprieta' CSS e non su `behavior: 'instant'` perche'
+  // quel valore dell'enum e' arrivato tardi in alcuni browser e una stringa
+  // non riconosciuta fa eccezione invece di degradare.
+  function senzaAnimazione(azione){
+    const html = document.documentElement;
+    const prima = html.style.scrollBehavior;
+    html.style.scrollBehavior = 'auto';
+    // Il reflow forzato NON e' superstizione: senza, il motore risolve il
+    // `behavior: auto` della chiamata leggendo lo stile calcolato ancora
+    // vecchio, e lo spostamento parte animato lo stesso. Misurato sui quattro
+    // modi possibili: stile inline senza reflow -> scrollY invariato subito
+    // dopo la chiamata (animazione in corso); con reflow -> gia' a
+    // destinazione. Vedi decision-log del 23 settembre.
+    void html.offsetHeight;
+    try { azione(); } finally { html.style.scrollBehavior = prima; }
+  }
+
   function nudgeIntersectionObservers(){
     // Gli IntersectionObserver di ciascun capitolo (fade-in .reveal) e quello
     // globale di scroll-spy vengono creati mentre il capitolo e' ancora
@@ -680,8 +848,7 @@ NAV_CONTROLLER = """
     // il loro ricalcolo in questo motore di rendering. Un piccolo delta di
     // scroll reale (anche se il documento e' gia' a scrollY 0) forza il
     // ricalcolo dell'intersezione in modo affidabile.
-    window.scrollBy(0, 1);
-    window.scrollBy(0, -1);
+    senzaAnimazione(() => { window.scrollBy(0, 1); window.scrollBy(0, -1); });
   }
 
   function updateSidebarState(id){
@@ -713,14 +880,21 @@ NAV_CONTROLLER = """
       .forEach(el => el.classList.remove('aperto'));
   }
 
-  function showChapter(id){
+  // `dopoIlNudge` riceve la funzione da eseguire quando l'ultimo nudge e'
+  // passato: un'eventuale animazione di scorrimento (il rimando a un
+  // paragrafo preciso) deve partire DOPO, altrimenti e' il nudge ad
+  // annullare lei.
+  function showChapter(id, dopoIlNudge){
     chiudiSovrapposizioni();
     chapters.forEach(c => { c.hidden = (c.id !== 'chapter-' + id); });
     updateSidebarState(id);
-    window.scrollTo({ top: 0 });
+    senzaAnimazione(() => window.scrollTo(0, 0));
     nudgeIntersectionObservers();
     requestAnimationFrame(nudgeIntersectionObservers);
-    setTimeout(nudgeIntersectionObservers, 60);
+    setTimeout(() => {
+      nudgeIntersectionObservers();
+      if (dopoIlNudge) dopoIlNudge();
+    }, 60);
     window.dispatchEvent(new CustomEvent('corso:chapterchange'));
   }
 
@@ -733,8 +907,12 @@ NAV_CONTROLLER = """
     if(!a) return;
     e.preventDefault();
     const targetId = a.getAttribute('href').slice(1);
-    showChapter(a.dataset.navChapter);
-    requestAnimationFrame(() => {
+    const nodo = a.dataset.nodo;
+    showChapter(a.dataset.navChapter, () => {
+      // La Lente e' un capitolo, e la tenda di un concetto ci arriva chiedendo
+      // un nodo preciso. Si centra dopo che il capitolo e' visibile, perche'
+      // selezionaNodo scorre la lista laterale fino alla voce scelta.
+      if(nodo && typeof window.lenteSeleziona === 'function'){ window.lenteSeleziona(nodo); return; }
       const el = document.getElementById(targetId);
       if(el) el.scrollIntoView({ behavior: 'smooth' });
     });
@@ -802,7 +980,8 @@ def leggi_design_system_inline():
     versionato (sono i woff2 di design-system/fonts/ ricodificati): se manca,
     si rigenera invece di fallire. E' il motivo per cui il compilato non fa
     una sola richiesta di rete — niente Google Fonts, che per giunta serviva
-    subset di IBM Plex Mono privi di tre dei quattro simboli logici."""
+    subset privi di tre dei quattro simboli logici — il monospaziato oggi e
+    Noto Sans Mono, che li contiene tutti."""
     if not INLINE_CSS.is_file():
         print(f"{INLINE_CSS.name} assente (non versionato): lo rigenero con build_css.py")
         subprocess.run([sys.executable, str(BUILD_CSS_SCRIPT)], check=True, cwd=DESIGN_SYSTEM_DIR)
@@ -826,6 +1005,15 @@ def build(trial=False, lang="it"):
         markups.append(markup)
         scripts.append(script)
 
+    # La Lente entra per ultima: in --trial no, perche' la prova tecnica serve
+    # a verificare il namespacing dei capitoli di saggio/ e la Lente non ne
+    # usa.
+    lente_scripts = []
+    if not trial:
+        lente_style, lente_markup, lente_scripts = extract_lente()
+        styles.append(f"\n  /* ===== capitolo {LENTE_SLUG} (lente-semantica) ===== */\n{lente_style}")
+        markups.append(lente_markup)
+
     # data-theme="light" e' l'unico residuo del tema, e non e' un tema: e' la
     # stessa dichiarazione che meccanismo-4-reti-neurali.html porta sul
     # proprio <html>. Il suo shader della superficie di perdita sceglie la
@@ -840,7 +1028,7 @@ def build(trial=False, lang="it"):
 <style>
 /* ===================================================================
    design system, variante da incorporare: token, azzeramenti,
-   tipografia, impianto, componenti — e i font (EB Garamond, IBM Plex
+   tipografia, impianto, componenti — e i font (EB Garamond, Noto Sans
    Mono) in data-URI base64. Il compilato non fa richieste di rete.
    Generato da design-system/scripts/build_css.py: non si edita qui.
    =================================================================== */
@@ -865,10 +1053,30 @@ def build(trial=False, lang="it"):
 {NAV_CONTROLLER}
 {chr(10).join(scripts)}
 </script>
+{"".join(chr(10) + "<script>" + chr(10) + x + chr(10) + "</script>" for x in lente_scripts)}
 
 </body>
 </html>
 """
+
+    # Controlli sullo stato finale, non sui passaggi: e' il file scritto che
+    # deve essere autosufficiente, non l'intenzione di renderlo tale.
+    if not trial:
+        fuori = re.findall(r'(?:src|href)="(?!#|data:)([^"]+)"', html)
+        if fuori:
+            raise ValueError(f"il compilato non e' autosufficiente: {sorted(set(fuori))[:5]}")
+        attesi = len([c for c in chapters if c[0] != "dietro-i-widget.html"])
+        trovati = html.count("tendaLinkLente.setAttribute('data-nodo', id)")
+        if trovati != attesi:
+            raise ValueError(
+                f"rimandi alla Lente dalla tenda: attesi {attesi}, riscritti {trovati}"
+            )
+        # Il percorso, non il nome: due capitoli nominano
+        # `ontologia/lente-semantica` dentro un commento, parlando della
+        # provenienza di una tinta. Quello resta ed e' giusto che resti.
+        if "lente-semantica/output/index.html" in html:
+            raise ValueError("resta un percorso verso la Lente fuori dal file")
+
     OUTPUT_DIR.mkdir(exist_ok=True)
     suffix = "_trial" if trial else ""
     out_path = OUTPUT_DIR / f"dal-bit-alle-entita-semantiche_{lang}{suffix}.html"

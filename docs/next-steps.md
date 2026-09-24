@@ -13,6 +13,14 @@
   conteneva. Sostituito con Noto Sans Mono, l'unico fra otto monospaziati con
   licenza aperta che li ha tutti e tre, ridotto ai 133 caratteri che servono
   (10,0 KB contro 146,7). Vedi `decision-log.md`.
+- ~~**Il compilato non era autosufficiente**~~ — ✅ 23 settembre 2026: l'unico
+  collegamento che usciva dal file portava alla Lente semantica, e Safari lo
+  rifiutava — il suo sandbox dà accesso al solo file che gli viene consegnato dal
+  sistema, quindi qualunque altro file locale è negato. La Lente è ora un capitolo
+  del compilato, e `build_output.py` fallisce se resta un solo `href`/`src` esterno.
+  **Come si apre** (verificato il 24 settembre): doppio clic, ⌘O o `open` — tutte
+  vie che passano da LaunchServices. Incollare il percorso nella barra degli
+  indirizzi di Safari non funziona, e non è un difetto del file. Vedi `decision-log.md`.
 - **Cartelle `lab/`** (`design-system/lab/`, `ontologia/lente-semantica/lab/`) — da non
   pubblicare; per ora restano nel repository, da escludere prima del push.
 - **Push su GitHub** — decisione a parte, da confermare esplicitamente quando il resto
@@ -78,12 +86,12 @@
 
 ## Debito rimasto, non ancora fatto
 
-- **Rigenerare `dominio/output/dal-bit-alle-entità-semantiche_it.html`** via
-  `dominio/src/build_output.py` — deliberatamente non rigenerato dal 4 settembre.
-  Il bundle statico è ormai molto indietro rispetto ai file reali (contenuto,
-  design system, tenda dei concetti, indice riorganizzato), e lo script stesso
-  si è rivelato in parte disallineato (testo e font vecchi hardcoded in alcuni
-  punti) — non un semplice ri-lancio, va prima aggiornato.
+- ~~**Rigenerare il bundle a file singolo**~~ — ✅ 23 settembre 2026:
+  `dominio/src/build_output.py` è stato rifatto (non ritoccato) e
+  `dominio/output/dal-bit-alle-entità-semantiche_it.html` è allineato ai file
+  reali. Tema morto e link a Google Fonts rimossi, CSS del design system
+  inlineato con i font in data-URI, presentazione e appendice entrano come
+  capitoli veri. Vedi `decision-log.md`.
 - **Push su GitHub** — vedi sopra, "Prima della pubblicazione".
 
 ## Fatto, non più debito

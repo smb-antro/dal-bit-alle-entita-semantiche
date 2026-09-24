@@ -10,10 +10,13 @@ condivide nulla — separazione naturale.
 ## Struttura
 
 - `src/saggio/` — i 12 file HTML del saggio interattivo "Dal bit alle entità semantiche",
-  più `presentazione.html` e `indice.html`. Ogni file è autosufficiente, con una sidebar
-  fissa condivisa (indice ad accordion + scroll-spy).
+  più `presentazione.html` e `dietro-i-widget.html`. Ogni file è autosufficiente, con una
+  sidebar fissa condivisa (indice ad accordion + scroll-spy). (`indice.html` è stato
+  rimosso il 9 settembre 2026: la sidebar copre già quella funzione.)
 - `src/build_output.py` — compila `saggio/` in `output/dal-bit-alle-entita-semantiche_it.html`, un
-  documento unico autocontenuto (sidebar unica, navigazione via `showChapter()`).
+  documento unico autocontenuto (sidebar unica, navigazione via `showChapter()`). Dal 23
+  settembre 2026 include anche la Lente semantica come quindicesimo capitolo, e **fallisce**
+  se nel file scritto resta un `href`/`src` che non sia `#` o `data:`.
 - `src/piano_corso_llm.md`, `struttura_moduli_1-6.md`, `inventario_grafico_moduli_1-6.md`,
   `blocco_a_unita_3-4-5-6_contenuti.md` — pianificazione di processo, non contenuto
   pubblicato. Usano ancora terminologia dell'epoca in cui il progetto era concepito come
@@ -24,9 +27,9 @@ condivide nulla — separazione naturale.
 
 Fasi 1-2 (contenuto completo, compilazione, verifica) concluse — **non definitivo**:
 revisione manuale dell'utente in corso, non riprendere di iniziativa. Fase 3 (traduzioni
-EN/FR/DE) pianificata ma rimandata su richiesta esplicita, non ancora avviata. Pagina
-"Lente semantica" interattiva da costruire dopo l'aggiornamento dell'ontologia (vedi
-`docs/next-steps.md`).
+EN/FR/DE) pianificata ma rimandata su richiesta esplicita, non ancora avviata. La pagina
+"Lente semantica" è costruita (`ontologia/lente-semantica/`) e dal 23 settembre 2026 vive
+anche dentro il compilato come capitolo (vedi `docs/decision-log.md`).
 
 ## Regole operative
 

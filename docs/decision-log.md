@@ -1172,3 +1172,281 @@ cancello di determinismo severo — quattro catture, sei confronti, zero differe
 — e quel cancello era soddisfatto *anche* fotografando pagine vuote. Misurava con
 precisione la cosa sbagliata. A trovarlo non è stata una revisione del codice: è
 stato un cambiamento che *doveva* produrre una differenza e non l'ha prodotta.
+
+## 2026-09-23 — L'asserzione di copertura: la lezione messa dove non si può dimenticare
+
+Alla domanda «dove vanno salvate queste lezioni», la risposta scelta non è
+*dove* ma *quando devono arrivare*. La lezione sui font («la prova non sta nel
+rendering, sta nella dichiarazione») era **già scritta** in questo decision-log,
+ed è stata violata poche ore dopo: una riga letta all'avvio non ferma nessuno nel
+momento in cui conta. Quindi la regola diventa: **ciò che può fallire da solo non
+si scrive, si esegue.**
+
+Per i font la forma eseguibile esisteva già — `subset_font.py` si rifiuta di
+costruire senza `∧ ∨ ¬ ⊕`, e ha sparato al primo giro. Per l'harness non
+esisteva: `rivelaTutto` corregge la causa del 64% non fotografato, ma niente
+impediva all'errore di tornare sotto altra forma. Ora `cattura.js` misura prima
+di ogni scatto **quanta parte dell'altezza del documento dipinge qualcosa**, e
+sotto al 97% fallisce cancellando la cartella di uscita: non si tiene una
+baseline che certifica il vuoto. Dettagli e numeri in `design-system/verify/README.md`,
+sezione «Copertura».
+
+**La prima versione dell'asserzione misurava la cosa sbagliata** — e questa volta
+è emersa in venti minuti invece che in giorni, perché ho guardato *quali*
+elementi venivano contati invece del numero che ne usciva. Contava anche i
+`position: fixed`: gli unici elementi invisibili di rilievo erano i due velari
+`tenda-scrim` e `lightbox-scrim`, 900px di viewport su ogni pagina, che non
+contribuiscono a `scrollHeight` e quindi non possono lasciare altezza non
+dipinta. Due bersagli fallivano per una ragione che non c'entrava col contenuto.
+Corretto: gli elementi fuori flusso non entrano nel conto.
+
+**Provata rompendo apposta ciò che sorveglia**, che è l'unica prova che valga per
+uno strumento di verifica: ricreando il bug originale (niente scorrimento, niente
+congelamento dei `.reveal`) la copertura crolla a **28,0%** e il giro fallisce;
+rendendo invisibile **una sola sezione** scende a **84,0%** e fallisce lo stesso.
+È il secondo caso che giustifica la soglia: il disastro si vedrebbe comunque, la
+sparizione di una sezione no. Valori reali dopo la correzione: minima 99,4% (la
+Lente), mediana 100% su 63 scatti.
+
+Resta fuori dall'eseguibile il nucleo che nessuno script cattura — *un cancello
+soddisfatto anche dal vuoto non è un cancello* — e che vale per qualunque
+progetto, non per questo: va in `memoria/` come feedback, non qui. Qui resta il
+*perché* di questo repository.
+
+## 2026-09-23 — Il bundle che non tornava in cima, e una regola CSS che vinceva sul JavaScript
+
+Segnalato dall'utente: cliccando un capitolo nel Sommario del file compilato,
+«la pagina fa degli scatti strani». Misurato invece che dedotto, campionando
+`scrollY` a ogni fotogramma in Chrome vero: partendo da 3000px si finiva a
+**2998**. Il capitolo cambiava, ma la pagina **non tornava affatto in cima** —
+si restava in mezzo al capitolo nuovo, con due pixel di sobbalzo.
+
+**Causa.** Il design system dichiara `html{ scroll-behavior: smooth }`. Con
+quella regola attiva, ogni `scrollTo`/`scrollBy` programmatico che non dica
+esplicitamente il contrario diventa un'**animazione**, e ogni nuova chiamata
+*annulla* quella in corso ricalcolando il bersaglio dalla posizione del momento.
+`showChapter` chiedeva `scrollTo({top: 0})` e subito dopo `nudgeIntersectionObservers()`
+faceva `scrollBy(0, 1)` e `scrollBy(0, -1)`: il viaggio verso lo zero veniva
+cancellato un fotogramma dopo essere partito, ripuntando a «dove sono adesso
+meno uno». Ripetuto tre volte (subito, al fotogramma dopo, a 60ms). Una regola
+CSS che vince silenziosamente su quello che il JavaScript crede di fare.
+
+**Il primo rimedio non funzionava, e si è visto solo misurando.** Portare
+`html.style.scrollBehavior = 'auto'` prima della chiamata non basta: il motore
+risolve il `behavior: auto` leggendo lo stile calcolato **ancora vecchio**.
+Provate quattro varianti sulla pagina viva, guardando `scrollY` subito dopo la
+chiamata (se e' gia' a destinazione lo spostamento e' stato istantaneo):
+
+| Variante | `scrollY` subito dopo |
+|---|---|
+| stile inline `auto`, nessun reflow | 2000 — animato |
+| stile inline `auto` + reflow forzato (`void html.offsetHeight`) | **0** — istantaneo |
+| `behavior: 'instant'` | **0** — istantaneo |
+| stile inline, ripristino differito di un fotogramma | 2000 — animato |
+
+Scelto il reflow forzato invece di `behavior: 'instant'` perche' quel valore
+dell'enum e' arrivato tardi in alcuni browser e una stringa non riconosciuta
+solleva un'eccezione invece di degradare.
+
+**Seconda correzione, conseguente.** Il rimando dentro il testo faceva
+`scrollIntoView({behavior:'smooth'})` un fotogramma dopo `showChapter`: ora che i
+nudge sono istantanei, sarebbe stato il nudge delle 60ms ad annullare *lui*.
+`showChapter` prende quindi un secondo argomento, eseguito quando l'ultimo nudge
+è passato.
+
+**Verificato dopo**: Sommario 3000 → **0**, due soli cambi di `scrollY`, nessuna
+inversione. Sidebar: salto istantaneo a 0, poi **una sola** animazione che
+atterra esattamente su 744, che è la posizione reale di `#intro-parte-1`.
+Controllato anche che i `.reveal` continuino a rivelarsi nel capitolo appena
+mostrato — è il motivo per cui il nudge esiste: 6/6 e 23/23 dopo uno scorrimento
+completo. A `scrollY` 0 ne risultano zero visibili, ed è corretto: a quell'altezza
+nessun `.reveal` è ancora nel viewport.
+
+## 2026-09-23 — La Lente semantica entra nel compilato, perché Safari aveva ragione
+
+Segnalato dall'utente: nel file compilato «la lente semantica si apre su Chrome
+ma non su altri browser». Misurato invece che supposto, contando gli
+`href`/`src` del file: su 74 collegamenti, **uno solo usciva dal file** —
+`../../ontologia/lente-semantica/output/index.html`, più le tredici copie della
+stessa riga che il JavaScript della tenda dei concetti assegna a runtime. Tutto
+il resto era già interno o `data:`.
+
+~~Quel percorso risale due cartelle, e Safari rifiuta di seguire un
+collegamento locale che esce dalla cartella del documento.~~ **Meccanismo
+descritto male, corretto il 24 settembre** (vedi la voce «Non era il file, era
+come lo si apriva»): Safari è sandboxed e riceve l'accesso **per singolo file**,
+quello che gli consegna il sistema. Qualunque altro file locale gli è negato,
+a qualunque profondità: il clic non fa nulla, senza errore visibile. Chrome
+quella restrizione non ce l'ha, ed è l'unica ragione per cui funzionava.
+Confermato dall'utente: «non succede niente». La regola corretta rende la
+decisione più solida, non meno: non basta accorciare il percorso, serve che di
+file ce ne sia **uno**.
+
+**Decisione presa dall'utente**: la Lente diventa un capitolo del compilato,
+come presentazione e dietro-i-widget. Un deliverable «un file solo» non può
+dipendere dall'albero che gli sta intorno — e la prova che non ci dipende non è
+un'intenzione, è un controllo: `build_output.py` ora **fallisce** se nel file
+scritto resta un solo `href`/`src` che non sia `#` o `data:`.
+
+**Tre fatti misurati prima di scrivere una riga di codice**, perché ciascuno
+poteva rendere la cosa impraticabile:
+- i nove id della Lente (`svg-grafo`, `ricerca`, `lista-nodi`…) **non collidono**
+  con nessun id del compilato → non serve prefissarli, e `lente.js`, che li
+  cerca per nome, resta intatto;
+- `lente.js` **non misura mai il layout reale** (nessun `getBoundingClientRect`,
+  nessun `clientWidth`: il grafo è disegnato in coordinate `viewBox`) → può
+  inizializzarsi mentre il capitolo è ancora `hidden`, che è la sua condizione
+  al caricamento;
+- delle diciotto classi della Lente **una sola** è in comune col resto.
+
+**Due cose sole cambiano in `lente.js`**, dietro un `window.LENTE_INCORPORATA`
+che il guscio dichiara: non scrive più il nodo scelto in `location.hash` (nel
+compilato l'hash appartiene alla navigazione fra capitoli: ogni clic sul grafo
+avrebbe cambiato capitolo) e non ascolta `hashchange`. In più espone
+`window.lenteSeleziona`, unico punto d'ingresso dall'esterno.
+
+**Il layout è stato corretto guardandolo, non prevedendolo.** Alla prima resa la
+Lente era coperta dal binario del saggio e l'elenco dei nodi appariva senza
+etichette, una colonna di soli numeri. Due cause, entrambe da `layout.css`:
+`main{ padding-left: var(--misura-rail) }` sopra i 900px non toccava la Lente
+(che non ha un `<main>` che avvolga tutta la pagina, quindi partiva sotto il
+binario) e toccava invece il suo `<main class="pannello-grafo">` interno,
+spostando il riquadro del grafo dentro un contenitore che non si era allargato.
+Corretto **dentro il capitolo**, senza toccare `layout.css`: la regola è giusta
+per il saggio.
+
+**Differenza dichiarata, non nascosta**: nel compilato la Lente riceve tutto il
+design system, mentre la pagina a sé carica le sole `fondamenta.css` — è la
+decisione dell'8 settembre, «Lente sulle fondamenta, non sulla tipografia del
+saggio». Dentro il saggio quella decisione si rovescia, e a ragione: tutto
+risulta il 20% più grande (`html{ font-size: 120% }`) e `.apparato` passa da
+13,12px a 19,2px perché la regola del design system vince su quella locale. Le
+due rese ora divergono di proposito. Se un domani si volesse riallinearle, il
+punto è questo paragrafo.
+
+**Verificato da `file://`**, che è il modo in cui il file viene davvero aperto:
+15 capitoli, grafo disegnato anche da nascosto (37 elementi), voce nella sidebar
+che mostra il capitolo con 258 nodi in elenco, tenda di un concetto →
+«Apri nella Lente semantica» che centra esattamente il nodo chiesto
+(`SpazioSemanticoEEmbedding`), tenda chiusa dietro di sé, hash intatto, un clic
+nel grafo che non cambia capitolo. Zero errori JavaScript, zero richieste di
+rete. Il file passa da 1,69 a **2,09 MB** (+23%): 280 KB sono D3.
+
+~~**Coda**: rieseguito l'harness dopo la modifica a `lente.js`, un bersaglio in
+più è risultato fallito — Genealogia · 3 a viewport stretto, 108 pixel con delta
+13. È bistabilità di rasterizzazione, dimostrata con tre catture dello stesso
+codice immutato. Decima deroga per bersaglio.~~ **Falso, corretto poche ore dopo
+dalla voce «L'osservatore che disturba» qui sotto: quei 108 pixel li produceva il
+mio stesso strumento di misura. La deroga è stata ritirata.**
+
+## 2026-09-23 — L'osservatore che disturba: la sentinella di copertura cambiava la fotografia
+
+Poche ore dopo aver aggiunto l'asserzione di copertura, l'harness ha cominciato a
+segnalare fallimenti che si spostavano da una corsa all'altra — prima uno, poi
+quattro, poi tre, tutti a viewport stretto — con il rumore assorbito a **133.747
+e 173.744 pixel** contro i 1.182 di una corsa sana. Centoquaranta volte tanto.
+
+Le due spiegazioni comode erano a portata di mano, e tutte e due sbagliate: il
+carico della macchina (una corsa era durata 861 secondi invece di 187) e la
+bistabilità di rasterizzazione già catalogata. La prima è caduta perché la corsa
+successiva è durata 185 secondi e ha fallito lo stesso. La seconda è caduta su un
+dettaglio che non tornava: **Genealogia · 4 dava numeri identici in due corse
+diverse** — 12 percettibili, 65.978 di rumore, delta massimo 9. Un numero che si
+ripete uguale non è casuale.
+
+Le differenze stavano in fondo alle pagine, a tutta larghezza, dove la `.chiusura`
+posa una sfumatura — e una sfumatura ditherizza, cioè basta pochissimo perché la
+stessa sfumatura venga resa in modo leggermente diverso. E la baseline era delle
+14:56, cioè di **prima** che aggiungessi la misura di copertura.
+
+`misuraCopertura` attraversa tutto il DOM chiamando `getComputedStyle` e
+`getBoundingClientRect`, e girava **subito prima dello scatto**: forza un
+ricalcolo di stile e impaginazione, e quel ricalcolo cambia come Chrome
+rasterizza. **Provato disattivando soltanto quella chiamata**: zero pixel di
+differenza dalla baseline. Riattivandola: 65.990.
+
+Spostata dopo lo scatto. Non è una misura meno vera — fra la fotografia e la
+misura non succede nulla che cambi la pagina, uno screenshot non muta il DOM — ma
+non può più influenzarla. Riverificato: corsa completa a **zero fallimenti su 65
+confronti**, rumore assorbito 878 pixel, e le due prove di rottura falliscono
+ancora con gli stessi valori di prima (28,0% ricreando il bug originale, 84,0%
+nascondendo una sola sezione). La sentinella morde ancora e non disturba più.
+
+**Due conseguenze, e la seconda è la più scomoda.**
+
+La prima: la decima deroga aggiunta poche ore prima è stata **ritirata**. Le tre
+catture con cui avevo «dimostrato» la bistabilità di Genealogia · 3 giravano
+tutte con lo strumento difettoso: la prova era viziata alla radice, e il numero
+ricorrente che mi aveva convinto era la perturbazione, che è deterministica.
+Oggi quel bersaglio è a zero differenze. Una deroga che documenta un fenomeno
+inesistente è peggio di nessuna deroga — un giorno nasconderebbe qualcosa di vero.
+
+La seconda: è la quarta volta in due giorni che sbaglio nella stessa direzione, e
+questa volta in un modo che la lezione precedente non copriva. Avevo verificato
+che lo strumento **funzionasse**, rompendo apposta ciò che sorveglia. Non avevo
+verificato che **non disturbasse**. Sono due proprietà diverse: la prima si prova
+introducendo un guasto e pretendendo il fallimento, la seconda si prova togliendo
+lo strumento e pretendendo che non cambi nulla. Un osservatore che altera ciò che
+osserva misura se stesso.
+
+## 2026-09-24 — Non era il file, era come lo si apriva
+
+Segnalato: «l'output si apre solo in Chrome, non su Safari». Questa volta la
+verifica è stata fatta nel motore giusto invece che per analogia. macOS include
+WebKit — lo stesso motore di Safari — utilizzabile da riga di comando: scritta
+una sonda di quaranta righe in Swift che carica il file in una `WKWebView`,
+intercetta `window.onerror`, `unhandledrejection`, `console.error/warn`, e a
+caricamento finito interroga il DOM.
+
+**Il compilato in WebKit funziona**: 15 capitoli, capitolo iniziale visibile,
+16.267 caratteri di testo, sidebar presente, `showChapter` e `lenteSeleziona`
+definite, 3 font caricati, **zero errori e zero avvisi**. Ripetuto concedendo
+l'accesso in lettura al **solo file** e a nessuna cartella: identico. Permessi
+lungo tutto il percorso normali, nessuna ACL, nessuna quarantena, nessun flag.
+
+Restava una variabile sola, ed è quella giusta: **come Safari arriva al file**.
+Safari è sandboxed e riceve l'accesso a un file locale solo se glielo consegna
+il sistema — pannello di apertura, doppio clic, `open`. Un percorso incollato
+nella barra degli indirizzi non gli è stato consegnato da nessuno, e viene
+rifiutato. Verificato dall'utente: **con ⌘O il file si apre benissimo.**
+
+**Il compilato non aveva alcun difetto.** Ed è la seconda volta in due giorni
+che una spiegazione plausibile e sbagliata sopravvive perché non la si prova nel
+posto giusto: avevo attribuito il primo sintomo a una regola di Safari sulle
+cartelle superiori, che non esiste. La regola è per file.
+
+**La correzione precedente resta però giusta, e per una ragione più forte.** Se
+l'accesso è per file, allora *qualunque* riferimento esterno sarebbe fallito in
+Safari, a qualunque profondità: non bastava accorciare il percorso, serviva che
+di file ce ne fosse **uno**. La Lente come capitolo e il controllo che fa
+fallire la compilazione su qualsiasi `href`/`src` esterno sono la risposta
+corretta a un meccanismo che avevo descritto male. Il meccanismo è stato
+corretto sul posto in `build_output.py` e nella voce del 23 settembre.
+
+**Nota operativa per la pubblicazione**: il file va aperto con un doppio clic,
+con ⌘O o con `open` — tutte vie che passano da LaunchServices, che è ciò che
+concede l'accesso. Incollare il percorso nella barra degli indirizzi di Safari
+non funziona, e non è un difetto del file. Servito via http la questione non si
+pone affatto.
+
+**Nota di metodo**: la sonda WebKit in Swift costa quaranta righe e non richiede
+di installare niente, perché il motore è già nel sistema. Vale la pena ricordarsela
+la prossima volta che un difetto è «solo su Safari»: si può guardare, invece di
+dedurre da Chrome.
+
+**Verificato anche in WebKit** (24 settembre): esercitato il compilato dentro la
+sonda, con l'accesso al solo file. Navigazione fra capitoli dal Sommario: da
+2000px a **0 in 120 millisecondi**. Voce di sidebar con ancora: atterra a 736,
+che è la posizione esatta del bersaglio. Lente come capitolo: 17 nodi, 258 voci
+in elenco, secondo grado che porta a 68 nodi; tenda di un concetto che centra
+`SpazioSemanticoEEmbedding` e si chiude dietro di sé. Font: EB Garamond e Noto
+Sans Mono, entrambi dai data-URI. Zero errori, hash mai toccato.
+
+Nel farlo ho lanciato due volte un falso allarme sullo scorrimento, per lo stesso
+motivo tecnico in entrambi i casi: lo scorrimento di *preparazione* della prova
+(`window.scrollTo(0, 2000)`) è a sua volta soggetto a `scroll-behavior: smooth`,
+quindi era ancora in volo quando misuravo, e il suo arrivo tardivo sembrava un
+mancato ritorno in cima. Rifatta la preparazione con `behavior: 'instant'`, il
+difetto è sparito perché non c'era. **Lezione minuta ma ricorrente**: quando si
+misura un comportamento di scorrimento, anche il gesto che prepara la misura è un
+comportamento di scorrimento, e va reso deterministico per primo.
