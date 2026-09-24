@@ -36,6 +36,23 @@ const REVEAL_NASCOSTI = [];
 // Bersagli il cui disegno non si e' fermato entro il tempo massimo.
 const DISEGNO_INSTABILE = [];
 
+// Frazione minima dell'altezza del documento che deve dipingere qualcosa
+// perche' la cattura valga come prova. Vedi `misuraCopertura` piu' sotto e
+// README, "Copertura: la prova che c'e' una pagina da guardare".
+// Misurata su tutti i 63 scatti dopo la correzione: minima 99,4% (la Lente),
+// mediana 100%. La soglia sta sotto al minimo misurato con circa due punti di
+// margine — abbastanza da non fallire per una deriva innocua, abbastanza vicina
+// da accorgersi della sparizione di una sezione, non solo del disastro. Se un
+// bersaglio finisse legittimamente sotto, si documenta una deroga per quel
+// bersaglio (come in `confronta.py`), non si abbassa la soglia di tutti.
+const COPERTURA_MINIMA = 0.97;
+
+// Copertura misurata, bersaglio per bersaglio, e quelli sotto la soglia.
+const COPERTURE = [];
+const COPERTURA_BASSA = [];
+
+const pct = (x) => `${(x * 100).toFixed(1)}%`;
+
 // ---------------------------------------------------------------------
 // Server statico minimale
 // ---------------------------------------------------------------------
@@ -252,6 +269,71 @@ async function rivelaTutto(page) {
   });
 }
 
+// Misura quanta parte dell'altezza del documento e' occupata da contenuto che
+// dipinge davvero qualcosa.
+//
+// PERCHE' ESISTE. Per giorni l'harness ha certificato "zero differenze"
+// fotografando pagine in cui il 64% dell'altezza era a `opacity: 0`: il
+// cancello di qualita' era soddisfatto ANCHE dal vuoto, e un cancello
+// soddisfatto dal vuoto non e' un cancello. `rivelaTutto` ha corretto quella
+// causa; questa funzione toglie all'errore la possibilita' di ripresentarsi in
+// silenzio sotto altra forma — una classe rinominata, un blocco nuovo che
+// nasce invisibile, un selettore sbagliato in un CSS futuro. Non verifica che
+// la pagina sia giusta: verifica che ci sia una pagina da guardare.
+//
+// Conta come non dipinto cio' che occupa spazio nel layout ma non si vede:
+// `opacity: 0` e `visibility: hidden`. Cio' che e' `display: none` non occupa
+// altezza, quindi non entra ne' al numeratore ne' al denominatore — nascondere
+// un blocco cosi' non abbassa la copertura, ed e' corretto: la pagina
+// fotografata e' davvero tutta la pagina che esiste.
+//
+// LIMITE NOTO: un discendente che ripristina `visibility: visible` dentro un
+// antenato nascosto verrebbe contato come invisibile (la scansione non ci
+// scende). Misurato su tutti i bersagli, non succede; se un giorno succedesse
+// si vedrebbe come copertura che cala senza che nulla sia sparito.
+async function misuraCopertura(page) {
+  return page.evaluate(() => {
+    const altezza = document.documentElement.scrollHeight;
+    const intervalli = [];
+    const scansiona = (el) => {
+      const s = getComputedStyle(el);
+      if (s.display === 'none') return;
+      // `position: fixed` non entra nel conto: non contribuisce a
+      // scrollHeight, quindi non puo' lasciare altezza non dipinta, e il suo
+      // rect e' relativo al viewport, non al documento. Vale anche per i
+      // discendenti, fuori flusso come lui. (Prima versione di questa misura:
+      // li contava, e l'unica cosa che vedeva erano i due velari `tenda-scrim`
+      // e `lightbox-scrim` a opacity 0 — 900px di viewport su ogni pagina,
+      // cioe' il 12% di una pagina corta. Misurava con precisione una cosa che
+      // non c'entrava, esattamente come l'harness che doveva sorvegliare.)
+      if (s.position === 'fixed') return;
+      if (s.opacity === '0' || s.visibility === 'hidden') {
+        const r = el.getBoundingClientRect();
+        const inizio = Math.max(0, r.top + window.scrollY);
+        const fine = Math.min(altezza, r.bottom + window.scrollY);
+        if (fine > inizio) intervalli.push([inizio, fine]);
+        return; // non si scende: l'intera sottochioma e' gia' contata qui
+      }
+      for (const figlio of el.children) scansiona(figlio);
+    };
+    if (document.body) scansiona(document.body);
+
+    // Unione degli intervalli: due blocchi invisibili sovrapposti (o annidati
+    // in rami diversi) non devono contare due volte.
+    intervalli.sort((a, b) => a[0] - b[0]);
+    let invisibile = 0;
+    let cursore = -Infinity;
+    for (const [inizio, fine] of intervalli) {
+      const da = Math.max(inizio, cursore);
+      if (fine > da) {
+        invisibile += fine - da;
+        cursore = fine;
+      }
+    }
+    return { altezza, invisibile: Math.round(invisibile) };
+  });
+}
+
 // Aspetta che il textContent di `selettore` smetta di cambiare per almeno
 // `stabileMs` — usato per il loop requestAnimationFrame del widget
 // "paesaggio di perdita" (meccanismo-4), che non e' un'animazione CSS e
@@ -422,6 +504,26 @@ async function catturaBersaglio(browser, baseURL, outDir, bersaglio, vpName, red
       const filePath = path.join(outDir, `${bersaglio.id}__${suffisso}.png`);
       await page.screenshot({ path: filePath, fullPage: true });
       scritti++;
+
+      // DOPO lo scatto, non prima. La misura attraversa tutto il DOM
+      // chiamando getComputedStyle e getBoundingClientRect: forza un
+      // ricalcolo di stile e impaginazione, e quel ricalcolo CAMBIA la
+      // fotografia. Misurato il 23 settembre 2026, ed e' il motivo per cui
+      // tre bersagli "regredivano" senza che nulla fosse cambiato:
+      // disattivando la sola misura, genealogia-4 a viewport stretto tornava
+      // a zero pixel di differenza dalla baseline; riattivandola, 65.990 —
+      // concentrati in fondo alla pagina, dove la sfumatura di chiusura
+      // dithera e basta pochissimo per farla dithera-re diversamente.
+      //
+      // Spostarla dopo non la rende meno vera: fra lo scatto e la misura non
+      // succede nulla che cambi la pagina — lo screenshot non muta il DOM.
+      // La misura descrive quindi esattamente la pagina fotografata, ma non
+      // puo' piu' influenzarla. Uno strumento che perturba cio' che osserva
+      // misura se stesso.
+      const c = await misuraCopertura(page);
+      const frazione = c.altezza > 0 ? 1 - c.invisibile / c.altezza : 0;
+      COPERTURE.push({ etichetta, frazione, ...c });
+      if (frazione < COPERTURA_MINIMA) COPERTURA_BASSA.push({ etichetta, frazione, ...c });
     }
 
     if (bersaglio.canvas && !reducedMotion) {
@@ -514,6 +616,42 @@ async function main() {
   // rimasto da un giro precedente direbbe il falso, ed e' proprio il genere
   // di bugia che passa inosservata.
   await fsp.rm(rapporto, { force: true });
+
+  // --- Copertura -----------------------------------------------------
+  // Prima di ogni altro rapporto, perche' se la copertura non tiene tutto il
+  // resto (differenze, altezze, stili calcolati) parla di pagine che non sono
+  // state davvero guardate.
+  if (COPERTURE.length) {
+    const ordinate = [...COPERTURE].sort((a, b) => a.frazione - b.frazione);
+    const mediana = ordinate[Math.floor(ordinate.length / 2)].frazione;
+    console.log(`\nCopertura dipinta: minima ${pct(ordinate[0].frazione)}, ` +
+                `mediana ${pct(mediana)} ` +
+                `(soglia ${pct(COPERTURA_MINIMA)}, ${COPERTURE.length} catture)`);
+    // Le cinque piu' basse si stampano sempre, anche quando passano: servono a
+    // vedere il margine che resta, non solo che la soglia e' stata superata.
+    for (const c of ordinate.slice(0, 5)) {
+      console.log(`  ${pct(c.frazione).padStart(6)}  ${c.etichetta}`);
+    }
+  }
+
+  if (COPERTURA_BASSA.length) {
+    console.error(`\nCOPERTURA INSUFFICIENTE — ${COPERTURA_BASSA.length} catture sotto ${pct(COPERTURA_MINIMA)}:`);
+    for (const c of COPERTURA_BASSA) {
+      console.error(`  ${c.etichetta}: ${pct(c.frazione)} ` +
+                    `(${c.invisibile}px invisibili su ${c.altezza})`);
+    }
+    console.error(
+      `\n  Gran parte di queste pagine occupa spazio senza dipingere nulla:\n` +
+      `  le immagini non sono una prova di niente, e un confronto a pixel che\n` +
+      `  le dichiarasse identiche direbbe soltanto che il vuoto e' uguale al\n` +
+      `  vuoto. Causa tipica: contenuto che resta a opacity: 0 perche' non e'\n` +
+      `  stato rivelato (vedi rivelaTutto) o perche' un selettore del\n` +
+      `  congelamento non lo prende piu'.`);
+    await fsp.rm(outDir, { recursive: true, force: true });
+    console.error(`\n  ${outDirName}/ cancellata: non si tiene una baseline che certifica il vuoto.`);
+    process.exitCode = 1;
+    return;
+  }
 
   if (DISEGNO_INSTABILE.length) {
     console.log(`\nBersagli il cui disegno non si e' fermato entro il tempo massimo:`);

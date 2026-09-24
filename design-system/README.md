@@ -240,7 +240,10 @@ L'ultimo passo non è una formalità: è il motivo per cui questo sistema ha pot
 sostituire 3.300 righe di CSS ricopiato senza cambiare un pixel. L'harness confronta
 65 immagini su due viewport, stati interattivi compresi, e distingue una differenza
 vera dal rumore di rasterizzazione misurando **di quanto** cambia un pixel, non
-quanti ne cambiano. Vedi [`verify/README.md`](verify/README.md).
+quanti ne cambiano. Prima di ogni scatto misura anche **quanta parte della pagina
+dipinge qualcosa**, e si rifiuta di produrre una baseline sotto il 97%: un
+confronto fra pagine vuote direbbe soltanto che il vuoto è uguale al vuoto — ed è
+successo davvero, per giorni. Vedi [`verify/README.md`](verify/README.md).
 
 ## Cosa non si tocca
 

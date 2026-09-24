@@ -143,6 +143,78 @@ la cattura corretta e confrontati. **26 confronti su 28 identici**; i due con
 differenze mostrano esattamente i valori bistabili già catalogati sotto. La
 migrazione regge anche su ciò che l'harness non aveva mai guardato.
 
+## Copertura: la prova che c'è una pagina da guardare
+
+La correzione qui sopra toglie la **causa** di quell'errore. Questa asserzione gli
+toglie la possibilità di ripresentarsi **in silenzio**, sotto un'altra forma: una
+classe rinominata, un blocco nuovo che nasce invisibile, un selettore del
+congelamento che un giorno non prende più niente.
+
+Il principio è che *un cancello soddisfatto anche dal vuoto non è un cancello*.
+Il cancello di qualità di questo harness era severo — quattro catture, sei
+confronti, zero differenze pretese — ed era superato anche fotografando pagine
+per due terzi vuote, perché il vuoto è perfettamente uguale al vuoto.
+
+Prima di ogni scatto, `misuraCopertura` calcola **quanta parte dell'altezza del
+documento dipinge davvero qualcosa**. Conta come non dipinto ciò che occupa
+spazio nel layout senza vedersi (`opacity: 0`, `visibility: hidden`); ciò che è
+`display: none` non entra né al numeratore né al denominatore, perché non crea
+altezza — nascondere un blocco così non abbassa la copertura, ed è giusto: la
+pagina fotografata *è* tutta la pagina che esiste. Sotto la soglia, il giro
+fallisce e **la cartella di uscita viene cancellata**: non si tiene una baseline
+che certifica il vuoto.
+
+**La prima versione di questa misura misurava la cosa sbagliata.** Contava anche
+gli elementi `position: fixed`, e l'unica cosa che vedeva erano i due velari
+`tenda-scrim` e `lightbox-scrim` a opacità zero: 900px di viewport su ogni
+pagina, cioè il 12% di una pagina corta — abbastanza da far fallire due bersagli
+per un motivo che non c'entrava nulla col contenuto. Un elemento fuori flusso non
+contribuisce a `scrollHeight`, quindi non può lasciare altezza non dipinta. È
+emerso guardando *quali* elementi venivano contati, non il numero che ne usciva.
+
+**Misurato** dopo la correzione, sui 63 scatti: minima **99,4%** (la Lente
+semantica), mediana **100%**. La soglia è **97%**, sotto al minimo misurato con
+circa due punti di margine. Le cinque coperture più basse si stampano a ogni
+giro anche quando passano: serve vedere il margine, non solo che la soglia è
+stata superata. Se un bersaglio finisse legittimamente sotto, si documenta una
+deroga per quel bersaglio — come in `confronta.py` — e non si abbassa la soglia
+di tutti.
+
+**Provata rompendo apposta ciò che sorveglia**, perché uno strumento di verifica
+va verificato come il codice che verifica:
+
+| Guasto introdotto | Copertura | Esito |
+|---|---|---|
+| Nessuno | 99,4–100% | passa |
+| Il bug originale ricreato (niente scorrimento, niente congelamento dei `.reveal`) | **28,0%** | fallisce, cartella cancellata |
+| Una sola sezione resa invisibile (`#strato-3 > .wrap`) | **84,0%** | fallisce |
+
+Il terzo caso è quello che conta: la soglia non serve a intercettare il disastro,
+che si vedrebbe comunque, ma la sparizione di una sezione sola.
+
+**La misura gira DOPO lo scatto, e non è un dettaglio.** Nella prima versione
+girava prima, ed è stato un errore vero: attraversare il DOM con
+`getComputedStyle` e `getBoundingClientRect` forza un ricalcolo di stile e
+impaginazione, e quel ricalcolo **cambia la fotografia**. Non di poco: 65.990
+pixel su Genealogia · 4 a viewport stretto, concentrati in fondo alla pagina,
+dove la sfumatura di chiusura ditherizza e basta pochissimo per farla
+ditherizzare diversamente. Tre bersagli risultavano "regrediti" senza che nulla
+fosse cambiato.
+
+La prova è stata disattivare **soltanto** la misura: zero pixel di differenza
+dalla baseline. Riattivarla: 65.990. Spostarla dopo lo scatto non la rende meno
+vera — fra la fotografia e la misura non succede niente che cambi la pagina, uno
+screenshot non muta il DOM — ma le toglie la possibilità di influenzarla.
+
+La lezione è distinta da quella che l'ha preceduta di un'ora: avevo verificato
+che lo strumento **funzionasse**, rompendo apposta ciò che sorveglia, e non che
+**non disturbasse**. Sono due proprietà diverse, e la seconda non me l'ero posta.
+Un osservatore che altera ciò che osserva sta misurando se stesso.
+
+**Limite dichiarato**: misura che ci sia qualcosa da guardare, non che sia la cosa
+giusta. Una pagina che dipinge tutto e sbagliato ha copertura 100% — quello resta
+mestiere del confronto a pixel.
+
 ## Tolleranza: l'entità, non il numero
 
 La tolleranza non è una percentuale di pixel diversi. Due catture dello stesso
@@ -181,6 +253,17 @@ viene rasterizzato. Margine concesso: 300 pixel, sopra il massimo misurato di 24
 Non nasconde una regressione vera — un cambio di colore, misura o spaziatura
 produce migliaia o milioni di pixel percettibili su pagine da ~20 milioni, non
 centinaia sparse sui bordi.
+
+~~Una decima deroga, il 23 settembre: Genealogia · 3 a viewport stretto, 108 pixel
+con delta 13.~~ **Ritirata lo stesso giorno, e vale la pena dire perché.** Quei
+108 pixel non erano bistabilità della pagina: erano prodotti dalla misura di
+copertura che allora girava *prima* dello scatto (vedi sotto). Le tre catture
+con cui avevo "dimostrato" la bistabilità giravano tutte con lo strumento
+difettoso — la prova era viziata alla radice, e il numero ricorrente che mi
+aveva convinto era solo la perturbazione, che è deterministica. Spostata la
+misura dopo lo scatto, quel bersaglio è tornato a **zero** differenze e la
+deroga è stata tolta da `confronta.py`. Una deroga che documenta un fenomeno
+inesistente è peggio di nessuna deroga: nasconde davvero qualcosa, un giorno.
 
 **Validazione**: 4 catture indipendenti e 6 confronti a coppie prima della
 correzione dei `.reveal`; 3 catture e 3 confronti dopo, più il confronto
