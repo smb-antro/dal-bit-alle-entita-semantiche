@@ -30,6 +30,12 @@ const REPO_ROOT = path.resolve(__dirname, '..', '..'); // verify -> design-syste
 // Raccolto durante la cattura, scritto a fine esecuzione (vedi README).
 const ANIMAZIONI_INFINITE = [];
 
+// Bersagli in cui qualche `.reveal` non si e' rivelato nemmeno dopo lo scorrimento.
+const REVEAL_NASCOSTI = [];
+
+// Bersagli il cui disegno non si e' fermato entro il tempo massimo.
+const DISEGNO_INSTABILE = [];
+
 // ---------------------------------------------------------------------
 // Server statico minimale
 // ---------------------------------------------------------------------
@@ -115,6 +121,16 @@ const CSS_CONGELAMENTO = `
     transition-delay: 0s !important;
     scroll-behavior: auto !important;
   }
+
+  /* I blocchi .reveal arrivano allo stato finale per dichiarazione, non per
+     transizione. Non e' solo velocita': un translateY(0) resta pur sempre una
+     trasformazione, che promuove l'elemento a livello compositato e ne cambia
+     la rasterizzazione del testo a seconda che il browser lo ri-unisca o no
+     prima dello scatto. Il cancello di qualita' l'ha fatto emergere subito
+     dopo l'introduzione dello scorrimento: differenze di pochi pixel sui
+     bordi, con delta fino a 74, su pagine visivamente identiche. Togliendo la
+     trasformazione la rasterizzazione e' una sola. */
+  .reveal{ opacity: 1 !important; transform: none !important; }
 `;
 
 // Unico setInterval trovato nel repo (fondamenti-2-hardware-software.html)
@@ -195,6 +211,47 @@ async function attendiPronta(page) {
   await page.evaluate(() => document.fonts.ready);
 }
 
+// Scorre l'intera pagina e torna in cima, per far scattare gli
+// IntersectionObserver che rivelano i blocchi `.reveal`.
+//
+// PERCHE' ESISTE. Senza, l'harness fotografava pagine in cui i `.reveal`
+// erano ancora a `opacity: 0` — e i `.reveal` contengono il **64%**
+// dell'altezza complessiva delle 14 pagine del saggio. Il confronto a pixel
+// vedeva quindi circa un terzo del contenuto, e dichiarava "zero differenze"
+// su pagine in gran parte vuote. Trovato il 23 settembre 2026 cambiando il
+// font monospaziato: i quattro simboli logici, alti 40px, non comparivano in
+// nessuno dei due screenshot perche' stanno dentro un `.reveal`.
+//
+// Lo spostamento e' l'ultimo `.reveal` dichiarato visibile, non un numero di
+// millisecondi: il congelamento delle animazioni rende la transizione
+// istantanea, quindi la classe arriva subito dopo l'intersezione.
+async function rivelaTutto(page) {
+  await page.evaluate(async () => {
+    const passo = Math.max(200, Math.floor(window.innerHeight * 0.8));
+    const attendiDueFotogrammi = () =>
+      new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+    let y = 0;
+    // scrollHeight puo' crescere mentre si scorre (contenuto che si rivela)
+    while (y < document.documentElement.scrollHeight) {
+      window.scrollTo(0, y);
+      await attendiDueFotogrammi();
+      y += passo;
+    }
+    window.scrollTo(0, document.documentElement.scrollHeight);
+    await attendiDueFotogrammi();
+    window.scrollTo(0, 0);
+    await attendiDueFotogrammi();
+  });
+
+  // Quanti restano nascosti: non un errore di per se' (un `.reveal` dentro un
+  // `details` chiuso non si rivela mai), ma va detto invece che taciuto.
+  return page.evaluate(() => {
+    const tutti = [...document.querySelectorAll('.reveal')];
+    return { totale: tutti.length,
+             nascosti: tutti.filter((e) => !e.classList.contains('visible')).length };
+  });
+}
+
 // Aspetta che il textContent di `selettore` smetta di cambiare per almeno
 // `stabileMs` — usato per il loop requestAnimationFrame del widget
 // "paesaggio di perdita" (meccanismo-4), che non e' un'animazione CSS e
@@ -221,6 +278,50 @@ async function attendiAssestamento(page, selettore, { timeoutMs = 8000, stabileM
     await page.waitForTimeout(intervalMs);
   }
   console.warn(`  attenzione: "${selettore}" non si e' stabilizzato entro ${timeoutMs}ms (ultimo valore: ${JSON.stringify(ultimo)})`);
+}
+
+// Impronta di cio' che i widget disegnano: contenuto dei canvas, markup
+// generato dentro gli SVG, e testo della pagina. Non e' il pixel esatto dello
+// screenshot (troppo costoso da ripetere in polling) ma cattura tutto cio' che
+// nel saggio cambia dopo il caricamento.
+async function improntaDisegno(page) {
+  return page.evaluate(() => {
+    const parti = [];
+    for (const c of document.querySelectorAll('canvas')) {
+      try { parti.push(c.toDataURL()); } catch (e) { parti.push('canvas-non-leggibile'); }
+    }
+    for (const s of document.querySelectorAll('svg')) parti.push(s.innerHTML);
+    parti.push(document.body.innerText);
+    const s = parti.join('\u0001');
+    let h1 = 0x811c9dc5, h2 = 0;
+    for (let i = 0; i < s.length; i++) {
+      h1 = (h1 ^ s.charCodeAt(i)) >>> 0;
+      h1 = (h1 * 0x01000193) >>> 0;
+      h2 = (h2 + s.charCodeAt(i) * (i + 1)) >>> 0;
+    }
+    return `${s.length}:${h1}:${h2}`;
+  });
+}
+
+// Aspetta che quell'impronta smetta di cambiare.
+//
+// PERCHE'. Diversi widget del saggio disegnano con requestAnimationFrame, che
+// il congelamento delle animazioni CSS non ferma: tokenizzatore, grafici di
+// probabilita', mappa degli embedding, quantizzazione. Finche' i .reveal
+// restavano a opacita' zero il loro output non compariva negli screenshot e la
+// cosa non si vedeva; rivelandoli, il cancello di qualita' ha iniziato a
+// fallire su bersagli diversi a ogni giro. Non e' rumore di rasterizzazione:
+// e' disegno non ancora finito.
+async function attendiDisegnoStabile(page, { timeoutMs = 9000, stabileMs = 500, intervalMs = 150 } = {}) {
+  const inizio = Date.now();
+  let ultima = null, ultimoCambio = Date.now();
+  while (Date.now() - inizio < timeoutMs) {
+    const i = await improntaDisegno(page);
+    if (i !== ultima) { ultima = i; ultimoCambio = Date.now(); }
+    else if (Date.now() - ultimoCambio >= stabileMs) return true;
+    await page.waitForTimeout(intervalMs);
+  }
+  return false;
 }
 
 // ---------------------------------------------------------------------
@@ -285,8 +386,19 @@ async function catturaBersaglio(browser, baseURL, outDir, bersaglio, vpName, red
       await INTERAZIONI[bersaglio.interazione](page);
     }
 
+    // Prima dell'assestamento: rivelare il contenuto puo' far partire widget
+    // che a quel punto devono convergere.
+    const rivelati = await rivelaTutto(page);
+    if (rivelati.nascosti) {
+      REVEAL_NASCOSTI.push(`${etichetta}: ${rivelati.nascosti}/${rivelati.totale}`);
+    }
+
     if (bersaglio.assestamento) {
       await attendiAssestamento(page, bersaglio.assestamento);
+    }
+
+    if (!(await attendiDisegnoStabile(page))) {
+      DISEGNO_INSTABILE.push(etichetta);
     }
 
     // Pausa finale prima dello scatto — piu' lunga di quanto sembri
@@ -402,6 +514,16 @@ async function main() {
   // rimasto da un giro precedente direbbe il falso, ed e' proprio il genere
   // di bugia che passa inosservata.
   await fsp.rm(rapporto, { force: true });
+
+  if (DISEGNO_INSTABILE.length) {
+    console.log(`\nBersagli il cui disegno non si e' fermato entro il tempo massimo:`);
+    for (const r of DISEGNO_INSTABILE) console.log(`  ${r}`);
+  }
+
+  if (REVEAL_NASCOSTI.length) {
+    console.log(`\nBlocchi .reveal rimasti nascosti dopo lo scorrimento:`);
+    for (const r of REVEAL_NASCOSTI) console.log(`  ${r}`);
+  }
 
   if (ANIMAZIONI_INFINITE.length) {
     await fsp.writeFile(rapporto, JSON.stringify(ANIMAZIONI_INFINITE, null, 2) + '\n');

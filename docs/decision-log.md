@@ -1105,3 +1105,70 @@ base64 e 132.392 le immagini incorporate.
 dichiarazione che `meccanismo-4-reti-neurali.html` porta sul proprio `<html>`, e che il suo
 `currentLossPalette()` legge per scegliere la tavolozza dello shader. Senza, la superficie
 di perdita sarebbe disegnata in variante scura su pagina chiara.
+
+## 2026-09-23 — Il monospaziato sostituito, e l'harness che guardava un terzo di pagina
+
+**Noto Sans Mono al posto di IBM Plex Mono.** Accertato ieri che Plex non contiene
+`∧ ∨ ⊕`, si è cercato un monospaziato con licenza aperta che li avesse. Provati
+otto candidati scaricando da ciascuno un sottoinsieme di un paio di KB e
+leggendone la `cmap`: **Noto Sans Mono è l'unico che li contiene tutti e tre**
+(JetBrains Mono ha ∧ ∨ ma non ⊕; Inconsolata solo ⊕; Fira Mono, Source Code Pro,
+Roboto Mono, Space Mono e Plex nessuno).
+
+Il file completo è un variabile da 1,67 MB. Ridotto ai 133 caratteri che il saggio
+usa davvero — ASCII, accenti italiani, simboli tecnici — pesa **10,0 KB**, contro
+i 146,7 KB dei tre file di Plex, di cui **due non venivano mai caricati**:
+verificato sul bundle compilato con tutti e 14 i capitoli, il browser chiede solo
+il peso 400.
+
+La riduzione è riproducibile: `design-system/scripts/subset_font.py` la rigenera
+dal sorgente, e **fallisce** se il font non contiene i quattro simboli o se il
+sottoinsieme ne perde uno. L'ha fatto subito, al primo giro: `␣` (U+2423) era
+nell'elenco ma Noto Sans Mono non ce l'ha. Verificato che non serve — l'unico uso
+nel saggio è in `.pg-chip .glyph::before` di Meccanismo · 1, che è in **serif**,
+non in monospaziato. (Anche EB Garamond non lo contiene: quel glifo ripiega da
+sempre, cosa diversa e preesistente.)
+
+Il monospaziato ha **due** usi reali, non uno come diceva il README: i quattro
+simboli logici, e i valori tecnici che cambiano dal vivo in Meccanismo · 4 e 6.
+Corretto anche quello.
+
+**E poi la scoperta che conta di più.** Cambiato il font, l'harness ha dichiarato
+zero differenze. Impossibile: i simboli erano appena cambiati di carattere.
+Cercandoli per colore dentro le immagini, si è visto che **non c'erano affatto**,
+né prima né dopo.
+
+Il saggio avvolge quasi tutto il contenuto in blocchi `.reveal`, a `opacity: 0`
+finché un `IntersectionObserver` non li incontra. `cattura.js` non scorreva la
+pagina, quindi l'osservatore non scattava mai. Misurato: **il 64% dell'altezza
+complessiva delle 14 pagine stava dentro `.reveal` mai resi visibili.** Il
+confronto a pixel — con cui ho certificato la migrazione al design system —
+guardava circa un terzo del contenuto.
+
+Cosa non era compromesso, perché va detto con la stessa precisione: i confronti di
+**stile calcolato** (816 proprietà su quattro capitoli) leggono i valori a
+prescindere dall'opacità; i confronti di **altezza** sono validi perché un
+elemento a opacità zero occupa comunque il suo spazio; link, rete e token non
+c'entrano. Era cieco il solo confronto a pixel — che però era il cuore della
+verifica.
+
+**Corretto e ri-verificato.** L'harness ora scorre l'intera pagina e porta i
+`.reveal` allo stato finale per dichiarazione. Poi, per rispondere alla domanda
+vera — *la migrazione ha cambiato qualcosa in quel 64%?* — sono stati estratti
+dalla storia lo stato prima (`c8db785`) e dopo (`1791eda`) la migrazione, resi
+entrambi con la cattura corretta e confrontati: **26 confronti su 28 identici**.
+I due con differenze mostrano esattamente i valori bistabili già catalogati.
+La migrazione regge anche su ciò che non era mai stato guardato.
+
+Rivelare il contenuto ha fatto emergere, in tre pagine dense di widget, una
+instabilità di rasterizzazione su bordi e maiuscoletto: non deriva ma
+**bistabilità**, con gli stessi valori esatti che ricorrono (240, 183, 133, 73) e
+due varianti indistinguibili a occhio. Soglie per bersaglio fissate a 300, sopra
+il massimo misurato di 240, con la ragione scritta accanto.
+
+**La lezione, che è la terza dello stesso genere in due giorni**: uno strumento di
+verifica va verificato come il codice che verifica. Questo harness ha superato un
+cancello di determinismo severo — quattro catture, sei confronti, zero differenze
+— e quel cancello era soddisfatto *anche* fotografando pagine vuote. Misurava con
+precisione la cosa sbagliata. A trovarlo non è stata una revisione del codice: è
+stato un cambiamento che *doveva* produrre una differenza e non l'ha prodotta.

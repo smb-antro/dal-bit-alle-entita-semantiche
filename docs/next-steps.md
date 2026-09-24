@@ -9,13 +9,10 @@
   `:VocabolarioBpeDelSaggio`. Vedi `decision-log.md`.
 - ~~**IBM Plex Mono self-hosted**~~ — ✅ 22 settembre 2026: in `design-system/fonts/`
   insieme a EB Garamond, unica copia per tutto il repository, nessuna richiesta di rete.
-- **I tre simboli logici `∧ ∨ ⊕`** — ⚠️ **decisione aperta**. Verificato il 23 settembre
-  leggendo la `cmap` dei file: IBM Plex Mono non li contiene (ha solo `¬`), e nemmeno
-  EB Garamond. Ripiegano quindi su un font di sistema, diverso da macchina a macchina —
-  e l'unico uso dichiarato del monospaziato nel design system è soddisfatto per un glifo
-  su quattro. Visivamente reggono; l'affermazione contraria nei documenti è stata
-  corretta. Opzioni: un font di ripiego che li contenga, disegnarli come SVG, o
-  accettare il ripiego dichiarandolo.
+- ~~**I tre simboli logici `∧ ∨ ⊕`**~~ — ✅ 23 settembre 2026: IBM Plex Mono non li
+  conteneva. Sostituito con Noto Sans Mono, l'unico fra otto monospaziati con
+  licenza aperta che li ha tutti e tre, ridotto ai 133 caratteri che servono
+  (10,0 KB contro 146,7). Vedi `decision-log.md`.
 - **Cartelle `lab/`** (`design-system/lab/`, `ontologia/lente-semantica/lab/`) — da non
   pubblicare; per ora restano nel repository, da escludere prima del push.
 - **Push su GitHub** — decisione a parte, da confermare esplicitamente quando il resto

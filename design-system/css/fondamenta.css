@@ -13,12 +13,20 @@
    Una sola copia per l'intero repository; i percorsi sono relativi a questo file,
    quindi funziona da qualunque pagina che lo colleghi.
 
-   EB Garamond — testo del saggio.            Licenza: OFL-EBGaramond.txt
-   IBM Plex Mono — simboli logici ed etichette tecniche. Licenza: OFL-IBMPlexMono.txt
+   EB Garamond — testo del saggio.                Licenza: OFL-EBGaramond.txt
+   Noto Sans Mono — simboli logici e valori tecnici. Licenza: OFL-NotoSansMono.txt
 
-   Nota: IBM Plex Mono era caricato da Google Fonts in 5 capitoli su 14, e i subset
-   serviti non coprivano U+2227 (∧), U+2228 (∨), U+2295 (⊕) — cioè tre dei quattro
-   simboli logici di Fondamenti · 1. I file completi qui presenti li contengono. */
+   Nota: IBM Plex Mono era caricato da Google Fonts in 5 capitoli su 14, e in 9 non
+   era caricato affatto. Averlo qui rende uniforme la resa del monospaziato.
+
+   Il monospaziato è Noto Sans Mono, ridotto ai 133 caratteri che il saggio usa
+   davvero (10 KB) da scripts/subset_font.py. Ha sostituito IBM Plex Mono il 23
+   settembre 2026, per una ragione verificata leggendo la cmap dei file: Plex NON
+   contiene U+2227 (∧), U+2228 (∨), U+2295 (⊕), cioè tre dei quattro simboli
+   logici che sono l'uso principale del monospaziato in questo saggio. Su otto
+   monospaziati con licenza aperta esaminati, Noto Sans Mono è l'unico che li ha
+   tutti e tre. Un peso solo: verificato sul bundle con tutti e 14 i capitoli, il
+   browser non ha mai caricato altro che il 400. */
 
 @font-face {
   font-family: 'EB Garamond';
@@ -35,23 +43,9 @@
   font-display: swap;
 }
 @font-face {
-  font-family: 'IBM Plex Mono';
-  src: url('../fonts/IBMPlexMono-Regular.woff2') format('woff2');
+  font-family: 'Noto Sans Mono';
+  src: url('../fonts/NotoSansMono-Tecnico.woff2') format('woff2');
   font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'IBM Plex Mono';
-  src: url('../fonts/IBMPlexMono-Medium.woff2') format('woff2');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'IBM Plex Mono';
-  src: url('../fonts/IBMPlexMono-SemiBold.woff2') format('woff2');
-  font-weight: 600;
   font-style: normal;
   font-display: swap;
 }
@@ -199,7 +193,7 @@
 
     /* famiglie tipografiche */
     --serif: 'EB Garamond', Garamond, Georgia, 'Times New Roman', serif;
-    --mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+    --mono: 'Noto Sans Mono', 'SFMono-Regular', Consolas, monospace;
 
     /* misure di struttura */
     --rail-w: 300px;

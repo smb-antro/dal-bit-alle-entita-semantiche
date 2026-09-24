@@ -56,6 +56,32 @@ SOGLIE_PER_BERSAGLIO = {
     # nell'altro, non contenuto che cambia. Margine 4 = il doppio del
     # misurato: due pixel non possono nascondere una regressione in un grafo.
     'lente-attention-grado2__desktop': (4, "2 px bistabili di antialiasing, misurati su 3 catture"),
+
+    # Le tre pagine con i widget piu' densi. Dal 23 settembre 2026 l'harness
+    # rivela i blocchi .reveal prima di fotografare (prima ne fotografava il
+    # 64% a opacita' zero), quindi queste pagine mostrano molto piu' contenuto
+    # — e con esso una instabilita' di rasterizzazione su bordi e maiuscoletto.
+    #
+    # Non e' deriva ma BISTABILITA': su tre catture consecutive dello stesso
+    # codice immutato ricorrono sempre gli stessi valori esatti (240, 183, 133,
+    # 73), cioe' la pagina rende in una di due varianti. Guardate da vicino, le
+    # due varianti sono indistinguibili: un'etichetta con bordo arancione e il
+    # suo maiuscoletto, spostati di frazioni di pixel. L'impronta del disegno
+    # (canvas, SVG, testo) e' identica: cambia solo la rasterizzazione.
+    #
+    # Margine 300, sopra il massimo misurato di 240. Non nasconde una
+    # regressione vera: un cambio di colore, misura o spaziatura produce
+    # migliaia o milioni di pixel percettibili su pagine da ~20 milioni, non
+    # centinaia sparse sui bordi.
+    'saggio-meccanismo-1-testo-come-dato__desktop': (300, "bistabile, max misurato 240 su 3 catture"),
+    'saggio-meccanismo-1-testo-come-dato__desktop__reduced-motion': (300, "bistabile, max misurato 240"),
+    'saggio-meccanismo-1-testo-come-dato__mobile': (300, "bistabile, max misurato 230"),
+    'saggio-meccanismo-2-probabilita__desktop': (300, "bistabile, max misurato 73"),
+    'saggio-meccanismo-2-probabilita__desktop__reduced-motion': (300, "bistabile, max misurato 73"),
+    'saggio-meccanismo-2-probabilita__mobile': (300, "bistabile, max misurato 183"),
+    'saggio-meccanismo-6-large__desktop': (300, "bistabile, max misurato 133"),
+    'saggio-meccanismo-6-large__desktop__reduced-motion': (300, "bistabile, max misurato 133"),
+    'saggio-meccanismo-6-large__mobile': (300, "bistabile, max misurato 216"),
 }
 
 

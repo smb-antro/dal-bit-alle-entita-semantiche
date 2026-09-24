@@ -93,7 +93,7 @@
 
   /* famiglie tipografiche */
   --serif: 'EB Garamond', Garamond, Georgia, 'Times New Roman', serif;
-  --mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+  --mono: 'Noto Sans Mono', 'SFMono-Regular', Consolas, monospace;
 
   /* misure di struttura */
   --rail-w: 300px;

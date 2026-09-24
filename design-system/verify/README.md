@@ -56,6 +56,9 @@ Nessuna delle tre cartelle di immagini è versionata: si rigenerano. Gli script 
 
 - **Le ~186 pagine dell'ontologia non campionate.** Sono generate dagli stessi
   modelli; un errore che tocchi solo una pagina specifica non verrebbe visto.
+- **I widget che richiedono un'interazione per disegnare** (un click, un
+  trascinamento). Lo scorrimento fa partire quelli agganciati all'intersezione,
+  non gli altri.
 - **Che le animazioni si fermino davvero sotto reduced-motion.** L'harness
   congela le animazioni in entrambe le varianti per poter essere deterministico,
   quindi non può verificarlo per immagine. Lo verifica invece un censimento
@@ -97,6 +100,9 @@ cause distinte, tutte emerse solo dal doppio giro e mai da una cattura singola.
 4. **Il dithering delle sfumature**, che ha richiesto di ripensare la tolleranza
    — vedi la sezione seguente.
 
+5. **I blocchi `.reveal`, che non si rivelavano affatto** — la scoperta più grave,
+   e arrivata tardi: vedi la sezione seguente.
+
 Una pista esplorata e **scartata**: il limite di 16384px (2¹⁴) alla dimensione
 delle texture di Chrome. 25 bersagli su 65 superano quell'altezza, fino a
 54.900px, e una differenza intermittente cadeva in un riquadro che finiva esatto
@@ -104,6 +110,38 @@ a y=16384 — indizio convincente. Si è provato a catturare a fasce da 8000px. 
 misurando l'*entità* di quelle differenze si è visto che erano tutte di 1 livello
 su 255: Playwright cuce bene, il limite non corrompe nulla. Le fasce sono state
 rimosse, perché introducevano più rumore di quanto ne togliessero.
+
+## I `.reveal`: il 64% che non veniva fotografato
+
+Trovato il **23 settembre 2026**, cambiando il carattere monospaziato. I quattro
+simboli logici di Fondamenti · 1, alti 40px, non comparivano in *nessuno* dei due
+screenshot — né prima né dopo il cambio. Cercandoli per colore nell'immagine
+intera: una sola banda arancione in tutta la pagina.
+
+La causa: il saggio avvolge quasi tutto il proprio contenuto in blocchi `.reveal`,
+che partono a `opacity: 0` e diventano visibili quando un `IntersectionObserver`
+li incontra. `cattura.js` non scorreva la pagina, quindi l'osservatore non
+scattava mai. Misurato sulle 14 pagine: **il 64% dell'altezza complessiva stava
+dentro `.reveal` mai resi visibili.** Il confronto a pixel vedeva circa un terzo
+del contenuto e dichiarava «zero differenze» su pagine in gran parte vuote.
+
+Cosa **non** era compromesso, e vale la pena dirlo: i confronti di stile calcolato
+leggono i valori a prescindere dall'opacità; i confronti di altezza sono validi
+perché un elemento a opacità zero occupa comunque il suo spazio; i controlli su
+link, rete e token non c'entrano. Era cieco il solo confronto a pixel.
+
+La correzione fa due cose: **scorre** l'intera pagina e torna in cima, così gli
+osservatori scattano e i widget agganciati all'intersezione disegnano davvero; e
+porta i `.reveal` allo stato finale **per dichiarazione** (`opacity: 1;
+transform: none`), perché un `translateY` residuo promuove l'elemento a livello
+compositato e ne cambia la rasterizzazione. La cattura passa da ~88 a ~186
+secondi: è il prezzo di guardare tutta la pagina invece di un terzo.
+
+**Verificato dopo la correzione**: estratti dalla storia lo stato prima
+(`c8db785`) e dopo (`1791eda`) la migrazione al design system, resi entrambi con
+la cattura corretta e confrontati. **26 confronti su 28 identici**; i due con
+differenze mostrano esattamente i valori bistabili già catalogati sotto. La
+migrazione regge anche su ciò che l'harness non aveva mai guardato.
 
 ## Tolleranza: l'entità, non il numero
 
@@ -133,8 +171,20 @@ due soli pixel, sempre con gli stessi due valori alternativi. È una coordinata
 che cade su un mezzo pixel esatto e arrotonda in un verso o nell'altro. Margine
 concesso: 4 pixel, il doppio del misurato.
 
-**Validazione finale**: 4 catture indipendenti, 6 confronti a coppie, zero
-fallimenti.
+Dal 23 settembre, con i `.reveal` finalmente visibili, tre pagine molto dense di
+widget — Meccanismo · 1, 2 e 6 — mostrano una instabilità di rasterizzazione su
+bordi e maiuscoletto. Non è deriva ma **bistabilità**: su tre catture consecutive
+dello stesso codice ricorrono sempre gli stessi valori esatti (240, 183, 133, 73),
+cioè la pagina rende in una di due varianti, indistinguibili guardandole da
+vicino. L'impronta del disegno (canvas, SVG, testo) è identica: cambia solo come
+viene rasterizzato. Margine concesso: 300 pixel, sopra il massimo misurato di 240.
+Non nasconde una regressione vera — un cambio di colore, misura o spaziatura
+produce migliaia o milioni di pixel percettibili su pagine da ~20 milioni, non
+centinaia sparse sui bordi.
+
+**Validazione**: 4 catture indipendenti e 6 confronti a coppie prima della
+correzione dei `.reveal`; 3 catture e 3 confronti dopo, più il confronto
+prima/dopo migrazione descritto sopra.
 
 ## Animazioni infinite sotto reduced-motion
 

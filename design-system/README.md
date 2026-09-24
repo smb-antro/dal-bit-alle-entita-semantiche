@@ -116,12 +116,17 @@ sempre vero, mai simulato.
 small-caps` più `letter-spacing: .06em` sulla stessa Garamond, colore
 `--colore-testo-tenue`. Niente secondo font.
 
-**Il monospaziato ha un uso solo, dichiarato**: i quattro simboli logici `∧ ∨ ¬ ⊕`.
-Con un'avvertenza che vale la pena leggere: IBM Plex Mono contiene solo `¬`. Gli altri
-tre glifi non ci sono — verificato leggendo la `cmap` dei file, non a occhio — e
-ripiegano su un font di sistema. L'uso dichiarato del monospaziato è quindi oggi
-soddisfatto per un glifo su quattro; la decisione su cosa farne è aperta, vedi
-`../docs/next-steps.md`.
+**Il monospaziato ha due usi, entrambi dichiarati**: i quattro simboli logici
+`∧ ∨ ¬ ⊕` di Fondamenti · 1, e i valori tecnici che cambiano dal vivo in
+Meccanismo · 4 e 6 (formula, perdita, prompt). Tutto il resto che nel saggio
+originale era monospaziato è passato a Garamond in maiuscoletto.
+
+È **Noto Sans Mono**, ridotto ai 133 caratteri che servono (10 KB) da
+`scripts/subset_font.py`. Ha sostituito IBM Plex Mono il 23 settembre 2026 per una
+ragione misurata: Plex non contiene `∧`, `∨`, `⊕` — verificato leggendo la `cmap`
+dei file, non a occhio — quindi tre dei quattro simboli ripiegavano su un font di
+sistema, visibilmente più piccoli delle lettere accanto. Fra otto monospaziati con
+licenza aperta esaminati, Noto Sans Mono è l'unico che li ha tutti e tre.
 Tutto ciò che nel saggio originale era monospaziato — kicker, valori dei widget,
 intestazioni di tabella — è passato a Garamond in maiuscoletto, verificato dal vivo
 che i numeri che cambiano in tempo reale non «ballano», perché stanno in riquadri a
