@@ -1498,3 +1498,51 @@ che lo scroll-spy continui a seguire lo scorrimento normale: 6 unità su 6.
 **Nota**: la prima verifica di questa correzione usava la prima sotto-sezione,
 che sta a y=0 — indistinguibile dall'andare in cima. Una prova che non può
 fallire non è una prova; rifatta con la quarta.
+
+## 2026-09-25 — La nona scheda: uno specimen che dichiara invece di mostrare soltanto
+
+Domanda dell'utente: perché nel design system non c'è uno specimen. Risposta
+verificata: c'è la scheda `tipografia`, 41 righe, intitolata «Scala tipografica»,
+ed è esattamente quello — otto gradini di dimensione con il token accanto. Uno
+specimen della **scala**, non dei **caratteri**. Misurato ciò che il sistema
+contiene e la scheda non mostrava: il corsivo è una faccia separata da 287 KB
+usata 167 volte nel saggio e assente da ogni scheda; l'asse di peso va da 400 a
+800 e nessun valore era reso; mancavano alfabeto, cifre, accenti e maiuscoletto —
+che qui non è un dettaglio, perché è la scelta che sostituisce un secondo font.
+
+Non era una decisione presa e registrata: era un buco di perimetro. Le schede
+erano state definite come «~10 componenti reali» estratti dal saggio, e la
+tipografia vi era entrata come problema di riconciliazione (tre scale ridotte a
+una), non come materiale da documentare.
+
+**Nona scheda, `components/caratteri/`, generata** da
+`scripts/specimen_caratteri.py`. Il motivo per cui è generata e non scritta a
+mano è il punto della cosa: la colonna di copertura dice quali codepoint ogni
+file **dichiara** nella propria `cmap`, letta con fontTools. Quel dato non si può
+dedurre dalla pagina — un glifo assente non lascia un quadratino, ripiega in
+silenzio su un carattere di sistema e sembra a posto. È l'errore che in questo
+repository è costato due affermazioni false. La scheda tiene le due cose
+separate e lo dice in testa: *mostrato* a sinistra, *dichiarato* a destra.
+
+Modalità `--check` come `export_tokens.py` e `build_css.py`. **Provata rompendo
+apposta ciò che sorveglia**, su una copia di lavoro fuori dal repository:
+sostituito `NotoSansMono-Tecnico.woff2` con EB Garamond, `--check` è uscito con
+codice 1, e la rigenerazione ha riportato `∧ ∨ ⊕` come assenti da tutte e tre le
+facce. fontTools è importato dentro la funzione, come in `subset_font.py`: sta
+nel python di sistema (4.60.2), nessun ambiente virtuale.
+
+**Due lacune latenti, trovate dalla scheda al primo giro**, nessuna delle quali
+si manifesta oggi:
+- il **corsivo** di EB Garamond non contiene `⁰ ¹ ² ⁸ ⁹` (solo `ⁿ` sopravvive);
+- il sottoinsieme di **Noto Sans Mono** non contiene `¹` e `²`, coerentemente con
+  l'elenco `TECNICI` dichiarato in `subset_font.py`, che non li include.
+
+Verificato dove quei glifi compaiono davvero: `2ⁿ` dentro un `<em>` in
+Fondamenti · 1 (e `ⁿ` c'è, nel corsivo), e `¹⁰ ¹¹ ¹²` nelle etichette d'asse del
+grafico di Meccanismo · 6, che non dichiarano `font-family` e quindi ereditano EB
+Garamond tondo, dove ci sono tutti. Nessun ripiego in atto. Le due lacune passano
+da ignote a dichiarate, che è l'unico risultato che uno specimen possa dare
+quando non c'è un difetto.
+
+Resa verificata a 1100px: tre facce caricate, cinque tabelle, 21 righe di
+copertura, nessuna richiesta fallita, nessun errore JavaScript.

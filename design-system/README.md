@@ -194,10 +194,18 @@ Ogni cartella in [`components/`](components/) è un'anteprima autonoma, apribile
 browser così com'è, e una scheda per il pannello di Claude Design — il marcatore
 `<!-- @dsCard group="…" -->` sulla prima riga dice a quale gruppo appartiene.
 
+Una sola è generata: `caratteri`. La sua colonna di copertura riporta quali codepoint
+ciascun file **dichiara** nella propria `cmap`, e quel dato non si può scrivere a mano
+né dedurre guardando la pagina — un glifo che il font non ha ripiega in silenzio su un
+carattere di sistema e sembra a posto. Si modifica nello script, non nell'HTML, e
+`python3 scripts/specimen_caratteri.py --check` fallisce se i font cambiano senza che la
+scheda venga rigenerata.
+
 | Scheda | Gruppo | Cosa mostra |
 |---|---|---|
 | [`tavolozza`](components/tavolozza/) | Fondamenta | le tre famiglie e i neutri, con primitivo e ruolo accanto |
 | [`tipografia`](components/tipografia/) | Fondamenta | la scala con testo vero, e i quattro simboli logici |
+| [`caratteri`](components/caratteri/) | Fondamenta | le tre facce: alfabeto, corsivo, maiuscoletto, pesi, e la copertura **dichiarata** dai file — **generata** da `scripts/specimen_caratteri.py` |
 | [`sidebar`](components/sidebar/) | Navigazione | il binario con scroll-spy e moduli apribili |
 | [`hero`](components/hero/) | Lettura | apertura di pagina |
 | [`richiami`](components/richiami/) | Lettura | nota a margine, domanda, citazione |

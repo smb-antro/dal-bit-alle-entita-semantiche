@@ -1,9 +1,14 @@
 # Snapshot — cs-1-cartografia-semantica
 
-**9 settembre 2026** — saggio e Lente semantica interamente integrati e rifiniti:
-design chiaro uniforme, tenda dei concetti su tutto il saggio, poster del grafo,
-indice della presentazione riorganizzato in 4 parti, secondo grado della Lente
-reso leggibile. Nessun commit pubblicato su GitHub.
+**25 settembre 2026** — design system funzionante (token, layer, 9 schede di
+componente), compilato a file singolo autosufficiente con la Lente semantica
+dentro come capitolo, harness di regressione visiva a zero differenze su 65
+confronti. Nessun commit pubblicato su GitHub.
+
+*(Stato al 9 settembre 2026, che le voci qui sotto continuano a descrivere: saggio
+e Lente integrati e rifiniti, design chiaro uniforme, tenda dei concetti su tutto
+il saggio, poster del grafo, indice della presentazione in 4 parti, secondo grado
+della Lente reso leggibile.)*
 
 - `dominio/` e `ontologia/` copiati integralmente (`git archive`) dai rispettivi
   repository sorgente, al loro stato del 4 settembre 2026 (HEAD `bea0aaa` e `1765f29`
@@ -46,11 +51,20 @@ reso leggibile. Nessun commit pubblicato su GitHub.
   legenda non toccava affatto il secondo grado (mancava `data-cat`).
 - ✅ **Bundle a file singolo rifatto** (23 settembre 2026): `build_output.py` non girava
   più. Ora presentazione e appendice sono capitoli veri, il tema morto è eliminato, i font
-  sono incorporati in data-URI e il bundle è **un file solo** (1,88 MB) che funziona anche
+  sono incorporati in data-URI e il bundle è **un file solo** che funziona anche
   da `file://`. Verificato: 816 proprietà di stile confrontate fra bundle e sorgenti su
   quattro capitoli, zero differenze.
-- `docs/` (questo file, decision-log, next-steps) sincronizzati il 9 settembre
-  2026 dopo essere rimasti indietro rispetto al lavoro di giornata.
+- ✅ **Lente semantica dentro il compilato** (23-24 settembre 2026): era l'unico
+  collegamento che usciva dal file, e Safari lo rifiutava — il suo sandbox dà accesso al
+  solo file consegnato dal sistema. Ora è il quindicesimo capitolo; il compilato pesa
+  2,09 MB e `build_output.py` fallisce se resta un `href`/`src` esterno. Corretta anche
+  la navigazione: cliccando una sotto-sezione si atterra direttamente su quella, senza
+  ripartire dall'inizio del capitolo.
+- ✅ **Nona scheda `caratteri`** (25 settembre 2026): specimen delle tre facce, generato
+  da `scripts/specimen_caratteri.py`, con la copertura dei glifi letta dalla `cmap` dei
+  file invece che dedotta dalla resa.
+- `docs/` (questo file, decision-log, next-steps) sincronizzati il 9 settembre 2026 e
+  di nuovo il 25 settembre 2026.
 - `LICENSE` definita il 19 settembre 2026: codice MIT, ontologia CC BY 4.0 (anche
   dentro i dati, con `owl:versionInfo "1.0"`), prosa e documentazione riservate.
 - ✅ **Font self-hosted in una copia sola** (22 settembre 2026): `design-system/fonts/`

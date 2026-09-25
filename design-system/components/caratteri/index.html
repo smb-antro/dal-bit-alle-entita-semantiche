@@ -1,0 +1,86 @@
+<!-- @dsCard group="Fondamenta" -->
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Caratteri</title>
+<link rel="stylesheet" href="../../css/design-system.css">
+<style>
+  body{ padding: 32px; max-width: 980px; }
+  h2{ font-size: var(--dim-lede); font-variant: small-caps;
+      letter-spacing: var(--traccia-apparato); color: var(--colore-apparato);
+      margin: 34px 0 14px; }
+  .nota{ font-size: .96rem; color: var(--colore-testo-attenuato); max-width: 62ch; }
+  .campione{ font-size: 2.1rem; line-height: 1.45; word-spacing: .12em; margin: 6px 0 2px; }
+  .campione.corsivo{ font-style: italic; }
+  .campione.mono{ font-family: var(--font-mono); font-size: 1.8rem; }
+  .etichetta{ font-size: .72rem; color: var(--colore-testo-tenue);
+              font-variant: small-caps; letter-spacing: var(--traccia-apparato); }
+  table{ border-collapse: collapse; margin-top: 10px; font-size: .9rem; }
+  th, td{ text-align: left; padding: 7px 14px 7px 0; border-bottom: 1px solid var(--colore-bordo); }
+  th{ font-size: .72rem; font-variant: small-caps; letter-spacing: var(--traccia-apparato);
+      color: var(--colore-testo-tenue); font-weight: 400; }
+  td.glifo{ font-size: 1.5rem; }
+  td.glifo.mono{ font-family: var(--font-mono); }
+  td.cp, td.num{ font-family: var(--font-mono); font-size: .8rem;
+                 color: var(--colore-testo-attenuato); }
+  .si{ color: var(--colore-ontologia); }
+  .no{ color: var(--colore-apparato); font-weight: 500; }
+  .peso{ margin: 4px 0; font-size: 1.4rem; }
+</style>
+</head>
+<body>
+<p class="nota">Le tre facce del sistema, mostrate e dichiarate. <strong>Mostrate</strong>
+è ciò che si vede qui sotto; <strong>dichiarate</strong> è ciò che la <code>cmap</code> di
+ogni file contiene, letta da <code>scripts/specimen_caratteri.py</code>. Le due cose non
+coincidono: un glifo che il font non ha ripiega in silenzio su un carattere di sistema e
+sulla pagina sembra a posto. Questa scheda è generata — si modifica nello script, non qui.</p>
+
+<h2>Le facce</h2>
+<table>
+<tr><th>faccia</th><th>file</th><th>byte</th><th>codepoint</th><th>pesi dichiarati</th><th>assi</th></tr>
+<tr><td>EB Garamond <span class="etichetta">tondo</span></td><td class="cp">EBGaramond-Variable.woff2</td><td class="num">297,028</td><td class="num">2,091</td><td class="cp">400 800</td><td class="cp">wght 400–800</td></tr><tr><td>EB Garamond <span class="etichetta">corsivo</span></td><td class="cp">EBGaramond-Italic-Variable.woff2</td><td class="num">287,472</td><td class="num">1,972</td><td class="cp">400 800</td><td class="cp">wght 400–800</td></tr><tr><td>Noto Sans Mono <span class="etichetta">tondo</span></td><td class="cp">NotoSansMono-Tecnico.woff2</td><td class="num">10,268</td><td class="num">133</td><td class="cp">400</td><td class="cp">statico</td></tr>
+</table>
+<p class="nota">Nessuna delle tre facce dichiara <code>unicode-range</code>
+(0 occorrenze in <code>fonts.css</code>): ogni faccia è candidata per
+qualunque codepoint, e il ripiego dipende solo da cosa contiene.</p>
+
+<h2>Alfabeto</h2>
+<p class="etichetta">tondo</p>
+<div class="campione">ABCDEFGHIJKLMNOPQRSTUVWXYZ</div>
+<div class="campione">abcdefghijklmnopqrstuvwxyz</div>
+<div class="campione">0123456789</div>
+<p class="etichetta">corsivo — faccia separata, non una inclinazione calcolata</p>
+<div class="campione corsivo">ABCDEFGHIJKLMNOPQRSTUVWXYZ</div>
+<div class="campione corsivo">abcdefghijklmnopqrstuvwxyz</div>
+<div class="campione corsivo">0123456789</div>
+<p class="nota">Le cifre sono minuscole (oldstyle): scendono sotto la linea di base e
+hanno altezze diverse fra loro. È la resa predefinita di EB Garamond, non una scelta
+dichiarata nei token.</p>
+
+<h2>Italiano</h2>
+<div class="campione">àèéìòùÀÈÉÌÒÙ</div>
+<div class="campione">«»’“”–—…·</div>
+
+<h2>Maiuscoletto</h2>
+<p class="nota">Il maiuscoletto sostituisce un secondo carattere: tutto ciò che è apparato
+lo usa invece di cambiare famiglia. È la scelta da cui dipende il fatto che il sistema
+abbia un solo carattere di testo.</p>
+<div class="campione"><span class="apparato">Fondamenti · 1 — Funzioni booleane</span></div>
+
+<h2>Pesi</h2>
+<p class="nota">L'asse di peso va da 400 a 800. Qui sono resi i valori che il design system
+chiede davvero, ricavati dai suoi CSS: 500, 600.</p>
+<div class="peso" style="font-weight:500">Il significato non sta nella parola <span class="etichetta">peso 500</span></div><div class="peso" style="font-weight:600">Il significato non sta nella parola <span class="etichetta">peso 600</span></div>
+
+<h2>Copertura dichiarata</h2>
+<p class="nota">Reso a sinistra, dichiarato a destra. Dove una faccia risulta «assente», in
+quella faccia il glifo viene da un carattere di sistema, diverso da macchina a macchina.</p>
+<p class="etichetta">simboli logici</p><table><tr><th>glifo</th><th>codepoint</th><th>EB Garamond tondo</th><th>EB Garamond corsivo</th><th>Noto Sans Mono tondo</th></tr><tr><td class="glifo mono">∧</td><td class="cp">U+2227</td><td><span class=no>assente</span></td><td><span class=no>assente</span></td><td><span class=si>dichiarato</span></td></tr><tr><td class="glifo mono">∨</td><td class="cp">U+2228</td><td><span class=no>assente</span></td><td><span class=no>assente</span></td><td><span class=si>dichiarato</span></td></tr><tr><td class="glifo mono">¬</td><td class="cp">U+00AC</td><td><span class=si>dichiarato</span></td><td><span class=si>dichiarato</span></td><td><span class=si>dichiarato</span></td></tr><tr><td class="glifo mono">⊕</td><td class="cp">U+2295</td><td><span class=no>assente</span></td><td><span class=no>assente</span></td><td><span class=si>dichiarato</span></td></tr></table><p class="etichetta">altri segni tecnici</p><table><tr><th>glifo</th><th>codepoint</th><th>EB Garamond tondo</th><th>EB Garamond corsivo</th><th>Noto Sans Mono tondo</th></tr><tr><td class="glifo">↔</td><td class="cp">U+2194</td><td><span class=si>dichiarato</span></td><td><span class=si>dichiarato</span></td><td><span class=si>dichiarato</span></td></tr><tr><td class="glifo">≈</td><td class="cp">U+2248</td><td><span class=si>dichiarato</span></td><td><span class=si>dichiarato</span></td><td><span class=si>dichiarato</span></td></tr><tr><td class="glifo">∼</td><td class="cp">U+223C</td><td><span class=si>dichiarato</span></td><td><span class=si>dichiarato</span></td><td><span class=si>dichiarato</span></td></tr><tr><td class="glifo">→</td><td class="cp">U+2192</td><td><span class=si>dichiarato</span></td><td><span class=si>dichiarato</span></td><td><span class=si>dichiarato</span></td></tr><tr><td class="glifo">↓</td><td class="cp">U+2193</td><td><span class=si>dichiarato</span></td><td><span class=si>dichiarato</span></td><td><span class=si>dichiarato</span></td></tr><tr><td class="glifo">−</td><td class="cp">U+2212</td><td><span class=si>dichiarato</span></td><td><span class=si>dichiarato</span></td><td><span class=si>dichiarato</span></td></tr><tr><td class="glifo">›</td><td class="cp">U+203A</td><td><span class=si>dichiarato</span></td><td><span class=si>dichiarato</span></td><td><span class=si>dichiarato</span></td></tr></table><p class="etichetta">apici</p><table><tr><th>glifo</th><th>codepoint</th><th>EB Garamond tondo</th><th>EB Garamond corsivo</th><th>Noto Sans Mono tondo</th></tr><tr><td class="glifo">ⁿ</td><td class="cp">U+207F</td><td><span class=si>dichiarato</span></td><td><span class=si>dichiarato</span></td><td><span class=si>dichiarato</span></td></tr><tr><td class="glifo">⁰</td><td class="cp">U+2070</td><td><span class=si>dichiarato</span></td><td><span class=no>assente</span></td><td><span class=si>dichiarato</span></td></tr><tr><td class="glifo">¹</td><td class="cp">U+00B9</td><td><span class=si>dichiarato</span></td><td><span class=no>assente</span></td><td><span class=no>assente</span></td></tr><tr><td class="glifo">²</td><td class="cp">U+00B2</td><td><span class=si>dichiarato</span></td><td><span class=no>assente</span></td><td><span class=no>assente</span></td></tr><tr><td class="glifo">⁸</td><td class="cp">U+2078</td><td><span class=si>dichiarato</span></td><td><span class=no>assente</span></td><td><span class=si>dichiarato</span></td></tr><tr><td class="glifo">⁹</td><td class="cp">U+2079</td><td><span class=si>dichiarato</span></td><td><span class=no>assente</span></td><td><span class=si>dichiarato</span></td></tr></table><p class="etichetta">assente ovunque, documentato</p><table><tr><th>glifo</th><th>codepoint</th><th>EB Garamond tondo</th><th>EB Garamond corsivo</th><th>Noto Sans Mono tondo</th></tr><tr><td class="glifo">␣</td><td class="cp">U+2423</td><td><span class=no>assente</span></td><td><span class=no>assente</span></td><td><span class=no>assente</span></td></tr></table>
+
+<h2>Cosa questa pagina non prova</h2>
+<p class="nota">Che il browser usi davvero la faccia attesa per un certo glifo: la colonna
+dice cosa il file contiene, non quale font il motore ha scelto al momento di disegnare.
+Per quello serve l'ispettore del browser, o un confronto di metriche.</p>
+</body>
+</html>
