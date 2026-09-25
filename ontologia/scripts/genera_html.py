@@ -237,8 +237,16 @@ def genera_indice_concetti(g):
 
 def _blocco_citazioni(g, target):
     """Le righe 'Concetti discussi qui' / 'Teorici citati qui' per un bersaglio
-    di :discussoInUnita (un'Unità o, per Fondamenti, il Capitolo stesso)."""
-    citanti = sorted(g.subjects(N.discussoInUnita, target), key=lambda x: label(g, x))
+    (un'Unità o, per Fondamenti, il Capitolo stesso).
+
+    Due proprietà e non una: dal 25 settembre 2026 i concetti arrivano da
+    :discussoInUnita e i teorici da :citatoInUnita — sono classi disgiunte e
+    una proprietà sola con dominio :Concetto rendeva l'ontologia incoerente
+    (vedi ontologia.ttl, :citatoInUnita)."""
+    citanti = sorted(
+        set(g.subjects(N.discussoInUnita, target)) | set(g.subjects(N.citatoInUnita, target)),
+        key=lambda x: label(g, x),
+    )
     concetti = [x for x in citanti if kind(g, x) == "concetto"]
     teorici_qui = [x for x in citanti if kind(g, x) == "teorico"]
     righe = []
@@ -349,7 +357,7 @@ def genera_pagina_teorico(g, t):
     teorizzati = sorted(g.subjects(N.teorizzatoDa, t), key=lambda x: label(g, x))
     discussi = sorted(g.subjects(N.messoInDiscussioneDa, t), key=lambda x: label(g, x))
     risposte_a = sorted(g.objects(t, N.riprendeArgomentazioneDi), key=lambda x: label(g, x))
-    unita = sorted(g.objects(t, N.discussoInUnita), key=lambda x: label(g, x))
+    unita = sorted(g.objects(t, N.citatoInUnita), key=lambda x: label(g, x))
 
     corpo = [f'<p class="scope-note">{ruolo}</p>' if ruolo else ""]
     if opera:

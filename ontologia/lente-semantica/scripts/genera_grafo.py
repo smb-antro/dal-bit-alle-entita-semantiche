@@ -51,6 +51,7 @@ PROPRIETA = [
     (N.messoInDiscussioneDa, "messo in discussione da", "mette in discussione", "attribuzione"),
     (N.riprendeArgomentazioneDi, "riprende l'argomentazione di", "la cui argomentazione è ripresa da", "attribuzione"),
     (N.discussoInUnita, "discusso in", "discute", "struttura"),
+    (N.citatoInUnita, "citato in", "cita", "struttura"),
     (N.partOfCapitolo, "fa parte del capitolo", "contiene l'unità", "struttura"),
     (N.partOfParte, "fa parte della parte", "contiene il capitolo", "struttura"),
     (N.rimandaA, "rimanda a", "è richiamato da", "struttura"),
@@ -86,6 +87,9 @@ def slug(uri):
 def tipi_di(g, uri):
     tipi_uri = set(g.objects(uri, RDF.type))
     return [nome for uri_tipo, nome in TIPI if uri_tipo in tipi_uri]
+
+
+DCT = rdflib.Namespace("http://purl.org/dc/terms/")
 
 
 def main():
@@ -145,9 +149,21 @@ def main():
         "diretta": "contiene, in ordine", "inversa": "fa parte del filo", "categoria": "struttura",
     }
 
+    # La data NON è quella dell'esecuzione: è `dct:modified` dichiarata dalle
+    # sorgenti. Due ragioni. Primo, un orologio renderebbe il file diverso a ogni
+    # rigenerazione e un diff non direbbe più niente. Secondo, il campo si
+    # chiamava "generato" ed era la costante "2026-09-04" scritta a mano: il 25
+    # settembre 2026 ha fatto credere che il grafo fosse rimasto indietro
+    # rispetto a sorgenti del 19-20, mentre rigenerandolo risultava identico
+    # byte per byte. Un campo che sembra una data di generazione e non lo è
+    # costa più di quanto valga.
+    modificato = max(
+        (str(o) for o in g.objects(None, DCT.modified)), default="sconosciuta"
+    )
+
     out = {
-        "generato": "2026-09-04",
-        "nota": "Vista a grafo di src/*.ttl (root) — generata, sola lettura. Vedi docs/decisioni-modellazione.md per il modello sorgente.",
+        "sorgentiModificate": modificato,
+        "nota": "Vista a grafo di src/*.ttl (root) — generata, sola lettura, deterministica (nessun orologio). Vedi docs/decisioni-modellazione.md per il modello sorgente.",
         "nodi": nodi,
         "archi": archi,
         "proprieta": proprieta_meta,

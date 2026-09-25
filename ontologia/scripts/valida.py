@@ -48,6 +48,54 @@ def verifica_coerenza_owl(g):
             print(f"  - {i}")
         return False
     print("Nessuna incoerenza (owl:Nothing vuoto).")
+
+    # owl:Nothing da solo NON basta, ed è costato caro: fino al 25 settembre 2026
+    # questo controllo passava su un'ontologia che HermiT dichiarava incoerente.
+    # Il motivo è preciso. La disgiunzione di questo schema è scritta come
+    # `owl:AllDisjointClasses` con `owl:members`, e owlrl implementa la regola
+    # cax-dw, che agisce sulla forma `owl:disjointWith`, non la cax-adc sulla
+    # forma a elenco. Nel grafo chiuso non compare NESSUN owl:disjointWith, né
+    # asserito né derivato: la regola non aveva su cosa scattare. La chiusura
+    # deduceva correttamente che 64 Teorici fossero anche Concetti (per il
+    # dominio di :discussoInUnita) e non se ne lamentava, perché nessuno le
+    # aveva detto che le due classi non possono coesistere.
+    #
+    # Qui la disgiunzione viene verificata a mano, sulla forma che il file usa
+    # davvero. Non sostituisce un reasoner DL — non copre le unioni in posizione
+    # di superclasse, per esempio — ma copre l'assioma che c'è.
+    return verifica_disgiunzione(chiuso)
+
+
+def verifica_disgiunzione(chiuso):
+    """Nessun individuo appartiene a due classi dichiarate disgiunte."""
+    coppie = set()
+    for assioma in chiuso.subjects(RDF.type, OWL.AllDisjointClasses):
+        for lista in chiuso.objects(assioma, OWL.members):
+            membri = list(rdflib.collection.Collection(chiuso, lista))
+            for i, a in enumerate(membri):
+                for b in membri[i + 1:]:
+                    coppie.add((a, b))
+    for a, b in chiuso.subject_objects(OWL.disjointWith):
+        coppie.add((a, b))
+
+    if not coppie:
+        print("Disgiunzione: nessun assioma da verificare.")
+        return True
+
+    violazioni = []
+    for a, b in sorted(coppie, key=lambda p: (str(p[0]), str(p[1]))):
+        comuni = set(chiuso.subjects(RDF.type, a)) & set(chiuso.subjects(RDF.type, b))
+        for x in sorted(comuni, key=str):
+            violazioni.append((x, a, b))
+
+    if violazioni:
+        print(f"INCOERENTE: {len(violazioni)} individui in due classi disgiunte:")
+        for x, a, b in violazioni[:10]:
+            print(f"  - {x.split('#')[-1]} è {a.split('#')[-1]} e {b.split('#')[-1]}")
+        if len(violazioni) > 10:
+            print(f"  ... e altri {len(violazioni) - 10}")
+        return False
+    print(f"Disgiunzione: {len(coppie)} coppie verificate, nessuna violata.")
     return True
 
 

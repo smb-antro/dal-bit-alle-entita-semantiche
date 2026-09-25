@@ -458,7 +458,10 @@ def main():
         out.append(f'    rdfs:comment "{esc(ruolo)}"@it ;')
         if slugs:
             targets = ', '.join(f':{s}' for s in slugs)
-            out.append(f'    :discussoInUnita {targets} ;')
+            # :citatoInUnita, non :discussoInUnita: quest'ultima ha dominio
+            # :Concetto, e un Teorico non è un Concetto (sono classi disgiunte).
+            # Vedi ontologia.ttl, :citatoInUnita.
+            out.append(f'    :citatoInUnita {targets} ;')
         if opera:
             out.append(f'    :citaOpera "{esc(opera)}" ;')
         out[-1] = out[-1].rstrip(' ;') + ' .'

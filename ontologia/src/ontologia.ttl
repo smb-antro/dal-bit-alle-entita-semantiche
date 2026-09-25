@@ -198,6 +198,24 @@
     rdfs:domain :Concetto ; rdfs:range [ a owl:Class ; owl:unionOf ( :Unita :Capitolo ) ] .
 
 
+# Aggiunta il 25 settembre 2026. :discussoInUnita dichiara dominio :Concetto, ma
+# 85 delle sue 262 asserzioni avevano per soggetto un :Teorico — 64 teorici, da
+# Boole a Wittgenstein. Il dominio inferiva quindi che fossero Concetti, e
+# :Concetto e :Teorico sono disgiunti: l'ontologia era INCOERENTE in OWL 2 DL, e
+# lo era da prima di questa sessione. HermiT lo rileva, il reasoner OWL-RL del
+# repository no — la disgiunzione è scritta come owl:AllDisjointClasses e owlrl
+# implementa la regola sulla forma owl:disjointWith, che qui non compare mai.
+#
+# Scelta: una proprietà separata invece di allargare il dominio a un'unione. Un
+# concetto viene *discusso* in un'unità, un teorico vi è *citato*: sono due
+# relazioni diverse, e tenerle distinte le rende interrogabili separatamente —
+# che è il motivo per cui l'ontologia esiste.
+:citatoInUnita a owl:ObjectProperty ;
+    rdfs:label "citato in unità"@it ;
+    rdfs:comment "Il teorico è citato o discusso in quell'unità del saggio. Controparte di :discussoInUnita per i :Teorico; il range è allargato al Capitolo per la stessa ragione (i 2 Capitoli di Fondamenti non hanno unità proprie)."@it ;
+    rdfs:domain :Teorico ; rdfs:range [ a owl:Class ; owl:unionOf ( :Unita :Capitolo ) ] .
+
+
 ########################################################################
 # Proprietà — Dataset
 ########################################################################
@@ -212,10 +230,18 @@
     rdfs:comment "Riferimento bibliografico in forma di stringa (es. \"The Computer and the Brain, 1958\"), attaccato al Teorico citato. Stringa e non una classe Opera a sé: modellare una vera ontologia bibliografica (autori, edizioni, venue) sarebbe sproporzionato rispetto allo scopo — qui basta poter leggere la citazione, non interrogarla come entità propria."@it ;
     rdfs:domain :Teorico ; rdfs:range xsd:string .
 
-:dataVerifica a owl:DatatypeProperty, owl:FunctionalProperty ;
+# Annotazione, non proprietà di dati — cambiata il 25 settembre 2026. È
+# provenienza su una risorsa, non una relazione su cui qualcuno ragioni:
+# misurato che nessuno la legge (assente dalle 196 pagine generate, dalle 6
+# query, dalla Lente) e che tutti gli 11 valori sono la stessa data. Come
+# proprietà di dati era anche l'unica cosa che teneva l'ontologia fuori dal
+# profilo OWL 2 DL, perché xsd:date non appartiene alla mappa dei datatype di
+# OWL 2 e quel vincolo si applica alle proprietà di dati, non alle annotazioni
+# — dct:created e dct:modified portano lo stesso xsd:date e non violano nulla.
+# Perde owl:FunctionalProperty: nulla vi si appoggiava.
+:dataVerifica a owl:AnnotationProperty ;
     rdfs:label "data di verifica"@it ;
-    rdfs:comment "Data in cui il contenuto di un Dataset è stato verificato algoritmicamente (es. round-trip del tokenizzatore BPE, calcolo dell'aritmetica vettoriale)."@it ;
-    rdfs:domain :Dataset ; rdfs:range xsd:date .
+    rdfs:comment "Data in cui il contenuto di un Dataset è stato verificato algoritmicamente (es. round-trip del tokenizzatore BPE, calcolo dell'aritmetica vettoriale)."@it .
 
 
 ########################################################################
@@ -236,3 +262,72 @@
 :Attention a :Tecnica . :Softmax a :Tecnica . :MultiHeadAttention a :Tecnica .
 :CodificaPosizione a :Tecnica . :DiscesaDelGradiente a :Tecnica .
 :Rlhf a :Tecnica . :FineTuning a :Tecnica . :Quantizzazione a :Tecnica .
+
+
+########################################################################
+# Retyping — i tre fili trasversali
+#
+# Aggiunto il 25 settembre 2026. :FiloTrasversale era dichiarata come classe e
+# inclusa nell'assioma di disgiunzione qui sopra, ma non aveva alcun individuo:
+# i tre fili esistevano solo come skos:OrderedCollection in vocabolario.ttl.
+# Lo squilibrio era visibile dall'esterno — genera_grafo.py li esponeva come
+# nodi di tipo FiloTrasversale nella Lente semantica, cioè la visualizzazione
+# affermava una tipizzazione che i dati non contenevano.
+#
+# Si sceglie di tipizzarli invece di togliere la classe: la classe è già
+# argomentata in decisioni-modellazione.md, è già nella disgiunzione, ed è ciò
+# che rende i fili interrogabili in SPARQL come entità e non solo come
+# contenitori SKOS. Nessuna tripla di vocabolario.ttl viene toccata: restano
+# skos:OrderedCollection con il loro skos:memberList, e ricevono qui un tipo
+# aggiuntivo, esattamente come i 18 nodi :Tecnica qui sopra.
+########################################################################
+
+:FiloDiscretoContinuo a :FiloTrasversale .
+:FiloGalileoCrolloQuantistico a :FiloTrasversale .
+:FiloLogicaInformazioneBiologia a :FiloTrasversale .
+
+
+########################################################################
+# Dichiarazioni dei termini esterni — per OWL 2 DL
+#
+# Aggiunte il 25 settembre 2026, dopo che ROBOT (validate-profile --profile DL,
+# reasoner HermiT) ha riportato 738 violazioni, tutte della stessa natura: IRI
+# usati ma mai dichiarati. In OWL 2 DL ogni IRI deve avere una dichiarazione, e
+# questa ontologia non fa owl:imports — scelta documentata alle righe 12-15, il
+# namespace non è dereferenziabile. Senza import, SKOS e Dublin Core risultano
+# ignoti al reasoner, e in assenza di dichiarazione lui indovina: skos:broader
+# veniva letto come proprietà di ANNOTAZIONE, cioè ignorato ai fini di ogni
+# inferenza, pur essendo la relazione gerarchica portante del vocabolario.
+#
+# Dichiararli qui, invece di importarli, mantiene il file autosufficiente e dà
+# a ciascun termine il tipo che SKOS gli attribuisce: etichette e note come
+# annotazioni, relazioni fra risorse come proprietà di oggetto.
+########################################################################
+
+skos:Concept a owl:Class .
+skos:ConceptScheme a owl:Class .
+skos:OrderedCollection a owl:Class .
+
+skos:prefLabel a owl:AnnotationProperty .
+skos:altLabel a owl:AnnotationProperty .
+skos:scopeNote a owl:AnnotationProperty .
+
+skos:broader a owl:ObjectProperty .
+skos:inScheme a owl:ObjectProperty .
+skos:topConceptOf a owl:ObjectProperty .
+skos:hasTopConcept a owl:ObjectProperty .
+skos:memberList a owl:ObjectProperty .
+
+dct:title a owl:AnnotationProperty .
+dct:description a owl:AnnotationProperty .
+dct:creator a owl:AnnotationProperty .
+dct:created a owl:AnnotationProperty .
+dct:modified a owl:AnnotationProperty .
+dct:license a owl:AnnotationProperty .
+
+# Property-ponte di Fase 2: il riferimento all'unità come stringa, precedente a
+# :discussoInUnita che fa la stessa cosa verso individui reali. Le due coesistono
+# deliberatamente (vedi il commento di :discussoInUnita); mancava la dichiarazione.
+:fonte a owl:DatatypeProperty ;
+    rdfs:label "fonte (testuale)"@it ;
+    rdfs:comment "Riferimento all'unità del saggio come stringa, nella forma «Parte · n.m». Versione informale e precedente di :discussoInUnita."@it .

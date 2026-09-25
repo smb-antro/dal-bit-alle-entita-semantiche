@@ -1,6 +1,6 @@
 const GRAFO = {
- "generato": "2026-09-04",
- "nota": "Vista a grafo di src/*.ttl (root) — generata, sola lettura. Vedi docs/decisioni-modellazione.md per il modello sorgente.",
+ "sorgentiModificate": "2026-09-19",
+ "nota": "Vista a grafo di src/*.ttl (root) — generata, sola lettura, deterministica (nessun orologio). Vedi docs/decisioni-modellazione.md per il modello sorgente.",
  "nodi": [
   {
    "id": "Abduzione",
@@ -2967,11 +2967,6 @@ const GRAFO = {
    "prop": "discussoInUnita"
   },
   {
-   "da": "VonNeumann",
-   "a": "U11",
-   "prop": "discussoInUnita"
-  },
-  {
    "da": "Discretizzazione",
    "a": "U63",
    "prop": "discussoInUnita"
@@ -2983,21 +2978,6 @@ const GRAFO = {
   },
   {
    "da": "VeritasFiliaTemporis",
-   "a": "U63",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "VonNeumann",
-   "a": "U63",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Bacon",
-   "a": "U63",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Bayle",
    "a": "U63",
    "prop": "discussoInUnita"
   },
@@ -3107,47 +3087,12 @@ const GRAFO = {
    "prop": "discussoInUnita"
   },
   {
-   "da": "Godel",
-   "a": "U15",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Cantor",
-   "a": "U15",
-   "prop": "discussoInUnita"
-  },
-  {
    "da": "FondamentiLogicoMatematici",
    "a": "Gen11",
    "prop": "discussoInUnita"
   },
   {
    "da": "StoriaIntelligenzaArtificiale",
-   "a": "Gen11",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Leibniz",
-   "a": "Gen11",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Boole",
-   "a": "Gen11",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Frege",
-   "a": "Gen11",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Russell",
-   "a": "Gen11",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Whitehead",
    "a": "Gen11",
    "prop": "discussoInUnita"
   },
@@ -3182,26 +3127,6 @@ const GRAFO = {
    "prop": "discussoInUnita"
   },
   {
-   "da": "Godel",
-   "a": "Gen12",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Turing",
-   "a": "Gen12",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Lucas",
-   "a": "Gen12",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Penrose",
-   "a": "Gen12",
-   "prop": "discussoInUnita"
-  },
-  {
    "da": "SistemaFormale",
    "a": "Gen16",
    "prop": "discussoInUnita"
@@ -3213,11 +3138,6 @@ const GRAFO = {
   },
   {
    "da": "RetiRicorrentiLstm",
-   "a": "Gen16",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Bahdanau",
    "a": "Gen16",
    "prop": "discussoInUnita"
   },
@@ -3242,47 +3162,12 @@ const GRAFO = {
    "prop": "discussoInUnita"
   },
   {
-   "da": "Cantor",
-   "a": "U31",
-   "prop": "discussoInUnita"
-  },
-  {
    "da": "StoriaIntelligenzaArtificiale",
    "a": "Gen13",
    "prop": "discussoInUnita"
   },
   {
    "da": "SeparabilitaLineare",
-   "a": "Gen13",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "McCarthy",
-   "a": "Gen13",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Minsky",
-   "a": "Gen13",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Shannon",
-   "a": "Gen13",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Rochester",
-   "a": "Gen13",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Rosenblatt",
-   "a": "Gen13",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Papert",
    "a": "Gen13",
    "prop": "discussoInUnita"
   },
@@ -3312,11 +3197,6 @@ const GRAFO = {
    "prop": "discussoInUnita"
   },
   {
-   "da": "Vapnik",
-   "a": "Gen14",
-   "prop": "discussoInUnita"
-  },
-  {
    "da": "StoriaIntelligenzaArtificiale",
    "a": "Gen15",
    "prop": "discussoInUnita"
@@ -3333,36 +3213,6 @@ const GRAFO = {
   },
   {
    "da": "Backpropagation",
-   "a": "Gen15",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Rumelhart",
-   "a": "Gen15",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Hinton",
-   "a": "Gen15",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Williams",
-   "a": "Gen15",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Osindero",
-   "a": "Gen15",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Teh",
-   "a": "Gen15",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Mikolov",
    "a": "Gen15",
    "prop": "discussoInUnita"
   },
@@ -3432,11 +3282,6 @@ const GRAFO = {
    "prop": "discussoInUnita"
   },
   {
-   "da": "Chomsky",
-   "a": "U24",
-   "prop": "discussoInUnita"
-  },
-  {
    "da": "Calibrazione",
    "a": "Gen22",
    "prop": "discussoInUnita"
@@ -3497,16 +3342,6 @@ const GRAFO = {
    "prop": "discussoInUnita"
   },
   {
-   "da": "WeiEtAl2022",
-   "a": "Gen21",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "SchaefferEtAl2023",
-   "a": "Gen21",
-   "prop": "discussoInUnita"
-  },
-  {
    "da": "SpazioSemanticoEEmbedding",
    "a": "U32",
    "prop": "discussoInUnita"
@@ -3527,21 +3362,6 @@ const GRAFO = {
    "prop": "discussoInUnita"
   },
   {
-   "da": "Leibniz",
-   "a": "U32",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Newton",
-   "a": "U32",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "GalileoGalilei",
-   "a": "U32",
-   "prop": "discussoInUnita"
-  },
-  {
    "da": "SpazioSemanticoEEmbedding",
    "a": "U33",
    "prop": "discussoInUnita"
@@ -3558,21 +3378,6 @@ const GRAFO = {
   },
   {
    "da": "SignificatoComeUso",
-   "a": "U33",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Mikolov",
-   "a": "U33",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Firth",
-   "a": "U33",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Wittgenstein",
    "a": "U33",
    "prop": "discussoInUnita"
   },
@@ -3598,16 +3403,6 @@ const GRAFO = {
   },
   {
    "da": "IrragionevoleEfficaciaMatematica",
-   "a": "U34",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Bateson",
-   "a": "U34",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Wigner",
    "a": "U34",
    "prop": "discussoInUnita"
   },
@@ -3652,11 +3447,6 @@ const GRAFO = {
    "prop": "discussoInUnita"
   },
   {
-   "da": "GalileoGalilei",
-   "a": "U54",
-   "prop": "discussoInUnita"
-  },
-  {
    "da": "ReteNeuraleEApprendimento",
    "a": "U41",
    "prop": "discussoInUnita"
@@ -3692,47 +3482,12 @@ const GRAFO = {
    "prop": "discussoInUnita"
   },
   {
-   "da": "Varela",
-   "a": "U41",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Maturana",
-   "a": "U41",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "McCulloch",
-   "a": "U41",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Pitts",
-   "a": "U41",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Hebb",
-   "a": "U41",
-   "prop": "discussoInUnita"
-  },
-  {
    "da": "ReteNeuraleEApprendimento",
    "a": "U42",
    "prop": "discussoInUnita"
   },
   {
    "da": "SeparabilitaLineare",
-   "a": "U42",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Rosenblatt",
-   "a": "U42",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "VonNeumann",
    "a": "U42",
    "prop": "discussoInUnita"
   },
@@ -3753,11 +3508,6 @@ const GRAFO = {
   },
   {
    "da": "PleromaCreatura",
-   "a": "U43",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Bateson",
    "a": "U43",
    "prop": "discussoInUnita"
   },
@@ -3817,42 +3567,7 @@ const GRAFO = {
    "prop": "discussoInUnita"
   },
   {
-   "da": "Bateson",
-   "a": "U45",
-   "prop": "discussoInUnita"
-  },
-  {
    "da": "PlasticitaSinaptica",
-   "a": "Gen33",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "McCulloch",
-   "a": "Gen33",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Pitts",
-   "a": "Gen33",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Hebb",
-   "a": "Gen33",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Hubel",
-   "a": "Gen33",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Wiesel",
-   "a": "Gen33",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Shatz",
    "a": "Gen33",
    "prop": "discussoInUnita"
   },
@@ -3947,27 +3662,7 @@ const GRAFO = {
    "prop": "discussoInUnita"
   },
   {
-   "da": "Harnad",
-   "a": "Gen23",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Pearl",
-   "a": "Gen23",
-   "prop": "discussoInUnita"
-  },
-  {
    "da": "CapacitaEmergenti",
-   "a": "U62",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "WeiEtAl2022",
-   "a": "U62",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "SchaefferEtAl2023",
    "a": "U62",
    "prop": "discussoInUnita"
   },
@@ -3997,37 +3692,7 @@ const GRAFO = {
    "prop": "discussoInUnita"
   },
   {
-   "da": "Frege",
-   "a": "Gen31",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Wittgenstein",
-   "a": "Gen31",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Harnad",
-   "a": "Gen31",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Searle",
-   "a": "Gen31",
-   "prop": "discussoInUnita"
-  },
-  {
    "da": "RagionamentoCausale",
-   "a": "Gen32",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Pearl",
-   "a": "Gen32",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Hume",
    "a": "Gen32",
    "prop": "discussoInUnita"
   },
@@ -4057,26 +3722,6 @@ const GRAFO = {
    "prop": "discussoInUnita"
   },
   {
-   "da": "Chalmers",
-   "a": "Gen34",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Tononi",
-   "a": "Gen34",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Baars",
-   "a": "Gen34",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Dehaene",
-   "a": "Gen34",
-   "prop": "discussoInUnita"
-  },
-  {
    "da": "FilosofiaSpazioECorpo",
    "a": "Gen41",
    "prop": "discussoInUnita"
@@ -4102,21 +3747,6 @@ const GRAFO = {
    "prop": "discussoInUnita"
   },
   {
-   "da": "Newton",
-   "a": "Gen41",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Kant",
-   "a": "Gen41",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "MerleauPonty",
-   "a": "Gen41",
-   "prop": "discussoInUnita"
-  },
-  {
    "da": "FilosofiaSpazioECorpo",
    "a": "Gen42",
    "prop": "discussoInUnita"
@@ -4133,21 +3763,6 @@ const GRAFO = {
   },
   {
    "da": "MetaforeConcettuali",
-   "a": "Gen42",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Brooks",
-   "a": "Gen42",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Lakoff",
-   "a": "Gen42",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Johnson",
    "a": "Gen42",
    "prop": "discussoInUnita"
   },
@@ -4172,42 +3787,12 @@ const GRAFO = {
    "prop": "discussoInUnita"
   },
   {
-   "da": "Boole",
-   "a": "Fondamenti1",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Peirce",
-   "a": "Fondamenti1",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "Post",
-   "a": "Fondamenti1",
-   "prop": "discussoInUnita"
-  },
-  {
    "da": "AddestramentoEScala",
    "a": "U61",
    "prop": "discussoInUnita"
   },
   {
    "da": "ParametriScala",
-   "a": "U61",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "HerculanoHouzel",
-   "a": "U61",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "BrownEtAl2020",
-   "a": "U61",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "ChowdheryEtAl2022",
    "a": "U61",
    "prop": "discussoInUnita"
   },
@@ -4223,11 +3808,6 @@ const GRAFO = {
   },
   {
    "da": "FineTuning",
-   "a": "U64",
-   "prop": "discussoInUnita"
-  },
-  {
-   "da": "OuyangEtAl2022",
    "a": "U64",
    "prop": "discussoInUnita"
   },
@@ -4257,9 +3837,429 @@ const GRAFO = {
    "prop": "discussoInUnita"
   },
   {
+   "da": "Leibniz",
+   "a": "Gen11",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Boole",
+   "a": "Gen11",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Frege",
+   "a": "Gen11",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Russell",
+   "a": "Gen11",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Whitehead",
+   "a": "Gen11",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Leibniz",
+   "a": "U32",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Newton",
+   "a": "U32",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "GalileoGalilei",
+   "a": "U32",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Newton",
+   "a": "Gen41",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Kant",
+   "a": "Gen41",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "MerleauPonty",
+   "a": "Gen41",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Boole",
+   "a": "Fondamenti1",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Peirce",
+   "a": "Fondamenti1",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Post",
+   "a": "Fondamenti1",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Frege",
+   "a": "Gen31",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Wittgenstein",
+   "a": "Gen31",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Harnad",
+   "a": "Gen31",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Searle",
+   "a": "Gen31",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Godel",
+   "a": "Gen12",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Turing",
+   "a": "Gen12",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Lucas",
+   "a": "Gen12",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Penrose",
+   "a": "Gen12",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Godel",
+   "a": "U15",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Cantor",
+   "a": "U15",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "McCarthy",
+   "a": "Gen13",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Minsky",
+   "a": "Gen13",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Shannon",
+   "a": "Gen13",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Rochester",
+   "a": "Gen13",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Rosenblatt",
+   "a": "Gen13",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Papert",
+   "a": "Gen13",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Rosenblatt",
+   "a": "U42",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "VonNeumann",
+   "a": "U42",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Rumelhart",
+   "a": "Gen15",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Hinton",
+   "a": "Gen15",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Williams",
+   "a": "Gen15",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Osindero",
+   "a": "Gen15",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Teh",
+   "a": "Gen15",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Mikolov",
+   "a": "Gen15",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Mikolov",
+   "a": "U33",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Firth",
+   "a": "U33",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Wittgenstein",
+   "a": "U33",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Bahdanau",
+   "a": "Gen16",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "VonNeumann",
+   "a": "U11",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "VonNeumann",
+   "a": "U63",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Bacon",
+   "a": "U63",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Bayle",
+   "a": "U63",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Cantor",
+   "a": "U31",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Vapnik",
+   "a": "Gen14",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Chomsky",
+   "a": "U24",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Bateson",
+   "a": "U34",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Wigner",
+   "a": "U34",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Bateson",
+   "a": "U43",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Bateson",
+   "a": "U45",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Varela",
+   "a": "U41",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Maturana",
+   "a": "U41",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "McCulloch",
+   "a": "U41",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Pitts",
+   "a": "U41",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Hebb",
+   "a": "U41",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "McCulloch",
+   "a": "Gen33",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Pitts",
+   "a": "Gen33",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Hebb",
+   "a": "Gen33",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Hubel",
+   "a": "Gen33",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Wiesel",
+   "a": "Gen33",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Shatz",
+   "a": "Gen33",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Harnad",
+   "a": "Gen23",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Pearl",
+   "a": "Gen23",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Pearl",
+   "a": "Gen32",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Hume",
+   "a": "Gen32",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Chalmers",
+   "a": "Gen34",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Tononi",
+   "a": "Gen34",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Baars",
+   "a": "Gen34",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Dehaene",
+   "a": "Gen34",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Brooks",
+   "a": "Gen42",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Lakoff",
+   "a": "Gen42",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "Johnson",
+   "a": "Gen42",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "GalileoGalilei",
+   "a": "U54",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "WeiEtAl2022",
+   "a": "Gen21",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "SchaefferEtAl2023",
+   "a": "Gen21",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "WeiEtAl2022",
+   "a": "U62",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "SchaefferEtAl2023",
+   "a": "U62",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "HerculanoHouzel",
+   "a": "U61",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "BrownEtAl2020",
+   "a": "U61",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "ChowdheryEtAl2022",
+   "a": "U61",
+   "prop": "citatoInUnita"
+  },
+  {
+   "da": "OuyangEtAl2022",
+   "a": "U64",
+   "prop": "citatoInUnita"
+  },
+  {
    "da": "Lawvere",
    "a": "U66",
-   "prop": "discussoInUnita"
+   "prop": "citatoInUnita"
   },
   {
    "da": "Gen11",
@@ -4836,6 +4836,11 @@ const GRAFO = {
   "discussoInUnita": {
    "diretta": "discusso in",
    "inversa": "discute",
+   "categoria": "struttura"
+  },
+  "citatoInUnita": {
+   "diretta": "citato in",
+   "inversa": "cita",
    "categoria": "struttura"
   },
   "partOfCapitolo": {

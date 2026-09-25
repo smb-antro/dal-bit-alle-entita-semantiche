@@ -384,334 +384,334 @@
 :Leibniz a :Teorico ;
     rdfs:label "Gottfried Leibniz"@it ;
     rdfs:comment "Characteristica Universalis, il sogno del pensiero come calcolo; anche calcolo infinitesimale (con Newton)."@it ;
-    :discussoInUnita :Gen11, :U32 .
+    :citatoInUnita :Gen11, :U32 .
 
 :Newton a :Teorico ;
     rdfs:label "Isaac Newton"@it ;
     rdfs:comment "Calcolo infinitesimale (con Leibniz); spazio come contenitore assoluto."@it ;
-    :discussoInUnita :U32, :Gen41 .
+    :citatoInUnita :U32, :Gen41 .
 
 :Boole a :Teorico ;
     rdfs:label "George Boole"@it ;
     rdfs:comment "Algebra della logica; origine degli operatori E/O/NON."@it ;
-    :discussoInUnita :Gen11, :Fondamenti1 ;
+    :citatoInUnita :Gen11, :Fondamenti1 ;
     :citaOpera "The Laws of Thought, 1854" .
 
 :Frege a :Teorico ;
     rdfs:label "Gottlob Frege"@it ;
     rdfs:comment "Riduzione dell'aritmetica alla logica; distinzione senso/riferimento."@it ;
-    :discussoInUnita :Gen11, :Gen31 .
+    :citatoInUnita :Gen11, :Gen31 .
 
 :Russell a :Teorico ;
     rdfs:label "Bertrand Russell"@it ;
     rdfs:comment "Paradosso che incrina i Grundgesetze di Frege; Principia Mathematica con Whitehead."@it ;
-    :discussoInUnita :Gen11 ;
+    :citatoInUnita :Gen11 ;
     :citaOpera "Principia Mathematica (con Alfred North Whitehead)" .
 
 :Whitehead a :Teorico ;
     rdfs:label "Alfred North Whitehead"@it ;
     rdfs:comment "Co-autore di Principia Mathematica."@it ;
-    :discussoInUnita :Gen11 ;
+    :citatoInUnita :Gen11 ;
     :citaOpera "Principia Mathematica (con Bertrand Russell)" .
 
 :Godel a :Teorico ;
     rdfs:label "Kurt Gödel"@it ;
     rdfs:comment "Teoremi di incompletezza (1931); aritmetizzazione."@it ;
-    :discussoInUnita :Gen12, :U15 .
+    :citatoInUnita :Gen12, :U15 .
 
 :Turing a :Teorico ;
     rdfs:label "Alan Turing"@it ;
     rdfs:comment "Macchina universale; Test di Turing; risponde all'obiezione gödeliana."@it ;
-    :discussoInUnita :Gen12 .
+    :citatoInUnita :Gen12 .
 
 :Lucas a :Teorico ;
     rdfs:label "J.R. Lucas"@it ;
     rdfs:comment "Riformula l'obiezione gödeliana contro il meccanicismo (1961)."@it ;
-    :discussoInUnita :Gen12 .
+    :citatoInUnita :Gen12 .
 
 :Penrose a :Teorico ;
     rdfs:label "Roger Penrose"@it ;
     rdfs:comment "Riprende l'argomento di Lucas, collegandolo alla coscienza."@it ;
-    :discussoInUnita :Gen12 .
+    :citatoInUnita :Gen12 .
 
 :McCarthy a :Teorico ;
     rdfs:label "John McCarthy"@it ;
     rdfs:comment "Conia \"intelligenza artificiale\"; proposta di Dartmouth (1956)."@it ;
-    :discussoInUnita :Gen13 .
+    :citatoInUnita :Gen13 .
 
 :Minsky a :Teorico ;
     rdfs:label "Marvin Minsky"@it ;
     rdfs:comment "Dartmouth; Perceptrons (con Papert, 1969) — dimostra il limite di XOR."@it ;
-    :discussoInUnita :Gen13 ;
+    :citatoInUnita :Gen13 ;
     :citaOpera "Perceptrons, 1969 (con Seymour Papert)" .
 
 :Shannon a :Teorico ;
     rdfs:label "Claude Shannon"@it ;
     rdfs:comment "Co-firmatario della proposta di Dartmouth."@it ;
-    :discussoInUnita :Gen13 .
+    :citatoInUnita :Gen13 .
 
 :Rochester a :Teorico ;
     rdfs:label "Nathaniel Rochester"@it ;
     rdfs:comment "Co-firmatario della proposta di Dartmouth."@it ;
-    :discussoInUnita :Gen13 .
+    :citatoInUnita :Gen13 .
 
 :Rosenblatt a :Teorico ;
     rdfs:label "Frank Rosenblatt"@it ;
     rdfs:comment "Costruisce il Perceptron (1958)."@it ;
-    :discussoInUnita :Gen13, :U42 .
+    :citatoInUnita :Gen13, :U42 .
 
 :Papert a :Teorico ;
     rdfs:label "Seymour Papert"@it ;
     rdfs:comment "Perceptrons con Minsky (1969)."@it ;
-    :discussoInUnita :Gen13 ;
+    :citatoInUnita :Gen13 ;
     :citaOpera "Perceptrons, 1969 (con Marvin Minsky)" .
 
 :Rumelhart a :Teorico ;
     rdfs:label "David Rumelhart"@it ;
     rdfs:comment "Articolo del 1986 sul backpropagation (con Hinton e Williams)."@it ;
-    :discussoInUnita :Gen15 .
+    :citatoInUnita :Gen15 .
 
 :Hinton a :Teorico ;
     rdfs:label "Geoffrey Hinton"@it ;
     rdfs:comment "Backpropagation (1986); deep learning (2006, con Osindero e Teh)."@it ;
-    :discussoInUnita :Gen15 .
+    :citatoInUnita :Gen15 .
 
 :Williams a :Teorico ;
     rdfs:label "Ronald Williams"@it ;
     rdfs:comment "Articolo del 1986 sul backpropagation."@it ;
-    :discussoInUnita :Gen15 .
+    :citatoInUnita :Gen15 .
 
 :Osindero a :Teorico ;
     rdfs:label "Simon Osindero"@it ;
     rdfs:comment "Co-autore con Hinton del metodo 2006 per reti profonde."@it ;
-    :discussoInUnita :Gen15 .
+    :citatoInUnita :Gen15 .
 
 :Teh a :Teorico ;
     rdfs:label "Yee-Whye Teh"@it ;
     rdfs:comment "Co-autore con Hinton del metodo 2006 per reti profonde."@it ;
-    :discussoInUnita :Gen15 .
+    :citatoInUnita :Gen15 .
 
 :Mikolov a :Teorico ;
     rdfs:label "Tomas Mikolov"@it ;
     rdfs:comment "Guida il gruppo che pubblica Word2Vec (2013)."@it ;
-    :discussoInUnita :Gen15, :U33 .
+    :citatoInUnita :Gen15, :U33 .
 
 :Bahdanau a :Teorico ;
     rdfs:label "Dzmitry Bahdanau"@it ;
     rdfs:comment "Introduce il meccanismo di attention nella traduzione automatica (2014-2015)."@it ;
-    :discussoInUnita :Gen16 .
+    :citatoInUnita :Gen16 .
 
 :VonNeumann a :Teorico ;
     rdfs:label "John von Neumann"@it ;
     rdfs:comment "The Computer and the Brain (1958); momento di consapevolezza della discretizzazione."@it ;
-    :discussoInUnita :U11, :U63, :U42 ;
+    :citatoInUnita :U11, :U63, :U42 ;
     :citaOpera "The Computer and the Brain, 1958" .
 
 :Cantor a :Teorico ;
     rdfs:label "Georg Cantor"@it ;
     rdfs:comment "Argomento diagonale: i numeri reali non sono numerabili."@it ;
-    :discussoInUnita :U15, :U31 .
+    :citatoInUnita :U15, :U31 .
 
 :Vapnik a :Teorico ;
     rdfs:label "Vladimir Vapnik"@it ;
     rdfs:comment "Formalizza le Support Vector Machines."@it ;
-    :discussoInUnita :Gen14 .
+    :citatoInUnita :Gen14 .
 
 :Chomsky a :Teorico ;
     rdfs:label "Noam Chomsky"@it ;
     rdfs:comment "Critica ai modelli \"a stati finiti\" del linguaggio (anni '50)."@it ;
-    :discussoInUnita :U24 .
+    :citatoInUnita :U24 .
 
 :Firth a :Teorico ;
     rdfs:label "John Rupert Firth"@it ;
     rdfs:comment "Ipotesi distribuzionale: \"si conosce una parola dalla compagnia che tiene\" (1957)."@it ;
-    :discussoInUnita :U33 .
+    :citatoInUnita :U33 .
 
 :Wittgenstein a :Teorico ;
     rdfs:label "Ludwig Wittgenstein (tardo)"@it ;
     rdfs:comment "Significato come uso, giochi linguistici."@it ;
-    :discussoInUnita :Gen31, :U33 .
+    :citatoInUnita :Gen31, :U33 .
 
 :Bateson a :Teorico ;
     rdfs:label "Gregory Bateson"@it ;
     rdfs:comment "Sillogismo dell'erba; pleroma/creatura; schismogenesi."@it ;
-    :discussoInUnita :U34, :U43, :U45 ;
+    :citatoInUnita :U34, :U43, :U45 ;
     :citaOpera "Naven, 1936" .
 
 :Varela a :Teorico ;
     rdfs:label "Francisco Varela"@it ;
     rdfs:comment "Autopoiesi e chiusura operazionale (con Maturana)."@it ;
-    :discussoInUnita :U41 .
+    :citatoInUnita :U41 .
 
 :Maturana a :Teorico ;
     rdfs:label "Humberto Maturana"@it ;
     rdfs:comment "Autopoiesi (con Varela)."@it ;
-    :discussoInUnita :U41 .
+    :citatoInUnita :U41 .
 
 :McCulloch a :Teorico ;
     rdfs:label "Warren McCulloch"@it ;
     rdfs:comment "Primo modello matematico del neurone (1943, con Pitts); neurofisiologo."@it ;
-    :discussoInUnita :Gen33, :U41 .
+    :citatoInUnita :Gen33, :U41 .
 
 :Pitts a :Teorico ;
     rdfs:label "Walter Pitts"@it ;
     rdfs:comment "Primo modello matematico del neurone (1943, con McCulloch); logico."@it ;
-    :discussoInUnita :Gen33, :U41 .
+    :citatoInUnita :Gen33, :U41 .
 
 :Hebb a :Teorico ;
     rdfs:label "Donald Hebb"@it ;
     rdfs:comment "Regola di rinforzo delle connessioni (1949), nella sua forma originale tecnica — non lo slogan con cui è oggi ricordato (vedi Shatz)."@it ;
-    :discussoInUnita :Gen33, :U41 .
+    :citatoInUnita :Gen33, :U41 .
 
 :Hubel a :Teorico ;
     rdfs:label "David Hubel"@it ;
     rdfs:comment "Organizzazione gerarchica della corteccia visiva (con Wiesel)."@it ;
-    :discussoInUnita :Gen33 .
+    :citatoInUnita :Gen33 .
 
 :Wiesel a :Teorico ;
     rdfs:label "Torsten Wiesel"@it ;
     rdfs:comment "Organizzazione gerarchica della corteccia visiva (con Hubel)."@it ;
-    :discussoInUnita :Gen33 .
+    :citatoInUnita :Gen33 .
 
 :Harnad a :Teorico ;
     rdfs:label "Stevan Harnad"@it ;
     rdfs:comment "Symbol grounding problem (1990)."@it ;
-    :discussoInUnita :Gen23, :Gen31 .
+    :citatoInUnita :Gen23, :Gen31 .
 
 :Pearl a :Teorico ;
     rdfs:label "Judea Pearl"@it ;
     rdfs:comment "Scala causale: associazione, intervento, controfattuale."@it ;
-    :discussoInUnita :Gen23, :Gen32 .
+    :citatoInUnita :Gen23, :Gen32 .
 
 :Hume a :Teorico ;
     rdfs:label "David Hume"@it ;
     rdfs:comment "La causalità come inferenza abituale, non percezione diretta."@it ;
-    :discussoInUnita :Gen32 .
+    :citatoInUnita :Gen32 .
 
 :Searle a :Teorico ;
     rdfs:label "John Searle"@it ;
     rdfs:comment "Esperimento mentale della stanza cinese (1980)."@it ;
-    :discussoInUnita :Gen31 .
+    :citatoInUnita :Gen31 .
 
 :Chalmers a :Teorico ;
     rdfs:label "David Chalmers"@it ;
     rdfs:comment "Problema facile / problema difficile della coscienza (1995)."@it ;
-    :discussoInUnita :Gen34 .
+    :citatoInUnita :Gen34 .
 
 :Tononi a :Teorico ;
     rdfs:label "Giulio Tononi"@it ;
     rdfs:comment "Integrated Information Theory (Φ)."@it ;
-    :discussoInUnita :Gen34 .
+    :citatoInUnita :Gen34 .
 
 :Baars a :Teorico ;
     rdfs:label "Bernard Baars"@it ;
     rdfs:comment "Global Workspace Theory."@it ;
-    :discussoInUnita :Gen34 .
+    :citatoInUnita :Gen34 .
 
 :Dehaene a :Teorico ;
     rdfs:label "Stanislas Dehaene"@it ;
     rdfs:comment "Sviluppo della Global Workspace Theory."@it ;
-    :discussoInUnita :Gen34 .
+    :citatoInUnita :Gen34 .
 
 :Kant a :Teorico ;
     rdfs:label "Immanuel Kant"@it ;
     rdfs:comment "Spazio come forma dell'intuizione."@it ;
-    :discussoInUnita :Gen41 .
+    :citatoInUnita :Gen41 .
 
 :MerleauPonty a :Teorico ;
     rdfs:label "Maurice Merleau-Ponty"@it ;
     rdfs:comment "Spazio vissuto attraverso il corpo."@it ;
-    :discussoInUnita :Gen41 .
+    :citatoInUnita :Gen41 .
 
 :Brooks a :Teorico ;
     rdfs:label "Rodney Brooks"@it ;
     rdfs:comment "Robotica embodied: l'intelligenza richiede corpi, non solo simboli."@it ;
-    :discussoInUnita :Gen42 .
+    :citatoInUnita :Gen42 .
 
 :Lakoff a :Teorico ;
     rdfs:label "George Lakoff"@it ;
     rdfs:comment "Metafore concettuali a origine sensomotoria (con Johnson)."@it ;
-    :discussoInUnita :Gen42 .
+    :citatoInUnita :Gen42 .
 
 :Johnson a :Teorico ;
     rdfs:label "Mark Johnson"@it ;
     rdfs:comment "Metafore concettuali a origine sensomotoria (con Lakoff)."@it ;
-    :discussoInUnita :Gen42 .
+    :citatoInUnita :Gen42 .
 
 :GalileoGalilei a :Teorico ;
     rdfs:label "Galileo Galilei"@it ;
     rdfs:comment "Qualità primarie/secondarie; fondazione della scienza quantificabile."@it ;
-    :discussoInUnita :U32, :U54 .
+    :citatoInUnita :U32, :U54 .
 
 :Wigner a :Teorico ;
     rdfs:label "Eugene Wigner"@it ;
     rdfs:comment "\"Irragionevole efficacia della matematica\"."@it ;
-    :discussoInUnita :U34 .
+    :citatoInUnita :U34 .
 
 :WeiEtAl2022 a :Teorico ;
     rdfs:label "Wei et al. (2022)"@it ;
     rdfs:comment "Conia il termine \"capacità emergenti\"."@it ;
-    :discussoInUnita :Gen21, :U62 ;
+    :citatoInUnita :Gen21, :U62 ;
     :citaOpera "TMLR, 2022, arXiv:2206.07682" .
 
 :SchaefferEtAl2023 a :Teorico ;
     rdfs:label "Schaeffer, Miranda, Koyejo (2023)"@it ;
     rdfs:comment "Controargomento: l'emergenza può essere artefatto delle metriche."@it ;
-    :discussoInUnita :Gen21, :U62 .
+    :citatoInUnita :Gen21, :U62 .
 
 :HerculanoHouzel a :Teorico ;
     rdfs:label "Suzana Herculano-Houzel"@it ;
     rdfs:comment "Stima di ~86 miliardi di neuroni nel cervello umano (2009)."@it ;
-    :discussoInUnita :U61 ;
+    :citatoInUnita :U61 ;
     :citaOpera "Frontiers in Human Neuroscience, 2009" .
 
 :BrownEtAl2020 a :Teorico ;
     rdfs:label "Brown et al. (2020)"@it ;
     rdfs:comment "Paper GPT-3, citato per gli ordini di grandezza dei parametri."@it ;
-    :discussoInUnita :U61 .
+    :citatoInUnita :U61 .
 
 :ChowdheryEtAl2022 a :Teorico ;
     rdfs:label "Chowdhery et al. (2022)"@it ;
     rdfs:comment "Paper PaLM (Google), citato per gli ordini di grandezza."@it ;
-    :discussoInUnita :U61 .
+    :citatoInUnita :U61 .
 
 :OuyangEtAl2022 a :Teorico ;
     rdfs:label "Ouyang et al. (2022)"@it ;
     rdfs:comment "Introduce il fine-tuning verso il comportamento istruito."@it ;
-    :discussoInUnita :U64 ;
+    :citatoInUnita :U64 ;
     :citaOpera "InstructGPT, 2022" .
 
 :Bacon a :Teorico ;
     rdfs:label "Francis Bacon"@it ;
     rdfs:comment "\"Veritas filia temporis\" — la verità è figlia del tempo."@it ;
-    :discussoInUnita :U63 ;
+    :citatoInUnita :U63 ;
     :citaOpera "Veritas filia temporis" .
 
 :Bayle a :Teorico ;
     rdfs:label "Pierre Bayle"@it ;
     rdfs:comment "Contro-tesi \"error filius temporis\"."@it ;
-    :discussoInUnita :U63 ;
+    :citatoInUnita :U63 ;
     :citaOpera "Error filius temporis" .
 
 :Lawvere a :Teorico ;
     rdfs:label "William Lawvere"@it ;
     rdfs:comment "Geometria differenziale sintetica: il continuo come primitivo."@it ;
-    :discussoInUnita :U66 .
+    :citatoInUnita :U66 .
 
 :Peirce a :Teorico ;
     rdfs:label "Charles Sanders Peirce"@it ;
     rdfs:comment "Abbozza una versione della tavola di verità già tra il 1883 e il 1902, in manoscritti rimasti inediti per decenni."@it ;
-    :discussoInUnita :Fondamenti1 .
+    :citatoInUnita :Fondamenti1 .
 
 :Post a :Teorico ;
     rdfs:label "Emil Post"@it ;
     rdfs:comment "Usa la tavola di verità (1921, indipendentemente da Wittgenstein) per dimostrare che E, O e NON bastano a costruire qualsiasi funzione booleana."@it ;
-    :discussoInUnita :Fondamenti1 .
+    :citatoInUnita :Fondamenti1 .
 
 :Shatz a :Teorico ;
     rdfs:label "Carla Shatz"@it ;
     rdfs:comment "Conia decenni dopo lo slogan «neurons that fire together, wire together», spesso attribuito per errore direttamente a Hebb (1949) — nessuna data/opera specifica data dal testo."@it ;
-    :discussoInUnita :Gen33 .
+    :citatoInUnita :Gen33 .
 
 ########################################################################
 # Dataset

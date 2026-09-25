@@ -1546,3 +1546,71 @@ quando non c'è un difetto.
 
 Resa verificata a 1100px: tre facce caricate, cinque tabelle, 21 righe di
 copertura, nessuna richiesta fallita, nessun errore JavaScript.
+
+## 2026-09-25 — L'ontologia era incoerente, e il controllo che doveva accorgersene guardava altrove
+
+Prima del push, con ROBOT e HermiT installati per una verifica DL che `valida.py`
+non poteva fare. Il reasoner ha trovato due cose, e la seconda è più grave della
+prima.
+
+**1. 738 violazioni del profilo OWL 2 DL, tutte di dichiarazione.** SKOS e Dublin
+Core sono usati senza `owl:imports` — scelta documentata, il namespace non è
+dereferenziabile — e in OWL 2 DL ogni IRI deve essere dichiarato. Senza
+dichiarazione il reasoner indovina, e indovinava male: **`skos:broader`
+risultava una proprietà di annotazione**, cioè ignorata da ogni inferenza, pur
+essendo la gerarchia portante di un vocabolario SKOS. I termini esterni sono ora
+dichiarati in fondo a `ontologia.ttl` col tipo che SKOS attribuisce loro.
+
+Questo corregge anche un'affermazione della revisione in sola lettura di ieri, in
+cui avevo scritto che «i costrutti usati rientrano in OWL 2 DL». Era falso:
+avevo ispezionato le *espressioni* e non le *dichiarazioni*, e senza un
+validatore di profilo non potevo saperlo. Lo strumento l'ha visto in un minuto.
+
+**2. L'ontologia era incoerente, e lo era da prima di questa sessione.**
+`:discussoInUnita` dichiara `rdfs:domain :Concetto`, ma 85 delle sue 262
+asserzioni avevano per soggetto un `:Teorico` — 64 teorici, da Boole a
+Wittgenstein. Il dominio inferisce che siano Concetti; `:Concetto` e `:Teorico`
+sono disgiunti; contraddizione. Verificato che c'è anche nello stato committato.
+Controllati poi tutti e 32 gli assiomi di dominio e range contro i dati: **questo
+è l'unico** contraddetto.
+
+**Perché `valida.py` non lo vedeva.** La chiusura OWL-RL *deduce* correttamente
+che i 64 teorici sono Concetti — verificato, `True` per ognuno — ma `owl:Nothing`
+resta vuoto. La disgiunzione è scritta come `owl:AllDisjointClasses` con
+`owl:members`, e `owlrl` implementa la regola sulla forma `owl:disjointWith`, che
+in questo grafo non compare **mai**, né asserita né derivata. La regola non aveva
+su cosa scattare. Il controllo passava, e il README affermava che la disgiunzione
+era «verificata con un reasoner OWL-RL, non solo dichiarata». Era dichiarata e
+non verificata: la stessa forma dell'errore sui font e dell'harness cieco — uno
+strumento che passa mentre misura altro.
+
+**Correzione scelta dall'utente**: proprietà separata invece di allargare il
+dominio. `:citatoInUnita`, dominio `:Teorico`, range `:Unita ⊔ :Capitolo` come la
+sorella. Un concetto viene *discusso* in un'unità, un teorico vi è *citato*: due
+relazioni diverse, interrogabili separatamente. Una riga sola in
+`genera_dati.py`, perché il generatore già trattava i due casi in blocchi
+distinti; `genera_html.py` unisce le due proprietà dove la pagina elenca chi cita
+un'unità; `genera_grafo.py` la aggiunge alle proprietà della Lente.
+
+**`:dataVerifica` diventa una proprietà di annotazione.** Era l'unica cosa che
+teneva l'ontologia fuori dal profilo DL, perché `xsd:date` non appartiene alla
+mappa dei datatype di OWL 2 e quel vincolo vale per le proprietà di dati, non per
+le annotazioni. La decisione è nata da una domanda dell'utente — «a cosa serve il
+tempo in questo lavoro?» — e dalla misura che ne è seguita: gli 11 valori sono
+**tutti la stessa data**, la proprietà non compare in nessuna delle 196 pagine
+generate, in nessuna delle 6 query, in nessun punto della Lente. È provenienza,
+non una dimensione del modello, e ora lo dichiara.
+
+**`valida.py` ora verifica la disgiunzione** sulla forma che il file usa davvero:
+21 coppie, controllate individuo per individuo dopo la chiusura. Provato sui dati
+precedenti alla correzione, dove trova i 64 e fallisce. Il repository non dipende
+da Java per questo: ROBOT resta il controllo di profilo e di coerenza DL,
+documentato e riproducibile, ma non incluso.
+
+**Esito.** Profilo OWL 2 DL: «Ontology and imports closure in profile», zero
+violazioni. HermiT: coerente. OWL-RL e SHACL: invariati, più il controllo nuovo.
+Le 195 pagine rigenerate sono **identiche byte per byte** alle precedenti, il
+grafo della Lente conserva 258 nodi e 537 archi (85 passati alla proprietà
+nuova), e la pagina di Hebb continua a dire «Citato in Genealogia · 3.3,
+Meccanismo · 4.1». La correzione è formalmente sostanziale e visivamente nulla,
+che è esattamente ciò che doveva essere.

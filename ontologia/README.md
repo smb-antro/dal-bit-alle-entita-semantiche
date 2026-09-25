@@ -20,9 +20,11 @@ Due competenze che di norma stanno in stanze separate:
 1. **Modellazione formale** — `src/vocabolario.ttl` (111 concetti SKOS, gerarchia
    disciplinata genere-specie/parte-tutto, 3 percorsi di lettura ordinati) e
    `src/ontologia.ttl` (9 classi OWL — inclusa `Parte`, aggiunta il 4 settembre 2026
-   quando il saggio si è riorganizzato in tre Parti — 16 object property + 2 datatype
-   property, con caratteristiche formali — transitività, simmetria, disgiunzione —
-   verificate con un reasoner OWL-RL, non solo dichiarate).
+   quando il saggio si è riorganizzato in tre Parti — 17 object property + 2 datatype
+   property + 1 annotation property, con caratteristiche formali — transitività, simmetria, disgiunzione —
+   verificate, non solo dichiarate: `scripts/valida.py` chiude il grafo con un
+   reasoner OWL-RL e controlla la disgiunzione classe per classe, e l'ontologia è
+   **nel profilo OWL 2 DL** e **coerente secondo HermiT** (vedi «Verifica formale»).
 2. **Architettura dell'informazione** — `output/`, una struttura di consultazione
    HTML/CSS vanilla in quattro viste (glossario, moduli, fili trasversali, teorici)
    generata dal grafo RDF, verificata contro compiti di ricerca concreti in browser, non
@@ -76,6 +78,51 @@ Validare (coerenza logica OWL-RL + conformità SHACL):
 ```bash
 .venv/bin/python3 scripts/valida.py
 ```
+
+**Cosa questa validazione copre, e cosa no.** Due controlli, non uno. Il primo
+chiude deduttivamente il grafo con un reasoner OWL-RL (1.775 triple → chiusura) e
+verifica che `owl:Nothing` resti vuoto. Il secondo verifica la **disgiunzione**
+classe per classe, sulla forma che questo file usa davvero.
+
+Il secondo esiste perché il primo, da solo, non bastava — e lo si è scoperto il
+25 settembre 2026, quando HermiT ha dichiarato incoerente un'ontologia che
+`valida.py` dava per buona. La ragione è precisa: la disgiunzione qui è scritta
+come `owl:AllDisjointClasses` con `owl:members`, e `owlrl` implementa la regola
+che agisce sulla forma `owl:disjointWith` — che in questo grafo non compare mai,
+né asserita né derivata. La regola non aveva su cosa scattare, e il controllo
+passava mentre misurava altro. Oggi le 21 coppie disgiunte sono verificate
+esplicitamente; provato sui dati precedenti alla correzione, dove trova i 64
+individui che erano insieme `:Concetto` e `:Teorico`.
+
+**Resta fuori dal profilo RL**, e quindi ignorato dal reasoner: il `rdfs:range`
+di `:discussoInUnita` e di `:citatoInUnita` è `owl:unionOf ( :Unita :Capitolo )`,
+e OWL 2 RL ammette in posizione di superclasse solo classi nominate. Gli assiomi
+sono validi in OWL 2 DL e restano scritti perché descrivono il modello con
+precisione — ma nessuna conclusione viene tratta da essi qui.
+
+### Verifica formale con un reasoner DL
+
+L'ontologia è **nel profilo OWL 2 DL** («Ontology and imports closure in
+profile») e **coerente** secondo HermiT. Riproducibile con
+[ROBOT](http://robot.obolibrary.org/), che non è incluso nel repository — serve
+un runtime Java e `robot.jar` dalle release del progetto:
+
+```bash
+.venv/bin/python3 -c "import rdflib; g=rdflib.Graph(); \
+  [g.parse(f) for f in ['src/vocabolario.ttl','src/ontologia.ttl','src/dati.ttl']]; \
+  g.serialize(destination='/tmp/unito.ttl', format='turtle')"
+java -jar robot.jar validate-profile --profile DL --input /tmp/unito.ttl
+java -jar robot.jar reason --reasoner hermit --input /tmp/unito.ttl --output /tmp/ragionato.ttl
+```
+
+Il 25 settembre 2026 questo controllo riportava **738 violazioni di profilo** e
+un'ontologia incoerente. Le violazioni erano tutte di dichiarazione: SKOS e
+Dublin Core sono usati senza `owl:imports` (scelta documentata: il namespace non
+è dereferenziabile), e in OWL 2 DL ogni IRI deve essere dichiarato. Senza
+dichiarazione il reasoner indovinava, e indovinava male — `skos:broader`
+risultava una proprietà di *annotazione*, cioè ignorata da ogni inferenza, pur
+essendo la gerarchia portante del vocabolario. I termini esterni sono ora
+dichiarati in fondo a `ontologia.ttl` con il tipo che SKOS attribuisce loro.
 
 Interrogare il grafo (6 query di esempio: concetti-cardine, catena di prerequisiti
 transitiva, filo trasversale in ordine, lacune di popolamento, teorici più citati,
