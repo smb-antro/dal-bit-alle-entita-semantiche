@@ -1450,3 +1450,51 @@ mancato ritorno in cima. Rifatta la preparazione con `behavior: 'instant'`, il
 difetto è sparito perché non c'era. **Lezione minuta ma ricorrente**: quando si
 misura un comportamento di scorrimento, anche il gesto che prepara la misura è un
 comportamento di scorrimento, e va reso deterministico per primo.
+
+## 2026-09-24 — Le sotto-sezioni si raggiungono direttamente, non ripartendo dal capitolo
+
+Segnalato: cliccando nel binario una sotto-sezione, «il click fa ripartire dalla
+prima parte del capitolo e poi scorre fino alla quarta». Difetto reale, e
+**l'avevo già misurato il giorno prima senza riconoscerlo**: nella verifica
+dello scorrimento leggevo `3000 → 0 → 744` e l'avevo archiviato come corretto
+perché atterrava sul bersaglio giusto. Il numero giusto alla fine di un percorso
+sbagliato.
+
+**La causa è concettuale, non tecnica**: avevo trattato come un gesto solo due
+gesti diversi. Cambiare capitolo **senza** bersaglio (Sommario, titolo di
+capitolo) deve portare in cima, e lì tornare a 0 è giusto. Cambiare capitolo
+**con** un bersaglio deve portare lì e basta. Il viaggio intermedio non aggiunge
+orientamento: lo toglie, perché mostra un punto di partenza che non è né dove
+eri né dove vai.
+
+`showChapter` prende ora un oggetto di opzioni invece di una sola funzione:
+`bersaglio` è l'id su cui atterrare, `poi` la funzione da eseguire a capitolo
+visibile (oggi solo la selezione del nodo nella Lente). Con un bersaglio si va
+direttamente alla sua posizione, senza animazione; senza bersaglio si torna in
+cima come prima. Vale anche per le sotto-sezioni del capitolo in cui si è già,
+che soffrivano dello stesso difetto ed erano il caso più fastidioso.
+
+**Un secondo difetto trovato dalla verifica, non dalla segnalazione**: passando
+a un capitolo senza unità (Fondamenti, per esempio), il pallino dello scroll-spy
+restava acceso su un'unità del capitolo *precedente*. `updateActive` lascia
+deliberatamente acceso l'ultimo pallino quando non trova un bersaglio in vista —
+comportamento giusto mentre si scorre fra due unità, sbagliato dopo un cambio di
+capitolo. Spento ora in `updateSidebarState`, cioè al cambio di capitolo e non a
+ogni scorrimento; chi riaccende quello giusto è `updateActive`, che parte subito
+dopo su `corso:chapterchange`.
+
+**Misurato in Chrome e in WebKit**, campionando `scrollY` a ogni fotogramma:
+
+| caso | Chrome | WebKit |
+|---|---|---|
+| 4ª sotto-sezione da un altro capitolo | 2500 → 9693, atteso 9693 | 2500 → 9638, atteso 9638 |
+| 4ª sotto-sezione del capitolo in cui si è | 2500 → 9693 | 2500 → 9638 |
+| voce di capitolo senza ancora | 2500 → 0 | 2500 → 0 |
+
+Nessuna posizione intermedia in nessuno dei casi, pallino giusto in tutti, e
+`null` invece di un pallino ereditato sul capitolo senza unità. Controllato anche
+che lo scroll-spy continui a seguire lo scorrimento normale: 6 unità su 6.
+
+**Nota**: la prima verifica di questa correzione usava la prima sotto-sezione,
+che sta a y=0 — indistinguibile dall'andare in cima. Una prova che non può
+fallire non è una prova; rifatta con la quarta.

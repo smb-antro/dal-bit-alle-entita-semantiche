@@ -6667,6 +6667,15 @@ svg[data-nascondi~="gerarchia"] [data-cat="gerarchia"],
   }
 
   function updateSidebarState(id){
+    // Il pallino dello scroll-spy si spegne al cambio di capitolo, non a ogni
+    // scorrimento: `updateActive` lascia l'ultimo acceso quando non trova un
+    // bersaglio in vista — giusto mentre si scorre fra due unita', sbagliato
+    // quando si e' cambiato capitolo. Senza questa riga, andando su un
+    // capitolo senza unita' (Fondamenti, per esempio) restava acceso il
+    // pallino di un'unita' di un ALTRO capitolo, nascosto dentro il suo
+    // accordion chiuso finche' non lo si riapriva. Chi riaccende quello
+    // giusto e' `updateActive`, che parte subito dopo su corso:chapterchange.
+    sidebar.querySelectorAll('a.active').forEach(a => a.classList.remove('active'));
     sidebarSimple.forEach(a => a.classList.toggle('current', a.dataset.navChapter === id));
     sidebarModules.forEach(d => {
       const belongs = !!d.querySelector('a[data-nav-chapter="' + id + '"]');
@@ -6695,20 +6704,50 @@ svg[data-nascondi~="gerarchia"] [data-cat="gerarchia"],
       .forEach(el => el.classList.remove('aperto'));
   }
 
-  // `dopoIlNudge` riceve la funzione da eseguire quando l'ultimo nudge e'
-  // passato: un'eventuale animazione di scorrimento (il rimando a un
-  // paragrafo preciso) deve partire DOPO, altrimenti e' il nudge ad
-  // annullare lei.
-  function showChapter(id, dopoIlNudge){
+  // Porta la pagina esattamente sul bordo superiore di `bersaglio`, senza
+  // animazione. Torna false se il bersaglio non esiste, cosi' chi chiama sa
+  // che deve ripiegare sull'inizio del capitolo.
+  //
+  // PERCHE' DIRETTAMENTE. Cliccando una sotto-sezione nel binario, prima si
+  // tornava all'inizio del capitolo e da li' partiva uno scorrimento dolce
+  // fino al bersaglio: si vedeva il capitolo ripartire dalla prima parte e
+  // poi correre fino alla quarta. Sono due gesti diversi trattati come uno
+  // solo — cambiare capitolo SENZA bersaglio deve portare in cima, cambiare
+  // capitolo CON un bersaglio deve portare li' e basta. Il viaggio
+  // intermedio non aggiunge orientamento, lo toglie.
+  function vaiAlBersaglio(bersaglio){
+    const el = bersaglio ? document.getElementById(bersaglio) : null;
+    if (!el) return false;
+    senzaAnimazione(() => {
+      // Il capitolo e' appena passato da hidden a visibile: la posizione si
+      // legge dopo che il motore ha rifatto l'impaginazione, non prima.
+      // `senzaAnimazione` forza gia' quel ricalcolo.
+      const y = Math.max(0, Math.round(el.getBoundingClientRect().top + window.scrollY));
+      window.scrollTo(0, y);
+    });
+    return true;
+  }
+
+  // `opzioni.bersaglio` e' l'id su cui atterrare; `opzioni.poi` una funzione
+  // da eseguire quando l'ultimo nudge e' passato (oggi solo la selezione del
+  // nodo nella Lente, che deve avvenire a capitolo gia' visibile).
+  function showChapter(id, opzioni){
+    opzioni = opzioni || {};
     chiudiSovrapposizioni();
     chapters.forEach(c => { c.hidden = (c.id !== 'chapter-' + id); });
     updateSidebarState(id);
-    senzaAnimazione(() => window.scrollTo(0, 0));
+    if (!vaiAlBersaglio(opzioni.bersaglio)) {
+      senzaAnimazione(() => window.scrollTo(0, 0));
+    }
     nudgeIntersectionObservers();
     requestAnimationFrame(nudgeIntersectionObservers);
     setTimeout(() => {
       nudgeIntersectionObservers();
-      if (dopoIlNudge) dopoIlNudge();
+      // I nudge sono istantanei e a somma zero, ma rivelare i blocchi puo'
+      // far comparire contenuto che sposta il bersaglio: si ricontrolla una
+      // volta sola, e solo se serve davvero.
+      if (opzioni.bersaglio) vaiAlBersaglio(opzioni.bersaglio);
+      if (opzioni.poi) opzioni.poi();
     }, 60);
     window.dispatchEvent(new CustomEvent('corso:chapterchange'));
   }
@@ -6723,14 +6762,16 @@ svg[data-nascondi~="gerarchia"] [data-cat="gerarchia"],
     e.preventDefault();
     const targetId = a.getAttribute('href').slice(1);
     const nodo = a.dataset.nodo;
-    showChapter(a.dataset.navChapter, () => {
+    if (nodo) {
       // La Lente e' un capitolo, e la tenda di un concetto ci arriva chiedendo
       // un nodo preciso. Si centra dopo che il capitolo e' visibile, perche'
       // selezionaNodo scorre la lista laterale fino alla voce scelta.
-      if(nodo && typeof window.lenteSeleziona === 'function'){ window.lenteSeleziona(nodo); return; }
-      const el = document.getElementById(targetId);
-      if(el) el.scrollIntoView({ behavior: 'smooth' });
-    });
+      showChapter(a.dataset.navChapter, { poi: () => {
+        if (typeof window.lenteSeleziona === 'function') window.lenteSeleziona(nodo);
+      } });
+    } else {
+      showChapter(a.dataset.navChapter, { bersaglio: targetId });
+    }
   });
 
   window.showChapter = showChapter;
