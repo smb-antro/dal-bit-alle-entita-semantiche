@@ -1638,3 +1638,36 @@ la mappa prodotta da `filter-repo` (`c8db785`→`ef918c0`, `1791eda`→`d2fba43`
 `6da4c30`→`2425758`, `352c9c6`→`152a528`). Senza questo passaggio sarebbero
 diventati puntatori a nulla: una riscrittura della storia invalida ogni hash
 scritto in prosa, ed è il costo meno visibile dell'operazione.
+
+## 2026-09-25 — La Lente dopo il cambio di classe: cosa segue e cosa resta dov'è
+
+Controllo richiesto dall'utente dopo la modifica di classe ai fili trasversali e
+l'aggiunta di `:citatoInUnita`: la Lente semantica ne ha tenuto conto?
+
+**Sì, per le relazioni.** `lente.js` costruisce le relazioni dai dati
+(`PROPRIETA = GRAFO.proprieta`), quindi la proprietà nuova è entrata da sola: 19
+voci nel glossario, `citatoInUnita · citato in / cita` nella sezione «Struttura
+del corpus» accanto a `discussoInUnita`. Verificato anche il disegno: Donald Hebb
+mostra «Teorico · 2 archi» con le etichette di Meccanismo · 4.1 e Genealogia · 3.3.
+
+**No, per il raggruppamento — e resta così di proposito.** `gruppoDi`
+(`lente.js`, riga 48) ha un elenco di tipi scritto a mano e chiude con
+`return "Altro"`, commentato «FiloTrasversale, StatoEpistemico, e nodi senza
+tipo». I tre fili restano quindi sotto l'intestazione «Altro» anche ora che
+l'ontologia li dichiara membri di una classe propria. Non è una regressione: si
+comportava così anche quando la classe era vuota e il tipo arrivava per ripiego.
+
+Decisione dell'utente: **non intervenire**. Le ragioni, perché non venga
+"corretto" in futuro credendolo una svista: i fili sono percorsi di lettura, non
+entità del dominio, e «Altro» li descrive onestamente; dare loro un gruppo
+proprio richiederebbe un ottavo colore nella scala `--grp-*`, che è una palette
+categoriale già validata per separazione e daltonismo e che il progetto ha deciso
+di non ridisegnare.
+
+**Nota di metodo, terza della stessa specie.** Le prime due misure del glossario
+hanno dato «citato in» assente, ed erano entrambe sbagliate: la prima troncava il
+testo a 600 caratteri, la seconda leggeva `innerText` di un `<details>` chiuso,
+che restituisce stringa vuota. Contenuto presente nel DOM, invisibile alla
+misura: identico al caso dei blocchi `.reveal`. Il dato vero è arrivato aprendo
+il pannello. Quando una verifica dice «assente», la prima ipotesi da escludere è
+che sia lo strumento a non guardare.
