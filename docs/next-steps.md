@@ -21,8 +21,9 @@
   **Come si apre** (verificato il 24 settembre): doppio clic, ⌘O o `open` — tutte
   vie che passano da LaunchServices. Incollare il percorso nella barra degli
   indirizzi di Safari non funziona, e non è un difetto del file. Vedi `decision-log.md`.
-- **Cartelle `lab/`** (`design-system/lab/`, `ontologia/lente-semantica/lab/`) — da non
-  pubblicare; per ora restano nel repository, da escludere prima del push.
+- ~~**Cartelle `lab/`**~~ — ✅ 25 settembre 2026: rimosse da tutta la storia con
+  `git filter-repo` (22 file, 340 → 318 tracciati, `.git` da 12 a 4,1 MB). Un commit
+  che toccava solo `lab/` è sparito perché vuoto. Vedi `decision-log.md`.
 - **Push su GitHub** — decisione a parte, da confermare esplicitamente quando il resto
   sarà pronto (vedi `../CLAUDE.md`, Regole operative).
 

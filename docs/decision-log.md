@@ -1045,7 +1045,7 @@ documentazione del repository, e ha dichiarato che la contraddiceva.
 **Corretto** in `design-system/fonts/fonts.css`, `design-system/README.md`,
 `docs/snapshot.md`, `docs/next-steps.md`, e nella voce del 22 settembre, che porta ora la
 correzione sul posto invece di essere riscritta. I due messaggi di commit che contengono
-l'affermazione falsa (`6da4c30`, `352c9c6`) restano come sono: la storia non si riscrive
+l'affermazione falsa (`2425758`, `152a528`) restano come sono: la storia non si riscrive
 per un errore che una voce successiva può correggere.
 
 **Cosa resta vero della voce del 22 settembre**: i font sono self-hostati in una copia
@@ -1155,7 +1155,7 @@ verifica.
 **Corretto e ri-verificato.** L'harness ora scorre l'intera pagina e porta i
 `.reveal` allo stato finale per dichiarazione. Poi, per rispondere alla domanda
 vera — *la migrazione ha cambiato qualcosa in quel 64%?* — sono stati estratti
-dalla storia lo stato prima (`c8db785`) e dopo (`1791eda`) la migrazione, resi
+dalla storia lo stato prima (`ef918c0`) e dopo (`d2fba43`) la migrazione, resi
 entrambi con la cattura corretta e confrontati: **26 confronti su 28 identici**.
 I due con differenze mostrano esattamente i valori bistabili già catalogati.
 La migrazione regge anche su ciò che non era mai stato guardato.
@@ -1614,3 +1614,27 @@ grafo della Lente conserva 258 nodi e 537 archi (85 passati alla proprietà
 nuova), e la pagina di Hebb continua a dire «Citato in Genealogia · 3.3,
 Meccanismo · 4.1». La correzione è formalmente sostanziale e visivamente nulla,
 che è esattamente ciò che doveva essere.
+
+## 2026-09-25 — Storia riscritta: le cartelle `lab/` fuori dal repository pubblico
+
+Ultimo passo prima del push, come previsto da `next-steps.md`. `git filter-repo`
+ha rimosso `design-system/lab/` e `ontologia/lente-semantica/lab/` da **tutti** i
+commit: 22 file, da 340 tracciati a 318, `.git` da 12 a 4,1 MB.
+
+Eseguita su un clone usa-e-getta e verificata prima di sostituire il repository
+di lavoro: zero occorrenze di `lab/` in tutta la storia, e l'albero di lavoro
+identico all'originale a meno delle cartelle rimosse e dei file ignorati
+(`design-system.inline.css`, `.venv`, `.DS_Store`).
+
+**Un commit è scomparso**: `feat(design-system): primi test verificati —
+tipografia, palette, eccezioni colore` toccava soltanto file di `lab/`, quindi
+dopo il filtraggio era vuoto e `filter-repo` lo ha eliminato. Da 25 a 24 commit.
+È la conseguenza coerente della decisione: i prototipi non si pubblicano, e il
+commit che li registrava se ne va con loro. Ciò che quei test hanno stabilito
+resta nelle voci di questo registro, che è dove serve.
+
+**I quattro riferimenti a commit citati in questo file sono stati riscritti** con
+la mappa prodotta da `filter-repo` (`c8db785`→`ef918c0`, `1791eda`→`d2fba43`,
+`6da4c30`→`2425758`, `352c9c6`→`152a528`). Senza questo passaggio sarebbero
+diventati puntatori a nulla: una riscrittura della storia invalida ogni hash
+scritto in prosa, ed è il costo meno visibile dell'operazione.
