@@ -1,0 +1,19 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "headers": [
+    {
+      "source": "/(.*).ttl",
+      "headers": [
+        { "key": "Content-Type", "value": "text/turtle; charset=utf-8" }
+      ]
+    },
+    {
+      "source": "/LICENSE",
+      "headers": [
+        { "key": "Content-Type", "value": "text/plain; charset=utf-8" }
+      ]
+    }
+  ],
+  "cleanUrls": false,
+  "trailingSlash": false
+}

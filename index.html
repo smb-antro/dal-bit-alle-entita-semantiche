@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dal bit alle entità semantiche — caso studio</title>
+<meta name="description" content="Un saggio interattivo su come funzionano i modelli linguistici, e la sua cartografia semantica: vocabolario SKOS, ontologia OWL e un grafo navigabile.">
+<link rel="stylesheet" href="design-system/css/design-system.css">
+<style>
+  /* Pagina di ingresso: esiste solo qui, e vive dei token del design system.
+     Tre porte, una riga ciascuna. Nessun contenuto proprio: tutto ciò che
+     conta sta dietro i collegamenti. */
+  .ingresso{ max-width: 46rem; margin: 0 auto; padding: 8vh 24px 10vh; }
+  .porte{ display: grid; gap: 14px; margin: 34px 0 40px; }
+  .porta{
+    display: block; text-decoration: none; color: inherit;
+    border: 1px solid var(--colore-bordo); border-radius: 8px;
+    padding: 20px 22px; background: var(--colore-superficie);
+    transition: border-color .2s ease, transform .2s ease;
+  }
+  .porta:hover{ border-color: var(--colore-apparato-medio); transform: translateY(-1px); }
+  .porta:focus-visible{ outline: 2px solid var(--colore-apparato); outline-offset: 3px; }
+  .porta h2{
+    margin: 0 0 6px; font-size: var(--dim-lede); font-weight: 500;
+    color: var(--colore-navigazione);
+  }
+  .porta p{ margin: 0; font-size: var(--dim-nota); color: var(--colore-testo-attenuato); }
+  .porta .freccia{ color: var(--colore-apparato); }
+  .coda{
+    border-top: 1px solid var(--colore-bordo); padding-top: 22px;
+    font-size: var(--dim-nota); color: var(--colore-testo-attenuato);
+  }
+  .coda p{ margin: 0 0 10px; }
+  .coda a{ color: var(--colore-navigazione); }
+</style>
+</head>
+<body>
+<main class="ingresso">
+
+  <div class="apparato">Caso studio · Stefano Bongiovanni</div>
+  <h1>Dal bit alle <em>entità semantiche</em></h1>
+
+  <p class="lede">Due lavori nati separati e tenuti insieme: un saggio interattivo su
+  come funzionano i modelli linguistici, e la cartografia semantica dello stesso
+  dominio — cosa succede quando quel territorio viene riformalizzato come vocabolario
+  e ontologia, con vincoli di coerenza propri.</p>
+
+  <p>Il vocabolario non è un indice del saggio: è un'altra proiezione dello stesso
+  territorio. È il rapporto fra le due proiezioni il contenuto di questo caso studio.</p>
+
+  <div class="porte">
+
+    <a class="porta" href="dominio/src/saggio/presentazione.html">
+      <h2>Il saggio <span class="freccia">→</span></h2>
+      <p>Quattordici capitoli in tre parti — Fondamenti, Genealogia, Meccanismo — dai
+      principi discreti dell'hardware allo spazio vettoriale del significato. Centodieci
+      termini sono cliccabili e aprono la scheda del concetto nell'ontologia.</p>
+    </a>
+
+    <a class="porta" href="ontologia/output/index.html">
+      <h2>L'ontologia <span class="freccia">→</span></h2>
+      <p>Vocabolario controllato SKOS di 111 concetti e micro-ontologia OWL, consultabili
+      in quattro viste: glossario, capitoli, fili trasversali, teorici. Nel profilo OWL 2
+      DL e coerente secondo HermiT.</p>
+    </a>
+
+    <a class="porta" href="ontologia/lente-semantica/output/index.html">
+      <h2>La Lente semantica <span class="freccia">→</span></h2>
+      <p>Il grafo dello stesso vocabolario, esplorato un nodo alla volta: 258 entità e 537
+      relazioni, con i vicini di primo e secondo grado disposti a ventaglio intorno al
+      termine scelto.</p>
+    </a>
+
+  </div>
+
+  <div class="coda">
+    <p>Il saggio esiste anche come
+    <a href="dominio/output/dal-bit-alle-entita-semantiche_it.html">file unico</a>:
+    caratteri, immagini, JavaScript e la Lente stessa incorporati, nessuna richiesta di
+    rete. Si scarica e si apre con un doppio clic, anche senza connessione.</p>
+    <p>Codice sorgente e note di modellazione su
+    <a href="https://github.com/smb-antro/dal-bit-alle-entita-semantiche">GitHub</a>.
+    Codice MIT, ontologia CC BY 4.0, prosa riservata —
+    <a href="LICENSE">dettagli</a>.</p>
+  </div>
+
+</main>
+</body>
+</html>

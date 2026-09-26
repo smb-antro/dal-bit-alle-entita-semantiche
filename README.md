@@ -20,6 +20,23 @@ Due lavori nati separati:
   e "Lente semantica", un grafo radiale interattivo per esplorare i concetti uno alla
   volta ([`ontologia/lente-semantica/output/index.html`](ontologia/lente-semantica/output/index.html)).
 
+## Il sito
+
+La radice del repository è anche la radice del sito: `index.html` è una pagina di
+ingresso con tre porte — il saggio, l'ontologia, la Lente semantica — e non contiene
+nient'altro, perché tutto ciò che conta sta dietro quei collegamenti. È l'unico file
+HTML scritto a mano fuori dal design system, e ne usa i token.
+
+`vercel.json` fa due cose sole, entrambe sul `Content-Type`: serve i `.ttl` come
+`text/turtle` invece che come file da scaricare — sono il deliverable dell'ontologia,
+non un allegato — e `LICENSE`, che non ha estensione, come testo.
+
+**Il namespace non è dereferenziabile**, ed è una scelta dichiarata: l'ontologia si
+identifica con `https://smb-antro.github.io/dal-bit-alle-entita-semantiche/vocabolario#`,
+che è un identificatore, non un indirizzo. Nessun file viene servito a quel percorso.
+Renderlo risolvibile richiederebbe un dominio stabile nel tempo, e un namespace agganciato
+a un dominio che un giorno non si rinnova è peggio di uno che non ha mai risolto.
+
 ## Aprire il saggio compilato
 
 [`dominio/output/dal-bit-alle-entita-semantiche_it.html`](dominio/output/dal-bit-alle-entita-semantiche_it.html)
